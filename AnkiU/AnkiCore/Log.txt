@@ -1,0 +1,24 @@
+﻿				Python					Android
+------------------------------------------------------------------------
+DB:								TODO: Change to use async
+------------------------------------------------------------------------
+Media:						    Regrex in writeData can cause problems
+								Change "notes" in query string to "Note"
+								flds -> Fields
+								Change _mTime() to GetTimeLastModified()
+								Combine lastUsn and seLastUsn into property LastUsn
+								Change SyncInfo to GetSyncInfo
+------------------------------------------------------------------------
+Utils:							Change SplitFileName to SplitNameAndExtension
+------------------------------------------------------------------------
+Collection:                     Change server to isServer
+------------------------------------------------------------------------
+Deck:                           Change mDconf to deckConf
+								Change _path to SplitPath
+								Change function name() to GetDeckName()
+								Change function nameOrNone to GetDeckNameOrNull()
+								Change function cids to GetCardIds()
+------------------------------------------------------------------------
+Model:                          Change mMod to modifiedTime
+								Change function nids to GetNoteIds()
+								
