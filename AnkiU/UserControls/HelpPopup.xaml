@@ -1,0 +1,96 @@
+﻿<UserControl
+    x:Class="AnkiU.UserControls.HelpPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="userControl"
+    Background="White"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Storyboard x:Name="FadeIn">
+            <DoubleAnimation
+                      Storyboard.TargetName="popUp"
+                      Storyboard.TargetProperty="Opacity"
+                      From="0.0" To="1.0" Duration="0:0:0.3"/>
+        </Storyboard>
+
+        <Storyboard x:Name="FadeOut">
+            <DoubleAnimation
+                      Storyboard.TargetName="popUp"
+                      Storyboard.TargetProperty="Opacity"
+                      From="1.0" To="0" Duration="0:0:0.3"/>
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Popup x:Name="popUp" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MaxWidth="320" MaxHeight="250" Opacity="0">
+        <Grid   Background="{Binding Background, ElementName=userControl}" Width="320" MaxHeight="260"
+                VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0,0,0,5"
+                 BorderThickness="1" BorderBrush="{Binding Foreground, ElementName=userControl}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Padding="5" Background="{StaticResource ButtonBackGroundNormal}">
+                <TextBlock HorizontalAlignment="Center" x:Name="title" FontSize="18"
+                       Foreground="White" Text="Help" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+                <TextBlock HorizontalAlignment="Center" x:Name="subTitle" FontSize="15"
+                       Foreground="White" Text="Help" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+            </StackPanel>
+
+            <Button Style="{StaticResource ButtonBlue}" BorderBrush="Transparent" x:Name="closeButtonTop" Padding="2" Visibility="Collapsed"
+                    BorderThickness="0" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" Click="CloseButtonClick" >
+                <SymbolIcon Symbol="Clear" RenderTransformOrigin="0.5,0.5" >
+                    <SymbolIcon.RenderTransform>
+                        <CompositeTransform ScaleX="0.5" ScaleY="0.5"/>
+                    </SymbolIcon.RenderTransform>
+                </SymbolIcon>
+            </Button>
+
+            <StackPanel Padding="5,5,5,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <Image x:Name="helpImage" Visibility="Collapsed" MaxHeight="130" MaxWidth="300" Stretch="Uniform"/>
+                <TextBlock HorizontalAlignment="Center" x:Name="helpTextBlock"  FontSize="14"
+                       Foreground="{Binding Foreground, ElementName=userControl}" Text="Help"
+                       VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+            </StackPanel>
+
+            <Button Style="{StaticResource ButtonGray}" x:Name="closeButton" 
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    BorderBrush="{Binding Foreground, ElementName=userControl}" 
+                    Content="Close" BorderThickness="1" Background="Transparent" Margin="5,5,5,0" VerticalAlignment="Top"
+                    Visibility="Collapsed" Height="30" HorizontalAlignment="Stretch" Grid.Row="2"/>
+
+            <Button Style="{StaticResource ButtonGray}" x:Name="nextButton" 
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    BorderBrush="{Binding Foreground, ElementName=userControl}" 
+                    Content="Next" BorderThickness="1" Background="Transparent" Margin="5,5,5,0" VerticalAlignment="Top"
+                    Visibility="Collapsed" Height="30" HorizontalAlignment="Stretch" Grid.Row="2"/>
+
+            <Grid x:Name="nextAndBackGrid" Grid.Row="2" Height="30" Margin="5,5,5,0" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Style="{StaticResource ButtonGray}" 
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    BorderBrush="{Binding Foreground, ElementName=userControl}" Click="BackButtonClick"
+                    Content="Back" BorderThickness="1" Background="Transparent"  VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch" />
+
+                <Button Style="{StaticResource ButtonGray}" Grid.Column="2" x:Name="nextOrCloseButton"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    BorderBrush="{Binding Foreground, ElementName=userControl}"  Click="NextOrCloseButtonClickHandler"
+                    Content="Next" BorderThickness="1" Background="Transparent"  VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch" />
+            </Grid>
+        </Grid>
+    </Popup>
+</UserControl>

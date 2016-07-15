@@ -1,4 +1,21 @@
-﻿using System;
+﻿/*
+Copyright (C) 2016 Anki Universal Team <ankiuniversal@outlook.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,73 +30,85 @@ using System.Linq;
 using Windows.Storage.Compression;
 using Windows.Storage.Streams;
 using System.IO.Compression;
+using AnkiU.AnkiCore.Templates;
 
 namespace AnkiU.AnkiCore
 {
-    
-    class Media
-    {
-        private readonly static Regex illegalCharRegex;
-        private readonly static Regex fRemoteRegex;
 
+    public class Media : IDisposable
+    {
+        public static readonly string[] ALLOWED_EXTENSION = { ".flac", ".mp3", ".wav", ".wma",
+                                                              ".mkv", ".mp4", ".avi",
+                                                              ".jpg", ".jpeg", ".png", ".bmp", ".gif"};
+
+        public const string IMAGE_HTML = "<img src='{0}'>";
+        public const string SOUND_HTML = "[sound:{0}]";
+        public const char DECK_NAME_SEPARATOR = '/';
+
+        private readonly static Regex illegalCharRegex;
+        private readonly static Regex remoteRegex;
      
         //Group 1 = Contents of [sound:] tag <br>
         //Group 2 = "fname"
-        private readonly static Regex fSoundRegExps;
+        private readonly static Regex soundRegExps;
 
         
         //Group 1 = Contents of<img> tag<br>
         //Group 2 = "str" <br>
         //Group 3 = "fname" <br>
         //Group 4 = Backreference to "str" (i.e., same type of quote character)
-        private readonly static Regex fImgRegExpQuote;
+        private readonly static Regex imgRegExpQuote;
 
         //Group 1 = Contents of <img> tag <br>
         //Group 2 = "fname"
-        private readonly static Regex fImgRegExpUnQuote;
+        private readonly static Regex imgRegExpUnQuote;
+
+        public readonly static Regex mediaClozeRegex = new Regex(@"{{c(\d+)::.+?}}", RegexOptions.Compiled);
 
         private Collection collection;
         private string mediaFolderName;
+        private string mediaDatabaseName;
         private StorageFolder mediaFolder;
-        private StorageFolder folder;
+        private StorageFolder appFolder;
         private DB database;
 
-        private static System.Globalization.CultureInfo locale = new System.Globalization.CultureInfo("en-US");
+        public StorageFolder MediaFolder { get { return mediaFolder; } }
+        public DB Database { get { return database; } }
+        public string MediaDatabaseName { get { return mediaDatabaseName; } }
+        public static System.Globalization.CultureInfo locale = new System.Globalization.CultureInfo("en-US");
 
-        public static List<Regex> fImgRegExps = new List<Regex>();
+        public static List<Regex> imgRegExps = new List<Regex>();
         public static List<Regex> RegExps = new List<Regex>();
 
-        public int LastUsn
+        public long GetLastUnixTimeSync()
         {
-            get { return database.QueryScalar<int>("select lastUsn from meta"); }
-            set { database.Execute("update meta set lastUsn = ?", new object[] { value }); }
+             return database.QueryScalar<int>("select lastUsn from meta");
+        }
+
+        public void SetLastUnixTimeSync(long value)
+        {
+            database.Execute("update meta set lastUsn = ?", value);
         }
 
         static Media()
         {
-            string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            illegalCharRegex = new Regex( @"[][><:"" /? *^\\|\0\r\n]", RegexOptions.Compiled);
+            remoteRegex = new Regex("(https?|ftp)://", RegexOptions.Compiled);
+            soundRegExps = new Regex(@"(?i)(\[sound:(?<fname>[^]]+)\])", RegexOptions.Compiled);
+            imgRegExpQuote = new Regex(@"(?i)(\<img[^>]* src=(?<str>[\""'])(?<fname>[^>]+?)(\k<str>)[^>]*\>)", RegexOptions.Compiled);
+            imgRegExpUnQuote = new Regex(@"(?i)(\<img[^>]* src=(?!['\""])(?<fname>[^ >]+)[^>]*?\>)", RegexOptions.Compiled);
 
-            illegalCharRegex = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)), RegexOptions.Compiled);
-            fRemoteRegex = new Regex("(https?|ftp)://", RegexOptions.Compiled);
-            fSoundRegExps = new Regex(@"(?i)(\[sound:(?<fname>[^]]+)\])", RegexOptions.Compiled);
-            fImgRegExpQuote = new Regex(@"(?i)(\<img[^>]* src=(?<str>[\""'])(?<fname>[^>]+?)(\k<str>)[^>]*\>)", RegexOptions.Compiled);
-            fImgRegExpUnQuote = new Regex(@"(?i)(\<img[^>]* src=(?!['\""])(?<fname>[^ >]+)[^>]*?\>)", RegexOptions.Compiled);
+            imgRegExps.Add(imgRegExpQuote);
+            imgRegExps.Add(imgRegExpUnQuote);
 
-            fImgRegExps.Add(fImgRegExpQuote);
-            fImgRegExps.Add(fImgRegExpUnQuote);
-
-            RegExps.Add(fSoundRegExps);
-            RegExps.Add(fImgRegExpQuote);
-            RegExps.Add(fImgRegExpUnQuote);
+            RegExps.Add(soundRegExps);
+            RegExps.Add(imgRegExpQuote);
+            RegExps.Add(imgRegExpUnQuote);
         }
-
-        public Media(Collection colection, bool server)
-            : this(colection, server, ApplicationData.Current.LocalFolder)
-        { }
 
         public Media(Collection colection, bool server, StorageFolder folder)
         {
-            this.folder = folder;
+            this.appFolder = folder;
             this.collection = colection;
             if (server)
             {
@@ -87,7 +116,7 @@ namespace AnkiU.AnkiCore
                 return;
             }
 
-            mediaFolderName = colection.GetPath().ReplaceFirst("\\.anki2$", ".media");
+            mediaFolderName = colection.RelativePath.ReplaceFirst(".anki2", ".media");
             Task task = Task.Factory.StartNew(() =>
             {
                 CreateFolder();
@@ -97,64 +126,53 @@ namespace AnkiU.AnkiCore
             if (folder == null)
                 throw new Exception("Cannot create media directory: " + mediaFolderName);
 
-            Connect();
+            ConnectDatabase();
         }
 
         public async void CreateFolder()
         {
-            mediaFolder = await folder.CreateFolderAsync(mediaFolderName, CreationCollisionOption.OpenIfExists);
+            mediaFolder = await appFolder.CreateFolderAsync(mediaFolderName, CreationCollisionOption.OpenIfExists);
         }
 
-        public void Connect()
+        public void ConnectDatabase()
         {
             if (collection.IsServer)
                 return;
 
-            // NOTE: Similar to AnkiDroid, use a custom prefix for AnkiU to avoid issues caused by copying
-            // the db to the desktop or vice versa.
-            // Consider revert it to ".db2" after throughout testing
-            string path = mediaFolderName + ".au.db2";
-            database = new DB(path);
-            Task task = Task.Factory.StartNew(() =>
+            mediaDatabaseName = Constant.MEDIA_DB_NAME;
+
+            bool create = false;
+            Task task = Task.Factory.StartNew(async() =>
             {
-                MakeSureFileExist(path);
+                StorageFile store = (await appFolder.TryGetItemAsync(mediaDatabaseName)) as StorageFile;
+                if (store == null)
+                    create = true; ;
             });
             task.Wait();
 
-            task = Task.Factory.StartNew(() =>
-            {
-                MaybeUpgrade();
-            });
-            task.Wait();
+            database = new DB(appFolder.Path + "\\" + mediaDatabaseName);
+            if (create)
+                InitMediaDatabase();
         }
 
-        private async void MakeSureFileExist(string fileName)
+        public void InitMediaDatabase()
         {
-            StorageFile store = (await folder.TryGetItemAsync(fileName)) as StorageFile;
-            if (store == null)
-                InitDB();
-        }
-
-        public void InitDB()
-        {
-            string sql = "create table media (\n" +
-                     " fname text not null primary key,\n" +
-                     " csum text,           -- null indicates deleted file\n" +
-                     " mtime int not null,  -- zero if deleted\n" +
-                     " dirty int not null\n" +
-                     ");\n" +
-                     "create index idx_media_dirty on media (dirty);\n" +
-                     "create table meta (dirMod int, lastUsn int); insert into meta values (0, 0);";
+            database.CreateTable<MediaTable>();
+            string sql = "create index idx_media_dirty on media (dirty)";
             database.ExecuteScript(sql);
+
+            database.CreateTable<MetaTable>();
+            database.Insert(new MetaTable() { DirtyModified = 0, LastUnixTimeSync = 0 });            
         }
 
+        [Obsolete]
         public async void MaybeUpgrade()
         {
             string oldpath = mediaFolderName + ".db";
-            StorageFile oldFile = (await folder.TryGetItemAsync(oldpath)) as StorageFile;
+            StorageFile oldFile = (await appFolder.TryGetItemAsync(oldpath)) as StorageFile;
             if (oldFile != null)
             {
-                database.Execute(String.Format("attach \"{0}\" as old", oldpath));
+                database.Execute(String.Format(Media.locale, "attach \"{0}\" as old", oldpath));
                 try
                 {
                     string sql = "insert into media\n" +
@@ -169,11 +187,11 @@ namespace AnkiU.AnkiCore
                 }
                 catch (Exception e)
                 {
-                    collection.Log("failed to import old media db:" + e.StackTrace.ToString());
+                    collection.Log(args: "failed to import old media db:" + e.StackTrace.ToString());
                 }
 
                 database.Execute("detach old");
-                StorageFile newDbFile = (await folder.TryGetItemAsync(oldpath + ".old")) as StorageFile;
+                StorageFile newDbFile = (await appFolder.TryGetItemAsync(oldpath + ".old")) as StorageFile;
                 if (newDbFile != null)
                     await newDbFile.DeleteAsync();
                 await oldFile.RenameAsync(newDbFile.Name);
@@ -189,17 +207,35 @@ namespace AnkiU.AnkiCore
             database = null;
         }
 
-        public async Task<string> AddFile(string oPath)
+        /// <summary>
+        /// Add a file into media folder and mark it into database
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns>Relative file name</returns>
+        public async Task<string> AddFile(StorageFile file, long deckId = 0)
         {
-            StorageFile oFile = await folder.GetFileAsync(oPath);
-            string fName = await WriteData(oFile);
-            MarkFileAdd(fName);
-            return fName;
+            StorageFolder folder = null;
+            if (deckId != 0)
+            {
+                folder = await MediaFolder.TryGetItemAsync(deckId.ToString()) as StorageFolder;
+                if (folder == null)
+                    folder = await MediaFolder.CreateFolderAsync(deckId.ToString());
+            }
+            
+            StorageFile sFile = await WriteData(file, folder);
+            MarkFileAddIntoDatabase(sFile.Name, deckId);
+            return sFile.Name;
         }
 
-        private async Task<string> WriteData(StorageFile sourceFile)
+        private async Task<StorageFile> WriteData(StorageFile sourceFile, StorageFolder deckIdFolder)
         {
-            string fileName = Path.GetFileName(sourceFile.Path);
+            StorageFolder mediaFolder;
+            if (deckIdFolder != null)
+                mediaFolder = deckIdFolder;
+            else
+                mediaFolder = this.mediaFolder;
+
+            string fileName = sourceFile.Name;
             Debug.WriteLine(sourceFile.Path);
             string normalize = fileName.Normalize(NormalizationForm.FormC);
 
@@ -208,92 +244,103 @@ namespace AnkiU.AnkiCore
             string root = split[0];
             string ext = split[1];
 
-            string checkSum = Utils.FileChecksum(sourceFile).Result;
-
-            StorageFile newFile;
-            while (true)
+            string checkSum = await Utils.FileChecksum(sourceFile);
+            try
             {
-                fileName = root + ext;
-                string path = mediaFolderName + "\\" + fileName;
-                newFile = (await folder.TryGetItemAsync(path)) as StorageFile;
+                StorageFile newFile;
+                while (true)
+                {                                     
+                    newFile = (await mediaFolder.TryGetItemAsync(legalName)) as StorageFile;
 
-                if (newFile == null)
-                {
-                    newFile = await sourceFile.CopyAsync(mediaFolder);
-                    await newFile.RenameAsync(fileName);
-                    return fileName;
-                }
+                    if (newFile == null)
+                    {
+                        newFile = await sourceFile.CopyAsync(mediaFolder, legalName);
+                        return newFile;
+                    }
 
-                if (Utils.FileChecksum(newFile).Result.Equals(checkSum, StringComparison.OrdinalIgnoreCase))
-                {
-                    return fileName;
-                }
+                    //WARNING: In python ver content of two files are compared and return if they are alike
+                    //However checksum is an expensive operation for large files so AnkiU does not check the whole file
+                    //and the buffer is different for each device type. Therefore we will only rename without checking
+                    //content
+                    //string newCheckSum = await Utils.FileChecksum(newFile);
+                    //if (newCheckSum.Equals(checkSum, StringComparison.OrdinalIgnoreCase))
+                    //{
+                    //    return newFile;
+                    //}
 
-                Regex reg = new Regex(@" \((\d+)\)$", RegexOptions.Compiled);
-                MatchCollection matches = reg.Matches(root);
-                if (matches.Count > 0)
-                {
-                    Match match = matches[0];
-                    GroupCollection groupCollection = match.Groups;
-                    int n = int.Parse(groupCollection[1].ToString());
-                    root = String.Format(" ({0})", n + 1);
-                    Debug.WriteLine(root);
+                    Regex reg = new Regex(@" \((\d+)\)$", RegexOptions.Compiled);
+                    MatchCollection matches = reg.Matches(root);
+                    if (matches.Count > 0)
+                    {
+                        Match match = matches[0];
+                        int n = int.Parse(match.GetGroup(1));
+                        n++;
+                        root = reg.Replace(root, " (" + n + ")");
+                        Debug.WriteLine(root);
+                    }
+                    else
+                        root = root + " (1)";
+
+                    legalName = root + ext;
                 }
-                else
-                    root = root + " (1)";
+            }
+            catch(Exception e)
+            {
+                throw new Exception("Media.WriteData Failed!", e);
             }
         }
 
-        public void MarkFileAdd(string fileName)
+        public void MarkFileAddIntoDatabase(string fileName, long deckId, long? modifiedTime = null)
         {
-            string path = folder.Path + "\\" + fileName;
-            database.Execute("insert or replace into media values (?,?,?,?)",
-                new object[] { fileName, Checksum(fileName), GetTimeLastModified(path), 1 });
+            var mediaInfo = new MediaTable();
+
+            if (modifiedTime == null)
+                mediaInfo.ModifiedTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            else
+                mediaInfo.ModifiedTime = (long)modifiedTime;
+
+            mediaInfo.Dirty = 1;
+            mediaInfo.DeckId = deckId;
+            mediaInfo.IsAdded = true;
+            mediaInfo.RelativePathName = deckId.ToString() + DECK_NAME_SEPARATOR + fileName;            
+
+            database.InsertOrReplace(mediaInfo, typeof(MediaTable));
+        }
+
+        [Obsolete]
+        public async Task MarkFileAdd(StorageFile file)
+        {
+            var mediaInfo = new MediaTable();
+
+            mediaInfo.CheckSum = await Checksum(file);
+            mediaInfo.ModifiedTime = await GetTimeLastModified(file);
+            mediaInfo.Dirty = 1;
+            mediaInfo.IsAdded = true;
+            mediaInfo.RelativePathName = file.Name;
+
+            database.InsertOrReplace(mediaInfo, typeof(MediaTable));
         }
 
         /// <summary>
         /// Return the checksum of a file
         /// </summary>
-        /// <param name="path">Relative path</param>
+        /// <param name="fileName">Relative path</param>
         /// <param name="sFolder">Parent folder</param>
         /// <returns></returns>
-        private string Checksum(string path, StorageFolder sFolder = null)
+        private async Task<string> Checksum(string fileName, StorageFolder sFolder = null)
         {
-            Task<string> task = Task<string>.Factory.StartNew(() =>
-            {
-                StorageFile file;
-                if (sFolder == null)
-                    file = GetFileAsync(folder, path).Result;
-                else
-                    file = GetFileAsync(sFolder, path).Result;
+            StorageFile file;
+            if (sFolder == null)
+                file = await appFolder.GetFileAsync(fileName);
+            else
+                file = await sFolder.GetFileAsync(fileName);
 
-                return Utils.FileChecksum(file).Result;
-            });
-            task.Wait();
-            return task.Result;
+            return await Utils.FileChecksum(file);
         }
 
-        private async Task<StorageFile> GetFileAsync(StorageFolder sFolder, string path)
+        private async Task<string> Checksum(StorageFile file)
         {
-            return await sFolder.GetFileAsync(path);
-        }
-
-        private long GetTimeLastModified(string path)
-        {
-            Task<BasicProperties> task = Task<BasicProperties>.Factory.StartNew(() =>
-            {
-                BasicProperties prop = GetBasicProperties(path).Result;
-                return prop;
-            });
-            task.Wait();
-            BasicProperties property = task.Result;
-            return property.DateModified.ToUnixTimeSeconds();
-        }
-
-        private async Task<BasicProperties> GetBasicProperties(string path)
-        {
-            StorageFile file = await folder.GetFileAsync(path);
-            return await file.GetBasicPropertiesAsync();
+            return await Utils.FileChecksum(file);
         }
 
         public string StripIllegal(string str)
@@ -306,11 +353,11 @@ namespace AnkiU.AnkiCore
             return illegalCharRegex.IsMatch(str);
         }
 
-        public List<string> FilesInStr(long mid, string strIn, bool includeRemote = false)
+        public List<string> FileNameInMediaFolder(long mid, string strIn, bool includeRemote = false)
         {
             List<string> returnList = new List<string>();
             List<string> stringList = new List<string>();
-            JsonObject model = collection.GetModels().get(mid);
+            JsonObject model = collection.Models.Get(mid);
 
             int type = (int)model.GetNamedNumber("type");
             if ((type == (int)ModelType.CLOZE) && strIn.Contains("{{c"))
@@ -321,15 +368,15 @@ namespace AnkiU.AnkiCore
             string str;
             foreach (string s in stringList)
             {
-                str = LaTeX.mungeQA(s, collection);
+                str = LaTeX.MungeQA(s, collection);
                 MatchCollection matches;
                 foreach (Regex p in RegExps)
                 {
                     matches = p.Matches(str);
                     foreach (Match m in matches)
                     {
-                        string fName = m.Groups["fname"].ToString();
-                        bool isLocal = !fRemoteRegex.IsMatch(fName.ToLower());
+                        string fName = m.Groups["fname"].Value;
+                        bool isLocal = !remoteRegex.IsMatch(fName.ToLower());
                         if (isLocal || includeRemote)
                             returnList.Add(fName);
                     }
@@ -342,13 +389,12 @@ namespace AnkiU.AnkiCore
         {
             List<string> stringList = new List<string>();
             SortedSet<string> ords = new SortedSet<string>();
-            string clozeReg = Template.Template.clozeReg;
-
-            Regex reg = new Regex(@"{{c(\d+)::.+?}}", RegexOptions.Compiled);
-            MatchCollection matches = reg.Matches(str);
+            string clozeReg = Template.clozeReg;
+            
+            MatchCollection matches = mediaClozeRegex.Matches(str);
             if (matches.Count > 0)
                 foreach (Match m in matches)
-                    ords.Add(m.Groups[1].ToString());
+                    ords.Add(m.GetGroup(1));
 
             string replacePattern = String.Format(locale, clozeReg, ".+?");
             foreach (string ord in ords)
@@ -358,13 +404,22 @@ namespace AnkiU.AnkiCore
                 matches = (new Regex(pattern)).Matches(str);
                 foreach (Match m in matches)
                 {
-                    if (String.IsNullOrEmpty(m.Groups[3].ToString()))
-                        sBuild.AppendAndReplace("[$3]", str, m.Index);
+                    if (String.IsNullOrEmpty(m.GetGroup(3)))
+                    {
+                        if (!sBuild.AppendAndReplace("[$3]", str, m))
+                            break;
+                    }
                     else
-                        sBuild.AppendAndReplace("[...]", str, m.Index);
+                    {
+                        if (!sBuild.AppendAndReplace("[...]", str, m))
+                            break;
+                    }
                 }
-                sBuild.AppendTail(str);
-                string s = sBuild.ToString().Replace(replacePattern, "$1");
+                string s;
+                if (sBuild.Length != 0)
+                    s = sBuild.ToString().Replace(replacePattern, "$1");
+                else
+                    s = str;
                 stringList.Add(s);
             }
             stringList.Add(str.Replace(replacePattern, "$1"));
@@ -380,14 +435,14 @@ namespace AnkiU.AnkiCore
 
         public string EscapeImages(string str, bool unescape = false)
         {
-            foreach (Regex pattern in fImgRegExps)
+            foreach (Regex pattern in imgRegExps)
             {
                 MatchCollection matches = pattern.Matches(str);
                 foreach (Match m in matches)
                 {
-                    string tag = m.Groups[0].ToString();
-                    string fName = m.Groups["fname"].ToString();
-                    if (!fRemoteRegex.IsMatch(fName))
+                    string tag = m.GetGroup(0);
+                    string fName = m.Groups["fname"].Value;
+                    if (!remoteRegex.IsMatch(fName))
                     {
                         if (unescape)
                             str = str.Replace(tag, tag.Replace(fName, fName.UrlDecode()));
@@ -399,74 +454,74 @@ namespace AnkiU.AnkiCore
             return str;
         }
 
-        public async Task<List<List<string>>> Check(StorageFile[] local)
+        //WARNING: we used struct instead of List<List<string>
+        //as in java and python ver to enforce type-safe and provide a clearer
+        //meaning of return values
+        public struct CheckResults
         {
-            HashSet<string> allRefs = new HashSet<string>();
-            var arrayNote = (from s in collection.Database.QueryColumn<Note>("select id, mid, flds from notes")
-                            select new { s.Id, s.Mid, s.JointFields}).ToArray();
+            public List<KeyValuePair<string, long>> UnusedFiles { get; set; }
+            public List<KeyValuePair<string, long>> MisingFiles { get; set; }
+        }
+        /// <summary>
+        /// Return missing files and unused files
+        /// </summary>
+        /// <param name="local"></param>
+        /// <returns></returns>
+        public async Task<CheckResults> CheckMissingAndUnusedFiles(Dictionary<StorageFile, long> local = null)
+        {
+            //WARNING: This function is totally diffent with python and java ver
+            //because we don't store all media files in one folder but in deckIdFolder          
+            var listNote = collection.Database.QueryColumn<NoteTable>(
+                           "select distinct f.id, f.mid, f.flds from notes f, cards c where c.nid = f.id");
+            var listCard = collection.Database.QueryColumn<CardTable>(
+               "select distinct c.did, c.nid from cards c, notes f where c.nid = f.id");
 
-            foreach (var note in arrayNote)
+            var noteToDeckId = MapNoteToDeckId(listNote, listCard);
+            var mediaToDeckId = MapMediaNameToDeckId(noteToDeckId);
+
+            var unUsed = new List<KeyValuePair<string, long>>();
+            //Warning: Invalid is kept in java ver for compatible with the source code in python
+            //Since window and C# is unicode base, we omit this instead
+            //List<string> inValid = new List<string>();
+            Dictionary<StorageFile, long> filesToDeckId;
+            if (local != null)
+                filesToDeckId = new Dictionary<StorageFile, long>(local);
+            else
             {
-                List<string> noteRefs = FilesInStr(note.Mid, note.JointFields);
-                foreach (string f in noteRefs)
-                {
-                    if (!f.IsNormalized(NormalizationForm.FormC))
-                    {
-                        NormalizeNoteRefs(note.Id);
-                        noteRefs = FilesInStr(note.Mid, note.JointFields);
-                        break;
-                    }
-                }
-                Utils.AddAll<string>(allRefs, noteRefs);
+                filesToDeckId = new Dictionary<StorageFile, long>();
+                foreach (var folder in await mediaFolder.GetFoldersAsync())                             
+                    foreach(var f in await folder.GetFilesAsync())
+                        filesToDeckId.Add(f, Convert.ToInt64(folder.Name));
             }
 
-            List<string> unUsed = new List<string>();
-            //Warning: Invalid is kept for compatible with the source code in python
-            //Since window is unicode base, we won't take for file that does not have unicode coding
-            List<string> inValid = new List<string>();
-            StorageFile[] files;
-            if (local == null)
-                files = (await mediaFolder.GetFilesAsync()).ToArray<StorageFile>();
-            else
-                files = local;
-
             bool isRenamedFiles = false;
-            for(int i = 0; i < files.Length; i++)
+            foreach(var file in filesToDeckId)
             {
-                if (files[i].Name.StartsWith("_")) { 
+                if (file.Key.Name.StartsWith("_")) { 
                     // leading _ says to ignore file
                     continue;
                 }
-                StorageFile nfcFile = await mediaFolder.GetFileAsync(files[i].Name.Normalize(NormalizationForm.FormC));
-                if(local == null)
-                {
-                    if(!files[i].Name.Equals(nfcFile.Name, StringComparison.OrdinalIgnoreCase))
-                        await files[i].DeleteAsync();
-                    else
-                        await files[i].RenameAsync(nfcFile.Name);
-                    isRenamedFiles = true;
-                    files[i] = nfcFile;
-                }
-                if (!allRefs.Contains(nfcFile.Name))
-                    unUsed.Add(files[i].Name);
+
+                var key = new KeyValuePair<string, long>(file.Key.Name, file.Value);
+                if (!mediaToDeckId.Keys.Contains(key))
+                    unUsed.Add(key);
                 else
-                    allRefs.Remove(nfcFile.Name);
+                    mediaToDeckId.Remove(key);
             }
 
             // if we renamed any files to nfc format, we must rerun the check
             // to make sure the renamed files are not marked as unused
             if (isRenamedFiles)
-                return await Check(local);
+                return await CheckMissingAndUnusedFiles(local);
 
-            List<string> notHave = new List<string>();
-            foreach (string x in allRefs)
-                if (x.StartsWith("_"))
-                    notHave.Add(x);
+            var noHave = new List<KeyValuePair<string, long>>();
+            foreach (var x in mediaToDeckId.Keys)
+                if (!x.Key.StartsWith("_"))
+                    noHave.Add( new KeyValuePair<string, long>(x.Key, x.Value));
 
-            List<List<string>> result = new List<List<string>>();
-            result.Add(notHave);
-            result.Add(unUsed);
-            result.Add(inValid);
+            CheckResults result = new CheckResults();
+            result.MisingFiles = noHave;
+            result.UnusedFiles = unUsed;            
             return result;
         }
 
@@ -483,10 +538,10 @@ namespace AnkiU.AnkiCore
                     note.SetField(i, nfc);
                 }
             }
-            note.Flush();
+            note.SaveChangesToDatabase();
         }
 
-        public async Task<bool> IsHave(string fName)
+        public async Task<bool> HaveInMainFolder(string fName)
         {
             StorageFile f = await mediaFolder.TryGetItemAsync(fName) as StorageFile;
             if (f == null)
@@ -494,9 +549,18 @@ namespace AnkiU.AnkiCore
             return true;
         }
 
-        public async Task findChanges(bool force = false)
+        /// <summary>
+        /// Scan for changes in media folder and note any changes.
+        /// </summary>
+        /// <param name="force">Unconditionally scan the media folder for changes 
+        /// (i.e., ignore differences in recorded and current
+        /// directory mod times). 
+        /// Use this when rebuilding the media database.</param>
+        /// <returns></returns>
+        [Obsolete]
+        public async Task ScanForChangesAsync(bool force = false)
         {
-            if ((folder == null) || (await Changed() != null))
+            if (force || (await Changed() != null))
                 await LogChanges();
         }
 
@@ -519,7 +583,9 @@ namespace AnkiU.AnkiCore
         private async Task<long> GetTimeLastModified(string fileName, StorageFolder sFolder)
         {
             StorageFile file = await sFolder.GetFileAsync(fileName);
-            return (await file.GetBasicPropertiesAsync()).DateModified.ToUnixTimeSeconds();
+            var modified = (await file.GetBasicPropertiesAsync())
+                       .DateModified.ToUnixTimeSeconds();
+            return modified;
         }
 
         /// <summary>
@@ -529,7 +595,9 @@ namespace AnkiU.AnkiCore
         /// <returns></returns>
         private async Task<long> GetTimeLastModified(StorageFolder sFolder)
         {
-            return (await sFolder.GetBasicPropertiesAsync()).DateModified.ToUnixTimeSeconds();
+            var modified = (await sFolder.GetBasicPropertiesAsync())
+                            .DateModified.ToUnixTimeSeconds();
+            return modified;
         }
 
         /// <summary>
@@ -539,9 +607,12 @@ namespace AnkiU.AnkiCore
         /// <returns></returns>
         private async Task<long> GetTimeLastModified(StorageFile file)
         {
-            return (await file.GetBasicPropertiesAsync()).DateModified.ToUnixTimeSeconds();
+            var modified = (await file.GetBasicPropertiesAsync())
+                                   .DateModified.ToUnixTimeSeconds();
+            return modified;
         }
 
+        [Obsolete]
         private async Task LogChanges()
         {
             List<List<string>> result = await Changes();
@@ -551,7 +622,7 @@ namespace AnkiU.AnkiCore
             foreach(string f in added)
             {
                 long modifiedTime = await GetTimeLastModified(f, mediaFolder);
-                media.Add(new object[] { f, Checksum(f, mediaFolder), modifiedTime, 1 });
+                media.Add(new object[] { f, await Checksum(f, mediaFolder), modifiedTime, 1 });
             }
             foreach (string f in removed)
                 media.Add(new object[] { f, null, 0, 1 });
@@ -560,19 +631,27 @@ namespace AnkiU.AnkiCore
             database.Execute("update meta set dirMod = ?", new object[] { await GetTimeLastModified(mediaFolder)});
         }
 
+        [Obsolete]
         private async Task<List<List<string>>> Changes()
         {
             Dictionary<string, object[]> cache = new Dictionary<string, object[]>();
-            var array = (from s in database.QueryColumn<MediaDB>("select fname, csum, mtime from media where csum is not null")
-                        select new { s.FileName, s.CheckSum, s.ModifiedTime}
+            var array = (from s in database.QueryColumn<MediaTable>("select fname, csum, mtime from media where csum is not null")
+                        select new { s.RelativePathName, s.CheckSum, s.ModifiedTime}
                         ).ToArray();
             for(int i = 0; i < array.Length; i++)
-                cache.Add(array[i].FileName, new object[] { array[i].CheckSum, array[i].ModifiedTime, false });
+                cache.Add(array[i].RelativePathName, new object[] { array[i].CheckSum, array[i].ModifiedTime, false });
 
             List<string> added = new List<string>();
             List<string> removed = new List<string>();
-            foreach (StorageFile file in await mediaFolder.GetFilesAsync())
+
+            var items = await mediaFolder.GetItemsAsync();
+
+            foreach (var item in items)
             {
+                var file = item as StorageFile;
+                if (file == null)
+                    continue;
+
                 if (file.Name.Equals("thumbs.db", StringComparison.CurrentCultureIgnoreCase))
                     continue;
                 if (HasIllegal(file.Name))
@@ -588,7 +667,7 @@ namespace AnkiU.AnkiCore
 
                 if (fsize > 100 * 1024 * 1024)
                 {
-                    collection.Log("ignoring file over 100MB", file);
+                    collection.Log(args: new object[] { "ignoring file over 100MB", file });
                     continue;
                 }
 
@@ -602,7 +681,8 @@ namespace AnkiU.AnkiCore
                 else
                 { //Modified since last time?
                     if ( (await GetTimeLastModified(file)) != (long)cache[file.Name][1])
-                        if (!Checksum(file.Name, mediaFolder).Equals(cache[file.Name][0]))
+                        if (! (await Checksum(file.Name, mediaFolder))
+                              .Equals(cache[file.Name][0]))
                             added.Add(file.Name);
 
                     cache[file.Name][2] = true;
@@ -623,9 +703,10 @@ namespace AnkiU.AnkiCore
             return database.QueryScalar<int>("select 1 from media where dirty=1 limit 1") > 0;
         }
 
+        [Obsolete]
         public KeyValuePair<string, int> GetSyncInfo(string fName)
         {
-            var array = (from s in database.QueryFirstRow<MediaDB>("select csum, dirty from media where fname=?", new string[] { fName })
+            var array = (from s in database.QueryFirstRow<MediaTable>("select csum, dirty from media where fname=?", new string[] { fName })
                          select new { s.CheckSum, s.Dirty }).ToArray();
             if (array[0] == null)
                 return new KeyValuePair<string, int>(null, 0);
@@ -638,18 +719,30 @@ namespace AnkiU.AnkiCore
             foreach (string fName in fNames)
                 database.Execute("update media set dirty=0 where fname=?", new object[] { fName });
         }
-
-        public async Task SyncDelete(string fName)
+      
+        public async Task SyncDelete(string mediaNameInDatabase)
         {
-            StorageFile file = await mediaFolder.TryGetItemAsync(fName) as StorageFile;
+            var splitString = mediaNameInDatabase.Split(new char[] { DECK_NAME_SEPARATOR }, 2);
+            if (splitString.Length != 2)
+                return;
+
+            var deckId = splitString[0];            
+            var deckFolder = await mediaFolder.TryGetItemAsync(deckId) as StorageFolder;
+            if (deckFolder == null)
+                return;
+
+            var fileName = splitString[1];
+            StorageFile file = await deckFolder.TryGetItemAsync(fileName) as StorageFile;
             if (file != null)
                 await file.DeleteAsync();
-            database.Execute("delete from media where fname=?", new object[] { fName });
+
+            //TODO: See if we need to change this position
+            database.Execute("delete from media where fname=?", fileName);
         }
 
         public int MediaCount()
         {
-            return database.QueryScalar<int>("select count() from media where csum is not null");
+            return database.QueryScalar<int>("select count() from media where isadded is not 0");
         }
 
         public int DirtyCount()
@@ -664,16 +757,17 @@ namespace AnkiU.AnkiCore
             database.Execute("vacuum analyze");
         }
 
+        [Obsolete]
         public async Task<KeyValuePair<StorageFile, List<string>>> MediaChangesZip()
         {
-            string name = collection.GetPath().ReplaceFirst("collection\\.anki2$", "tmpSyncToServer.zip");
-            var compressedFile = await folder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
+            string name = collection.RelativePath.ReplaceFirst("collection.anki2", "tmpSyncToServer.zip");
+            var compressedFile = await appFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
 
             List<string> fNames = new List<string>();
             JsonArray meta = new JsonArray();
             ulong size = 0;
-            var array = (from s in database.QueryColumn<MediaDB>("select fname, csum from media where dirty=1 limit " + Syncing.ZIP_COUNT)
-                         select new { s.FileName, s.CheckSum }).ToArray();
+            var array = (from s in database.QueryColumn<MediaTable>("select fname, csum from media where dirty=1 limit " + Syncing.ZIP_COUNT)
+                         select new { s.RelativePathName, s.CheckSum }).ToArray();
 
             using (FileStream zipToOpen = new FileStream(compressedFile.Path, FileMode.Open))
             {
@@ -681,13 +775,13 @@ namespace AnkiU.AnkiCore
                 {
                     for (int i = 0; i < array.Length; i++)
                     {
-                        fNames.Add(array[i].FileName);
-                        string normName = array[i].FileName.Normalize(NormalizationForm.FormC);
+                        fNames.Add(array[i].RelativePathName);
+                        string normName = array[i].RelativePathName.Normalize(NormalizationForm.FormC);
 
                         if (!String.IsNullOrEmpty(array[i].CheckSum))
                         {
-                            collection.Log("+media zip" + array[i].FileName);
-                            StorageFile file = await mediaFolder.TryGetItemAsync(array[i].FileName) as StorageFile;
+                            collection.Log(args: "+media zip" + array[i].RelativePathName);
+                            StorageFile file = await mediaFolder.TryGetItemAsync(array[i].RelativePathName) as StorageFile;
                             if (file != null)
                             {
                                 archive.CreateEntryFromFile(file.Path, i.ToString());
@@ -698,11 +792,11 @@ namespace AnkiU.AnkiCore
                                 size += (await file.GetBasicPropertiesAsync()).Size;
                             }
                             else
-                                await RemoveFile(array[i].FileName);
+                                RemoveFileFromMediaDatabase(array[i].RelativePathName);
                         }
                         else
                         {
-                            collection.Log("-media zip " + array[i].FileName);
+                            collection.Log(args: "-media zip " + array[i].RelativePathName);
                             meta.Add(new JsonArray {
                                             JsonValue.CreateStringValue(normName),
                                             JsonValue.CreateStringValue("")
@@ -722,71 +816,64 @@ namespace AnkiU.AnkiCore
             return new KeyValuePair<StorageFile, List<string>>(compressedFile, fNames);
         }
 
-        /// <summary>
-        /// Remove a file in media folder and database
-        /// </summary>
-        /// <param name="fName">Name of the file in media folder</param>
-        /// <returns></returns>
-        public async Task RemoveFile(string fName)
+        [Obsolete]
+        public void RemoveFileFromMediaDatabase(string fName)
         {
-            StorageFile file = await mediaFolder.TryGetItemAsync(fName) as StorageFile;
-            if (file != null)
-                await file.DeleteAsync();
+            var mediaInfor = new MediaTable();
 
             database.Execute("insert or replace into media values (?,?,?,?)",
                 new object[] { fName, null, 0, 1 });
         }
 
-        public async Task<int> addFilesFromZip(string pathToFile)
+        public void MarkFileRemoveIntoDatabase(string fName, long deckId, long? modifiedTime = null)
+        {
+            var mediaInfor = new MediaTable();
+            mediaInfor.RelativePathName = deckId.ToString() + DECK_NAME_SEPARATOR + fName;
+            mediaInfor.IsAdded = false;
+            mediaInfor.DeckId = deckId;
+            mediaInfor.Dirty = 1;
+            if (modifiedTime == null)
+                mediaInfor.ModifiedTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            else
+                mediaInfor.ModifiedTime = (long)modifiedTime;
+            database.InsertOrReplace(mediaInfor);            
+        }
+
+        [Obsolete]
+        public async Task<int> AddFilesFromZip(ZipArchive archive)
         {
             List<object[]> media = new List<object[]>();
             JsonObject meta;
             int count = 0;
 
-            using (FileStream zipToOpen = new FileStream(pathToFile, FileMode.Open))
-            {
-                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read))
-                {
-                    ZipArchiveEntry metaEntry = archive.GetEntry("_meta");
-                    using (StreamReader reader = new StreamReader(metaEntry.Open()))
-                        meta = JsonObject.Parse(reader.ReadToEnd());
+            ZipArchiveEntry metaEntry = archive.GetEntry("_meta");
+            using (StreamReader reader = new StreamReader(metaEntry.Open()))
+                meta = JsonObject.Parse(reader.ReadToEnd());
                     
-                    foreach(ZipArchiveEntry entry in archive.Entries)
-                    {
-                        if (entry.Name.Equals("_meta"))
-                            continue;
+            foreach(ZipArchiveEntry entry in archive.Entries)
+            {
+                if (entry.Name.Equals("_meta"))
+                    continue;
                             
-                        string name = meta.GetNamedString(entry.Name).Normalize(NormalizationForm.FormC);
-                        string destPath = mediaFolder.Path + "\\" + name;
-                        entry.ExtractToFile(destPath);
-                        StorageFile newFile = await mediaFolder.GetFileAsync(name);
-                        string checkSum = await Utils.FileChecksum(newFile);
-                        media.Add(new object[] { name, checkSum, GetTimeLastModified(newFile), 0});
-                        count++;
-                    }
-                    if (media.Count > 0)
-                        database.ExecuteMany("insert or replace into media values (?,?,?,?)", media);
-                }
+                string name = meta.GetNamedString(entry.Name).Normalize(NormalizationForm.FormC);
+                string destPath = mediaFolder.Path + "\\" + name;
+                entry.ExtractToFile(destPath);
+                StorageFile newFile = await mediaFolder.GetFileAsync(name);
+                string checkSum = await Utils.FileChecksum(newFile);
+                media.Add(new object[] { name, checkSum, GetTimeLastModified(newFile), 0});
+                count++;
             }
+            if (media.Count > 0)
+                database.ExecuteMany("insert or replace into media values (?,?,?,?)", media);
+         
             return count;
-        }
-
-        /// <summary>
-        /// Temporary implement as the one in java code
-        /// TODO: Fix this description after learning the use of this function
-        /// </summary>
-        /// <param name="reg"></param>
-        /// <returns></returns>
-        public static int IndexOfFname(Regex reg)
-        {
-            int fnameIdx = reg == fSoundRegExps ? 2 : reg == fImgRegExpUnQuote ? 2 : 3;
-            return fnameIdx;
         }
 
         /// <summary>
         /// Scan the first dirMod from meta
         /// </summary>
         /// <returns>True if the media db has not been populated yet</returns>
+        [Obsolete]
         public bool NeedScan()
         {
             long dirMod = database.QueryScalar<long>("select dirMod from meta");
@@ -796,18 +883,141 @@ namespace AnkiU.AnkiCore
             return false;
         }
 
-        //TODO: Delete this attributes
-        [SQLite.Net.Attributes.Table("media")]
-        private class MediaDB
+        public void Dispose()
         {
-            [SQLite.Net.Attributes.Column("fname")]
-            public string FileName { get; set; }
-            [SQLite.Net.Attributes.Column("csum")]
-            public string CheckSum { get; set; }
-            [SQLite.Net.Attributes.Column("mtime")]
-            public long ModifiedTime { get; set; }
-            [SQLite.Net.Attributes.Column("dirty")]
-            public int Dirty { get; set; }
+            Close();
         }
+
+        #region Not in java and python ver        
+        public Dictionary<NoteTable, long> MapNoteToDeckId(IEnumerable<NoteTable> arrayNote, IEnumerable<CardTable> arrayCard)
+        {
+            Dictionary<NoteTable, long> array = new Dictionary<NoteTable, long>();
+            foreach (var note in arrayNote)
+            {
+                //We assume that card and note will always belong to only one deck
+                //so only need to retrieve DeckId from one card
+                var card = arrayCard.First((x) => { return x.Nid == note.Id; });
+                array.Add(note, card.Did);
+            }
+
+            return array;
+        }
+
+        public Dictionary<KeyValuePair<string, long>, bool> MapMediaNameToDeckId(Dictionary<NoteTable, long> array)
+        {
+            var mediaNameMapDeckId = new Dictionary<KeyValuePair<string, long>, bool>();
+            foreach (var note in array)
+            {
+                List<string> noteRefs = FileNameInMediaFolder(note.Key.Mid, note.Key.Fields);
+                foreach (string f in noteRefs)
+                {
+                    if (!f.IsNormalized(NormalizationForm.FormC))
+                    {
+                        NormalizeNoteRefs(note.Key.Id);
+                        noteRefs = FileNameInMediaFolder(note.Key.Mid, note.Key.Fields);
+                        break;
+                    }
+                }
+                foreach (var s in noteRefs)
+                {
+                    var key = new KeyValuePair<string, long>(s, note.Value);
+                    mediaNameMapDeckId[key] = true;
+                }
+            }
+
+            return mediaNameMapDeckId;
+        }
+
+        public async Task<Dictionary<long, StorageFolder>> MapDeckIdToDeckIdFolder()
+        {
+            long[] deckIdArray = collection.Deck.AllIds();
+            Dictionary<long, StorageFolder> folderList = new Dictionary<long, StorageFolder>();
+            foreach (var id in deckIdArray)
+            {
+                StorageFolder folder = await MediaFolder.TryGetItemAsync(id.ToString()) as StorageFolder;
+                if (folder == null)
+                    folder = await MediaFolder.CreateFolderAsync(id.ToString());
+                folderList.Add(id, folder);
+            }
+
+            return folderList;
+        }
+
+        public async Task RemoveDeckMediaFolderAsync(long deckId)
+        {
+            RemoveDeckMediaFromtDatabase(deckId);
+
+            var deckFolder = await mediaFolder.TryGetItemAsync(deckId.ToString()) as StorageFolder;
+            if (deckFolder == null)
+                return;
+                                    
+            await deckFolder.DeleteAsync();
+        }
+
+        public void RemoveDeckMediaFromtDatabase(long deckId)
+        {            
+            database.Execute("delete from media where deckid = ?", deckId);
+        }
+
+        public async Task DeleteMediaFiles(List<KeyValuePair<string, long>> mediaFiles)
+        {
+            var folders = await MapDeckIdToDeckIdFolder();
+            foreach(var file in mediaFiles)
+            {
+                StorageFolder folder;
+                if (folders.Keys.Contains(file.Value))
+                    folder = folders[file.Value];
+                else
+                    folder = await MediaFolder.TryGetItemAsync(file.Value.ToString()) as StorageFolder;
+                if (folder == null)
+                    continue;
+
+                var storageFile = await folder.TryGetItemAsync(file.Key) as StorageFile;
+                if (storageFile != null)
+                {
+                    await storageFile.DeleteAsync();
+                    MarkFileRemoveIntoDatabase(storageFile.Name, file.Value);
+                }
+            }
+        }
+        #endregion
     }
+
+    /// <summary>
+    /// Class used to access the media tables of media
+    /// database
+    /// </summary>
+    [SQLite.Net.Attributes.Table("media")]
+    public class MediaTable
+    {
+        [SQLite.Net.Attributes.PrimaryKey, SQLite.Net.Attributes.Column("fname")]
+        public string RelativePathName { get; set; }
+        [SQLite.Net.Attributes.Column("isadded")]
+        public bool IsAdded { get; set; }  
+        [SQLite.Net.Attributes.Column("mtime")]
+        public long ModifiedTime { get; set; }
+        [SQLite.Net.Attributes.Column("deckid")]
+        public long DeckId { get; set; }
+
+        #region Currently not used
+        [SQLite.Net.Attributes.Column("csum")]
+        public string CheckSum { get; set; }
+        [SQLite.Net.Attributes.Column("dirty")]
+        public int Dirty { get; set; }
+        #endregion
+    }
+
+    /// <summary>
+    /// Class used to access the meta table of media
+    /// database
+    /// </summary>
+    [SQLite.Net.Attributes.Table("meta")]
+    public class MetaTable
+    {
+        [SQLite.Net.Attributes.Column("dirMod")]
+        public int DirtyModified { get; set; }
+        [SQLite.Net.Attributes.Column("lastUsn")]
+        public long LastUnixTimeSync { get; set; }
+    }
+
 }

@@ -1,0 +1,48 @@
+﻿@import "/html/fieldeditor.css";
+
+/*To ensure TinyMce won't cause offscreen problem on touch keyboard devices
+  we limit the height of editable area so that they should never take half of
+  the screen
+*/
+
+@media screen and (max-height: 299px) {
+     .editable {
+        overflow: auto;
+        max-height: 50px;
+    }
+}
+
+@media screen and (max-height: 499px) and (min-height: 300px) {
+    .editable {
+        overflow: auto;
+        max-height: 100px;
+    }
+}
+
+@media screen and (max-height: 699px) and (min-height: 500px) {
+    .editable {
+        overflow: auto;
+        max-height: 200px;
+    }
+}
+
+@media screen and (max-height: 899px) and (min-height: 700px) {
+    .editable {
+        overflow: auto;
+        max-height: 300px;
+    }
+}
+
+@media screen and (max-height: 1099px) and (min-height: 900px) {
+    .editable {
+        overflow: auto;
+        max-height: 400px;
+    }
+}
+
+@media screen and (min-height: 1100px) {
+    .editable {
+        overflow: auto;
+        max-height: 500px;
+    }
+}

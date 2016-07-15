@@ -1,0 +1,43 @@
+﻿<UserControl 
+    xmlns:views="using:AnkiU.Views" 
+    x:Class="AnkiU.UserControls.CreateNewDeckFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Flyout x:Name="addDeckFlyout" x:Key="NewDeckFlyoutTemplate">
+            <ContentPresenter>
+                <StackPanel Width="300">
+
+                    <TextBlock Text="Deck name: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
+                    <TextBox x:Name="deckNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2" BorderBrush="Black"  BorderThickness="1" Margin="5,5,0,5"/>
+
+                    <TextBlock Text="Note type name: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
+                    <TextBox x:Name="noteTypeNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2" BorderBrush="Black"  BorderThickness="1" Margin="5,5,0,5"/>
+
+                    <TextBlock Grid.Row="1" Text="Based on note type: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
+                    <views:AnkiModeInformationView x:Name="modelView" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,5,0,5"/>
+
+                    <Grid Height="35" Margin="4,5,-1,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Style="{StaticResource ButtonBlue}" Content="OK" Click="OkButtonClick" BorderBrush="Transparent"
+                         BorderThickness="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+
+                        <Button Style="{StaticResource ButtonGray}" Content="Cancel" Grid.Column="2" BorderBrush="Black"
+                        BorderThickness="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="CancelButtonClickHandler" />
+                    </Grid>
+                </StackPanel>
+            </ContentPresenter>
+        </Flyout>
+    </UserControl.Resources>
+</UserControl>

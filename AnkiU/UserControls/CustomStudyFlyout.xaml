@@ -1,0 +1,167 @@
+﻿<UserControl xmlns:views="using:AnkiU.Views" 
+    x:Class="AnkiU.UserControls.CustomStudyFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"    
+    Foreground="Black"
+    d:DesignHeight="400"
+    Background="White"
+    x:Name="userControl"    
+    d:DesignWidth="400">
+
+    <Popup x:Name="customStudyFlyout" IsOpen="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="335" Height="400">
+        <Grid   Background="{Binding Background, ElementName=userControl}" BorderThickness="1"
+               BorderBrush="{Binding Foreground, ElementName=userControl}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border Background="{StaticResource ButtonBackGroundAnalogousLeft}">
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Foreground="White"
+                           FontWeight="SemiBold" Text="Custom Study" Margin="10" />
+            </Border>
+
+            <ScrollViewer  Grid.Row="1" x:Name="scrollViewer" 
+                VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10" Grid.Row="0" >
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="custom" x:Name="increaseNewRadioButton" Foreground="{Binding Foreground, ElementName=userControl}"  Content="Increase today's new card limit" Checked="IncreaseTodayNewCheckedHandler"/>
+                            <Button Margin="5,0,0,0" Style="{StaticResource ButtonHelp}" Width="20" Height="20" >
+                                <Button.Flyout>
+                                    <Flyout Placement="Top">
+                                        <ContentPresenter Width="250">
+                                            <TextBlock TextAlignment="Center" Text="Temporarily increase the maximum number of today's new cards." TextWrapping="Wrap" />
+                                        </ContentPresenter>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="custom" x:Name="increaseReviewRadioButton" Content="Increase today's review card limit" Checked="IncreaseTodayReviewCheckedHandler" Foreground="{Binding Foreground, ElementName=userControl}" />
+                            <Button Margin="5,0,0,0" Style="{StaticResource ButtonHelp}" Width="20" Height="20" >
+                                <Button.Flyout>
+                                    <Flyout Placement="Top">
+                                        <ContentPresenter Width="250">
+                                            <TextBlock TextAlignment="Center" Text="Temporarily increase the maximum number of today's review cards" TextWrapping="Wrap" />
+                                        </ContentPresenter>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="custom" x:Name="forgottenRadioButton" Content="Review forgotten (relearn) cards" Checked="ReviewForgottenCardsChecked" Foreground="{Binding Foreground, ElementName=userControl}" />
+                            <Button Margin="5,0,0,0" Style="{StaticResource ButtonHelp}" Width="20" Height="20" >
+                                <Button.Flyout>
+                                    <Flyout Placement="Top">
+                                        <ContentPresenter Width="250">
+                                            <TextBlock TextAlignment="Center" Text="Create a &quot;Custom Study&quot; deck to view cards answered as &quot;Again&quot; within the specified time frame." TextWrapping="Wrap" />
+                                        </ContentPresenter>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="custom" x:Name="reviewAheadRadioButton" Content="Review ahead" Checked="ReviewAheadCheckedHandler" Foreground="{Binding Foreground, ElementName=userControl}" />
+                            <Button Margin="5,0,0,0" Style="{StaticResource ButtonHelp}" Width="20" Height="20" >
+                                <Button.Flyout>
+                                    <Flyout Placement="Top">
+                                        <ContentPresenter Width="250">
+                                            <TextBlock TextAlignment="Center" Text="Create a &quot;Custom Study&quot; deck with review cards due in the specified time frame." TextWrapping="Wrap" />
+                                        </ContentPresenter>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="custom" x:Name="previewNewRadioButton" Content="Preview new cards" Checked="PreviewCardsCheckedhandler" Foreground="{Binding Foreground, ElementName=userControl}" />
+                            <Button Margin="5,0,0,0" Style="{StaticResource ButtonHelp}" Width="20" Height="20" >
+                                <Button.Flyout>
+                                    <Flyout Placement="Top">
+                                        <ContentPresenter Width="250">
+                                            <TextBlock TextAlignment="Center" Text="Create a &quot;Custom Study&quot; deck to preview new cards added within the specified time frame." TextWrapping="Wrap" />
+                                        </ContentPresenter>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton GroupName="custom" x:Name="allCardsRadioButton" Content="All cards in random order (cram mode)" Checked="CramModeCheckedHandler" Unchecked="CramModeUnCheckedHandler" Foreground="{Binding Foreground, ElementName=userControl}" />
+                            <Button Margin="5,0,0,0" Style="{StaticResource ButtonHelp}" Width="20" Height="20" >
+                                <Button.Flyout>
+                                    <Flyout Placement="Top">
+                                        <ContentPresenter Width="250">
+                                            <TextBlock TextAlignment="Center" Text="Create a &quot;Custom Study&quot; deck with random cards. Useful when you need to prepare for a test." TextWrapping="Wrap" />
+                                        </ContentPresenter>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Border Grid.Row="1" BorderThickness="1" Margin="10,0,10,5"  BorderBrush="{StaticResource ButtonBackGroundCompliment}">
+                        <Grid Margin="5" >
+                            <StackPanel Visibility="Visible" Grid.Row="1" x:Name="standardOptionsRoot">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock x:Name="chosenLabel" Text="New cards in deck:" Margin="0,0,5,0" Foreground="{Binding Foreground, ElementName=userControl}" />
+                                    <TextBlock x:Name="chosenLabelValue" FontWeight="SemiBold" Text="0" Foreground="{Binding Foreground, ElementName=userControl}" />
+                                </StackPanel>
+                                <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                                    <TextBlock x:Name="numberBoxFirstLabel" Text="Increase by" VerticalAlignment="Center" Margin="0,0,5,2" Foreground="{Binding Foreground, ElementName=userControl}" />
+                                    <local:NumbericTextBox x:Name="numberBox" BorderBrush="Black" BorderThickness="1" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}" />
+                                    <TextBlock x:Name="numberBoxSecondLabel" Text="cards" VerticalAlignment="Center" Margin="2,0,0,2" Foreground="{Binding Foreground, ElementName=userControl}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Grid x:Name="cramModeRoot" Visibility="Collapsed">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="Number of cards:" VerticalAlignment="Center" Margin="0,0,5,2" Foreground="{Binding Foreground, ElementName=userControl}" />
+                                    <local:NumbericTextBox x:Name="cramNumberBox" BorderBrush="Black" BorderThickness="1" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" >
+                                    <TextBlock Text="Include tags:"  Foreground="{Binding Foreground, ElementName=userControl}"/>
+                                    <views:TagInformationView x:Name="includeTags" AddVisibility="Collapsed" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Margin="0,5,0,0" >
+                                    <TextBlock Text="Exclude tags:"  Foreground="{Binding Foreground, ElementName=userControl}"/>
+                                    <views:TagInformationView x:Name="excludeTags" AddVisibility="Collapsed" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
+
+            <Grid Margin="10" Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource ButtonBlue}"  BorderThickness="0"  Content="OK" Click="OkButtonClick"
+                                        VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+
+                <Button Grid.Column="2" Style="{StaticResource ButtonGray}" BorderBrush="{Binding Foreground, ElementName=userControl}" Margin="0,0,-1,0" Background="Transparent" 
+                        BorderThickness="1"  Foreground="{Binding Foreground, ElementName=userControl}"
+                             VerticalAlignment="Center" HorizontalAlignment="Stretch"  Content="Cancel" Click="CancleButtonClickHandler"/>
+            </Grid>
+        </Grid>
+    </Popup>
+    
+</UserControl>

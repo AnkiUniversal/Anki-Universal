@@ -1,0 +1,91 @@
+﻿<Page xmlns:views="using:AnkiU.Views" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Class="AnkiU.Pages.StatsPage" 
+    x:Name="page"    SizeChanged="PageSizeChanged"
+    Background="{StaticResource BackgroundNormal}"
+    xmlns:oxy="using:OxyPlot.Windows"    
+    Loaded="PageLoaded"
+    mc:Ignorable="d">
+
+    <Grid x:Name="mainGrid" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto" ZoomMode="Enabled" MaxZoomFactor="5" MinZoomFactor="1"
+                      HorizontalScrollBarVisibility="Hidden" HorizontalScrollMode="Auto">
+            <Grid x:Name="chartsRoot">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="0" />
+                </Grid.RowDefinitions>
+
+                <StackPanel BorderBrush="{StaticResource ButtonBackGroundCompliment}" BorderThickness="0,0,0,2">
+                    <TextBlock  VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                           TextAlignment="Center" Text="Today"
+                           TextWrapping="Wrap" FontSize="22" FontWeight="Bold" />
+                    <TextBlock x:Name="todayStatsTextBlock" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                           TextAlignment="Center"
+                           TextWrapping="Wrap" Margin="0,0,0,10"/>
+                </StackPanel>
+
+                <oxy:PlotView Grid.Row="1" x:Name="foreCastPlotView" Height="300" MinHeight="300" Visibility="Visible"/>
+
+                <Grid Grid.Row="2" Background="Transparent" x:Name="reviewPlotRoot" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <oxy:PlotView  x:Name="reviewPlotView" Height="300"  MinHeight="300"  />
+                    <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                        Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock TextAlignment="Right" VerticalAlignment="Top" Grid.Column="1" 
+                                   HorizontalAlignment="Stretch" Text="Total answers:" />
+                        <TextBlock Margin="5,0,0,0" TextAlignment="Left" VerticalAlignment="Top" Grid.Column="2"
+                                   HorizontalAlignment="Stretch" x:Name="totalReviewTextBlock" FontWeight="Bold" />
+
+                        <TextBlock TextAlignment="Right" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"
+                                   HorizontalAlignment="Stretch" Text="Relearn ratio:" />
+                        <TextBlock  Margin="5,0,0,10" TextAlignment="Left" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1" 
+                                   HorizontalAlignment="Stretch" x:Name="relearnRatio" FontWeight="Bold" />
+                    </Grid>
+                </Grid>
+
+                <oxy:PlotView Grid.Row="3" x:Name="cardTypePlotView" Height="300" MinHeight="300"  />
+            </Grid>
+        </ScrollViewer>
+
+        <Border Grid.Row="1"  Background="Transparent"
+                BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,1,0,0"/>
+        <RelativePanel  Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+
+            <views:DeckNameView Margin="0,0,10,0" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="monthRadioButton" MaxWidth="400" MinWidth="120" HorizontalAlignment="Right" x:Name="deckNameView" Height="30" Foreground="{Binding Foreground, ElementName=page}" Background="{Binding Background, ElementName=page}" />
+
+            <RadioButton RelativePanel.AlignHorizontalCenterWithPanel="True"  Margin="0,5,0,5" Content="1 month"  MinWidth="80" IsChecked="True" x:Name="monthRadioButton" Foreground="{Binding Foreground, ElementName=page}"/>
+            <RadioButton x:Name="yearRadioButton" RelativePanel.RightOf="monthRadioButton"  Margin="5,5,0,5" Content="1 year" MinWidth="70" Checked="OneYearCheckedHandler" Foreground="{Binding Foreground, ElementName=page}"/>
+            <RadioButton RelativePanel.RightOf="yearRadioButton" Margin="5,5,0,5"  Content="Life" MinWidth="60" Checked="LifeCheckedHandler" Foreground="{Binding Foreground, ElementName=page}"/>
+            
+        </RelativePanel>
+
+        <ProgressRing x:Name="progressRing" Visibility="Collapsed" Grid.Row="0" Width="80" Height="80" />
+
+    </Grid>
+</Page>
+
+    

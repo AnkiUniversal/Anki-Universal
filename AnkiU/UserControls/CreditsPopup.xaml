@@ -1,0 +1,176 @@
+﻿<UserControl
+    x:Class="AnkiU.UserControls.CreditsPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="userControl"
+    SizeChanged="WindowSizeChanged"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Popup  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  x:Name="creditPopup" VerticalOffset="30">
+        <Grid x:Name="creditRoot" VerticalAlignment="Center" HorizontalAlignment="Center"
+                  Background="{Binding Background, ElementName=userControl}" MaxWidth="600"
+                  BorderBrush="{Binding Foreground, ElementName=userControl}" BorderThickness="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Background="{StaticResource ButtonBackGroundNormal}" />
+            <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="White"
+                           Text="ABOUT" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="7" />
+
+            <Button Style="{StaticResource ButtonBlue}" Click="CreditClose" 
+                                Width="30" Height="30" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                VerticalAlignment="Top" HorizontalAlignment="Right">
+                <SymbolIcon Symbol="Clear" RenderTransformOrigin="0.5,0.5" >
+                    <SymbolIcon.RenderTransform>
+                        <CompositeTransform ScaleX="0.6" ScaleY="0.6"/>
+                    </SymbolIcon.RenderTransform>
+                </SymbolIcon>
+            </Button>
+
+            <ScrollViewer 
+                              Grid.Row="1" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled"
+                              VerticalScrollBarVisibility="Auto" VerticalScrollMode="Enabled">
+                <RichTextBlock TextWrapping="Wrap" Margin="5,5,15,5" TextAlignment="Center">
+                    <Paragraph>
+                        <LineBreak />
+                    </Paragraph>
+                    
+                    <Paragraph >
+                        <Bold FontSize="22">Copyright (C) 2016 Anki Universal Team</Bold>
+                        <LineBreak />
+                        <Bold>(ankiuniversal@outlook.com)</Bold>
+                        <LineBreak />
+                        <LineBreak />
+                        This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.                        
+                        <LineBreak />
+                        <LineBreak />
+                        This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.                        
+                        <LineBreak />
+                        <LineBreak />
+                        You should have received a copy of the GNU Affero General Public License along with this program.  If not, see
+                        <Hyperlink NavigateUri="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</Hyperlink>.
+                        <LineBreak />
+                        <LineBreak />
+                    </Paragraph>
+                    
+                    <Paragraph >
+                        <Bold FontSize="22">Acknowledgement</Bold>
+                        <LineBreak />
+                        <LineBreak />
+                        Below is the list of Open Source libraries used in this application.                                    
+                        We acknowledge and are grateful to the developers of these projects for their contributions to open source.
+                        <LineBreak />
+                    </Paragraph>
+
+                    <Paragraph >
+                        <Bold FontSize="18">Anki Core Libraries:</Bold>
+                        <LineBreak/>
+                        <Bold>Anki</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="http://ankisrs.net/">http://ankisrs.net/</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) Damien Elmes (anki@ichi2.net)
+                        <LineBreak />
+                        <Hyperlink NavigateUri="https://github.com/dae/anki/blob/master/LICENSE">License (AGPL)</Hyperlink>
+                        <LineBreak/>
+                        <Bold>Ankidroid</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/ankidroid/Anki-Android">https://github.com/ankidroid/Anki-Android</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) 2009 Nicolas Raoul (nicolas.raoul@gmail.com)
+                        <LineBreak />
+                        Copyright (c) 2009 Edu Zamora (edu.zasu@gmail.com)
+                        <LineBreak />
+                        Copyright (c) 2015 Tim Rae (perceptualchaos2@gmail.com)
+                        <LineBreak />
+                        <Hyperlink NavigateUri="https://github.com/ankidroid/Anki-Android/blob/develop/COPYING">License (GPL3)</Hyperlink>
+                        <LineBreak/>
+                    </Paragraph>
+
+                    <Paragraph >
+                        <Bold FontSize="18">Database Wrapper: SQLite.Net-PCL</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/oysteinkrog/SQLite.Net-PCL">https://github.com/oysteinkrog/SQLite.Net-PCL</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) 2012 Krueger Systems, Inc
+                        <LineBreak />
+                        Copyright (c) 2013 Øystein Krog (oystein.krog@gmail.com)
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/oysteinkrog/SQLite.Net-PCL/blob/master/LICENSE.txt">License (MIT)</Hyperlink>
+                        <LineBreak/>
+                    </Paragraph>
+
+                    <Paragraph >
+                        <Bold FontSize="18">Plotting API: OxyPlot</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="http://www.oxyplot.org/">http://www.oxyplot.org/</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) 2014 OxyPlot contributors
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="http://docs.oxyplot.org/en/latest/introduction/license.html">License (MIT)</Hyperlink>
+                        <LineBreak/>
+                    </Paragraph>
+
+                    <Paragraph >
+                        <Bold FontSize="18">Rich Text Editor API: TinyMCE</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://www.tinymce.com/">https://www.tinymce.com/</Hyperlink>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/tinymce/tinymce/blob/master/LICENSE.TXT">License (LGPL 2.1)</Hyperlink>
+                        <LineBreak/>
+                    </Paragraph>
+
+                    <Paragraph >
+                        <Bold FontSize="18">2D Graphics API: Win2D</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/Microsoft/Win2D">https://github.com/Microsoft/Win2D</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) Microsoft Corporation. All rights reserved.
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/Microsoft/Win2D/blob/master/LICENSE.txt">License (MIT)</Hyperlink>
+                        <LineBreak/>
+                    </Paragraph>
+
+                    <Paragraph >
+                        <Bold FontSize="18">OneDrive SDK</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/OneDrive/onedrive-sdk-csharp">https://github.com/OneDrive/onedrive-sdk-csharp</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) Microsoft Corporation. All rights reserved.
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/OneDrive/onedrive-sdk-csharp/blob/master/LICENSE.txt">License (MIT)</Hyperlink>
+                        <LineBreak/>
+                    </Paragraph>
+
+                    <Paragraph>
+                        <Bold  FontSize="18">Icons: Elegant Font</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="http://www.elegantthemes.com/">http://www.elegantthemes.com/</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) 2013 Elegant Themes, Inc.
+                        <LineBreak/>
+                        License (MIT) (Installation Folder)
+                        <LineBreak/>
+                    </Paragraph>
+
+                    <Paragraph>
+                        <Bold  FontSize="18">Font: Fira Sans</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/mozilla/Fira">https://github.com/mozilla/Fira</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) 2014, Mozilla Foundation
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="http://scripts.sil.org/OFL">License (SIL Open Font)</Hyperlink>
+                    </Paragraph>
+                </RichTextBlock>
+            </ScrollViewer>
+        </Grid>
+    </Popup>
+</UserControl>

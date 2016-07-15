@@ -1,0 +1,58 @@
+﻿<UserControl
+    x:Class="AnkiU.Views.DeckGeneralOptionsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="320"
+
+    xmlns:controls="using:AnkiU.UserControls"
+    xmlns:DataBindingConverters="using:AnkiU.UIUtilities.DataBindingConverters" x:Name="userControl">
+
+    <UserControl.Resources>
+        <DataBindingConverters:BoolToNullableBoolConverter x:Key="BoolToNullableBoolConverter"/>
+    </UserControl.Resources>
+
+
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="*" MaxWidth="200"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Skip answers longer than" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <controls:NumbericTextBox Grid.Row="0" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"
+                                  BorderThickness="1" BorderBrush="Black"
+                                  MaxNumber="{x:Bind Options.MAX_MAXTAKEN, Mode=OneTime}"
+                                  Number="{x:Bind Options.MaxTaken, Mode=TwoWay}">
+        </controls:NumbericTextBox>
+        <TextBlock Margin="5,0,0,0" Grid.Row="0" Grid.Column="3" Text="Second(s)" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Show answer timer" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="Collapsed"/>
+        <CheckBox Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="Collapsed"
+                  Foreground="{Binding Foreground, ElementName=userControl}"  Background="{Binding Background, ElementName=userControl}" 
+                                  IsChecked="{x:Bind Options.ShowTimer, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Automatically play media" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <CheckBox Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"  Background="{Binding Background, ElementName=userControl}" 
+                                  IsChecked="{x:Bind Options.AutoPlay, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
+
+        <Button Grid.Column="2" Style="{StaticResource ButtonGray}" 
+                Background="Transparent" BorderThickness="1" 
+                Foreground="{Binding Foreground, ElementName=userControl}"  
+                BorderBrush="{Binding Foreground, ElementName=userControl}"  Grid.ColumnSpan="2" Grid.Row="3" 
+                Margin="0,20,0,0" HorizontalAlignment="Right" x:Name="restoreButton"  
+                Content="Default" Width="80" Click="RestoreButtonClickHandler"/>
+    </Grid>
+</UserControl>

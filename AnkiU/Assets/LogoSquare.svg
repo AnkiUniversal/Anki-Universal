@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="LogoSquare.svg"
+   inkscape:export-filename="E:\NewStoreLogo.png"
+   inkscape:export-xdpi="7.2580638"
+   inkscape:export-ydpi="7.2580638">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.24748737"
+     inkscape:cx="-1111.1964"
+     inkscape:cy="717.52225"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1016"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 0">
+    <rect
+       style="fill:#17a1e5;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4157"
+       width="2480.946"
+       height="2480.946"
+       x="-747.96301"
+       y="-1059.4636"
+       inkscape:export-xdpi="10.302522"
+       inkscape:export-ydpi="10.302522"
+       inkscape:export-filename="E:\284.png" />
+  </g>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="star"
+       style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:40;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path3344"
+       sodipodi:sides="5"
+       sodipodi:cx="374.76657"
+       sodipodi:cy="422.02701"
+       sodipodi:r1="306.68237"
+       sodipodi:r2="159.93517"
+       sodipodi:arg1="0.92795398"
+       sodipodi:arg2="1.5562725"
+       inkscape:flatsided="false"
+       inkscape:rounded="0.247531"
+       inkscape:randomized="0"
+       d="M 558.61433,667.49407 C 518.85635,697.27165 426.75707,581.22389 377.08936,581.94531 327.42165,582.66672 238.73166,701.34042 198.1256,672.73011 157.51955,644.1198 239.42729,520.66745 223.39301,473.65358 207.35874,426.63972 67.086631,378.96271 81.748689,331.50298 96.410747,284.04326 239.1318,323.79327 278.88978,294.01569 c 39.75798,-29.77758 41.75504,-177.91729 91.42275,-178.63871 49.6677,-0.72142 55.96643,147.2978 96.57248,175.90811 40.60606,28.6103 182.11242,-15.26806 198.14669,31.7458 16.03428,47.01387 -122.79395,98.74476 -137.45601,146.20449 -14.66206,47.45972 70.79662,168.48111 31.03864,198.25869 z"
+       inkscape:transform-center-x="55.059743"
+       inkscape:transform-center-y="-7.3989048"
+       transform="matrix(2.2340301,-0.57937032,0.59860633,2.1622398,-542.26789,-506.97186)"
+       inkscape:export-xdpi="10.302522"
+       inkscape:export-ydpi="10.302522"
+       inkscape:export-filename="E:\284.png" />
+  </g>
+</svg>

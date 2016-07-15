@@ -1,0 +1,103 @@
+﻿<UserControl
+    x:Class="AnkiU.Views.DeckSImpleOptionsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.Views"
+    xmlns:data="using:AnkiU.Models"
+    xmlns:controls="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="400"
+    xmlns:DataBindingConverters="using:AnkiU.UIUtilities.DataBindingConverters" x:Name="userControl"
+    d:DesignWidth="320"
+    Background="{StaticResource BackgroundNormal}"
+    Foreground="Black">
+
+    <UserControl.Resources>
+        <DataBindingConverters:BoolToNullableBoolConverter x:Key="BoolToNullableBoolConverter"/>
+    </UserControl.Resources>
+
+
+    <Grid Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="*" MaxWidth="200"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Automatically play media" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <CheckBox Grid.Row="0" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
+                                  IsChecked="{x:Bind Options.AutoPlay, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="New cards/day" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <controls:NumbericTextBox Grid.Row="1" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="1" BorderBrush="Black"
+                                  MaxNumber="{x:Bind Options.MAX_PERDAY, Mode=OneTime}" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  Number="{x:Bind Options.NewCardPerDay, Mode=TwoWay}">
+        </controls:NumbericTextBox>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Review cards/day" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <controls:NumbericTextBox Grid.Row="2" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  MaxNumber="{x:Bind Options.MAX_PERDAY, Mode=OneTime}" BorderThickness="1"  BorderBrush="Black"
+                                  Number="{x:Bind Options.ReviewCardPerDay, Mode=TwoWay}">
+        </controls:NumbericTextBox>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Order" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <ComboBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  SelectedIndex="{x:Bind Options.NewcardOrder, Mode=TwoWay}" BorderThickness="1"  BorderBrush="Black"> 
+            <TextBlock Text="Show new cards in order added" TextAlignment="Left"/>
+            <TextBlock Text="Show new cards in random order" TextAlignment="Left"/>
+        </ComboBox>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Interval modifier" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <controls:NumbericTextBox Grid.Row="4" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  MaxNumber="{x:Bind Options.MAX_IVKFCT, Mode=OneTime}" BorderThickness="1"  BorderBrush="Black"
+                                  Number="{x:Bind Options.IvlFct, Mode=TwoWay}">
+        </controls:NumbericTextBox>
+        <controls:HelpButton Grid.Row="4" Grid.Column="3" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Width="20" Height="20"  
+                             HelpText="{x:Bind IntervalModHelp}" />
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Bury related new cards" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <CheckBox Grid.Row="5" Grid.Column="2" Height="20" Width="30" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  IsChecked="{x:Bind Options.BuryRelatedNewCard, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
+        <controls:HelpButton Grid.Row="5" Grid.Column="2" HorizontalAlignment="Left" Margin="50,0,0,0" VerticalAlignment="Center" Width="20" Height="20" 
+                             HelpText="{x:Bind BuryNewCardHelp}" />
+
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="Bury related review cards" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <CheckBox Grid.Row="6" Grid.Column="2" Height="20" Width="30" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  IsChecked="{x:Bind Options.BuryRelatedReviewCard, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
+        <controls:HelpButton Grid.Row="6" Grid.Column="2" HorizontalAlignment="Left" Margin="50,0,0,0" VerticalAlignment="Center" Width="20" Height="20"
+                             HelpText="{x:Bind BuryReviewHelp}" />
+
+
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="Leech threshold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <controls:NumbericTextBox Grid.Row="7" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="1"  BorderBrush="Black"
+                                  MaxNumber="{x:Bind Options.MAX_LEECHTHRESHOLD, Mode=OneTime}" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  Number="{x:Bind Options.LeechFailsThreshold, Mode=TwoWay}">
+        </controls:NumbericTextBox>
+        <controls:HelpButton Grid.Row="7" Grid.Column="3" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Width="20" Height="20" 
+                             HelpText="{x:Bind LeechThresholdHelp}" />
+
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="Leech action" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <ComboBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  SelectedIndex="{x:Bind Options.LeechAction, Mode=TwoWay}" BorderThickness="1"  BorderBrush="Black">
+            <TextBlock Text="Suspend card" TextAlignment="Left"/>
+            <TextBlock Text="Tag only" TextAlignment="Left"/>
+        </ComboBox>
+
+        <Button Grid.Column="2" Style="{StaticResource ButtonGray}" Foreground="{Binding Foreground, ElementName=userControl}" Background="Transparent" BorderThickness="1" BorderBrush="{Binding Foreground, ElementName=userControl}" Grid.ColumnSpan="2" Margin="0,15,0,0"  HorizontalAlignment="Right"  Grid.Row="9" x:Name="restoreButton"   Content="Default" Width="80" Click="RestoreButtonClickHandler"/>
+    </Grid>
+</UserControl>

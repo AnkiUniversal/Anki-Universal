@@ -1,9 +1,27 @@
-﻿using System;
+﻿/*
+Copyright (C) 2016 Anki Universal Team <ankiuniversal@outlook.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite.Net;
 using SQLite.Net.Platform.WinRT;
+using System.Collections;
 
 namespace AnkiU.AnkiCore
 {
@@ -31,17 +49,20 @@ namespace AnkiU.AnkiCore
             return dbConnection.DatabasePath;
         }
 
-        public DB(string pathToFile)
+        public DB(string absolutePathToFile)
         {
             try
             {
-                dbConnection = new SQLiteConnection(new SQLitePlatformWinRT(), pathToFile);
+                dbConnection = new SQLiteConnection(new SQLitePlatformWinRT(), absolutePathToFile);
                 isModified = false;
             }
             catch (SQLiteException e)
             {
                 if (dbConnection == null)
-                    throw new DBCorruptException("Can't open the database!", e);
+                {
+                    string msg = String.Format("Can't open the database at {0}", absolutePathToFile);
+                    throw new DBCorruptException(msg, e);
+                }
             }
         }
 
@@ -68,28 +89,67 @@ namespace AnkiU.AnkiCore
                 }
         }
 
-        public void ExecuteMany(string sql, params object[] list)
+        public void ExecuteMany(string sql, List<object[]> list)
         {
             isModified = true;
 
             dbConnection.RunInTransaction(() =>
             {
-                foreach (object obj in list)
+                foreach (object[] obj in list)
                     dbConnection.Execute(sql, obj);
             });
+        }
+
+        public void RunInTransaction(Action action)
+        {
+            dbConnection.RunInTransaction(action);
+        }
+
+
+        public string SaveTransactionPoint()
+        {
+            return dbConnection.SaveTransactionPoint();
+        }
+
+        public void Rollback()
+        {
+            dbConnection.Rollback();
+        }
+
+        public void RollbackTo(string savepoint)
+        {
+            dbConnection.RollbackTo(savepoint);
+        }
+
+        public void BeginTransaction()
+        {
+            dbConnection.BeginTransaction();
+        }
+
+        public void Commit()
+        {
+            dbConnection.Commit();
         }
 
         public void ExecuteScript(string sql)
         {
             isModified = true;
-            string[] queries = sql.Split(';');
-            foreach (string q in queries)
-                dbConnection.Execute(q);
+            string[] queries = sql.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+            dbConnection.RunInTransaction(() =>
+            {
+                foreach (string q in queries)
+                    dbConnection.Execute(q);
+            });
         }
 
         public T QueryScalar<T>(string query)
         {
             return dbConnection.ExecuteScalar<T>(query);
+        }
+
+        public T QueryScalar<T>(string query, params object[] obj)
+        {
+            return dbConnection.ExecuteScalar<T>(query, obj);
         }
 
         public List<T> QueryColumn<T>(string query) where T : class
@@ -124,25 +184,65 @@ namespace AnkiU.AnkiCore
             dbConnection.CreateTable(type, flag);
         }
 
-        public void Commit()
-        {
-            dbConnection.Commit();
-        }
-
-        public void RollBack()
-        {
-            dbConnection.Rollback();
-        }
-
-        public void Insert(object obj)
+        public void Insert(object obj, Type type = null)
         {
             isModified = true;
-            dbConnection.Insert(obj);
+            if (type != null)
+                dbConnection.Insert(obj, type);
+            else
+                dbConnection.Insert(obj);
+        }
+
+        public void InsertOrReplace(object obj, Type type = null)
+        {
+            isModified = true;
+            if (type != null)
+                dbConnection.InsertOrReplace(obj, type);
+            else
+                dbConnection.InsertOrReplace(obj);
+        }
+
+        public void Update(object obj, Type type = null)
+        {
+            isModified = true;
+            if (type != null)
+                dbConnection.Update(obj, type);
+            else
+                dbConnection.Update(obj);            
+        }
+
+        public void DropTable<T>()
+        {
+            dbConnection.DropTable<T>();
+        }
+
+        public void InsertAll(IEnumerable obj, bool runInTransaction = true)
+        {
+            isModified = true;
+            dbConnection.InsertAll(obj, runInTransaction);
+        }
+
+        //Mainly used for testing purpose
+        public void DeleteAll<T>()
+        {
+            isModified = true;
+            dbConnection.DeleteAll<T>();
+        }
+
+        public void Delete<T>(object primaryKey)
+        {
+            isModified = true;
+            dbConnection.Delete<T>(primaryKey);
         }
 
         public void Close()
         {
             dbConnection.Close();
+        }
+
+        public TableQuery<T> GetTable<T>() where T : class
+        {
+            return dbConnection.Table<T>();
         }
    
         public void Dispose()

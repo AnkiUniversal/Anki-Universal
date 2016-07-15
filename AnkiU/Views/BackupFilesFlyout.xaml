@@ -1,0 +1,55 @@
+﻿<UserControl
+    x:Class="AnkiU.Views.BackupFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.Views"
+    xmlns:data="using:AnkiU.Models"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Flyout x:Name="databaseBackupFlyout" x:Key="DatabaseBackupFlyoutTemplate" >
+            <ContentPresenter>
+                <Grid MinWidth="300" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Background="{StaticResource ButtonBackGroundAnalogousLeft}" Margin="5" >
+                        <TextBlock Foreground="White" Text="Please choose a backup point" TextWrapping="Wrap" Margin="5"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Border>
+                    
+                    <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="1"                                
+                                  HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled">
+                        <ItemsControl ItemsSource="{Binding}"   
+                                      x:Name="fileListView" Margin="5,5,15,5"
+                                  HorizontalAlignment="Stretch"
+                                  Padding="0" >
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"  />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="data:BackupFilesInformation">
+                                    <Button  Background="Transparent" VerticalAlignment="Center" Style="{StaticResource ButtonGray}" Click="RestoreFromBackupClick"
+                                             BorderThickness="0" Foreground="Black" HorizontalContentAlignment="Left"  HorizontalAlignment="Stretch">
+                                        <TextBlock TextAlignment="Left" FontSize="15" TextWrapping="Wrap" Text="{x:Bind DateCreate, Mode=OneTime}"/>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <Button x:Name="cancelButton" Margin="0,0,5,0"  Grid.Row="2" HorizontalAlignment="Stretch" Content="Cancel" Style="{StaticResource ButtonGray}" Click="CancelButtonClickHandler" BorderBrush="Black" BorderThickness="1"/>
+                </Grid>
+            </ContentPresenter>
+        </Flyout>
+    </UserControl.Resources>
+</UserControl>

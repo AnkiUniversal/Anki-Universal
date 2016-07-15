@@ -1,0 +1,182 @@
+﻿<UserControl
+    x:Class="AnkiU.Views.AllHelps"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" 
+    x:Name="userControl"
+    Background="White"
+    Foreground="Black"
+    d:DesignHeight="300"
+    d:DesignWidth="200">
+
+    <Grid Background="{Binding Background,ElementName=userControl}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto" 
+                                  HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Hidden">
+            <StackPanel Margin="5">
+                <TextBlock Margin="0,10"
+                        Text="Tutorials" Foreground="{Binding Foreground, ElementName=userControl}" 
+                       FontSize="22" HorizontalAlignment="Center"
+                       FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" />
+
+                <Border BorderThickness="0,1,0,0" BorderBrush="{Binding Foreground, ElementName=userControl}" Margin="0,0,0,5"/>
+
+                <Button Style="{StaticResource ButtonBlue}" 
+                    BorderThickness="0"       
+                    x:Name="button"
+                    Background="Transparent"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Height="35"
+                    Padding="5"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Click="AddDeckAndNoteClick">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0" x:Name="DecksAndNotesFlag"/>
+                        <TextBlock Text="Decks &amp; Notes" />
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
+                    BorderThickness="0"          
+                    Background="Transparent"
+                    Height="35"
+                    Padding="5"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Click="NoteTypeAndTemplateClick">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="NoteTypeAndTemplateFlag"/>
+                        <TextBlock Text="Note Types &amp; Templates" />
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
+                    BorderThickness="0"          
+                    Background="Transparent" 
+                    Height="35"
+                    Padding="5"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Visibility="Collapsed"
+                        x:Name="templateWithTypeField"
+                    Click="TemplateWithTypeFieldClick">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="TypeFieldFlag"/>
+                        <TextBlock Text="Template with Type Field" />
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
+                    BorderThickness="0"          
+                    Background="Transparent" 
+                    Height="35"
+                    Padding="5"
+                        x:Name="templateWithClozeField"
+                    Visibility="{Binding Visibility,ElementName=templateWithTypeField}"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"                                   
+                    Click="TemplateWithClozeFieldClick">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="ClozeFlag"/>
+                        <TextBlock Text="Template with Cloze Field" />
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
+                    BorderThickness="0"          
+                    Background="Transparent"
+                    Height="35"
+                    Padding="5"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Click="CustomStudy">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="CustomStudyFlag"/>
+                        <TextBlock Text="Custom Study" />
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
+                    BorderThickness="0"          
+                    Background="Transparent" 
+                    Height="35"
+                    Padding="5"
+                    x:Name="DataSyncing"
+                    Visibility="Visible"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"                                   
+                    Click="DataSyncingClick">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="DataSyncingFlag"/>
+                        <TextBlock Text="Data Syncing" />
+                    </StackPanel>
+                </Button>
+
+                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
+                    BorderThickness="0"          
+                    Background="Transparent" 
+                    Height="35"
+                    Padding="5"
+                    x:Name="DeckOption"
+                    Visibility="Collapsed"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"                                   
+                    Click="DeckOptionHelpShown">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="DeckOptionFlag"/>
+                        <TextBlock Text="Deck Options" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,1,0,0">
+            <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
+                    BorderThickness="0"        
+                    Margin="2"
+                    Background="Transparent"
+                    Height="35"
+                    Padding="5,0,0,0"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Click="UserManualClick">
+                <StackPanel Orientation="Horizontal">
+                    <Path Style="{StaticResource BookIcon}" Margin="0,0,5,0" Fill="{Binding Foreground,ElementName=userControl}" />
+                    <TextBlock FontSize="16" Text="User Manual (Online)" />
+                </StackPanel>
+            </Button>
+
+            <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
+                    BorderThickness="0"        
+                    Margin="2,3,2,3"
+                    Background="Transparent"
+                    Height="35"
+                    Padding="5,0,0,0"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Click="CreditClick">
+                <StackPanel Orientation="Horizontal">
+                    <Path Style="{StaticResource InfoIcon}" Margin="0,0,5,0" Fill="{Binding Foreground,ElementName=userControl}" />
+                    <TextBlock FontSize="16" Text="About" />
+                </StackPanel>
+            </Button>
+            
+        </StackPanel>
+
+    </Grid>
+</UserControl>

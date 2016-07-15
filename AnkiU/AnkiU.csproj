@@ -16,7 +16,12 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>AnkiU_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>AnkiU_StoreKey.pfx</PackageCertificateKeyFile>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <Win32Resource>MyResources.res</Win32Resource>
+    <PackageCertificateThumbprint>4FECF9297BF9B3C1754494D0246B1EC4C38FBFAD</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -89,65 +94,775 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <Content Include="AnkiCore\Log.txt" />
+    <None Include="AnkiCore\Log.txt" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\AddClozeField.png" />
+    <Content Include="Assets\AddClozeNote.png" />
+    <Content Include="Assets\AddTypeField.png" />
+    <Content Include="Assets\AnkiLogo.png" />
+    <Content Include="Assets\ChangeToCloze.png" />
+    <Content Include="Assets\DefaultHighDef.png" />
+    <Content Include="Assets\Default.png" />
+    <Content Include="Assets\Fonts\fira-sans\SIL Open Font License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\CardTypeField.png" />
+    <Content Include="Assets\LogoSquare.svg">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Assets\NewStoreLogo.scale-100.png" />
+    <Content Include="Assets\NewStoreLogo.scale-125.png" />
+    <Content Include="Assets\NewStoreLogo.scale-150.png" />
+    <Content Include="Assets\NewStoreLogo.scale-200.png" />
+    <Content Include="Assets\NewStoreLogo.scale-400.png" />
+    <Content Include="Assets\NoteTypeField.png" />
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\SplashScreen.scale-125.png" />
+    <Content Include="Assets\SplashScreen.scale-150.png" />
+    <Content Include="Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Square310x310Logo.scale-100.png" />
+    <Content Include="Assets\Square310x310Logo.scale-125.png" />
+    <Content Include="Assets\Square310x310Logo.scale-150.png" />
+    <Content Include="Assets\Square310x310Logo.scale-200.png" />
+    <Content Include="Assets\Square310x310Logo.scale-400.png" />
+    <Content Include="Assets\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-16_altform-unplated.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-256_altform-unplated.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-32_altform-unplated.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-48_altform-unplated.png" />
+    <Content Include="Assets\Square71x71Logo.scale-100.png" />
+    <Content Include="Assets\Square71x71Logo.scale-125.png" />
+    <Content Include="Assets\Square71x71Logo.scale-150.png" />
+    <Content Include="Assets\Square71x71Logo.scale-200.png" />
+    <Content Include="Assets\Square71x71Logo.scale-400.png" />
+    <Content Include="Assets\TypeFieldIntro.png" />
+    <Content Include="Assets\TypeTemplate.png" />
+    <Content Include="Assets\ValidClozeTemplate.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="html\fieldeditor.css" />
+    <Content Include="html\fieldeditor.html" />
+    <Content Include="html\fieldeditortouch.css" />
+    <Content Include="html\cardviewer.css" />
+    <Content Include="html\globalstyles.css" />
+    <Content Include="html\fieldeditortouch.html" />
+    <Content Include="html\notefieldeditor.js" />
+    <Content Include="html\htmleditor.js" />
+    <Content Include="html\templateeditortouch.css" />
+    <Content Include="html\templateeditortouch.html" />
+    <Content Include="html\templateeditor.html" />
+    <Content Include="html\templateeditor.js" />
+    <Content Include="html\templateeditor.css" />
+    <Content Include="html\tinymce\img\aletter.png" />
+    <Content Include="html\tinymce\img\cloze.png" />
+    <Content Include="html\tinymce\img\microphone.png" />
+    <Content Include="html\tinymce\img\input.png" />
+    <Content Include="html\tinymce\license.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="html\tinymce\plugins\visualblocks\css\visualblocks.css" />
+    <Content Include="html\tinymce\skins\lightgray\content.inline.min.css" />
+    <Content Include="html\tinymce\skins\lightgray\content.min.css" />
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce-small.svg" />
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce.svg" />
+    <Content Include="html\tinymce\skins\lightgray\img\anchor.gif" />
+    <Content Include="html\tinymce\skins\lightgray\img\loader.gif" />
+    <Content Include="html\tinymce\skins\lightgray\img\object.gif" />
+    <Content Include="html\tinymce\skins\lightgray\img\trans.gif" />
+    <Content Include="html\tinymce\skins\lightgray\skin.ie7.min.css" />
+    <Content Include="html\tinymce\skins\lightgray\skin.min.css" />
+    <Content Include="html\tinymce\tinymce.min.js" />
+    <Content Include="Licenses\AnkiCore\License.txt" />
+    <Content Include="Licenses\AnkiCore\COPYING.txt" />
+    <Content Include="Licenses\COPYING.txt" />
+    <Content Include="Licenses\ElegantFont\license.txt" />
+    <Content Include="Licenses\OxyPlot\Authors.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Licenses\OxyPlot\Contributors.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Licenses\OxyPlot\License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Licenses\SQLite.Net-PCL\License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Licenses\Win2D\License.txt" />
+    <None Include="AnkiU_StoreKey.pfx" />
+    <None Include="MyResources.res" />
+    <None Include="TestUiCases.txt" />
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce-small.eot" />
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce-small.json" />
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce-small.ttf" />
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce-small.woff" />
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce.eot" />
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce.json" />
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce.ttf" />
+    <Content Include="html\tinymce\skins\lightgray\fonts\tinymce.woff" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Bold.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-BoldItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Book.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-BookItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Eight.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-EightItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-ExtraBold.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-ExtraBoldItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-ExtraLight.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-ExtraLightItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Four.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-FourItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Hair.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-HairItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Heavy.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-HeavyItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Italic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Light.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-LightItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Medium.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-MediumItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Regular.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-SemiBold.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-SemiBoldItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Thin.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-ThinItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Two.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-TwoItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-Ultra.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-UltraItalic.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-UltraLight.otf" />
+    <Content Include="Assets\Fonts\fira-sans\FiraSans-UltraLightItalic.otf" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnkiCore\AnswerComparer.cs" />
     <Compile Include="AnkiCore\Card.cs" />
     <Compile Include="AnkiCore\Collection.cs" />
     <Compile Include="AnkiCore\Consts.cs" />
     <Compile Include="AnkiCore\DB.cs" />
     <Compile Include="AnkiCore\Deck.cs" />
+    <Compile Include="AnkiCore\Exporter\AnkiExporter.cs" />
+    <Compile Include="AnkiCore\Exporter\AnkiPackageExporter.cs" />
+    <Compile Include="AnkiCore\Finder.cs" />
+    <Compile Include="AnkiCore\Hooks\FuriganaFilters.cs" />
+    <Compile Include="AnkiCore\Hooks\HintFilter.cs" />
+    <Compile Include="AnkiCore\Hooks\Hook.cs" />
+    <Compile Include="AnkiCore\Hooks\Hooks.cs" />
+    <Compile Include="AnkiCore\Hooks\Leech.cs" />
+    <Compile Include="AnkiCore\Importer\Anki2Importer.cs" />
+    <Compile Include="AnkiCore\Importer\AnkiPackageImporter.cs" />
+    <Compile Include="AnkiCore\Exporter\Exporter.cs" />
+    <Compile Include="AnkiCore\Importer\Importer.cs" />
+    <Compile Include="AnkiCore\Importer\NoteImporter.cs" />
+    <Compile Include="AnkiCore\Importer\TextImporter.cs" />
+    <Compile Include="AnkiCore\revlog.cs" />
+    <Compile Include="AnkiCore\Sync\FullSyncer.cs" />
+    <Compile Include="AnkiCore\Sync\HttpSyncer.cs" />
     <Compile Include="AnkiCore\LaTeX.cs" />
     <Compile Include="AnkiCore\Media.cs" />
     <Compile Include="AnkiCore\Models.cs" />
     <Compile Include="AnkiCore\Note.cs" />
     <Compile Include="AnkiCore\Sched.cs" />
+    <Compile Include="AnkiCore\Sound.cs" />
+    <Compile Include="AnkiCore\Stats.cs" />
+    <Compile Include="AnkiCore\Storage.cs" />
+    <Compile Include="AnkiCore\Sync\ISyncer.cs" />
+    <Compile Include="AnkiCore\Sync\LocalServer.cs" />
+    <Compile Include="AnkiCore\Sync\MediaSyncer.cs" />
+    <Compile Include="AnkiCore\Sync\RemoteMediaServer.cs" />
+    <Compile Include="AnkiCore\Sync\RemoteServer.cs" />
+    <Compile Include="AnkiCore\Sync\Syncer.cs" />
     <Compile Include="AnkiCore\Tags.cs" />
     <Compile Include="AnkiCore\Templates\Template.cs" />
     <Compile Include="AnkiCore\Utils.cs" />
+    <Compile Include="Anki\DeckInkPreferences.cs" />
+    <Compile Include="Anki\Delegates.cs" />
+    <Compile Include="Anki\HtmlEditor.cs" />
+    <Compile Include="Anki\HtmlHelpter.cs" />
+    <Compile Include="Anki\InkPreference.cs" />
+    <Compile Include="Anki\InkToTextRecognizer.cs" />
+    <Compile Include="Anki\ObservableCollectionAutoResize.cs" />
+    <Compile Include="Anki\RecognizerHelper.cs" />
+    <Compile Include="Anki\DeckPreferences.cs" />
+    <Compile Include="Anki\GeneralPreference.cs" />
+    <Compile Include="Anki\Syncer\FullSync.cs" />
+    <Compile Include="Anki\Syncer\ISync.cs" />
+    <Compile Include="Anki\Syncer\ISyncInstance.cs" />
+    <Compile Include="Anki\Syncer\OneDriveSync.cs" />
+    <Compile Include="Anki\Syncer\RemoteItem.cs" />
+    <Compile Include="Anki\TextRecognizeResultBuilder.cs" />
+    <Compile Include="Anki\TinymceStreamUriWinRTResolver.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IAnkiDeckOptions.cs" />
+    <Compile Include="Interfaces\IAnkiDeckOptionsView.cs" />
+    <Compile Include="Interfaces\IAnkiDecksView.cs" />
+    <Compile Include="Interfaces\IDeckPreference.cs" />
+    <Compile Include="Interfaces\IInkToTextUIControl.cs" />
+    <Compile Include="Interfaces\IName.cs" />
+    <Compile Include="Interfaces\INightReadMode.cs" />
+    <Compile Include="Interfaces\IPlotChart.cs" />
+    <Compile Include="Interfaces\IUserInputString.cs" />
+    <Compile Include="Interfaces\IZoom.cs" />
+    <Compile Include="Models\BackupFilesInformation.cs" />
+    <Compile Include="Models\CardInformation.cs" />
+    <Compile Include="Models\CollectionOptions.cs" />
+    <Compile Include="Models\ColumnChart.cs" />
+    <Compile Include="Models\DeckConfigName.cs" />
+    <Compile Include="Models\DeckGeneralOptions.cs" />
+    <Compile Include="Models\DeckLapseOptions.cs" />
+    <Compile Include="Models\DeckNewOptions.cs" />
+    <Compile Include="Models\DeckReviewOptions.cs" />
+    <Compile Include="Models\DeckSimpleOptions.cs" />
+    <Compile Include="Models\InkToWord.cs" />
+    <Compile Include="Models\AvailableRecoginitionLanguage.cs" />
+    <Compile Include="Models\AnkiModelInformation.cs" />
+    <Compile Include="Models\NoteField.cs" />
+    <Compile Include="Models\TagInformation.cs" />
+    <Compile Include="Models\TemplateInformation.cs" />
+    <Compile Include="Pages\DeckOptionsPage.xaml.cs">
+      <DependentUpon>DeckOptionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FirstSetupPage.xaml.cs">
+      <DependentUpon>FirstSetupPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ModelEditor.xaml.cs">
+      <DependentUpon>ModelEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\TemplateEditor.xaml.cs">
+      <DependentUpon>TemplateEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\NoteEditor.xaml.cs">
+      <DependentUpon>NoteEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SearchPage.xaml.cs">
+      <DependentUpon>SearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SettingPage.xaml.cs">
+      <DependentUpon>SettingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StatsPage.xaml.cs">
+      <DependentUpon>StatsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIUtilities\DataBindingConverters\VisibilityInvertConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\BoolToNullableBoolConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\CardStateToSolidBrushConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\NumberOfCardToSolidBrushConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\FieldOrderToColorConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\SlelectionToVisibilityConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\StringToNumberConverter.cs" />
+    <Compile Include="UIUtilities\DeviceFamilyStateTrigger.cs" />
+    <Compile Include="Models\DeckInformation.cs" />
+    <Compile Include="Pages\DeckSelectPage.xaml.cs">
+      <DependentUpon>DeckSelectPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIUtilities\DataBindingConverters\SizeConverter.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AnkiCore\StringExtensionMethods.cs" />
+    <Compile Include="Anki\CardStreamUriWinRTResolver.cs" />
+    <Compile Include="UIUtilities\UIConst.cs" />
+    <Compile Include="UIUtilities\UIHelper.cs" />
+    <Compile Include="UserControls\AudioRecorder.xaml.cs">
+      <DependentUpon>AudioRecorder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AudioRecorderDialog.xaml.cs">
+      <DependentUpon>AudioRecorderDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CardViewPopup.xaml.cs">
+      <DependentUpon>CardViewPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CreateNewDeckFlyout.xaml.cs">
+      <DependentUpon>CreateNewDeckFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CreditsPopup.xaml.cs">
+      <DependentUpon>CreditsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CustomStudyFlyout.xaml.cs">
+      <DependentUpon>CustomStudyFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\HelpButton.xaml.cs">
+      <DependentUpon>HelpButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\HelpPopup.xaml.cs">
+      <DependentUpon>HelpPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\HyperLinkDialog.xaml.cs">
+      <DependentUpon>HyperLinkDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\InsertMediaFlyout.xaml.cs">
+      <DependentUpon>InsertMediaFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\IntNumberEnterFlyout.xaml.cs">
+      <DependentUpon>IntNumberEnterFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\MediaCheckContentDialog.xaml.cs">
+      <DependentUpon>MediaCheckContentDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\NotificationPopup.xaml.cs">
+      <DependentUpon>NotificationPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\NumbericTextBox.xaml.cs">
+      <DependentUpon>NumbericTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ProgressDialog.xaml.cs">
+      <DependentUpon>ProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\NameEnterFlyout.xaml.cs">
+      <DependentUpon>NameEnterFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\RescheduleFlyout.xaml.cs">
+      <DependentUpon>RescheduleFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\RichEditBoxExtend.xaml.cs">
+      <DependentUpon>RichEditBoxExtend.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\RichEditBoxContentDialog.xaml.cs">
+      <DependentUpon>RichEditBoxContentDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\SyncDialog.xaml.cs">
+      <DependentUpon>SyncDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\AnkiModelInfomartionViewModel.cs" />
+    <Compile Include="ViewModels\CardInformationViewModel.cs" />
+    <Compile Include="ViewModels\CardStatesViewModel.cs" />
+    <Compile Include="ViewModels\CollectionOptionViewModel.cs" />
+    <Compile Include="ViewModels\DeckConfigNameViewModel.cs" />
+    <Compile Include="ViewModels\DeckGeneralOptionsViewModel.cs" />
+    <Compile Include="ViewModels\DeckLapseOptionsViewModel.cs" />
+    <Compile Include="ViewModels\DeckNameViewModel.cs" />
+    <Compile Include="ViewModels\DeckNewOptionsViewModel.cs" />
+    <Compile Include="ViewModels\DeckReviewOptionsViewModel.cs" />
+    <Compile Include="ViewModels\DeckSimpleOptionsViewModel.cs" />
+    <Compile Include="ViewModels\ReviewChartViewModel.cs" />
+    <Compile Include="ViewModels\InkToWordListViewModel.cs" />
+    <Compile Include="Models\InkToWordList.cs" />
+    <Compile Include="ViewModels\AvailableRecoginitionLanguageViewMode.cs" />
+    <Compile Include="UserControls\CardButton.xaml.cs">
+      <DependentUpon>CardButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\NoteFieldsViewModel.cs" />
+    <Compile Include="ViewModels\NotesFirstFieldViewModel.cs" />
+    <Compile Include="ViewModels\ForeCastChartViewModel.cs" />
+    <Compile Include="ViewModels\TagInformationViewModel.cs" />
+    <Compile Include="ViewModels\TemplateInformationViewModel.cs" />
+    <Compile Include="Views\AllHelps.xaml.cs">
+      <DependentUpon>AllHelps.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AnkiModeInformationView.xaml.cs">
+      <DependentUpon>AnkiModeInformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\BackupFilesFlyout.xaml.cs">
+      <DependentUpon>BackupFilesFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CardInformationView.xaml.cs">
+      <DependentUpon>CardInformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CollectionOptionsView.xaml.cs">
+      <DependentUpon>CollectionOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckGeneralOptionsView.xaml.cs">
+      <DependentUpon>DeckGeneralOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckHubView.xaml.cs">
+      <DependentUpon>DeckHubView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\DeckListViewModel.cs" />
+    <Compile Include="UserControls\CardViewer.xaml.cs">
+      <DependentUpon>CardViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckLapseOptions.xaml.cs">
+      <DependentUpon>DeckLapseOptions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckListView.xaml.cs">
+      <DependentUpon>DeckListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ReviewPage.xaml.cs">
+      <DependentUpon>ReviewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckNameView.xaml.cs">
+      <DependentUpon>DeckNameView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckNewOptionsView.xaml.cs">
+      <DependentUpon>DeckNewOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckReviewOptionsView.xaml.cs">
+      <DependentUpon>DeckReviewOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckSImpleOptionsView.xaml.cs">
+      <DependentUpon>DeckSImpleOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FieldListView.xaml.cs">
+      <DependentUpon>FieldListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MediaBackupFlyout.xaml.cs">
+      <DependentUpon>MediaBackupFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NoteFieldView.xaml.cs">
+      <DependentUpon>NoteFieldView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TagInformationView.xaml.cs">
+      <DependentUpon>TagInformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TemplateInformationView.xaml.cs">
+      <DependentUpon>TemplateInformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TemplateView.xaml.cs">
+      <DependentUpon>TemplateView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
-      <SubType>Designer</SubType>
-    </AppxManifest>
     <None Include="AnkiU_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="html\card.js" />
+    <Content Include="html\error.html" />
+    <Content Include="html\card.html" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Pages\FirstSetupPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ModelEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\TemplateEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\NoteEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\SearchPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\SettingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\StatsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resource\AppBarStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\ButtonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\CheckboxStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\Colors.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\ComboBoxStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\FlyoutStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\GridViewStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\HubStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\Icons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\ListViewStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\MenuFlyouStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\MergeDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resource\PivotStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\RadioButtonStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\SplitViewStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\TextBoxStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resource\ToggleSwitchStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Pages\DeckOptionsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\DeckSelectPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AudioRecorder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AudioRecorderDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CardButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CardViewPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CreateNewDeckFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CreditsPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CustomStudyFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\HelpButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\HelpPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\HyperLinkDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\InsertMediaFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\IntNumberEnterFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\MediaCheckContentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\NotificationPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\NumbericTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ProgressDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\NameEnterFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\RescheduleFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\RichEditBoxExtend.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\RichEditBoxContentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SyncDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AllHelps.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AnkiModeInformationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BackupFilesFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CardInformationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CollectionOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeckGeneralOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeckHubView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CardViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeckLapseOptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeckListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ReviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeckNameView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeckNewOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeckReviewOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeckSImpleOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FieldListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MediaBackupFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NoteFieldView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagInformationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TemplateInformationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TemplateView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="SQLite.UWP.2015, Version=3.12.0">
-      <Name>SQLite for Universal Windows Platform %28SQLite.UWP.2015, Version=3.12.0%29</Name>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
+      <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
+    <SDKReference Include="SQLite.UWP.2015, Version=3.12.2">
+      <Name>SQLite for Universal Windows Platform %28SQLite.UWP.2015, Version=3.12.2%29</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\AnkiRuntimeComponent\AnkiRuntimeComponent.csproj">
+      <Project>{db0d81e2-9a27-4354-aabf-2ae1adf6567c}</Project>
+      <Name>AnkiRuntimeComponent</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

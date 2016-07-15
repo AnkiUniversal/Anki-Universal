@@ -1,0 +1,137 @@
+﻿<Page
+    x:Class="AnkiU.Pages.DeckOptionsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.Pages"
+    xmlns:views="using:AnkiU.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Foreground="Black"
+    Background="{StaticResource ForeGroundLight}"
+    x:Name="userControl"
+    mc:Ignorable="d" SizeChanged="WindowSizeChangedHandler">
+
+    <Grid  RenderTransformOrigin="0,0"  Background="{Binding Background, ElementName=userControl}" >
+        <Grid.RenderTransform>
+            <CompositeTransform x:Name="rootGridScale" ScaleX="1" ScaleY="1"/>
+        </Grid.RenderTransform>
+
+        <ScrollViewer ZoomMode="Disabled"  HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch"
+                      VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" HorizontalScrollBarVisibility="Disabled" >
+
+            <Grid x:Name="rootGrid"  Background="{Binding Background, ElementName=userControl}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid x:Name="simpleViewRootGrid" Visibility="Visible" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="10,0,0,0" MaxWidth="500" HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Margin="1,0,0,7" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Name:" FontSize="18" />
+                        <TextBox Margin="10,0,10,2" Grid.Column="2" VerticalAlignment="Center" 
+                                 x:Name="currentNameSimpleView"
+                                 Foreground="{Binding Foreground, ElementName=userControl}"
+                                 HorizontalAlignment="Left" Width="270" FontSize="18"                          
+                                 Text="{x:Bind CurrentName, Mode=TwoWay}"/>
+                    </Grid>
+                    <Border BorderBrush="{StaticResource ButtonBackGroundCompliment}" BorderThickness="0,0,0,1" />
+
+                    <Border Background="{Binding Background, ElementName=simpleConfigView}" Grid.Row="1"/>
+                    <views:DeckSImpleOptionsView HorizontalAlignment="Stretch" Background="White" 
+                                                 Foreground="{Binding Foreground, ElementName=userControl}" 
+                                                 x:Name="simpleConfigView" Grid.Row="1" Margin="10"/>
+                </Grid>
+
+                <Pivot x:Name="rootTab" Visibility="Collapsed" Foreground="{Binding Foreground, ElementName=userControl}"  Background="{Binding Background, ElementName=userControl}"      
+                   Style="{StaticResource TabsStylePivotStyle}" Grid.Row="0" x:DeferLoadStrategy="Lazy">
+                    <Pivot.Title>
+                        <Grid MaxWidth="500" HorizontalAlignment="Left"  >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="tabTitle" Foreground="{Binding Foreground, ElementName=userControl}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Name:" FontSize="18" />
+                            <TextBox x:Name="currentNameExpertView" Margin="10,0,10,0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Width="270" FontSize="18"  Foreground="{Binding Foreground, ElementName=userControl}"  
+                                Text="{x:Bind CurrentName, Mode=TwoWay}"/>
+                        </Grid>
+                    </Pivot.Title>
+                    <PivotItem x:Name="generalTab"  Background="{Binding Background, ElementName=simpleConfigView}" Padding="0" Margin="0" >
+                        <PivotItem.Header >
+                            <TextBlock Text="General"
+                            FontFamily="Segoe UI" 
+                            FontSize="18"                            
+                            FontWeight="SemiBold"
+                            Foreground="{Binding Foreground, ElementName=userControl}"
+                            Margin="5"                                   
+                            Style="{StaticResource CaptionTextBlockStyle}"                            
+                            IsTextScaleFactorEnabled="False"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"/>
+                        </PivotItem.Header>
+                        <views:DeckGeneralOptionsView x:Name="generalView" Margin="10" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=generalTab}"/>
+                    </PivotItem>
+
+                    <PivotItem x:Name="newTab" Padding="0" Margin="0" Background="{Binding Background, ElementName=generalTab}">
+                        <PivotItem.Header>
+                            <TextBlock Text="New"
+                            FontFamily="Segoe UI" 
+                            FontSize="18"
+                            FontWeight="SemiBold"                            
+                            Margin="5"
+                            Foreground="{Binding Foreground, ElementName=userControl}" 
+                            Style="{StaticResource CaptionTextBlockStyle}"                            
+                            IsTextScaleFactorEnabled="False"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"/>
+                        </PivotItem.Header>
+                        <views:DeckNewOptionsView x:Name="newView" Margin="10" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=generalTab}"/>
+                    </PivotItem>
+
+                    <PivotItem x:Name="reviewTab" Background="{Binding Background, ElementName=generalTab}"  Padding="0" Margin="0">
+                        <PivotItem.Header>
+                            <TextBlock Text="Review"
+                            FontFamily="Segoe UI" 
+                            FontSize="18"
+                            FontWeight="SemiBold"                            
+                            Margin="5"
+                            Foreground="{Binding Foreground, ElementName=userControl}"
+                            Style="{StaticResource CaptionTextBlockStyle}"                            
+                            IsTextScaleFactorEnabled="False"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"/>
+                        </PivotItem.Header>
+                        <views:DeckReviewOptionsView x:Name="reviewView" Margin="10" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=generalTab}"/>
+                    </PivotItem>
+
+                    <PivotItem x:Name="lapseTab" Background="{Binding Background, ElementName=generalTab}" Padding="0" Margin="0">
+                        <PivotItem.Header>
+                            <TextBlock Text="Lapse"
+                            FontFamily="Segoe UI" 
+                            FontWeight="SemiBold"
+                            FontSize="18"
+                            Margin="5"                    
+                            Foreground="{Binding Foreground, ElementName=userControl}" 
+                            Style="{StaticResource CaptionTextBlockStyle}"                            
+                            IsTextScaleFactorEnabled="False"
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center"/>
+                        </PivotItem.Header>
+                        <views:DeckLapseOptionsView x:Name="lapseView" Margin="10" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=generalTab}"/>
+                    </PivotItem>
+                </Pivot>
+
+                <Border x:Name="otherContentBorder" Grid.Row="1" Background="White" BorderBrush="{StaticResource ButtonBackGroundCompliment}" BorderThickness="0,1,0,0"/>
+                <Button Grid.Row="1" x:Name="viewModeButton" Style="{StaticResource ButtonBlue}"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,13,0,0" Content="Expert Mode" Width="120" Click="ViewModeButtonClickHandler" />
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

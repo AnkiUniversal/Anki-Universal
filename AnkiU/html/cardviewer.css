@@ -1,0 +1,48 @@
+﻿@import "/html/globalstyles.css";
+
+#typeAns {
+  width: 100%;
+}
+
+.typeGood {
+  color: black;
+  background-color: #17FF17;
+}
+
+.typeBad {
+  color: black;
+  background-color: #FFF917;
+}
+
+.typeMissed {
+  color: black;
+  background-color: lightgray;
+}
+
+.night .typeGood {
+  color: white;
+  background-color: #0AD200;
+}
+
+.night .typeBad {
+  color: white;
+  background-color: #B6B600;
+}
+
+.night .typeMissed {
+  color: white;
+  background-color: gray;
+}
+
+.night #cardcontent{  
+  color: white;
+  background-color: #202020;  
+  word-wrap: break-word;
+}
+
+#cardcontent{  
+  color: black;
+  background-color: white; 
+  word-wrap: break-word; 
+}
+

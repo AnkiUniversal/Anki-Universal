@@ -1,0 +1,25 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.Assets.Resource">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ButtonStyles.xaml"/>
+        <ResourceDictionary Source="ComboBoxStyles.xaml"/>
+        <ResourceDictionary Source="Colors.xaml"/>
+        <ResourceDictionary Source="Icons.xaml"/>
+        <ResourceDictionary Source="AppBarStyles.xaml"/>
+        <ResourceDictionary Source="ToggleSwitchStyles.xaml"/>
+        <ResourceDictionary Source="PivotStyles.xaml"/>
+        <ResourceDictionary Source="FlyoutStyles.xaml"/>
+        <ResourceDictionary Source="CheckboxStyles.xaml"/>
+        <ResourceDictionary Source="MenuFlyouStyles.xaml"/>
+        <ResourceDictionary Source="TextBoxStyles.xaml"/>
+        <ResourceDictionary Source="ListViewStyles.xaml"/>
+        <ResourceDictionary Source="GridViewStyles.xaml"/>
+        <ResourceDictionary Source="RadioButtonStyles.xaml"/>
+        <ResourceDictionary Source="HubStyles.xaml"/>
+        <ResourceDictionary Source="SplitViewStyles.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

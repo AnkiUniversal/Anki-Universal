@@ -1,0 +1,31 @@
+﻿<ContentDialog
+    x:Class="AnkiU.UserControls.SyncDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"    
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="userControl"
+    mc:Ignorable="d">
+
+    <ContentDialog.Resources>
+        <Storyboard x:Name="SyncIconRotation" AutoReverse="False" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="syncIcon" 
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" 
+                             From="0" To="360" Duration="00:00:01" />
+        </Storyboard>
+    </ContentDialog.Resources>
+
+    <StackPanel VerticalAlignment="Center" Margin="0,20,0,0" HorizontalAlignment="Stretch" MaxWidth="300">
+        <TextBlock Text="Please do not close the program to avoid corrupting your files." TextWrapping="Wrap" 
+                   FontSize="18"
+                   TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5,5,5,15"/>
+        <SymbolIcon Symbol="Sync" x:Name="syncIcon" RenderTransformOrigin="0.5,0.5"  Width="35" Height="35" >
+            <SymbolIcon.RenderTransform>
+                <CompositeTransform ScaleX="1.5" ScaleY="1.5"/>
+            </SymbolIcon.RenderTransform>
+        </SymbolIcon>
+        <TextBlock x:Name="progressLabel" Margin="5,15,5,5" FontSize="18"
+                   Text="Syncing..." VerticalAlignment="Bottom" HorizontalAlignment="Center" TextAlignment="Center"/>
+    </StackPanel>
+</ContentDialog>

@@ -1,0 +1,62 @@
+﻿All
+	Make sure all page can change read mode
+
+DeckSelectPage:
+	Make sure changing picture work
+
+ReviewPage:
+    1) Make sure all icon switch back to default when re-entering a page
+	
+	2) Make sure when user change ink to erase mode then turn Ink off and On again
+	   Ink changes back to pen mode automatically
+    
+	3) Make sure Ink does not turn on/off automatically when user go to a new reviewPage
+
+	4) Make sure enter when showing answer does nothing and pressing number while displaying
+	   question all so does nothing
+
+    5) Make sure enter wrong answer number (Ex: 1->3 but enter 4) does notthing
+
+	6) Make sure rapidly re-press a button won't cause card to be skipped
+
+	7) Make sure navigate failed won't cause problem
+
+	8) Make sure first time show a leech card works properly and Deck Option is saved
+
+	Ink To Text:
+		1) Turn off Ink and then open it again:
+			- Test automatic text recognition
+			- Test manual text recognition
+		
+		2) With Ink on, turn off Ink to Text then open it again
+			- Test automatic text recognition
+			- Test manual text recognition
+		
+		3) For manual text recognition, test that user can choose results in any orders they want 
+		   without affecting the orders of final results
+	   
+		4) With Ink on and Ink to text enable, ensure that when user presses HideInk,
+		   The answer input is automatically switch back to keyboard
+		   When they presses ShowInk, it is switch back to HandWriting Recognition
+
+    On Devices with touch input only:
+		1) After user answers a type card, make sure touch input won't automatically display again.
+
+Stats page:
+	1) Make sure zero data won't bug out
+	2) Make sure zero x and y axis won't bug out
+	3) Make sure relearn ratio won't show Nand when deck has no relearn card
+
+Option page:
+    1) Make sure all default button work
+	2) Make sure simple view and expert view sync
+	3) Make sure we won't save if user just return
+
+NoteEditore page:
+	1) Make sure undo appeare in reverse order (last added to olddest)
+
+Search Page:
+	1) Make sure Changing readmode after viewing and closing a card won't cause a crash
+
+Setting Page:
+	1) Make sure auto save user changes

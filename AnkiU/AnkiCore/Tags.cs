@@ -1,4 +1,21 @@
-﻿using System;
+﻿/*
+Copyright (C) 2016 Anki Universal Team <ankiuniversal@outlook.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +25,18 @@ using Windows.Data.Json;
 
 namespace AnkiU.AnkiCore
 {
-    class Tags
+    public class Tags
     {
-        private readonly static Regex sCanonify = new Regex("[\"']", RegexOptions.Compiled);
+        private readonly static Regex canonifyRegex = new Regex("[\"']", RegexOptions.Compiled);
 
         private Collection collection;
         private bool isChanged;
         private JsonObject tags;
+
+        public JsonObject GetTags()
+        {
+            return tags;
+        }
 
         public Tags(Collection collection)
         {
@@ -27,7 +49,7 @@ namespace AnkiU.AnkiCore
             isChanged = false;
         }
 
-        public void Flush()
+        public void SaveChangesToDatabase()
         {
             if(isChanged)
             {
@@ -36,7 +58,7 @@ namespace AnkiU.AnkiCore
             }
         }
 
-        public void Register(List<string> tags, int? usn = null)
+        public void Register(IEnumerable<string> tags, int? usn = null)
         {
             //bool found = false;
             foreach (string t in tags)
@@ -60,7 +82,7 @@ namespace AnkiU.AnkiCore
             return this.tags.Keys.ToList();
         }
 
-        public void RegisterNotes(long[] nids)
+        public void RegisterNotes(long[] nids = null)
         {
             string lim;
             if(nids != null)
@@ -72,15 +94,10 @@ namespace AnkiU.AnkiCore
                 isChanged = true;
             }
 
-            var notes = collection.Database.QueryColumn<notes>("SELECT DISTINCT tags FROM notes" + lim);
+            var notes = collection.Database.QueryColumn<NoteTable>("SELECT DISTINCT tags FROM notes" + lim);
             string[] tags = (from s in notes select s.Tags).ToArray();
             
             Register(Split(String.Join(" ", tags)));
-        }
-
-        public void AllItems()
-        {
-            //TODO
         }
 
         public void Save()
@@ -102,7 +119,7 @@ namespace AnkiU.AnkiCore
             {
                 List<long> dids = new List<long>();
                 dids.Add(deckId);
-                foreach(long id in collection.Decks.Children(deckId).Values)
+                foreach(long id in collection.Deck.Children(deckId).Values)
                     dids.Add(deckId);
 
                 sql.Append(" AND c.did IN ");
@@ -113,7 +130,7 @@ namespace AnkiU.AnkiCore
                 sql.Append(" AND c.did = ");
                 sql.Append(deckId.ToString());
             }
-            var cards = collection.Database.QueryColumn<notes>(sql.ToString());
+            var cards = collection.Database.QueryColumn<NoteTable>(sql.ToString());
             string[] tags = (from s in cards select s.Tags).ToArray();
             return Split(String.Join(" ", tags));
         }
@@ -123,10 +140,10 @@ namespace AnkiU.AnkiCore
         /// </summary>
         /// <param name="tags"></param>
         /// <returns></returns>
-        public List<string> Split(String tags)
+        public List<string> Split(string tags)
         {
             List<string> list = new List<string>();
-            var temp = tags.Replace('\u3000', ' ').Split(new string[] { "\\s" }, StringSplitOptions.RemoveEmptyEntries);
+            var temp = tags.Replace('\u3000', ' ').Split(new string[] { " " }, StringSplitOptions.None);
             foreach (string s in temp)
                 if (s.Length > 0)
                     list.Add(s);
@@ -147,56 +164,69 @@ namespace AnkiU.AnkiCore
         public void BulkAdd(List<long> ids, string tags, bool add = true)
         {
             List<string> newTags = Split(tags);
-            if (newTags == null)
+            if (newTags == null || (newTags.Count == 0))
+            {
                 return;
-
-            //cache tag names
+            }
+            // cache tag names
             Register(newTags);
-
             // find notes missing the tags
             string l;
-            SomeFunc fn;
-            if(add)
+            if (add)
             {
-                l = "tags not";
-                fn = AddToStr;
+                l = "tags not ";
             }
             else
             {
-                l = "tags";
-                fn = RemoveFromStr;
+                l = "tags ";
             }
-
             StringBuilder lim = new StringBuilder();
-            int count = 0;
-            string str;
-            Dictionary<string, string> tagDict = new Dictionary<string, string>();
-            foreach(string t in newTags)
+            foreach (string t in newTags)
             {
                 if (lim.Length != 0)
+                {
                     lim.Append(" or ");
-
+                }
                 lim.Append(l);
-                str = "like :_" + count;
-                lim.Append(str);
-
-                tagDict.Add(str, String.Format("% {0} %", t));
-                count++;
+                lim.Append("like '% ");
+                lim.Append(t);
+                lim.Append(" %'");
             }
-            string sql = String.Format("select id, tags from notes where id in {0} and ({1})", 
-                                        Utils.Ids2str(ids.ToArray()), lim);
 
-            var res = collection.Database.QueryColumn<notes>(sql, tagDict);
-            //update tags
-            Dictionary<string, object> fixNotes = FixRow(res, fn, tags);
-            collection.Database.ExecuteMany("update notes set tags=:t,mod=:n,usn=:u where id = :id",
-                                                fixNotes);
+            List<long> nids = new List<long>();
+            List<object[]> res = new List<object[]>();
+            var listNotes = collection.Database.QueryColumn<NoteTable>
+                            ("select id, tags from notes where id in " + Utils.Ids2str(ids) +
+                            " and (" + lim.ToString() + ")");
+            if (add)
+            {
+                foreach (NoteTable n in listNotes)
+                {
+                    nids.Add(n.Id);
+                    res.Add(new object[] { AddToStr(tags, n.Tags),
+                                           DateTimeOffset.Now.ToUnixTimeSeconds(),
+                                           collection.Usn, n.Id });
+                }
+            }
+            else
+            {
+                foreach (NoteTable n in listNotes)
+                {
+                    nids.Add(n.Id);
+                    res.Add(new object[] { RemoveFromStr(tags, n.Tags),
+                                           DateTimeOffset.Now.ToUnixTimeSeconds(),
+                                           collection.Usn, n.Id });
+                }
+            }
+
+            // update tags
+            collection.Database.ExecuteMany("update notes set tags=:t,mod=:n,usn=:u where id = :id", res);
         }
 
-        private Dictionary<string, object> FixRow(List<notes> res, SomeFunc fn, string tags)
+        private Dictionary<string, object> FixRow(List<NoteTable> res, SomeFunc fn, string tags)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-            foreach (notes row in res)
+            foreach (NoteTable row in res)
             {
                 dict.Add("id", row.Id);
                 dict.Add("t", fn(tags, row.Tags));
@@ -274,11 +304,14 @@ namespace AnkiU.AnkiCore
             SortedSet<string> strippedTags = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach(string t in tagList)
             {
-                string s = sCanonify.Replace(t, "");
+                string s = canonifyRegex.Replace(t, "");
                 foreach(string existingTag in this.tags.Keys)
                 {
                     if (s.Equals(existingTag, StringComparison.OrdinalIgnoreCase))
+                    {
                         s = existingTag;
+                        break;
+                    }
                 }
                 strippedTags.Add(s);
             }
@@ -289,14 +322,14 @@ namespace AnkiU.AnkiCore
         {
             foreach (string k in this.tags.Keys)
             {
-                this.tags.Add(k, JsonValue.CreateNumberValue(0));
+                this.tags[k] = JsonValue.CreateNumberValue(0);
             }
             Save();
         }
 
         public void Add(string key, int value)
         {
-            this.tags.Add(key, JsonValue.CreateNumberValue(value));
+            this.tags[key] = JsonValue.CreateNumberValue(value);
         }
     }
 }

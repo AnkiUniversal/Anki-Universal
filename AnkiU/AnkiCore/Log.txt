@@ -1,24 +1,63 @@
-﻿				Python					Android
+﻿								Python	&	Android
 ------------------------------------------------------------------------
-DB:								TODO: Change to use async
+DB:								All changes
 ------------------------------------------------------------------------
-Media:						    Regrex in writeData can cause problems
+Media:						    Regex in writeData can cause problems
 								Change "notes" in query string to "Note"
 								flds -> Fields
 								Change _mTime() to GetTimeLastModified()
 								Combine lastUsn and seLastUsn into property LastUsn
 								Change SyncInfo to GetSyncInfo
+								Change have() to Have()
+								Change findChanges() to ScanForChanges()
 ------------------------------------------------------------------------
 Utils:							Change SplitFileName to SplitNameAndExtension
 ------------------------------------------------------------------------
 Collection:                     Change server to isServer
+								Change isEmpty to IsCardEmpty
+								Change DueForDid() to DueOfCardForDid
+								WARNING: _renderQA() and renderQA() are two different functions
+								Change renderQA() to BulkRenderQA()
+								Change _renderQA() to renderQA()
+
+								both are used in other places of java ver
+								Change remNotes() to RemoveNotesAndCards()
+
+								Compare with python:
+								For field _usn used GetUsnForSync()
+								For method usn() used property Usn
 ------------------------------------------------------------------------
 Deck:                           Change mDconf to deckConf
+								Change mDecks to deckDict
 								Change _path to SplitPath
 								Change function name() to GetDeckName()
 								Change function nameOrNone to GetDeckNameOrNull()
 								Change function cids to GetCardIds()
+								Change Id() to AddOrResuedDeck()
+								Change ConfId() to CreateNewConfiguration()
 ------------------------------------------------------------------------
 Model:                          Change mMod to modifiedTime
-								Change function nids to GetNoteIds()
-								
+								Change function nids() to GetNoteIds()
+								Change function UseCount() to NoteUsedCount()
+------------------------------------------------------------------------
+Tags:						    Chang inList() to IsInList()
+------------------------------------------------------------------------
+Card:							Change mIvl to interval
+								Change flush() to SaveChangesToDatabase()
+								Change note() to LoadNote()
+------------------------------------------------------------------------
+Schedule						WARNING: Python ver use lambda function for cntFn
+								while java ver did not
+								Change NewForDeck() to NewCountForDeck()
+								Change GetCard() to PopCard()
+								Change ForgetCards() to ResetCards()
+------------------------------------------------------------------------				
+Storage:                        Change Collection() to OpenOrCreateCollection()
+------------------------------------------------------------------------
+Finder:							Change dids() to GetChildDeckIds()
+------------------------------------------------------------------------
+Importer						Change ts() to IncreaseThenGetTimeStamp()
+------------------------------------------------------------------------
+Note:							Change Flush() to SaveChangesToDatabase()
+								Change _remNotes() to RemoveNotes()
+								Change remNotes() to RemoveNotesAndCards()

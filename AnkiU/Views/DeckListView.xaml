@@ -1,0 +1,103 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.ViewModels"
+    xmlns:DataBindingConverters="using:AnkiU.UIUtilities.DataBindingConverters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" x:Name="userControl"
+    x:Class="AnkiU.Views.DeckListView"
+    xmlns:data="using:AnkiU.Models"
+    mc:Ignorable="d"   
+    d:DesignHeight="300" 
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        
+        <DataBindingConverters:NumberOfCardToSolidBrushConverter x:Key="NumberOfCardToSolidBrushConverter"/>
+             
+    </UserControl.Resources>
+
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0" Padding="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock   Foreground="{Binding Foreground,ElementName=userControl}" Grid.Column="0" Grid.ColumnSpan="2" Text="Decks" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+            <Grid Grid.Column="2" Padding="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock   Foreground="{Binding Foreground,ElementName=userControl}" Grid.Column="0" Margin="-15,0,0,0"  Text="New"  HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+                <TextBlock   Foreground="{Binding Foreground,ElementName=userControl}" Grid.Column="1" Margin="-20,0,0,0" Text="Due" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+            </Grid>
+        </Grid>
+
+        <ListView x:Name="ListView" BorderBrush="{StaticResource DeckListBorderColorBrush}" BorderThickness="0,2,0,0"
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Stretch" 
+                  Grid.Row="1" 
+                  Background="Transparent"    
+                  Foreground="{Binding Foreground,ElementName=userControl}"
+                  AutomationProperties.AutomationId="ListGridView"
+                  AutomationProperties.Name="List Items"
+                  IsSwipeEnabled="False"
+                  IsItemClickEnabled="True"
+                  SelectionMode="None"
+                  ItemsSource="{Binding}" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ItemClick="ListViewItemClickHandler">
+            <ListView.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </ListView.Transitions>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="BorderBrush" Value="{StaticResource DeckListItemColorBrush}" />
+                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter Property="Template" Value="{StaticResource DeckItemListViewType}"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="data:DeckInformation">
+                    <Grid x:Name="GridDeckList" Margin="0,5,0,5" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="Name" Grid.Column="0" Grid.ColumnSpan="2" Text="{x:Bind Name, Mode=OneWay}" 
+                                   Foreground="{Binding Foreground, ElementName=userControl}"
+                           HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="Wrap"/>
+
+                        <Grid Grid.Column="2" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="NewCards" 
+            			Text="{x:Bind NewCards, Mode=OneWay}" Grid.Column="0" 
+            			HorizontalAlignment="Center" VerticalAlignment="Center" 
+                        Foreground="{x:Bind NewCards, Converter={StaticResource NumberOfCardToSolidBrushConverter},  Mode=OneWay}"  />
+
+                            <TextBlock x:Name="DueCards" 
+            			Text="{x:Bind DueCards, Mode=OneWay}" Grid.Column="1" 
+                        Foreground="{x:Bind DueCards, Converter={StaticResource NumberOfCardToSolidBrushConverter},  Mode=OneWay}" 
+            			HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</UserControl>

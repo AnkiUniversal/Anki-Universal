@@ -1,0 +1,46 @@
+﻿<ContentDialog
+    x:Class="AnkiU.UserControls.HyperLinkDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    
+    PrimaryButtonText="OK"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="OKButtonClick"
+    SecondaryButtonClick="CancleButtonClick">
+
+    <Grid Margin="0,30,0,0" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Left" Text="Link" Grid.Column="0"/>
+        <TextBox Grid.Row="0" x:Name="linkRefTextBox"  
+                             PlaceholderText="Link to website"
+                             HorizontalAlignment="Stretch" 
+                             TextAlignment="Left" 
+                             VerticalAlignment="Center"
+                             Grid.Column="2">
+        </TextBox>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"  HorizontalAlignment="Left" Text="Text"/>
+        <TextBox Grid.Row="2" Grid.Column="2" x:Name="linkNameTextBox"  
+                             PlaceholderText="Display text"
+                             HorizontalAlignment="Stretch" 
+                             TextAlignment="Left" 
+                             VerticalAlignment="Center"
+                             >
+        </TextBox>
+ 
+    </Grid>
+</ContentDialog>

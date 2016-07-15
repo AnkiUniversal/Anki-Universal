@@ -1,0 +1,276 @@
+﻿<Page 
+    xmlns:views="using:AnkiU.Views" 
+    x:Class="AnkiU.Pages.SearchPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="userControl"
+    Foreground="Black"
+    Background="{StaticResource BackgroundNormal}"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <MenuFlyout Placement="Bottom" x:Key="CardListViewContextMenu" >
+            <MenuFlyoutItem Text="Select All" Style="{StaticResource IconMenuFlyoutItem}" Tag="SelectAll" Click="SelectAllMenuFlyoutItemClick"/>
+            <MenuFlyoutItem Text="Unselect All" Style="{StaticResource IconMenuFlyoutItem}" Tag="ClearSelection" Click="UnselectAllMenuFlyoutItemClick"/>
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="View Card" Style="{StaticResource IconMenuFlyoutItem}" Tag="View" Click="ViewCardMenuFlyoutClickHandler"/>
+            <MenuFlyoutItem Text="Edit Note" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource EditNoteIcon}" Click="EditMenuFlyoutItemClickHandler"/>
+            <MenuFlyoutSubItem Text="Change Due" Style="{StaticResource IconMenuFlyoutSubItem}" Tag="CalendarDay">
+                <MenuFlyoutItem Text="Reschedule" Style="{StaticResource IconMenuFlyoutItem}" Tag="CalendarReply" Click="RescheduleMenuFlyoutItemClickHandler"/>
+                <MenuFlyoutItem Text="Suspend" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource SuspendCardIcon}" Click="SuspendMenuFlyoutItemClickHandler"/>
+                <MenuFlyoutItem Text="Unsuspend" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource UnSuspendCardIcon}" Click="UnsuspendMenuFlyoutItemClickHandler"/>
+                <MenuFlyoutItem Text="Reset" Style="{StaticResource IconMenuFlyoutItem}" Tag="RepeatAll" Click="ResetMenuFlyoutItemClickHandler"/>
+            </MenuFlyoutSubItem>
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="Delete" Style="{StaticResource IconMenuFlyoutItem}" Tag="Delete" Click="DeleteMenuFlyoutItemClick"/>
+        </MenuFlyout>
+
+    </Page.Resources>
+
+    <Grid x:Name="mainGrid">
+
+        <RelativePanel Background="{Binding Background, ElementName=userControl}">
+
+            <ProgressRing x:Name="progressRing" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" 
+                      Width="80" Height="80" Canvas.ZIndex="1" Visibility="Collapsed" />
+
+            <views:DeckNameView x:Name="deckNameView" Margin="5,10,5,3" Height="37"
+                            RelativePanel.AlignTopWithPanel="True" 
+                            RelativePanel.AlignLeftWithPanel="True" 
+                            RelativePanel.AlignRightWithPanel="True" 
+                            Background="{Binding Background, ElementName=userControl}" Foreground="{Binding Foreground, ElementName=userControl}"/>
+
+            <views:TagInformationView Margin="2,0,5,0"
+            RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="deckNameView"
+            Height="35" AddVisibility="Collapsed" x:Name="tagInformationView"/>
+
+            <StackPanel Orientation="Horizontal" x:Name="cardStateRoot" Padding="0" Height="37"
+                     RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="tagInformationView" >
+                <TextBlock TextAlignment="Left" Text="Card state:" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=userControl}"/>
+                <CheckBox Content="New" MinWidth="60" Margin="5,0,5,0" Background="{Binding Background, ElementName=userControl}" Foreground="{Binding Foreground, ElementName=userControl}" Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"/>
+                <CheckBox Content="Review" MinWidth="60" Margin="0,0,5,0" Background="{Binding Background, ElementName=userControl}" Foreground="{Binding Foreground, ElementName=userControl}" Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"/>
+                <CheckBox Content="Suspended"  MinWidth="60" Margin="0,0,10,0" Background="{Binding Background, ElementName=userControl}" Foreground="{Binding Foreground, ElementName=userControl}" Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"/>
+            </StackPanel>
+
+            <Button Style="{StaticResource ButtonOrange}" 
+                Margin="0,2,0,0"
+                RelativePanel.AlignLeftWithPanel="True"         
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.Below="cardStateRoot"
+                Padding="0,2.5,0,2.5"                           
+                BorderThickness="0"
+                HorizontalAlignment="Stretch" Background="Transparent" 
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                x:Name="filterExpandToggleButton"
+                Click="FilterExpandToggleButtonClickHandler" RenderTransformOrigin="0.5,0.5">
+                <Button.RenderTransform>
+                    <CompositeTransform x:Name="expandButtonTransform" TranslateX="0"/>
+                </Button.RenderTransform>
+                <Path RenderTransformOrigin="0.5,0.5"  Style="{StaticResource ChevronDoubleDownIcon}"  Fill="White" Margin="0">
+                    <Path.RenderTransform>
+                        <CompositeTransform x:Name="expandSymbolRotation" Rotation="180"/>
+                    </Path.RenderTransform>
+                </Path>
+            </Button>
+
+            <Grid RelativePanel.Below="filterExpandToggleButton" 
+              x:Name="searchTextBoxRoot"
+              BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}"
+              RelativePanel.AlignLeftWithPanel="True" 
+              Padding="0,3,5,3"
+              RelativePanel.AlignRightWithPanel="True" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button Style="{StaticResource ButtonGray}" BorderThickness="0" 
+                    Background="Transparent" Width="35" Height="35"
+                    Foreground="{Binding Foreground, ElementName=userControl}" 
+                    Padding="0" VerticalAlignment="Stretch" Click="SearchButtonClickHandler">
+                    <SymbolIcon Symbol="Find"  />
+                </Button>
+                <TextBox Grid.Column="1"  PlaceholderText="Search..." x:Name="searchTextBox"
+                     Foreground="{Binding Foreground, ElementName=userControl}"                     
+                                 VerticalAlignment="Center" Style="{StaticResource SearchTextBox}"                 
+                                 HorizontalAlignment="Stretch" TextWrapping="Wrap"
+                                 TextAlignment="Left" IsSpellCheckEnabled="False" >
+                    <TextBox.InputScope>
+                        <InputScope>
+                            <InputScope.Names>
+                                <InputScopeName NameValue="Search"/>
+                            </InputScope.Names>
+                        </InputScope>
+                    </TextBox.InputScope>
+                </TextBox>
+                <Button Margin="8,0,3,0" Style="{StaticResource ButtonHelp}" Grid.Column="2" Width="22" Height="23" >
+                    <Button.Flyout>
+                        <Flyout>
+                            <ContentPresenter FontSize="15" FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" >
+                                <RichTextBlock TextWrapping="Wrap" Width="330">
+                                    <Paragraph >
+                                        Right-click (or touch &amp; hold) on column headers to change display contents.
+                                        <LineBreak/>
+                                        Right-click (or touch &amp; hold) on search results to see a list of possible actions.
+                                        <LineBreak/>
+                                    </Paragraph>
+
+                                    <Paragraph >
+                                        Normal search combinations like "anki", "-anki", "anki u*", etc., will work.
+                                        <LineBreak/>
+                                    </Paragraph>
+                                    <Paragraph >
+                                        To search for cards in a deck:
+                                    </Paragraph>
+                                    <Paragraph TextAlignment="Center" >
+                                        <Italic>"deck:Default" anki</Italic>
+                                    </Paragraph>
+
+                                    <Paragraph>
+                                        To exclude a deck from seaching, use minus sign:
+                                    </Paragraph>
+                                    <Paragraph TextAlignment="Center" >
+                                        <Italic>-"deck:Default" anki</Italic>
+                                    </Paragraph>
+
+                                    <Paragraph  >
+                                        To search cards with tags:
+                                    </Paragraph>
+                                    <Paragraph TextAlignment="Center" >
+                                        <Italic>"deck:Default" tag:leech anki</Italic>
+                                    </Paragraph>
+
+                                    <Paragraph >
+                                        Similarly, use minus sign to exclude tags:
+                                    </Paragraph>
+                                    <Paragraph TextAlignment="Center" >
+                                        <Italic>"deck:Default" tag:leech -tag:grammar anki</Italic>
+                                        <LineBreak />
+                                    </Paragraph>
+
+                                    <Paragraph TextAlignment="Center">
+                                        <Hyperlink NavigateUri="http://ankisrs.net/docs/manual.html#searching">More details</Hyperlink>
+                                    </Paragraph>
+                                </RichTextBlock>
+                            </ContentPresenter>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+
+            <views:CardInformationView  
+            RelativePanel.Below="searchTextBoxRoot" 
+            RelativePanel.Above="pageButtonRoot"
+            RelativePanel.AlignLeftWithPanel="True" 
+            RelativePanel.AlignRightWithPanel="True"            
+            x:Name="cardInformationView" Foreground="{Binding Foreground, ElementName=userControl}"/>
+
+            <Grid x:Name="pageButtonRoot"       Background="{StaticResource ButtonBackGroundNormal}"    
+              RelativePanel.AlignLeftWithPanel="True"
+              RelativePanel.AlignRightWithPanel="True"
+              RelativePanel.AlignBottomWithPanel="True" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" MinWidth="100" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource ButtonBlue}" 
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch" 
+                    x:Name="previousButton"
+                    Padding="0" Click="PreviousPageButtonClickHandler"
+                    BorderBrush="White" BorderThickness="0"
+                    Background="Transparent" >
+                    <Path Style="{StaticResource PreviousIcon}" Fill="White" Width="16" Height="16" />
+                </Button>
+
+                <Button HorizontalAlignment="Stretch" Height="24"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center"
+                    BorderThickness="0" Padding="0"
+                    Style="{StaticResource ButtonBlue}" 
+                    Grid.Column="1">
+                    <Grid >
+                        <Path Style="{StaticResource TriangleUpIcon}" Fill="White" Stroke="White" Height="4" Width="11" VerticalAlignment="Top" HorizontalAlignment="Center"
+                          Margin="0,1,0,0"/>
+                        <TextBlock HorizontalAlignment="Stretch" Margin="0,3,0,0"
+                       x:Name="pageTextBlock"
+                       FontSize="16" Foreground="White"
+                       VerticalAlignment="Center" 
+                       TextAlignment="Center" 
+                       Text="Page" />
+                    </Grid>
+                    <Button.Flyout>
+                        <Flyout Placement="Top" x:Name="pageFlyout">
+                            <StackPanel Orientation="Vertical" Width="130">
+                                <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
+                                    Padding="0"
+                                    Content="Show All Results" Click="ShowAllResultsButtonClickHandler"
+                                    HorizontalAlignment="Stretch" />
+                                <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
+                                    Padding="0"
+                                    Content="80 cards/page" Click="EightyPageButtonClickHandler"
+                                    HorizontalAlignment="Stretch" />
+                                <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
+                                    Padding="0"
+                                    Content="40 cards/page" Click="FortyCardPageButtonClickHandler"
+                                    HorizontalAlignment="Stretch" />
+                                <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
+                                    Padding="0"
+                                    Content="20 cards/page"
+                                    HorizontalAlignment="Stretch" Click="TwentyCardPageButtonClickHandler" />
+                                <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
+                                    Padding="0"
+                                    Content="10 cards/page"
+                                    HorizontalAlignment="Stretch" Click="TenCardPageButtonClickHandler" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+                <Button Style="{StaticResource ButtonBlue}" 
+                    HorizontalAlignment="Stretch"
+                    BorderBrush="White" BorderThickness="0"
+                    VerticalAlignment="Stretch"
+                    Padding="0" x:Name="nextButton"
+                    Click="NextButtonClickHandler"
+                    Grid.Column="2"
+                    Background="Transparent" >
+                    <Path Style="{StaticResource NextIcon}"  Fill="White" Width="16" Height="16"/>
+                </Button>
+            </Grid>
+
+        </RelativePanel>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WindowSizeStates" >
+                <VisualState  x:Name="narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState  x:Name="medium">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="700" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="tagInformationView.(RelativePanel.AlignLeftWithPanel)" Value="False" />
+                        <Setter Target="cardStateRoot.(RelativePanel.AlignRightWithPanel)" Value="False" />
+                        <Setter Target="tagInformationView.(RelativePanel.RightOf)" Value="cardStateRoot" />
+                        <Setter Target="cardStateRoot.(RelativePanel.Below)" Value="deckNameView" />
+                        <Setter Target="cardStateRoot.(BorderBrush)" Value="Gray" />
+                        <Setter Target="cardStateRoot.(BorderThickness)" Value="0,0,2,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>
+
+    

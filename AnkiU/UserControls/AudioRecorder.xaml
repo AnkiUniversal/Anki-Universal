@@ -1,0 +1,81 @@
+﻿<UserControl
+    x:Class="AnkiU.UserControls.AudioRecorder"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="80"
+    d:DesignWidth="250">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel  Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock TextAlignment="Center" HorizontalAlignment="Center" x:Name="hourTextBlock" Text="00" VerticalAlignment="Center" FontSize="20" />
+            <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text=":" VerticalAlignment="Center" FontSize="20" />
+            <TextBlock TextAlignment="Center" HorizontalAlignment="Center" x:Name="minueTextBlock" Text="00" VerticalAlignment="Center" FontSize="20" />
+            <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text=":" VerticalAlignment="Center" FontSize="20" />
+            <TextBlock TextAlignment="Center" HorizontalAlignment="Center" x:Name="secondTextBlock" Text="00" VerticalAlignment="Center" FontSize="20" />
+        </StackPanel>
+        
+        <Button x:Name="recordButton" Grid.Column="0" Grid.Row="1" 
+                Click="RecordButtonClickHandler" HorizontalAlignment="Center"
+                Style="{StaticResource ButtonGray}" Background="Transparent">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Start" Grid.Column="1" Margin="5,0,0,0"/>
+                <SymbolIcon Symbol="Microphone" Grid.Column="0" />
+            </Grid>
+        </Button>
+        <Button x:Name="stopRecordButton" Grid.Column="0"  Grid.Row="1"  Click="StopRecordButtonClickHandler" 
+                HorizontalAlignment="Center" Visibility="Collapsed"
+                Style="{StaticResource ButtonGray}" Background="Transparent">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Stop" Grid.Column="1" Margin="5,0,0,0"/>
+                <SymbolIcon Symbol="Stop" Grid.Column="0" />
+            </Grid>
+        </Button>
+        <Button x:Name="playButton" Grid.Column="1" Grid.Row="1" IsEnabled="False" 
+                Click="PlayButtonClickHandler"  HorizontalAlignment="Center"
+                Style="{StaticResource ButtonGray}" Background="Transparent">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Play" Grid.Column="1" Margin="5,0,0,0"/>
+                <SymbolIcon Symbol="Play" Grid.Column="0" />
+            </Grid>
+        </Button>
+
+        <Button x:Name="stopPlayButton" Grid.Column="1" Grid.Row="1"   Visibility="Collapsed"
+                Click="StopPlayButtonClickHandler"  HorizontalAlignment="Center"
+                Style="{StaticResource ButtonGray}" Background="Transparent">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Stop" Grid.Column="1" Margin="5,0,0,0"/>
+                <SymbolIcon Symbol="Stop" Grid.Column="0" />
+            </Grid>
+        </Button>
+       
+    </Grid>
+</UserControl>

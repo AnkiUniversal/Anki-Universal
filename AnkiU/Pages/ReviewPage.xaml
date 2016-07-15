@@ -1,0 +1,174 @@
+﻿<Page
+    x:Class="AnkiU.Pages.ReviewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU"
+    xmlns:triggers="using:AnkiU.UIUtilities"
+    xmlns:views="using:AnkiU.Views"
+    xmlns:controls="using:AnkiU.UserControls"
+    xmlns:DataBindingConverters="using:AnkiU.DataBindingConverters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="userControl"
+    d:DesignHeight="600"
+    Background="{StaticResource BackgroundNormal}"
+    Foreground="Black"
+    d:DesignWidth="320" SizeChanged="PageSizeChanged" >
+
+    <Page.Resources>
+
+        <Flyout x:Name="editFlyout" x:Key="editFlyoutTemplate">
+            <ContentPresenter Padding="0">
+                <StackPanel Width="180">
+
+                    <Button x:Name="editNoteButton" Padding="0" VerticalAlignment="Center" Height="35" HorizontalAlignment="Stretch"
+                            Background="Transparent"  HorizontalContentAlignment="Left" Style="{StaticResource ButtonGray}" 
+                            Click="EditNoteButtonClickHandler" ToolTipService.ToolTip="Ctrl + E">
+                        <Grid Padding="0" Margin="5,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Path Style="{StaticResource EditNoteIcon}" Stroke="Transparent" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="2" Text="Edit Note" HorizontalAlignment="Left" TextAlignment="Left"/>
+                        </Grid>
+                    </Button>
+
+                    <Button x:Name="rescheduleButton" Padding="0" VerticalAlignment="Center" Height="35" HorizontalAlignment="Stretch"
+                            Background="Transparent"  HorizontalContentAlignment="Left" Style="{StaticResource ButtonGray}" ToolTipService.ToolTip="Ctrl + R"
+                            Click="RescheduleButtonClickHandler">
+                        <Grid Padding="0" Margin="5,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <SymbolIcon Symbol="CalendarReply" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="2" Text="Reschedule Card" HorizontalAlignment="Left" TextAlignment="Left" />
+                        </Grid>
+                    </Button>
+
+                    <Button x:Name="suspendButton" Padding="0" VerticalAlignment="Center" Height="35" HorizontalAlignment="Stretch"
+                            Background="Transparent"  HorizontalContentAlignment="Left" Style="{StaticResource ButtonGray}" ToolTipService.ToolTip="Ctrl + P"
+                            Click="SuspendButtonClickHandler">
+                        <Grid Padding="0" Margin="5,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Path Style="{StaticResource SuspendCardIcon}" HorizontalAlignment="Left" Stroke="Transparent"/>
+                            <TextBlock Grid.Column="2" Text="Suspend Card" HorizontalAlignment="Left" TextAlignment="Left" />
+                        </Grid>
+                    </Button>
+
+                    <Border BorderBrush="Black" BorderThickness="0,1,0,0" Margin="0,10,0,0"/>
+                    <Button x:Name="deleteButton" Padding="0" VerticalAlignment="Center" Height="35" HorizontalAlignment="Stretch"
+                            Background="Transparent"  HorizontalContentAlignment="Left" Style="{StaticResource ButtonGray}" ToolTipService.ToolTip="Ctrl + D"
+                            Click="DeleteButtonClickHandler">
+                        <Grid Padding="0" Margin="5,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <SymbolIcon Symbol="Delete" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="2" Text="Delete" HorizontalAlignment="Left" TextAlignment="Left" />
+                        </Grid>
+                    </Button>
+                </StackPanel>
+            </ContentPresenter>
+        </Flyout>
+
+        <Flyout x:Name="rescheduleFlyout" x:Key="rescheduleFlyoutTemplate">
+            <ContentPresenter>
+                <Grid Width="300">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Row="0" x:Name="nextDuetimeTextBox"  
+                             PlaceholderText="Review again in: day(s)" HorizontalAlignment="Stretch" TextAlignment="Left" VerticalAlignment="Center" TextChanging="NextIntervalTextBoxTextChangingHandler">
+                        <TextBox.InputScope>
+                            <InputScope>
+                                <InputScope.Names>
+                                    <InputScopeName NameValue="Number"/>
+                                </InputScope.Names>
+                            </InputScope>
+                        </TextBox.InputScope>
+                    </TextBox>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="nextDueTimeOkButton" Width="130" Grid.Column="0" Content="OK" Style="{StaticResource ButtonBlue}" BorderThickness="0" Margin="0,5,0,0" HorizontalAlignment="Left" Click="NextDueTimeOkButtonClickHandler"/>
+                        <Button x:Name="nextDueTimeCancelButton" Width="130" Grid.Column="1" Content="Cancel" Style="{StaticResource ButtonGray}" BorderBrush="Black" BorderThickness="1" Margin="5,5,0,0" HorizontalAlignment="Right" Click="NextDueTimeCancelButtonClickHandler"/>
+                    </Grid>
+                </Grid>
+            </ContentPresenter>
+        </Flyout>
+
+        <Storyboard x:Name="fadeOutBoard" Duration="00:00:0.2" Completed="StoryboardOutBoardCompletedHandler">
+            <DoubleAnimation x:Name="fadeOutAnimate" AutoReverse="True" RepeatBehavior="1x"
+                    From="1" To="0" Duration="00:00:0.1" 
+                    Storyboard.TargetName="againButton" 
+                    Storyboard.TargetProperty="Opacity">
+            </DoubleAnimation>
+        </Storyboard>
+    </Page.Resources>
+
+    <Grid x:Name="mainGrid" Background="{Binding Background, ElementName=userControl}" 
+          >
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="cardViewGrid" Height="*"/>
+            <RowDefinition x:Name="buttonGrid" Height="50"/>
+        </Grid.RowDefinitions>
+
+        <Ellipse x:Name="customDueTimeShowPoint" Width="1" Height="1" Fill="Transparent" 
+                 Stroke="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+        <InkCanvas Canvas.ZIndex="0" x:Name="inkCanvas" 
+                   Visibility="Collapsed" x:DeferLoadStrategy="Lazy" Grid.Row="0"></InkCanvas>
+
+        <controls:CardView Canvas.ZIndex="1"  Grid.Row="0" x:Name="cardView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden" />
+
+        <controls:CardButtonView x:Name="showAnswerButton" Grid.Row="1" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                 Visibility="Collapsed" AutomationProperties.AccessibilityView="Content"/>
+
+        <StackPanel x:Name="answerButtonStack" Grid.Row="1" VerticalAlignment="Stretch" Orientation="Horizontal">
+            <controls:CardButtonView x:Name="againButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
+
+            <controls:CardButtonView x:Name="hardButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
+
+            <controls:CardButtonView x:Name="goodButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
+
+            <controls:CardButtonView x:Name="easyButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
+        </StackPanel>
+
+        <Popup x:Name="buttonPopup"  Margin="0,0,0,30" Width="50" 
+               VerticalAlignment="Bottom" HorizontalAlignment="Left">
+            <Popup.Resources>
+                <Storyboard x:Name="TextFadeInOut" Completed="StoryboardOutBoardCompletedHandler">
+                    <DoubleAnimation
+                      Storyboard.TargetName="buttonPopupText"
+                      Storyboard.TargetProperty="Opacity" 
+                      BeginTime="00:00:00"  From="1" To="0" Duration="0:0:0.2" />
+                </Storyboard>
+            </Popup.Resources>
+            <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Opacity="0" 
+                       x:Name="buttonPopupText" Foreground="{StaticResource ButtonBackGroundNormal}" FontSize="19" FontWeight="SemiBold">
+             </TextBlock>
+        </Popup>
+        
+        <controls:NotificationPopup Grid.Row="0" x:Name="popup" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                    Background="{Binding Background, ElementName=userControl}" 
+                                    Foreground="{Binding Foreground, ElementName=userControl}" />
+    </Grid>
+
+
+</Page>

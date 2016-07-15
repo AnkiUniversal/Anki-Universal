@@ -1,0 +1,22 @@
+﻿<ContentDialog
+    x:Class="AnkiU.UserControls.ProgressDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="TITLE"            
+    VerticalAlignment="Center"
+    Margin="0"
+    Padding="0">
+
+    <Grid Margin="0,20,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" x:Name="progressBarLabel" Margin="5,0,0,10" Text="Progress is runing" TextWrapping="Wrap" FontSize="20" Foreground="Black" HorizontalAlignment="Center" />
+        <ProgressBar Grid.Row="1" x:Name="progressBar" Margin="10,0,10,0" HorizontalAlignment="Stretch" Height="10" IsIndeterminate="False" />
+    </Grid>
+</ContentDialog>

@@ -1,4 +1,21 @@
-﻿using System;
+﻿/*
+Copyright (C) 2016 Anki Universal Team <ankiuniversal@outlook.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,111 +25,115 @@ using System.Diagnostics;
 
 namespace AnkiU.AnkiCore
 {
-    class Deck
+    public class Deck
     {
         public const string defaultDeck = ""
             + "{"
-                + "'newToday': [0, 0]," // currentDay, count
-                + "'revToday': [0, 0],"
-                + "'lrnToday': [0, 0],"
-                + "'timeToday': [0, 0]," // time in ms
-                + "'conf': 1,"
-                + "'usn': 0,"
-                + "'desc': \"\","
-                + "'dyn': 0," // anki uses int/bool interchangably here
-                + "'collapsed': False,"
+                + "\"newToday\": [0, 0]," // currentDay, count
+                + "\"revToday\": [0, 0],"
+                + "\"lrnToday\": [0, 0],"
+                + "\"timeToday\": [0, 0]," // time in ms
+                + "\"conf\": 1,"
+                + "\"usn\": 0,"
+                + "\"desc\": \"\","
+                + "\"dyn\": 0," // anki uses int/bool interchangably here
+                + "\"collapsed\": false,"
                 // added in beta11
-                + "'extendNew': 10,"
-                + "'extendRev': 50"
+                + "\"extendNew\": 10,"
+                + "\"extendRev\": 50"
             + "}";
 
         private const string defaultDynamicDeck = ""
             + "{"
-                + "'newToday': [0, 0],"
-                + "'revToday': [0, 0],"
-                + "'lrnToday': [0, 0],"
-                + "'timeToday': [0, 0],"
-                + "'collapsed': False,"
-                + "'dyn': 1,"
-                + "'desc': \"\","
-                + "'usn': 0,"
-                + "'delays': null,"
-                + "'separate': True,"
+                + "\"newToday\": [0, 0],"
+                + "\"revToday\": [0, 0],"
+                + "\"lrnToday\": [0, 0],"
+                + "\"timeToday\": [0, 0],"
+                + "\"collapsed\": false,"
+                + "\"dyn\": 1,"
+                + "\"desc\": \"\","
+                + "\"usn\": 0,"
+                + "\"delays\": null,"
+                + "\"separate\": true,"
                 // list of (search, limit, order); we only use first element for now
-                + "'terms': [[\"\", 100, 0]],"
-                + "'resched': True,"
-                + "'return': True" // currently unused
+                + "\"terms\": [[\"\", 100, 0]],"
+                + "\"resched\": true,"
+                + "\"return\": true" // currently unused
             + "}";
 
-        public readonly string defaultConf = ""
+        public static readonly string defaultConf = ""
             + "{"
-                + "'name': \"Default\","
-                + "'new': {"
-                    + "'delays': [1, 10],"
-                    + "'ints': [1, 4, 7]," // 7 is not currently used
-                    + "'initialFactor': 2500,"
-                    + "'separate': True,"
-                    + "'order': " + (int)NewCardInsertOrder.DUE + ","
-                    + "'perDay': 20,"
-                    // may not be set on old decks
-                    + "'bury': True"
+                + "\"name\": \"Default\","
+                + "\"new\": {"
+                    + "\"delays\": [1, 10],"
+                    + "\"ints\": [1, 4, 7]," // 7 is not currently used
+                    + "\"initialFactor\": 2500,"
+                    + "\"separate\": true,"
+                    + "\"order\": " + (int)NewCardInsertOrder.DUE + ","
+                    + "\"perDay\": 20,"
+                    // Python and java ver set this to true by default
+                    // But in AnkiU we set it to false since when user creates
+                    // a sibling card they expects to be shown immediately
+                    + "\"bury\": false"
                 + "},"
-                + "'lapse': {"
-                    + "'delays': [10],"
-                    + "'mult': 0,"
-                    + "'minInt': 1,"
-                    + "'leechFails': 8,"
+                + "\"lapse\": {"
+                    + "\"delays\": [10],"
+                    + "\"mult\": 0,"
+                    + "\"minInt\": 1,"
+                    + "\"leechFails\": 8,"
                     // type 0=suspend, 1=tagonly
-                    + "'leechAction': 0"
+                    + "\"leechAction\": 0"
                 + "},"
-                + "'rev': {"
-                    + "'perDay': 100,"
-                    + "'ease4': 1.3,"
-                    + "'fuzz': 0.05,"
-                    + "'minSpace': 1," // not currently used
-                    + "'ivlFct': 1,"
-                    + "'maxIvl': 36500,"
-                    // may not be set on old decks
-                    + "'bury': True"
+                + "\"rev\": {"
+                    + "\"perDay\": 100,"
+                    + "\"ease4\": 1.3,"
+                    + "\"fuzz\": 0.05,"
+                    + "\"minSpace\": 1," // not currently used
+                    + "\"ivlFct\": 1,"
+                    + "\"maxIvl\": 36500,"
+                    // Python and java ver set this to true by default
+                    // But in AnkiU we set it to false since when user creates
+                    // a sibling card they expects to be shown immediately
+                    + "\"bury\": false"
                 + "},"
-                + "'maxTaken': 60,"
-                + "'timer': 0,"
-                + "'autoplay': True,"
-                + "'replayq': True,"
-                + "'mod': 0,"
-                + "'usn': 0"
-            + "}";
+                + "\"maxTaken\": 60,"
+                + "\"timer\": 0,"
+                + "\"autoplay\": true," 
+                + "\"replayq\": true,"
+                + "\"mod\": 0,"
+                + "\"usn\": 0"
+            + "}";       
 
         private Collection collection;
         private Dictionary<long, JsonObject> deckDict;
         private Dictionary<long, JsonObject> deckConf;
         private bool isChanged;
 
+        public Dictionary<long, JsonObject> DeckDict { get { return deckDict; } }
+        public Dictionary<long, JsonObject> DeckConf { get { return deckConf; } }
+
         public Deck(Collection collection)
         {
             this.collection = collection;
         }
 
-        public void Load(string decksName, string dConf)
+        public void Load(string decksName, string deckConf)
         {
             try
             {
                 deckDict = new Dictionary<long, JsonObject>();
-                deckConf = new Dictionary<long, JsonObject>();
+                this.deckConf = new Dictionary<long, JsonObject>();
                 JsonObject decksArray = JsonObject.Parse(decksName);
-                JsonArray ids = decksArray.GetArray();
-                for (uint i = 0; i < ids.Count; i++)
+                foreach (var json in decksArray)
                 {
-                    string id = ids.GetStringAt(i);
-                    deckDict.Add(long.Parse(id), decksArray.GetNamedObject(id));
+                    deckDict.Add(Convert.ToInt64(json.Key), json.Value.GetObject());
                 }
-                JsonObject confArray = JsonObject.Parse(dConf);
-                ids = confArray.GetArray();
-                for (uint i = 0; (ids != null) && (i < ids.Count); i++)
+                JsonObject confArray = JsonObject.Parse(deckConf);
+                foreach (var json in confArray)
                 {
-                    string id = ids.GetStringAt(i);
-                    deckConf.Add(long.Parse(id), confArray.GetNamedObject(id));
+                    this.deckConf.Add(Convert.ToInt64(json.Key), json.Value.GetObject());
                 }
+
             }
             catch (Exception e)
             {
@@ -127,8 +148,8 @@ namespace AnkiU.AnkiCore
             {
                 try
                 {
-                    jObj.Add("mod", JsonValue.CreateNumberValue(DateTimeOffset.Now.ToUnixTimeSeconds()));
-                    jObj.Add("usn", JsonValue.CreateNumberValue(collection.Usn));
+                    jObj["mod"] = JsonValue.CreateNumberValue(DateTimeOffset.Now.ToUnixTimeSeconds());
+                    jObj["usn"] = JsonValue.CreateNumberValue(collection.Usn);
                 }
                 catch (Exception e)
                 {
@@ -138,7 +159,7 @@ namespace AnkiU.AnkiCore
             isChanged = true;
         }
 
-        public void flush()
+        public void SaveChangesToDatabase()
         {
             if (isChanged)
             {
@@ -157,22 +178,36 @@ namespace AnkiU.AnkiCore
             }
         }
 
-        public long? Id(string name)
+        /// <summary>
+        /// Add or reuse deck if already exists.
+        /// </summary>
+        /// <param name="name">Deck's name</param>
+        /// <param name="create">If true, create a new deck if it does not exist</param>
+        /// <returns>Deck ID</returns>
+        public long? AddOrResuedDeck(string name, bool create = true)
         {
-            return Id(name, true);
+            return AddOrResuedDeck(name, create, defaultDeck);
         }
 
-        public long? Id(string name, bool create)
+        /// <summary>
+        /// Add or reuse deck if already exists.
+        /// </summary>
+        /// <param name="name">Deck's name</param>
+        /// <param name="type"></param>
+        /// <returns>Deck ID</returns>
+        public long? AddOrResuedDeck(string name, string type)
         {
-            return Id(name, create, defaultDeck);
+            return AddOrResuedDeck(name, true, type);
         }
 
-        public long? Id(string name, string type)
-        {
-            return Id(name, true, type);
-        }
-
-        public long? Id(string name, bool create, string type)
+        /// <summary>
+        /// Add or reuse deck if already exists.
+        /// </summary>
+        /// <param name="name">Deck's name</param>
+        /// <param name="create">If true, create a new deck if it does not exist</param>
+        /// <param name="type"></param>
+        /// <returns>Deck ID</returns>
+        public long? AddOrResuedDeck(string name, bool create, string type)
         {
             name = name.Replace("\"", "");
             foreach (KeyValuePair<long, JsonObject> d in deckDict)
@@ -189,14 +224,14 @@ namespace AnkiU.AnkiCore
             JsonObject g;
             long id;
             g = JsonObject.Parse(type);
-            g.Add("name", JsonValue.CreateStringValue(name));
+            g["name"] = JsonValue.CreateStringValue(name);
             while (true)
             {
                 id = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 if (!deckDict.ContainsKey(id))
                     break;
             }
-            g.Add("id", JsonValue.CreateNumberValue(id));
+            g["id"] = JsonValue.CreateNumberValue(id);
             deckDict.Add(id, g);
             Save(g);
             MaybeAddToActive();
@@ -206,29 +241,34 @@ namespace AnkiU.AnkiCore
 
         public string EnsureParents(string name)
         {
-            string s = "";
+            StringBuilder s = new StringBuilder();
             string[] path = SplitPath(name);
             if (path.Length < 2)
                 return name;
 
             for (int i = 0; i < path.Length - 1; i++)
             {
-                if (String.IsNullOrEmpty(path[i]))
-                    s += path[i];
+                if (s.Length == 0)
+                    s.Append(path[i]);
                 else
-                    s += "::" + path[i];
+                {
+                    s.Append("::");
+                    s.Append(path[i]);
+                }
 
-                long? did = Id(s);
-                s = GetDeckName(did);
+                long? did = AddOrResuedDeck(s.ToString());
+                s.Clear();
+                s.Append(GetDeckName(did));
             }
-            name = s + "::" + path[path.Length - 1];
-            return name;
+            s.Append("::");
+            s.Append(path[path.Length - 1]);
+            return s.ToString();
         }
 
         private string[] SplitPath(string name)
         {
             string[] sep = new string[] { "::" };
-            return name.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+            return name.Split(sep, StringSplitOptions.None);
         }
 
         public string GetDeckName(long? did, bool def = false)
@@ -279,24 +319,25 @@ namespace AnkiU.AnkiCore
 
         public long Selected()
         {
-            return (long)collection.GetConf().GetNamedNumber("curDeck");
+            return (long)collection.Conf.GetNamedNumber("curDeck");
         }
 
         public void Select(long did)
         {
             string name = deckDict[did].GetNamedString("name");
 
-            collection.GetConf().Add("curDeck", JsonValue.CreateNumberValue(did));
-            // and active decks (current + all children)
-            Dictionary<string, long> actv = Children(did);
+            collection.Conf["curDeck"] = JsonValue.CreateNumberValue(did);
 
+            // and active decks (current + all children)
+            SortedDictionary<string, long> actv = new SortedDictionary<string, long>(Children(did));
             actv.Add(name, did);
+
             JsonArray ja = new JsonArray();
 
             foreach (long n in actv.Values)
                 ja.Add(JsonValue.CreateNumberValue(n));
 
-            collection.GetConf().Add("activeDecks", ja);
+            collection.Conf["activeDecks"] = ja;
             isChanged = true;
         }
 
@@ -328,7 +369,7 @@ namespace AnkiU.AnkiCore
         }
 
         public void Remove(long deckId, bool cardsToo = false, bool childrenToo = true)
-        {
+        {            
             JsonObject deck;
             if (deckId == 1)
             {
@@ -337,7 +378,7 @@ namespace AnkiU.AnkiCore
                 deck = Get(deckId);
                 if (deck.GetNamedString("name").Contains("::"))
                 {
-                    deck.Add("name", JsonValue.CreateStringValue("Default"));
+                    deck["name"] = JsonValue.CreateStringValue("Default");
                     Save(deck);
                 }
                 return;
@@ -360,7 +401,7 @@ namespace AnkiU.AnkiCore
             else
             {
                 RemoveIfChildrenToo(deckId, childrenToo, cardsToo);
-                RemoveIfCardsToo(deckId, cardsToo);
+                RemoveIfNoteAndCardsToo(deckId, cardsToo);
             }
 
             deckDict.Remove(deckId);
@@ -375,15 +416,15 @@ namespace AnkiU.AnkiCore
                     Remove(id, cardsToo);
         }
 
-        private void RemoveIfCardsToo(long deckId, bool cardsToo)
+        private void RemoveIfNoteAndCardsToo(long deckId, bool cardsToo)
         {
             string sql;
             if (cardsToo)
             {
                 // don't use cids(), as we want cards in cram decks too
                 sql = "SELECT id FROM cards WHERE did = " + deckId + " OR odid = " + deckId;
-                long[] cids = (from s in collection.Database.QueryColumn<Card>(sql) select s.Id).ToArray();
-                collection.RemoveCards(cids);
+                long[] cids = (from s in collection.Database.QueryColumn<CardIdOnlyTable>(sql) select s.Id).ToArray();
+                collection.RemoveCardsAndNoteIfNoCardsLeft(cids);
             }
         }
 
@@ -395,7 +436,7 @@ namespace AnkiU.AnkiCore
 
         public LinkedList<long> Active()
         {
-            JsonArray ja = collection.GetConf().GetNamedArray("activeDecks");
+            JsonArray ja = collection.Conf.GetNamedArray("activeDecks");
             LinkedList<long> result = new LinkedList<long>();
             for (uint i = 0; i < ja.Count; i++)
             {
@@ -437,6 +478,11 @@ namespace AnkiU.AnkiCore
             return decks;
         }
 
+        public bool HasDeckId(long id)
+        {
+            return deckDict.ContainsKey(id);
+        }
+
         public long[] AllIds()
         {
             return deckDict.Keys.ToArray();
@@ -445,8 +491,8 @@ namespace AnkiU.AnkiCore
         public void Collapse(long deckId)
         {
             JsonObject deck = Get(deckId);
-            deck.Add("collapsed", 
-                JsonValue.CreateBooleanValue(!deck.GetNamedBoolean("collapsed")));
+            deck["collapsed"] = 
+                JsonValue.CreateBooleanValue(!deck.GetNamedBoolean("collapsed"));
             Save(deck);
         }
 
@@ -455,7 +501,7 @@ namespace AnkiU.AnkiCore
             JsonObject deck = Get(deckId);
             string browCollap = "browserCollapsed";
             bool collapsed = deck.GetNamedBoolean(browCollap, false);
-            deck.Add(browCollap, JsonValue.CreateBooleanValue(!collapsed));
+            deck[browCollap] = JsonValue.CreateBooleanValue(!collapsed);
         }
 
         public int Count()
@@ -463,7 +509,7 @@ namespace AnkiU.AnkiCore
             return deckDict.Count();
         }
 
-        public JsonObject ByName(string name)
+        public JsonObject GetDeckByName(string name)
         {
             foreach(JsonObject m in deckDict.Values)
                 if (m.GetNamedString("name").Equals(name))
@@ -474,7 +520,7 @@ namespace AnkiU.AnkiCore
 
         public void Update(JsonObject jObj)
         {
-            deckDict.Add((long)jObj.GetNamedNumber("id"), jObj);
+            deckDict[(long)jObj.GetNamedNumber("id")] = jObj;
             MaybeAddToActive();
             Save();
         }
@@ -493,7 +539,7 @@ namespace AnkiU.AnkiCore
                 string[] subParts = new string[parts.Length - 1];
                 Array.Copy(parts, subParts, subParts.Length);
                 string newParent = String.Join("::", subParts);
-                if (ByName(newParent).GetNamedNumber("dyn") != 0)
+                if (GetDeckByName(newParent).GetNamedNumber("dyn") != 0)
                     throw new DeckRenameException(DeckRenameException.ErrorCode.FILTERED_NOSUBDEKCS);
             }
 
@@ -505,12 +551,12 @@ namespace AnkiU.AnkiCore
                 if(grp.GetNamedString("name").StartsWith(oldName + "::"))
                 {
                     str = grp.GetNamedString("name").ReplaceFirst(oldName + "::", newName + "::");
-                    grp.Add("name", JsonValue.CreateStringValue(str));
+                    grp["name"] = JsonValue.CreateStringValue(str);
                     Save(grp);
                 }
             }
             //adjust name
-            jObj.Add("name", JsonValue.CreateStringValue(newName));
+            jObj["name"] = JsonValue.CreateStringValue(newName);
             // ensure we have parents again, as we may have renamed parent->child
             newName = EnsureParents(newName);
             Save(jObj);
@@ -522,7 +568,7 @@ namespace AnkiU.AnkiCore
         {
             JsonObject draggedDeck = Get(draggedDeckDid);
             string draggedDeckName = draggedDeck.GetNamedString("name");
-            string ontoDeckName = Get(ontoDeckDid).GetNamedString("name");
+            string ontoDeckName; ;
 
             if (ontoDeckDid == null)
             {
@@ -531,12 +577,16 @@ namespace AnkiU.AnkiCore
                     Rename(draggedDeck, BaseName(draggedDeckName));
                 }
             }
-            else if(CanDragAndDrop(draggedDeckName, ontoDeckName))
+            else
             {
-                draggedDeck = Get(draggedDeckDid);
-                draggedDeckName = draggedDeck.GetNamedString("name");
                 ontoDeckName = Get(ontoDeckDid).GetNamedString("name");
-                Rename(draggedDeck, ontoDeckName + "::" + BaseName(draggedDeckName));
+                if (CanDragAndDrop(draggedDeckName, ontoDeckName))
+                {
+                    draggedDeck = Get(draggedDeckDid);
+                    draggedDeckName = draggedDeck.GetNamedString("name");
+                    ontoDeckName = Get(ontoDeckDid).GetNamedString("name");
+                    Rename(draggedDeck, ontoDeckName + "::" + BaseName(draggedDeckName));
+                }
             }
         }
 
@@ -548,7 +598,7 @@ namespace AnkiU.AnkiCore
 
         private bool CanDragAndDrop(string draggedDeckName, string ontoDeckName)
         {
-            if (draggedDeckName.Equals(ontoDeckName)
+            if (draggedDeckName.Equals(ontoDeckName, StringComparison.OrdinalIgnoreCase)
                     || IsParent(ontoDeckName, draggedDeckName)
                     || IsAncestor(draggedDeckName, ontoDeckName))
             {
@@ -570,22 +620,34 @@ namespace AnkiU.AnkiCore
                             ? childDeckPath.Length : parentDeckPath.Count;
             for (int i = 0; i < length; i++)
             {
-                if (!childDeckPath[i].Equals(parentDeckPath[i], StringComparison.CurrentCulture))
+                if (!childDeckPath[i].Equals(parentDeckPath[i], StringComparison.OrdinalIgnoreCase))
                     return false;
             }
             return true;
         }
 
+        /// <summary>
+        /// Verify if the a deck name is the ancestor of the other
+        /// </summary>
+        /// <param name="ancestorDeckName">Ancestor name</param>
+        /// <param name="descendantDeckName">Descendant name</param>
+        /// <returns></returns>
         private bool IsAncestor(string ancestorDeckName, string descendantDeckName)
         {
             string[] ancestorDeckPath = SplitPath(ancestorDeckName);
             string[] descendantDeckPath = SplitPath(descendantDeckName);
-
-            int length = (ancestorDeckPath.Length > descendantDeckPath.Length)
-                ? descendantDeckPath.Length : ancestorDeckPath.Length;
+            
+            //WARNING: the java ver implementation of this function is wrong
+            //we use the python ver implementation instead
+            int length = ancestorDeckPath.Length;
+            
+            //An ancestor cannot have a longer or equal path as its descendant
+            if (length >= descendantDeckPath.Length)
+                return false;
+            
             for (int i = 0; i < length; i++)
             {
-                if (!ancestorDeckPath[i].Equals(descendantDeckPath[i], StringComparison.CurrentCulture))
+                if (!ancestorDeckPath[i].Equals(descendantDeckPath[i], StringComparison.OrdinalIgnoreCase))
                     return false;
             }
             return true;
@@ -605,7 +667,7 @@ namespace AnkiU.AnkiCore
             return confs;
         }
 
-        public JsonObject ConfForDid(long did)
+        public JsonObject ConfForDeckId(long did)
         {
             JsonObject deck = Get(did, false);
             if (deck == null)
@@ -614,7 +676,7 @@ namespace AnkiU.AnkiCore
             if (deck.ContainsKey("conf"))
             {
                 JsonObject conf = GetConf((long)deck.GetNamedNumber("conf"));
-                conf.Add("dyn", JsonValue.CreateNumberValue(0));
+                conf["dyn"] = JsonValue.CreateNumberValue(0);
                 return conf;
             }
             // dynamic decks have embedded conf
@@ -628,13 +690,8 @@ namespace AnkiU.AnkiCore
 
         public void UpdateConf(JsonObject jObj)
         {
-            deckConf.Add((long)jObj.GetNamedNumber("id"), jObj);
+            deckConf[(long)jObj.GetNamedNumber("id")] = jObj;
             Save();
-        }
-
-        public long ConfId(string name)
-        {
-            return ConfId(name, defaultConf);
         }
 
         /// <summary>
@@ -642,8 +699,19 @@ namespace AnkiU.AnkiCore
         /// </summary>
         /// <param name="name"></param>
         /// <param name="cloneFrom"></param>
-        /// <returns></returns>
-        public long ConfId(string name, string cloneFrom)
+        /// <returns>ID of the new configuration</returns>
+        public long CreateNewConfiguration(string name)
+        {
+            return CreateNewConfiguration(name, defaultConf);
+        }
+
+        /// <summary>
+        /// Create a new configuration and return ID
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="cloneFrom"></param>
+        /// <returns>ID of the new configuration</returns>
+        public long CreateNewConfiguration(string name, string cloneFrom)
         {
             JsonObject jObj;
             long id;
@@ -654,18 +722,20 @@ namespace AnkiU.AnkiCore
                 if (!deckConf.ContainsKey(id))
                     break;
             }
-            jObj.Add("id", JsonValue.CreateNumberValue(id));
-            jObj.Add("name", JsonValue.CreateStringValue(name));
+            jObj["id"] = JsonValue.CreateNumberValue(id);
+            jObj["name"] = JsonValue.CreateStringValue(name);
             deckConf.Add(id, jObj);
             Save(jObj);
             return id;
         }
 
-        public void RemoveConf(long id) 
+        /// <summary>
+        /// Remove a configuration and update all decks using it.
+        /// </summary>
+        /// <param name="id"></param>
+        public void RemoveConfiguration(long id) 
         {
-            //TODO: Recheck this
-            if (id != 1)
-                throw new Exception("ID is not 1");
+            Debug.Assert(id != 1);
             
             collection.ModSchema(true);
             deckConf.Remove(id);
@@ -675,9 +745,9 @@ namespace AnkiU.AnkiCore
                 if (!g.ContainsKey("conf"))
                     continue;
                 
-                if (g.GetNamedString("conf").Equals(id.ToString()))
+                if (g.GetNamedNumber("conf") == id)
                 {
-                    g.Add("conf", JsonValue.CreateNumberValue(1));
+                    g["conf"] = JsonValue.CreateNumberValue(1);
                     Save(g);
                 }
             }
@@ -685,7 +755,7 @@ namespace AnkiU.AnkiCore
 
         public void SetConf(JsonObject grp, long id)
         {
-            grp.Add("conf", JsonValue.CreateNumberValue(id));
+            grp["conf"] = JsonValue.CreateNumberValue(id);
             Save(grp);
         }
 
@@ -736,7 +806,7 @@ namespace AnkiU.AnkiCore
         {
             if(!children)
             {
-                var list = collection.Database.QueryColumn<Card>("select id from cards where did=" + deckId);
+                var list = collection.Database.QueryColumn<CardIdOnlyTable>("select id from cards where did=" + deckId);
                 return (from s in list select s.Id).ToArray();
             }
 
@@ -746,7 +816,7 @@ namespace AnkiU.AnkiCore
                 deckIds.Add(entry.Value);
 
             string str = Utils.Ids2str(deckIds.ToArray());
-            var returnList = collection.Database.QueryColumn<Card>("select id from cards where did in " + str);
+            var returnList = collection.Database.QueryColumn<CardIdOnlyTable>("select id from cards where did in " + str);
             return (from s in returnList select s.Id).ToArray();
         }
 
@@ -762,7 +832,7 @@ namespace AnkiU.AnkiCore
         {
             List<string> parents = new List<string>();
             string[] array = Get(did).GetNamedString("name").Split(new string[] { "::" }, 
-                                                    StringSplitOptions.RemoveEmptyEntries);
+                                                    StringSplitOptions.None);
             List<string> parts = new List<string>(array);
             for(int i = 0; i < parts.Count - 1; i++)
             {
@@ -774,7 +844,7 @@ namespace AnkiU.AnkiCore
 
             List<JsonObject> oParents = new List<JsonObject>();
             for (int i = 0; i < parents.Count; i++)
-                oParents.Insert(i, Get(Id(parents[i])));
+                oParents.Insert(i, Get(AddOrResuedDeck(parents[i])));
 
             return oParents;
         }
@@ -783,18 +853,18 @@ namespace AnkiU.AnkiCore
         {
             foreach (JsonObject d in All())
             {
-                d.Add("usn", JsonValue.CreateNumberValue(0));
+                d["usn"] = JsonValue.CreateNumberValue(0);
             }
             foreach (JsonObject c in AllConf())
             {
-                c.Add("usn", JsonValue.CreateNumberValue(0));
+                c["usn"] = JsonValue.CreateNumberValue(0);
             }
             Save();
         }
 
-        public long NewDyn(string name)
+        public long NewDynamicDeck(string name)
         {
-            long? did = Id(name, defaultDynamicDeck);
+            long? did = AddOrResuedDeck(name, defaultDynamicDeck);
             if (did == null)
                 throw new Exception("NewDyn: did is null!");
 

@@ -1,0 +1,43 @@
+﻿<UserControl
+    x:Class="AnkiU.UserControls.RescheduleFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Flyout x:Name="rescheduleFlyout" x:Key="RescheduleFlyoutTemplate" Placement="Bottom" Closed="RescheduleFlyoutClosedHandler">
+            <ContentPresenter>
+                <StackPanel Width="300">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Review after" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <local:NumbericTextBox x:Name="numberBox" Margin="5,0,5,0" Grid.Column="1" VerticalAlignment="Center" 
+                                               BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" MaxNumber="1000"
+                                               KeyUp="NumberTextBoxEnterKeyUpHandler" Number="1" MinNumber="1" />
+                        <TextBlock Text="day(s)" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2"/>
+                    </Grid>
+                    
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="nextDueTimeOkButton" Width="140" Grid.Column="0" Content="OK" Style="{StaticResource ButtonBlue}" BorderThickness="0" Margin="0,5,0,0" HorizontalAlignment="Left" Click="OKButtonClickHandler"/>
+                        <Button x:Name="nextDueTimeCancelButton" Width="140" Grid.Column="1" Content="Cancel" Style="{StaticResource ButtonGray}" BorderBrush="Black" BorderThickness="1" Margin="5,5,0,0" HorizontalAlignment="Right" Click="CancelButtonClickHandler"/>
+                    </Grid>
+                </StackPanel>
+            </ContentPresenter>
+        </Flyout>
+    </UserControl.Resources>
+    
+</UserControl>

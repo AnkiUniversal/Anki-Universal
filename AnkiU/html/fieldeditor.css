@@ -1,0 +1,32 @@
+﻿@import "/html/globalstyles.css";
+
+body{	
+    margin: 10px 15px 130px 5px !important;    
+}
+
+.editable {    
+    font-family: 'Fira Sans', sans-serif;   
+    color:black;
+    background-color:white; 
+    height: auto;
+    font-size: 18px;        
+    border-color: #FF8700;
+    border-style: solid none solid none;
+    border-radius: 7.5px;
+    border-width: 1.5px;    
+    padding: 2.5px 15px 2.5px 2.5px;
+    word-wrap: break-word;
+}
+
+.night .editable {      
+    color: white;
+    background-color: #202020; 
+}
+
+h2 {
+    color: #088DC7;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 20px;    
+    font-weight: 400;    
+    margin: 15px 0px 5px 0;
+}

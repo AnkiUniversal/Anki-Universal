@@ -1,0 +1,277 @@
+﻿<Page xmlns:controls="using:AnkiU.UserControls" 
+    x:Class="AnkiU.Pages.DeckSelectPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.Pages"
+    xmlns:views="using:AnkiU.Views"
+    xmlns:data="using:AnkiU.Models"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"         
+    x:Name="page"        
+    Background="{StaticResource BackgroundNormal}"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+
+        <MenuFlyout x:Key="DeckContextMenu">
+            <MenuFlyoutItem  Text="Add Notes" Click="AddNoteMenuFlyoutItemClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Add" />
+            <MenuFlyoutItem  Text="Search Cards" Click="SeachCardMenuClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Find" />
+            <MenuFlyoutItem  Text="Statistics" Click="StatsMenuFlyoutItemClick" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource ChartIcon}" />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutSubItem Text="Edit" Style="{StaticResource IconMenuFlyoutSubItem}" Tag="Edit" >
+                <MenuFlyoutItem Text="Rename Deck" Click="RenameMenuFlyoutItemClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Rename" />
+                <MenuFlyoutItem Text="Change Image" Click="MenuFlyoutChangeImageItemClickHandler" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource ImageIcon}"/>
+                <MenuFlyoutItem Text="Options" Click="MenuFlyoutConfigureClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Setting"/>
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Text="Delete Deck" Click="MenuFlyoutDeleteClickHandler"  Style="{StaticResource IconMenuFlyoutItem}" Tag="Delete"/>
+            </MenuFlyoutSubItem>
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="Export Deck" Click= "ExportMenuFlyoutItemClickHanlder" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource ExportIcon}"/>
+        </MenuFlyout>
+
+        <MenuFlyout x:Key="DynamicDeckContextMenu">
+            <MenuFlyoutItem  Text="Search Cards" Click="SeachCardMenuClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Find" />
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="Rename" Click="RenameMenuFlyoutItemClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Rename" />
+            <MenuFlyoutItem Text="Delete" Click="MenuFlyoutDeleteClickHandler"  Style="{StaticResource IconMenuFlyoutItem}" Tag="Delete"/>
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="Export Deck" Click= "ExportMenuFlyoutItemClickHanlder" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource ExportIcon}"/>
+        </MenuFlyout>
+
+        <MenuFlyout x:Key="CollectionContextMenu">
+            <MenuFlyoutItem Text="Sort by date added" Click="SortByDateAddedClick"  />
+            <MenuFlyoutItem Text="Sort by name" Click= "SortByNameClick" />
+        </MenuFlyout>
+        
+        <Flyout x:Name="exportFlyout" Placement="Bottom" x:Key="ExportFlyoutTemplate" >
+            <ContentPresenter>
+                <Grid Width="300">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Export to:"/>
+                        <TextBox Margin="5,0,0,0" Grid.Column="1" x:Name="exportFlyoutTextBox"  TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True"  />
+                        <Button x:Name="exportFolderPickerButton" Style="{StaticResource ButtonGray}" BorderBrush="Black" BorderThickness="1" 
+                                Grid.Column="2" Padding="0" Margin="-2,0,0,0" Height="32" Width="40" Click="ExportFolderPickerButtonClickHandler" >
+                            <Path Style="{StaticResource OpenFolderIcon}" Margin="0" Width="30" Fill="Transparent" Stroke="Black" RenderTransformOrigin="0.5,0.5">
+                                <Path.RenderTransform>
+                                    <CompositeTransform ScaleX="0.7" ScaleY="0.7"/>
+                                </Path.RenderTransform>
+                            </Path>
+                        </Button>
+                    </Grid>
+                    <CheckBox x:Name="exportScheduleCheckBox" Grid.Row="1" HorizontalAlignment="Stretch" Content="Include learning history (schedule)"/>
+                    <CheckBox x:Name="exportMediaCheckBox" Grid.Row="2" HorizontalAlignment="Stretch" Content="Include media files"/>
+                    <Button x:Name="exportOkButton" Margin="0,0,0,0" Width="140" Grid.Row="3" HorizontalAlignment="Left" Content="Export" Style="{StaticResource ButtonBlue}" Click="ExportOkButtonClickHandler" BorderThickness="0"/>
+                    <Button x:Name="exportCancelButton" Margin="0,0,0,0" Width="140" Grid.Row="3" HorizontalAlignment="Right" Content="Cancel" Style="{StaticResource ButtonGray}" Click="FlyoutCancelButtonClickHandler" BorderBrush="Black" BorderThickness="1"/>
+                </Grid>
+            </ContentPresenter>
+        </Flyout>
+
+        <Flyout x:Name="configureFlyout" Placement="Bottom" >
+            <ContentPresenter >
+                <Grid Width="300">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+
+                    <Button  Style="{StaticResource ButtonBlue}" 
+                             Width="135"
+                            HorizontalAlignment="Left" Height="35" Content="OK"                              
+                            HorizontalContentAlignment="Center" Click="ConfigureFlyoutOkButtonClickHandler" />
+
+                    <Button  Style="{StaticResource ButtonGray}" BorderThickness="1" BorderBrush="Black" 
+                             Width="135"
+                            HorizontalAlignment="Right" Height="35" Content="Cancel"                              
+                            HorizontalContentAlignment="Center" Click="FlyoutCancelButtonClickHandler"/>
+
+                    <ItemsControl ItemsSource="{Binding}"
+                                  x:Name="deckAllConfigsView" 
+                                  Grid.Row="2"                                   
+                                  HorizontalAlignment="Stretch"
+                                  Padding="0" >
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="data:DeckConfigName">
+                                <Grid Margin="0,5,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150" />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition Width="35" />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition Width="35" />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition Width="35" />
+                                    </Grid.ColumnDefinitions>
+                                    <RadioButton  GroupName="DeckConfigsGroup" IsChecked="{x:Bind IsUsedBySelectedDeck, Mode=TwoWay}">
+                                        <TextBlock Text="{x:Bind Name}" TextWrapping="Wrap" />
+                                    </RadioButton>
+
+                                    <controls:HelpButton Grid.Column="2" HorizontalAlignment="Center"    
+                                             PlaceAt="{x:Bind PointToShowFlyout, Mode=OneWay}"             
+                                             ParentFlyout="{x:Bind ParentFlyout, Mode=OneWay}"
+                                             Width="20" Height="20" 
+                                             HelpText="{x:Bind HelpText}" Visibility="{x:Bind HelpTextVisibility}" />
+
+                                    <Button  Style="{StaticResource ButtonGray}" 
+                                             Background="Transparent"
+                                             Grid.Column="4" BorderThickness="0"
+                                             Width="35" Height="35" Padding="0"
+                                             HorizontalContentAlignment="Center" Click="ConfigureFlyoutNewClickHandler">
+                                        <SymbolIcon Symbol="Add" RenderTransformOrigin="0.5,0.5">
+                                            <SymbolIcon.RenderTransform>
+                                                <CompositeTransform ScaleX="0.9" ScaleY="0.9" TranslateX="0" TranslateY="0"/>
+                                            </SymbolIcon.RenderTransform>
+                                        </SymbolIcon>
+                                    </Button>
+
+                                    <Button VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="6" Width="35" Height="35" Padding="0"  Visibility="{x:Bind EditVisibility}" 
+                                        Style="{StaticResource ButtonGray}" Background="Transparent" BorderThickness="0"  Click="ConfigureFlyoutEditButtonClick">
+                                        <SymbolIcon Symbol="Edit" RenderTransformOrigin="0.5,0.5">
+                                            <SymbolIcon.RenderTransform>
+                                                <CompositeTransform ScaleX="0.9" ScaleY="0.9" TranslateX="0" TranslateY="0"/>
+                                            </SymbolIcon.RenderTransform>
+                                        </SymbolIcon>
+                                    </Button>
+
+                                    <Button VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="8" Width="35" Height="35" Padding="0"  Visibility="{x:Bind EditVisibility}"
+                                            Click="ConfigureFlyoutDeleteButtonClick" Background="Transparent"
+                                             Style="{StaticResource ButtonGray}" BorderThickness="0" >
+                                        <SymbolIcon Symbol="Delete" RenderTransformOrigin="0.5,0.5" >
+                                            <SymbolIcon.RenderTransform>
+                                                <CompositeTransform ScaleX="0.9" ScaleY="0.9" TranslateX="0" TranslateY="0"/>
+                                            </SymbolIcon.RenderTransform>
+                                        </SymbolIcon>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </ContentPresenter>
+        </Flyout>
+
+    </Page.Resources>
+
+    <Grid x:Name="mainGrid"  >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--<Image  x:Name="backgroundImage" Source="/Assets/SkyDay.jpg"
+               Grid.ColumnSpan="3" Grid.RowSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Stretch="Fill" Margin="-50"/>-->
+
+        <views:DeckListView x:Name="deckListView" 
+                            x:DeferLoadStrategy="Lazy"
+                            HorizontalAlignment="Stretch"  
+                            VerticalAlignment="Stretch" 
+                            Visibility="Collapsed"
+                            Grid.ColumnSpan="3" 
+                            Grid.Row="1"
+                            Grid.RowSpan="2"                                   
+                            Foreground="{Binding Foreground, ElementName=page}"
+                            RightTapped="DeckViewRightTapped"
+                            PointerPressed="PointerPressedHandler"
+                            Holding="DeckItemHolding"/>
+
+        <views:DeckHubView  x:Name="deckGridView"  
+                            x:DeferLoadStrategy="Lazy"
+                            HorizontalAlignment="Stretch"  
+                            VerticalAlignment="Stretch" 
+                            Grid.ColumnSpan="3" 
+                            Grid.Row="1"
+                            Margin="0,-13,0,0"
+                            Grid.RowSpan="2"                             
+                            Foreground="{Binding Foreground,ElementName=page}"
+                            Visibility="Collapsed"
+                            PointerPressed="PointerPressedHandler"
+                            RightTapped="DeckViewRightTapped"
+                            Holding="DeckItemHolding"/>
+
+
+
+        <Ellipse x:Name="pointToShowFlyout" Grid.RowSpan="3" Width="0" Height="0" Grid.ColumnSpan="3" Stroke="Transparent" Fill="Transparent" VerticalAlignment="Top" HorizontalAlignment="Left" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" IsHitTestVisible="False"/>
+
+        <Button Style="{StaticResource ButtonOcpacity}" Background="{Binding Background, ElementName=page}" Height="20" Grid.Row="0"
+                    Canvas.ZIndex="1" Click="NoticeBoardExpandButtonClick" Padding="0"
+                    HorizontalContentAlignment="Center" BorderThickness="0"
+                    VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="3">
+            <Path Style="{StaticResource ChevronDoubleDownIcon}"  Fill="{Binding Foreground, ElementName=page}" RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <CompositeTransform x:Name="expandSymbolRotation" Rotation="180"/>
+                </Path.RenderTransform>
+            </Path>
+        </Button>
+        <Grid x:Name="noticeBoardRoot" Grid.Column="0" PointerPressed="PointerPressedHandler" RightTapped="DeckViewRightTapped" Holding="DeckItemHolding"
+              Grid.ColumnSpan="3" Grid.Row="0" Visibility="Visible" Height="80">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Border Grid.ColumnSpan="3" 
+                    Background="{Binding Background, ElementName=page}">
+
+            </Border>
+
+            <Grid  Margin="-5,25,0,0" x:Name="textBlockRoot" Grid.ColumnSpan="3" HorizontalAlignment="Center">
+                <Path x:Name="sunSymbol" Style="{StaticResource SunPathIcon}" Fill="{Binding Foreground, ElementName=page}" Stroke="{Binding Foreground, ElementName=page}" Visibility="Visible"
+                      HorizontalAlignment="Left" Margin="-1,-12,0,0" Width="30" Height="30" RenderTransformOrigin="0.5,0.5">
+                </Path>
+
+                <Path x:Name="moonSymbol" Style="{StaticResource MoonPathIcon}" Fill="{Binding Foreground, ElementName=page}" Visibility="Visible"
+                      HorizontalAlignment="Left" Margin="1,-10,0,0" Width="25" Height="25" >
+                </Path>
+
+                <TextBlock x:Name="totalCardsText" Text="Today's card: 2000" Margin="35,0,0,0"
+                           TextAlignment="Center" 
+                           FontWeight="SemiBold" 
+                           FontSize="20" 
+                           FontFamily="Fira Sans"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="35,25,0,0">
+                    <TextBlock x:Name="newCardsText" 
+                           Text="New: 1000." 
+                           TextAlignment="Left" 
+                           FontWeight="Normal" 
+                           FontSize="15" 
+                           FontFamily="Fira Sans"/>
+
+                    <TextBlock x:Name="dueCardsText"
+                           Text="Due: 1000." Margin="10,0,0,0"
+                           TextAlignment="Left" 
+                           FontWeight="Normal" 
+                           FontSize="15" 
+                           FontFamily="Fira Sans"/>
+                </StackPanel>
+            </Grid>
+                        
+        </Grid>
+    </Grid>
+</Page>

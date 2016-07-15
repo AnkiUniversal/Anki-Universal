@@ -1,0 +1,63 @@
+﻿@import "/html/globalstyles.css";
+
+body{	
+    margin: 20px 15px 50px 5px !important;    
+}
+
+#typeAns {
+  width: 100%;
+}
+
+.typeGood {
+  color: black;
+  background-color: #17FF17;
+}
+
+.typeBad {
+  color: black;
+  background-color: #FFF917;
+}
+
+.typeMissed {
+  color: black;
+  background-color: lightgray;
+}
+
+.night .typeGood {
+  color: white;
+  background-color: #0AD200;
+}
+
+.night .typeBad {
+  color: white;
+  background-color: #B6B600;
+}
+
+.night .typeMissed {
+  color: white;
+  background-color: gray;
+}
+
+.card {    
+    height: auto;       
+    border-color: #FF8700;
+    border-style: solid none solid none;
+    border-radius: 7.5px;
+    border-width: 1.5px;    
+    padding: 10px 15px 10px 5px;
+    word-wrap: break-word;
+}
+
+.night .card {      
+    color: white;
+    background-color: #202020; 
+}
+
+h2 {
+    color: #088DC7;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 30px;    
+    font-weight: 400;    
+    text-align: center;
+    margin: 30px 5px 5px 0;
+}
