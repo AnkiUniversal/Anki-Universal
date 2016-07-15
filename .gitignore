@@ -143,7 +143,7 @@ publish/
 # TODO: Un-comment the next line if you do not want to checkin 
 # your web deploy settings because they may include unencrypted
 # passwords
-#*.pubxml
+*.pubxml
 *.publishproj
 
 # NuGet Packages
@@ -243,3 +243,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+#Package manifest and store files
+Package.StoreAssociation.xml
+Package.appxmanifest
