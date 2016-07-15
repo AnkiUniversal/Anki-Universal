@@ -243,7 +243,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
-
-#Package manifest and store files
-Package.StoreAssociation.xml
-Package.appxmanifest
+/AnkiU/Package.appxmanifest
+/AnkiU/Package.StoreAssociation.xml
