@@ -116,25 +116,19 @@ namespace AnkiU.AnkiCore
                 return;
             }
 
-            mediaFolderName = colection.RelativePath.ReplaceFirst(".anki2", ".media");
-            Task task = Task.Factory.StartNew(() =>
-            {
-                CreateFolder();
-            });
-            task.Wait();
-
-            if (folder == null)
-                throw new Exception("Cannot create media directory: " + mediaFolderName);
-
-            ConnectDatabase();
+            mediaFolderName = colection.RelativePath.ReplaceFirst(".anki2", ".media");            
+            CreateOrOpenMediaFolderAsync();
+            ConnectDatabaseAsync();
         }
 
-        public async void CreateFolder()
+        public async void CreateOrOpenMediaFolderAsync()
         {
-            mediaFolder = await appFolder.CreateFolderAsync(mediaFolderName, CreationCollisionOption.OpenIfExists);
+            mediaFolder = await appFolder.TryGetItemAsync(mediaFolderName) as StorageFolder;
+            if(mediaFolder == null)
+                mediaFolder = await appFolder.CreateFolderAsync(mediaFolderName, CreationCollisionOption.OpenIfExists);
         }
 
-        public void ConnectDatabase()
+        public async void ConnectDatabaseAsync()
         {
             if (collection.IsServer)
                 return;
@@ -142,17 +136,13 @@ namespace AnkiU.AnkiCore
             mediaDatabaseName = Constant.MEDIA_DB_NAME;
 
             bool create = false;
-            Task task = Task.Factory.StartNew(async() =>
-            {
-                StorageFile store = (await appFolder.TryGetItemAsync(mediaDatabaseName)) as StorageFile;
-                if (store == null)
-                    create = true; ;
-            });
-            task.Wait();
+            StorageFile store = (await appFolder.TryGetItemAsync(mediaDatabaseName)) as StorageFile;
+            if (store == null)
+                create = true;
 
             database = new DB(appFolder.Path + "\\" + mediaDatabaseName);
             if (create)
-                InitMediaDatabase();
+                InitMediaDatabase();            
         }
 
         public void InitMediaDatabase()
@@ -491,7 +481,7 @@ namespace AnkiU.AnkiCore
                 filesToDeckId = new Dictionary<StorageFile, long>();
                 foreach (var folder in await mediaFolder.GetFoldersAsync())                             
                     foreach(var f in await folder.GetFilesAsync())
-                        filesToDeckId.Add(f, Convert.ToInt64(folder.Name));
+                        filesToDeckId[f] =  Convert.ToInt64(folder.Name);
             }
 
             bool isRenamedFiles = false;

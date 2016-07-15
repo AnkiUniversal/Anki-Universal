@@ -408,7 +408,7 @@ namespace AnkiU.Anki.Syncer
         {
             mainPage.Collection.Media.Database.Close();
             await remoteMediaDBFile.CopyAsync(Storage.AppLocalFolder, Constant.MEDIA_DB_NAME, NameCollisionOption.ReplaceExisting);
-            mainPage.Collection.Media.ConnectDatabase();
+            mainPage.Collection.Media.ConnectDatabaseAsync();
         }
 
         private async Task UploadMediaChanges(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MetaTable remoteMeta)

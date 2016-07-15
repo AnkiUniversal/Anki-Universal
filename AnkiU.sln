@@ -69,7 +69,6 @@ Global
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Release|ARM.ActiveCfg = Release|ARM
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Release|x64.ActiveCfg = Release|x64
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Release|x64.Build.0 = Release|x64
-		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Release|x64.Deploy.0 = Release|x64
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution

@@ -196,7 +196,7 @@ namespace AnkiU.Anki.Syncer
             else if (oneDriveException.IsMatch(OneDriveErrorCode.QuotaLimitReached.ToString()))
                 await UIHelper.ShowMessageDialog("Quota limit reached");
             else
-                await UIHelper.ShowMessageDialog(oneDriveException.Message);
+                await UIHelper.ShowMessageDialog("Connection error.");
         }
     }
 }

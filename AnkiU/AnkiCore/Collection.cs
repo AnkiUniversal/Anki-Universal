@@ -384,7 +384,7 @@ namespace AnkiU.AnkiCore
             if (database == null)
             {
                 database = new DB(folder.Path + "\\" + RelativePath);
-                media.ConnectDatabase();
+                media.ConnectDatabaseAsync();
                 OpenLog();
             }
         }
