@@ -67,7 +67,7 @@ namespace AnkiU.Anki.Syncer
                 await PrepareForSyncing();
 
                 if (remoteUserPref == null || MainPage.UserPrefs.LastSyncTime >= remoteUserPref.LastSyncTime)
-                    await SyncToServer();
+                    await UploadToServer();
                 else
                     await DownloadFromServer();
 
@@ -88,7 +88,7 @@ namespace AnkiU.Anki.Syncer
             }
         }
 
-        private async Task SyncToServer()
+        private async Task UploadToServer()
         {
             dialog.Label = "Uploading database...";
             await UploadPrefDatabase();

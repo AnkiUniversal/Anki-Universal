@@ -72,14 +72,28 @@
         </ScrollViewer>
 
         <Border Grid.Row="1"  Background="Transparent"
-                BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,1,0,0"/>
+                BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,1,0,0" />
         <RelativePanel  Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" >
 
-            <views:DeckNameView Margin="0,0,10,0" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="monthRadioButton" MaxWidth="400" MinWidth="120" HorizontalAlignment="Right" x:Name="deckNameView" Height="30" Foreground="{Binding Foreground, ElementName=page}" Background="{Binding Background, ElementName=page}" />
+            <views:DeckNameView Margin="0,5,10,5" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" 
+                                RelativePanel.LeftOf="monthRadioButton" MaxWidth="400" MinWidth="120" 
+                                HorizontalAlignment="Right" x:Name="deckNameView" Height="30" 
+                                Foreground="{Binding Foreground, ElementName=page}" Background="{Binding Background, ElementName=page}" />
 
-            <RadioButton RelativePanel.AlignHorizontalCenterWithPanel="True"  Margin="0,5,0,5" Content="1 month"  MinWidth="80" IsChecked="True" x:Name="monthRadioButton" Foreground="{Binding Foreground, ElementName=page}"/>
-            <RadioButton x:Name="yearRadioButton" RelativePanel.RightOf="monthRadioButton"  Margin="5,5,0,5" Content="1 year" MinWidth="70" Checked="OneYearCheckedHandler" Foreground="{Binding Foreground, ElementName=page}"/>
-            <RadioButton RelativePanel.RightOf="yearRadioButton" Margin="5,5,0,5"  Content="Life" MinWidth="60" Checked="LifeCheckedHandler" Foreground="{Binding Foreground, ElementName=page}"/>
+            <RadioButton RelativePanel.AlignHorizontalCenterWithPanel="True"  Style="{StaticResource RadioBoxButton}"
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True" Tag="5,0,0,5"
+                         Content="1 month"  Width="70" IsChecked="True" Height="30" BorderThickness="1"
+                         x:Name="monthRadioButton" Foreground="{Binding Foreground, ElementName=page}"/>
+
+            <RadioButton x:Name="yearRadioButton" RelativePanel.RightOf="monthRadioButton" Style="{StaticResource RadioBoxButton}"
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True"
+                         Content="1 year" Width="70" Checked="OneYearCheckedHandler" BorderThickness="0,1,1,1"  Height="30"
+                         Foreground="{Binding Foreground, ElementName=page}"/>
+
+            <RadioButton RelativePanel.RightOf="yearRadioButton"  Content="Life"  Height="30" BorderThickness="0,1,1,1"
+                         RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True" Tag="0,5,5,0"
+                         Width="70" Checked="LifeCheckedHandler" Style="{StaticResource RadioBoxButton}"
+                         Foreground="{Binding Foreground, ElementName=page}"/>
             
         </RelativePanel>
 
