@@ -250,8 +250,6 @@ namespace AnkiU.Pages
                 decksView = deckGridView as IAnkiDecksView;
                 decksView.DataContext = deckListViewModel.Decks;
                 HookDeckItemEvent();
-                if (isNightMode)
-                    deckGridView.HideShadow();
             }
             mainPage.ListViewButton.Visibility = Visibility.Visible;
             mainPage.GridViewButton.Visibility = Visibility.Collapsed;

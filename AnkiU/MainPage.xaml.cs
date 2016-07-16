@@ -660,7 +660,7 @@ namespace AnkiU
             await BackupDatabase();
         }
 
-        public async Task BackupDatabase()
+        public static async Task BackupDatabase()
         {
             try
             {
@@ -701,7 +701,7 @@ namespace AnkiU
             return copyMediaDBFile;
         }
 
-        private async Task DeleteOldBackupIfNeeded(StorageFolder backup)
+        private static async Task DeleteOldBackupIfNeeded(StorageFolder backup)
         {            
             var files = await backup.GetFilesAsync();
             if (files.Count > UserPrefs.NumberOfBackups)
@@ -723,7 +723,7 @@ namespace AnkiU
             return hoursFromLastBackup >= UserPrefs.BackupsMinTime;
         }
 
-        private void BackUpCollection(StorageFolder backupFolder, StorageFile collectionFile, StorageFile copyMediaDBFile)
+        private static void BackUpCollection(StorageFolder backupFolder, StorageFile collectionFile, StorageFile copyMediaDBFile)
         {
             StringBuilder fileName = UIHelper.GetDateTimeStringForName();
             fileName.Append(Constant.BACKUP_AFFIX);

@@ -367,5 +367,6 @@ function InsertIntoAllFields(html) {
     for (var i = 0; i < fields.length; i++) {
         var editor = tinymce.get(fields[i].id);
         editor.execCommand('mceInsertContent', false, html);
+        NotifyContentChanged(editor.id);
     }
 }
