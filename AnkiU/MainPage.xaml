@@ -465,8 +465,8 @@
                         </StackPanel>
                     </ScrollViewer>
 
-                    <StackPanel Grid.Row="1" BorderThickness="0,1,0,0" 
-                                BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}">
+                    <StackPanel Grid.Row="1" >
+                        <Border BorderThickness="0,2,0,0" Margin="3,0,3,0"  BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}"/>
                         <Button 
                             Style="{Binding Style, ElementName=button}"
                             HorizontalAlignment="Stretch"                                                         
