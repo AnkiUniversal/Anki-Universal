@@ -74,7 +74,7 @@ namespace AnkiU.Views
 
         private async Task<IReadOnlyList<StorageFile>> GetBackUpFiles()
         {
-            backupFolder = await Storage.AppLocalFolder.GetFolderAsync(Constant.BACKUP_FOLDER_NAME);
+            backupFolder = await Storage.AppLocalFolder.TryGetItemAsync(Constant.BACKUP_FOLDER_NAME) as StorageFolder;
             if (backupFolder == null)
             {
                 await UIHelper.ShowMessageDialog("No backups found.");
@@ -104,7 +104,8 @@ namespace AnkiU.Views
             var filePath = backupFolder.Path + "\\" + backup.Name;
 
             bool isContinue = await UIHelper.AskUserConfirmation
-                ("This will permanently revert all your data (except media files) to the chosen backup file. Continue?");
+                ("This will permanently revert all your data (except media files) to the chosen backup file. Continue?\n" +
+                 "(A backup will also be created automatically before restoring)");
             if (!isContinue)
                 return;
             ProgressDialog progressDialog = ShowDialog();
@@ -112,6 +113,8 @@ namespace AnkiU.Views
             var tempFolder = await backupFolder.CreateFolderAsync("temp", CreationCollisionOption.ReplaceExisting);
             try
             {
+                await MainPage.BackupDatabase();
+
                 using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read))
                 using (var zipFile = new ZipArchive(fileStream, ZipArchiveMode.Read))
                 {

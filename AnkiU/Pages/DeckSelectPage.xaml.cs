@@ -670,7 +670,7 @@ namespace AnkiU.Pages
             if (isDelete)
             {
                 if (!collection.Deck.IsDyn(deckId))
-                    await mainPage.BackupDatabase();
+                    await MainPage.BackupDatabase();
 
                 string savePoint = collection.Database.SaveTransactionPoint();
                 try
