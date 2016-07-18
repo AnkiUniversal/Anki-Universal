@@ -636,8 +636,12 @@ namespace AnkiU.Pages
             if (isDelete)
             {
                 var config = (e.OriginalSource as FrameworkElement).DataContext as DeckConfigName;
-                collection.Deck.RemoveConfiguration(config.Id);
-                deckListViewModel.GetAllDeckInformation();
+                var deckIds = collection.Deck.DeckIdsForConf(config.Id);
+                collection.Deck.RemoveConfiguration(config.Id);                
+                foreach(var id in deckIds)
+                    deckListViewModel.UpdateCardCountForDeck(id);
+                
+                UpdateNoticeText();
                 collection.SaveAndCommit();
             }
         }
@@ -703,6 +707,11 @@ namespace AnkiU.Pages
             collection.Save();
             collection.Database.Commit();
 
+            RemoveDeckInPrefsIfNeeded(deckId);
+        }
+
+        private static void RemoveDeckInPrefsIfNeeded(long deckId)
+        {
             if (MainPage.DeckInkPrefs.HasId(deckId))
                 MainPage.DeckInkPrefs.RemoveDeckInkPref(deckId);
         }
@@ -723,7 +732,10 @@ namespace AnkiU.Pages
         {
             if (childs != null)
                 foreach (var deck in childs)
+                {
                     await RemoveMediaAndView(deck.Value);
+                    RemoveDeckInPrefsIfNeeded(deck.Value);
+                }
         }
 
         private async Task RemoveMediaAndView(long deckId)

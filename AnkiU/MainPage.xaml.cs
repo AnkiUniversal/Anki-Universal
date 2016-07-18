@@ -1809,16 +1809,14 @@ namespace AnkiU
                         return;
                     }
 
-                    MediaCheckContentDialog dialog = new MediaCheckContentDialog();
-                    await ShowResultsToUser(results, dialog);
-                    if(dialog.IsDelete)                    
-                        await DeleteMediaFiles(results.UnusedFiles);                    
+                    await ShowResultsToUser(results);                   
                 });
             });
         }
 
-        private async Task ShowResultsToUser(Media.CheckResults results, MediaCheckContentDialog dialog)
+        private async Task ShowResultsToUser(Media.CheckResults results)
         {
+            MediaCheckContentDialog dialog = new MediaCheckContentDialog();
             StringBuilder missingMessage = new StringBuilder();
             if (results.MisingFiles.Count == 0)
                 missingMessage.Append("0 file found.");
@@ -1839,7 +1837,10 @@ namespace AnkiU
             
             dialog.UnusedText = unusedMessage.ToString();
             dialog.MissingText = missingMessage.ToString();
+
             await dialog.ShowAsync();
+            if (dialog.IsDelete)
+                await DeleteMediaFiles(results.UnusedFiles);
         }
 
         private async Task DeleteMediaFiles(List<KeyValuePair<string, long>> results)

@@ -761,10 +761,16 @@ namespace AnkiU.AnkiCore
 
         public List<long> DeckIdsForConf(JsonObject conf)
         {
+            long confId = (long)conf.GetNamedNumber("id");
+            return DeckIdsForConf(confId);
+        }
+
+        public List<long> DeckIdsForConf(long confId)
+        {
             List<long> dids = new List<long>();
             foreach (JsonObject deck in deckDict.Values)
             {
-                if (deck.ContainsKey("conf") && (deck.GetNamedNumber("conf") == conf.GetNamedNumber("id")))
+                if (deck.ContainsKey("conf") && (deck.GetNamedNumber("conf") == confId))
                 {
                     dids.Add((long)deck.GetNamedNumber("id"));
                 }
