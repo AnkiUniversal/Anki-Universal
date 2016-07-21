@@ -415,8 +415,11 @@ namespace AnkiU.Anki.Syncer
         {
             var mediasModified = mainPage.Collection.Media.Database.QueryColumn<MediaTable>
                                                      ("Select * from media where mtime > ?", remoteMeta.LastUnixTimeSync);
-            long count = 0;
             long total = mediasModified.Count;
+            if (total == 0)
+                return;
+
+            long count = 0;            
             List<Item> deletedFolders = new List<Item>();
             foreach (var media in mediasModified)
             {
