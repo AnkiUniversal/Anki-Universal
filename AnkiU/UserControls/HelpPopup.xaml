@@ -45,10 +45,10 @@
             </StackPanel>
 
             <Button Style="{StaticResource ButtonBlue}" BorderBrush="Transparent" x:Name="closeButtonTop" Padding="2" Visibility="Collapsed"
-                    BorderThickness="0" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" Click="CloseButtonClick" >
+                    BorderThickness="0" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Click="CloseButtonClick" >
                 <SymbolIcon Symbol="Clear" RenderTransformOrigin="0.5,0.5" >
                     <SymbolIcon.RenderTransform>
-                        <CompositeTransform ScaleX="0.5" ScaleY="0.5"/>
+                        <CompositeTransform ScaleX="0.7" ScaleY="0.7"/>
                     </SymbolIcon.RenderTransform>
                 </SymbolIcon>
             </Button>

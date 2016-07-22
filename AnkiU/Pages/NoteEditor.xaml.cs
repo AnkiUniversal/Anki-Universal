@@ -638,7 +638,7 @@ namespace AnkiU.Pages
             {
                 await PasteHtmlFormat(dataPackageView);
             }
-            else if (dataPackageView.Contains(StandardDataFormats.Uri))
+            else if (dataPackageView.Contains(StandardDataFormats.WebLink))
             {
                 await PasteAndAutoLinkUri(dataPackageView);
             }
@@ -697,7 +697,7 @@ namespace AnkiU.Pages
         {            
             var linkRegex = new Regex(@"(?i)(http.+?(?=http))", RegexOptions.Compiled);
 
-            var uri = (await dataPackageView.GetUriAsync()).AbsoluteUri;
+            var uri = (await dataPackageView.GetWebLinkAsync()).AbsoluteUri;
             //No idea why dataPackage can return a duplicate link
             //so use regex to make sure we only take in one
             var match = linkRegex.Match(uri);

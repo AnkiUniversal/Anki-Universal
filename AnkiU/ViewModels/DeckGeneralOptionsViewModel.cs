@@ -82,7 +82,7 @@ namespace AnkiU.ViewModels
 
                 Options.AutoPlay = Config.GetNamedBoolean("autoplay");                
             }
-            catch //If any error happen we back to default
+            catch //If any error happen we go back to default
             {
                 Options = new DeckGeneralOptions();
             }            

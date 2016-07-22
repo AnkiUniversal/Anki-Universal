@@ -109,10 +109,25 @@ namespace AnkiU.ViewModels
         {
             long did = (long)deck.GetNamedNumber("id");
             if (did == Constant.DEFAULTDECK_ID)
-                return;            
-            
+                return;
+
             string name = deck.GetNamedString("name");
 
+            AddNewDeck(did, name);
+        }
+
+        public void AddNewDeck(long deckId)
+        {
+            if (deckId == Constant.DEFAULTDECK_ID)
+                return;
+            
+            string name = Collection.Deck.GetDeckName(deckId);
+
+            AddNewDeck(deckId, name);
+        }
+
+        private void AddNewDeck(long did, string name)
+        {
             Collection.Deck.Select(did);
             Collection.Sched.Reset();
 
@@ -125,30 +140,18 @@ namespace AnkiU.ViewModels
             Decks.Add(new DeckInformation(name, count.New, dueCards, did, Collection.Deck.IsDyn(did)));
         }
 
-        public void AddNewDeck(long deckId)
-        {
-            if (deckId == Constant.DEFAULTDECK_ID)
-                return;
-
-            Collection.Deck.Select(deckId);
-            string name = Collection.Deck.GetDeckName(deckId);
-
-            Collection.Sched.Reset();
-            CardTypeCounts count = Collection.Sched.AllCardTypeCounts();
-            int dueCards = count.Learn + count.Review;
-
-            TotalNewCards += count.New;
-            TotalDueCards += dueCards;
-
-            Decks.Add(new DeckInformation(name, count.New, dueCards, deckId, Collection.Deck.IsDyn(deckId)));
-        }
-
         public void AddOrUpdateDeck(long deckId)
         {            
             if (HasDeck(deckId))
                 UpdateCardCountForDeck(deckId);
             else
                 AddNewDeck(deckId);
+        }
+
+        public void UpdateCardCountAllDecks()
+        {
+            foreach(var deck in decks)            
+                UpdateCardCountForDeck(deck.Id, deck);            
         }
 
         public void UpdateCardCountForDeck(long deckId, DeckInformation deck = null)

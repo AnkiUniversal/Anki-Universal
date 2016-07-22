@@ -205,7 +205,7 @@
                             VerticalAlignment="Stretch" 
                             Grid.ColumnSpan="3" 
                             Grid.Row="1"
-                            Margin="0,-13,0,0"
+                            Margin="5,10,5,5"
                             Grid.RowSpan="2"                             
                             Foreground="{Binding Foreground,ElementName=page}"
                             Visibility="Collapsed"
@@ -213,9 +213,8 @@
                             RightTapped="DeckViewRightTapped"
                             Holding="DeckItemHolding"/>
 
-
-
-        <Ellipse x:Name="pointToShowFlyout" Grid.RowSpan="3" Width="0" Height="0" Grid.ColumnSpan="3" Stroke="Transparent" Fill="Transparent" VerticalAlignment="Top" HorizontalAlignment="Left" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" IsHitTestVisible="False"/>
+        <Ellipse x:Name="pointToShowFlyout" Grid.RowSpan="3" Width="0" Height="0" Grid.ColumnSpan="3" Stroke="Transparent" Fill="Transparent" 
+                 VerticalAlignment="Top" HorizontalAlignment="Left" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" IsHitTestVisible="False"/>
 
         <Button Style="{StaticResource ButtonOcpacity}" Background="{Binding Background, ElementName=page}" Height="20" Grid.Row="0"
                     Canvas.ZIndex="1" Click="NoticeBoardExpandButtonClick" Padding="0"

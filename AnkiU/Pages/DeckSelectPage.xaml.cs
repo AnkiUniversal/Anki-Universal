@@ -43,7 +43,10 @@ namespace AnkiU.Pages
 {
     public sealed partial class DeckSelectPage : Page, INightReadMode
     {
+        private const int DEFAULT_HELP_POPUP_VERTICAL_OFFSET = 50;
         private const double DEFAULT_OPACITY = 0.8;
+        private const double REFRESH_RATE = 1;
+
         private IAnkiDecksView decksView;
         private DeckListViewModel deckListViewModel;        
 
@@ -57,21 +60,18 @@ namespace AnkiU.Pages
         private Flyout currentShownFlyout;        
         private NameEnterFlyout renameFlyout;
         private CustomStudyFlyout customStudyFlyout = null;
-        private HelpPopup helpPopup = null;        
-
-        public event CreateNewDeckFlyout.NewDeckCreatedHandler NewDeckCreatedEvent;
+        private HelpPopup helpPopup = null;
+        private ProgressDialog progressDialog;
+        private StorageFolder exportFolder = null;
 
         private DeckInformation deckShowContextMenu;
-        public DeckInformation DeckShowContextMenu { get { return deckShowContextMenu; } }        
-
-        private ProgressDialog progressDialog;
-
-        private StorageFolder exportFolder = null;
+        public DeckInformation DeckShowContextMenu { get { return deckShowContextMenu; } }                        
 
         private bool isPointerPressed;
         private bool isNightMode = false;
+        private DateTime lastRefreshDate;
 
-        private const int DEFAULT_HELP_POPUP_VERTICAL_OFFSET = 50;
+        public event CreateNewDeckFlyout.NewDeckCreatedHandler NewDeckCreatedEvent;
 
         private MainPage mainPage;
         public MainPage MainPage { get { return mainPage; } }
@@ -90,7 +90,8 @@ namespace AnkiU.Pages
         public DeckSelectPage()
         {
             this.InitializeComponent();
-            deckMenuFlyout = Resources["DeckContextMenu"] as MenuFlyout;            
+            deckMenuFlyout = Resources["DeckContextMenu"] as MenuFlyout;
+            lastRefreshDate = DateTimeOffset.Now.DateTime;
 
             //Work around to show help text
             DeckConfigName.PointToShowFlyoutStatic = pointToShowFlyout;
@@ -171,11 +172,24 @@ namespace AnkiU.Pages
         {
             if (!e.Visible)
                 SaveSession();
+
+            RefreshCardCountsIfNeeded();
+        }
+
+        private void RefreshCardCountsIfNeeded()
+        {
+            var currentDate = DateTimeOffset.Now.DateTime;
+            var deltaTime = (currentDate - lastRefreshDate).TotalHours;
+            if (deltaTime > REFRESH_RATE)
+            {
+                deckListViewModel.UpdateCardCountAllDecks();
+                lastRefreshDate = currentDate;
+            }
         }
 
         private void SaveSession()
         {
-            collection.Save();
+            collection.SaveAndCommit();
         }
 
         private void ShowAllButtonOfThisPage()
@@ -294,7 +308,7 @@ namespace AnkiU.Pages
                     InitCustomStudyFlyout();
 
                 customStudyFlyout.InitDeckValue(collection, isNightMode);
-                customStudyFlyout.Show(0, -mainPage.CommanBar.ActualHeight);
+                customStudyFlyout.Show();
             }
             else
             {

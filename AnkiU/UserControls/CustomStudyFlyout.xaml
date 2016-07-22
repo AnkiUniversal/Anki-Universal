@@ -10,6 +10,7 @@
     d:DesignHeight="400"
     Background="White"
     x:Name="userControl"    
+             SizeChanged="WindowSizeChanged"
     d:DesignWidth="400">
 
     <Popup x:Name="customStudyFlyout" IsOpen="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="335" Height="400">
@@ -148,14 +149,14 @@
                 </Grid>
             </ScrollViewer>
 
-            <Grid Margin="10" Grid.Row="2">
+            <Grid Margin="10" Grid.Row="2" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="10" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Style="{StaticResource ButtonBlue}"  BorderThickness="0"  Content="OK" Click="OkButtonClick"
-                                        VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                <Button Style="{StaticResource ButtonBlue}"  BorderThickness="1" BorderBrush="{StaticResource ButtonBackGroundNormal}" 
+                        Content="OK" Click="OkButtonClick" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
 
                 <Button Grid.Column="2" Style="{StaticResource ButtonGray}" BorderBrush="{Binding Foreground, ElementName=userControl}" Margin="0,0,-1,0" Background="Transparent" 
                         BorderThickness="1"  Foreground="{Binding Foreground, ElementName=userControl}"

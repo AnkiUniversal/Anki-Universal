@@ -34,12 +34,16 @@ namespace AnkiU.UserControls
 {
     public sealed partial class CreditsPopup : UserControl
     {
+        private const int WIDTH_MARGIN = 10;
+        private const int HEIGHT_MARGIN = 30;
+
         private Grid rootGrid;
 
         public CreditsPopup(Grid rootGrid)
         {
             this.InitializeComponent();
             this.rootGrid = rootGrid;
+            creditPopup.IsLightDismissEnabled = true;
         }
 
         public void Show()
@@ -53,14 +57,16 @@ namespace AnkiU.UserControls
 
         private void CalculateSize()
         {
-            var newWidth = rootGrid.ActualWidth - 10;
+            var newWidth = rootGrid.ActualWidth - WIDTH_MARGIN;
             creditRoot.Width = newWidth;
-            creditRoot.Height = rootGrid.ActualHeight - 30;
+            creditRoot.Height = rootGrid.ActualHeight - HEIGHT_MARGIN;
 
             if (newWidth > creditRoot.MaxWidth)
                 creditPopup.HorizontalOffset = (rootGrid.ActualWidth / 2) - creditRoot.ActualWidth / 2;
             else
                 creditPopup.HorizontalOffset = 5;
+
+            creditPopup.VerticalOffset = -HEIGHT_MARGIN/3;
         }
 
         public void Hide()

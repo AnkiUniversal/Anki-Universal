@@ -146,6 +146,8 @@ namespace AnkiU.UserControls
             scrollViewer.MaxWidth = MaxWidth;
             customStudyFlyout.MaxHeight = maxHeight;
             scrollViewer.MaxHeight = maxHeight - DEFAULT_SCROLLVIEWER_MARGIN;
+
+            customStudyFlyout.VerticalOffset = - DEFAULT_HEIGHT_MARGIN / 5;
         }
 
         private void NumberChangedHandler(object sender, TextChangedEventArgs e)
@@ -176,10 +178,8 @@ namespace AnkiU.UserControls
             userControl.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
         }
 
-        public void Show(double horizontalOffset = 0, double verticalOfsset = 0)
-        {            
-            customStudyFlyout.HorizontalOffset = horizontalOffset;
-            customStudyFlyout.VerticalOffset = verticalOfsset;            
+        public void Show()
+        {                   
             customStudyFlyout.IsOpen = true;
         }
 
@@ -470,6 +470,11 @@ namespace AnkiU.UserControls
             foreach(var v in  value)            
                 jsonArray.Add(JsonValue.CreateNumberValue(v));
             return jsonArray;
+        }
+
+        private void WindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            CalculateSizeAndPosition();
         }
     }
 }
