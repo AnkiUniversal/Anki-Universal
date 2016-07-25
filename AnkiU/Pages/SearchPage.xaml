@@ -210,23 +210,23 @@
                         <Flyout Placement="Top" x:Name="pageFlyout">
                             <StackPanel Orientation="Vertical" Width="130">
                                 <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
-                                    Padding="0"
+                                    Padding="0" Height="35"
                                     Content="Show All Results" Click="ShowAllResultsButtonClickHandler"
                                     HorizontalAlignment="Stretch" />
                                 <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
-                                    Padding="0"
+                                    Padding="0" Height="35"
                                     Content="80 cards/page" Click="EightyPageButtonClickHandler"
                                     HorizontalAlignment="Stretch" />
                                 <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
-                                    Padding="0"
+                                    Padding="0" Height="35"
                                     Content="40 cards/page" Click="FortyCardPageButtonClickHandler"
                                     HorizontalAlignment="Stretch" />
                                 <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
-                                    Padding="0"
+                                    Padding="0" Height="35"
                                     Content="20 cards/page"
                                     HorizontalAlignment="Stretch" Click="TwentyCardPageButtonClickHandler" />
                                 <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
-                                    Padding="0"
+                                    Padding="0" Height="35"
                                     Content="10 cards/page"
                                     HorizontalAlignment="Stretch" Click="TenCardPageButtonClickHandler" />
                             </StackPanel>

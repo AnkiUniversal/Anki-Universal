@@ -687,14 +687,8 @@ namespace AnkiU.Pages
         }
 
         private void UnselectAllMenuFlyoutItemClick(object sender, RoutedEventArgs e)
-        {            
-            var item = cardInformationView.CardListView.SelectedItem;
-            if (item == null)
-                return;
-
-            cardInformationView.CardListView.SelectedItem = item;
-            ListViewItem listItem = cardInformationView.CardListView.ContainerFromItem(item) as ListViewItem;
-            listItem.IsSelected = false;            
+        {
+            cardInformationView.CardListView.SelectedItems.Clear();
         }
 
         private async void RescheduleMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
