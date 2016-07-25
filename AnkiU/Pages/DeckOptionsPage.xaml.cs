@@ -180,8 +180,7 @@ namespace AnkiU.Pages
 
             if (String.IsNullOrWhiteSpace(CurrentName))
             {
-                MessageDialog dialog = new MessageDialog("Please enter a name for this configuration");
-                await dialog.ShowAsync();
+                await UIHelper.ShowMessageDialog("Please enter a name for this configuration");                
                 return true;
             }
             return false;
@@ -199,9 +198,8 @@ namespace AnkiU.Pages
             {
                 string exist = c.GetNamedString("name");
                 if (exist.Equals(CurrentName, StringComparison.OrdinalIgnoreCase))
-                {                    
-                    MessageDialog dialog = new MessageDialog("A configuration with the same name already exists.");
-                    await dialog.ShowAsync();
+                {
+                    await UIHelper.ShowMessageDialog("A configuration with the same name already exists.");                    
                     return true;                   
                 }
             }
@@ -233,6 +231,7 @@ namespace AnkiU.Pages
             currentDeck["conf"] = config.GetNamedValue("id");
             collection.Deck.Save(currentDeck);            
             collection.Deck.Save(config);
+            collection.SaveAndCommitAsync();
             Frame.GoBack(); 
         }
 

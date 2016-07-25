@@ -1163,8 +1163,7 @@ namespace AnkiU.Pages
         {
             if (currentCard.Type != CardType.Review)
             {
-                MessageDialog diaglog = new MessageDialog("You can't reschedule a new or in learning card.");
-                await diaglog.ShowAsync();
+                await UIHelper.ShowMessageDialog("You can't reschedule a new or in learning card.");                                
                 return;
             }
             OpenRescheduleFlyout();
@@ -1233,16 +1232,13 @@ namespace AnkiU.Pages
 
         private static async Task HandlerSmallRescheduleDueTime()
         {
-            MessageDialog dialog =
-                                new MessageDialog("If you want to re-learn this card please choose \"AGAIN\" option on the answer side");
-            await dialog.ShowAsync();
+            await UIHelper.ShowMessageDialog("If you want to re-learn this card please choose \"AGAIN\" option on the answer side");            
         }
 
         private static async Task HandleLargeRescheduleDueTime()
         {
-            MessageDialog dialog = new MessageDialog("If you don't want to review this card again you can suspend it instead of rescheduling.\n",
+            await UIHelper.ShowMessageDialog("If you don't want to review this card again you can suspend it instead of rescheduling.\n",
                                                                       "It's over 999+!");
-            await dialog.ShowAsync();
         }
 
         private void RescheduleReviewCard(int due)

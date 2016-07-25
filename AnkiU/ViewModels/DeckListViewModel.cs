@@ -128,7 +128,7 @@ namespace AnkiU.ViewModels
 
         private void AddNewDeck(long did, string name)
         {
-            Collection.Deck.Select(did);
+            Collection.Deck.Select(did, false);
             Collection.Sched.Reset();
 
             CardTypeCounts count = Collection.Sched.AllCardTypeCounts();
@@ -161,7 +161,7 @@ namespace AnkiU.ViewModels
 
             SubtractCardsCountFromTotal(deckId);
 
-            Collection.Deck.Select(deckId);
+            Collection.Deck.Select(deckId, false);
             Collection.Sched.Reset();
             
             CardTypeCounts count = Collection.Sched.AllCardTypeCounts();

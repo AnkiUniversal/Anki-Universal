@@ -322,7 +322,7 @@ namespace AnkiU.AnkiCore
             return (long)collection.Conf.GetNamedNumber("curDeck");
         }
 
-        public void Select(long did)
+        public void Select(long did, bool isSetchanged = true)
         {
             string name = deckDict[did].GetNamedString("name");
 
@@ -338,7 +338,8 @@ namespace AnkiU.AnkiCore
                 ja.Add(JsonValue.CreateNumberValue(n));
 
             collection.Conf["activeDecks"] = ja;
-            isChanged = true;
+            if(isSetchanged)
+                isChanged = true;
         }
 
         public Dictionary<string, long> Children(long did)

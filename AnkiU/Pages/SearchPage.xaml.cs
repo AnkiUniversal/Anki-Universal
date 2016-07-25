@@ -559,7 +559,7 @@ namespace AnkiU.Pages
             if (cardInformationView.CardShowMenuFlyout == null)
                 return;
 
-            collection.Deck.Select(cardInformationView.CardShowMenuFlyout.DeckId);
+            collection.Deck.Select(cardInformationView.CardShowMenuFlyout.DeckId, false);
             Note note = collection.GetNote(cardInformationView.CardShowMenuFlyout.NoteId);
             NoteEditorPageParameter param = new NoteEditorPageParameter() { CurrentNote = note, Mainpage = mainPage };
             Frame.Navigate(typeof(NoteEditor), param);
@@ -575,6 +575,7 @@ namespace AnkiU.Pages
             foreach(var card in listCard.Key)            
                 SuspendCardInfor(card);
             UnselectAllMenuFlyoutItemClick(null, null);
+            collection.SaveAndCommitAsync();
         }
 
         private void SuspendCardInfor(CardInformation card)
@@ -594,6 +595,7 @@ namespace AnkiU.Pages
             foreach (var card in listCard.Key)
                 UnsuspendCardInfor(card);
             UnselectAllMenuFlyoutItemClick(null, null);
+            collection.SaveAndCommitAsync();
         }        
 
         private void UnsuspendCardInfor(CardInformation card)
@@ -617,6 +619,7 @@ namespace AnkiU.Pages
             collection.Sched.ResetCards(listCard.Value.ToArray());
             cardInforViewModel.UpdateCardInformationDueAfterReset(collection, listCard);
             UnselectAllMenuFlyoutItemClick(null, null);
+            collection.SaveAndCommitAsync();
         }
 
         private async void DeleteMenuFlyoutItemClick(object sender, RoutedEventArgs e)
@@ -631,7 +634,8 @@ namespace AnkiU.Pages
                 return;
 
             collection.RemoveCardsAndNoteIfNoCardsLeft(listCard.Value.ToArray());
-            UpdateSeachResultsAsync();
+            collection.SaveAndCommitAsync();
+            UpdateSeachResultsAsync();            
         }
 
         private KeyValuePair<List<CardInformation>, List<long>> GetSelectedCardsInListView()
@@ -732,6 +736,7 @@ namespace AnkiU.Pages
             listRescheduleCard.Key.Clear();
             listRescheduleCard.Value.Clear();
             UnselectAllMenuFlyoutItemClick(null, null);
+            collection.SaveAndCommitAsync();
         }
 
         private void ViewCardMenuFlyoutClickHandler(object sender, RoutedEventArgs e)

@@ -294,7 +294,7 @@ namespace AnkiU.Pages
 
         private void DeckListViewItemClickEventHandler(long deckId)
         {
-            mainPage.Collection.Deck.Select(deckId);
+            mainPage.Collection.Deck.Select(deckId, false);
             var deck = deckListViewModel.GetDeck(deckId);
             if (deck.NewCards > 0 || deck.DueCards > 0)
             {
@@ -477,20 +477,17 @@ namespace AnkiU.Pages
                 {
                     if (ex.Error == DeckRenameException.ErrorCode.ALREADY_EXISTS)
                     {
-                        MessageDialog dialog = new MessageDialog("A deck with the same name already exists!");
-                        await dialog.ShowAsync();
+                        await UIHelper.ShowMessageDialog("A deck with the same name already exists!");                        
                         renameFlyout.Show(pointToShowFlyout);
                     }
                     else
                     {
-                        MessageDialog dialog = new MessageDialog("You cannot rename this deck!");
-                        await dialog.ShowAsync();
+                        await UIHelper.ShowMessageDialog("You cannot rename this deck!"); 
                     }
                 }
                 catch
                 {
-                    MessageDialog dialog = new MessageDialog("Unexpected error!");
-                    await dialog.ShowAsync();
+                    await UIHelper.ShowMessageDialog("Unexpected error!");                    
                 }
             });
         }
@@ -651,11 +648,12 @@ namespace AnkiU.Pages
             {
                 var config = (e.OriginalSource as FrameworkElement).DataContext as DeckConfigName;
                 var deckIds = collection.Deck.DeckIdsForConf(config.Id);
-                collection.Deck.RemoveConfiguration(config.Id);                
+                collection.Deck.RemoveConfiguration(config.Id);
+                
                 foreach(var id in deckIds)
                     deckListViewModel.UpdateCardCountForDeck(id);
                 
-                UpdateNoticeText();
+                UpdateNoticeText();                
                 collection.SaveAndCommit();
             }
         }
@@ -791,14 +789,14 @@ namespace AnkiU.Pages
 
         private void AddNoteMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
         {
-            collection.Deck.Select(deckShowContextMenu.Id);
+            collection.Deck.Select(deckShowContextMenu.Id, false);
             NoteEditorPageParameter param = new NoteEditorPageParameter() { CurrentNote = null, Mainpage = mainPage };
             Frame.Navigate(typeof(NoteEditor), param);
         }
 
         private void SeachCardMenuClickHandler(object sender, RoutedEventArgs e)
         {
-            mainPage.Collection.Deck.Select(deckShowContextMenu.Id);
+            mainPage.Collection.Deck.Select(deckShowContextMenu.Id, false);
             Frame.Navigate(typeof(SearchPage), mainPage);
         }
 
@@ -827,7 +825,7 @@ namespace AnkiU.Pages
 
         private void StatsMenuFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            collection.Deck.Select(deckShowContextMenu.Id);
+            collection.Deck.Select(deckShowContextMenu.Id, false);
             Stats.IsWholeCollection = false;
             Frame.Navigate(typeof(StatsPage), mainPage);
         }

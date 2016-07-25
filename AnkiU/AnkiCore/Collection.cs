@@ -384,7 +384,7 @@ namespace AnkiU.AnkiCore
             if (database == null)
             {
                 database = new DB(folder.Path + "\\" + RelativePath);
-                media.ConnectDatabaseAsync();
+                media.ConnectDatabaseInNewThread();
                 OpenLog();
             }
         }
@@ -1167,7 +1167,7 @@ namespace AnkiU.AnkiCore
             conf["timeLim"] = JsonValue.CreateNumberValue(seconds);
         }
 
-        public long GtTimeLimit()
+        public long GetTimeLimit()
         {
             return (long)conf.GetNamedNumber("timeLim");
         }
@@ -1544,6 +1544,7 @@ namespace AnkiU.AnkiCore
         {
             database.Execute("VACUUM");
             database.Execute("ANALYZE");
+            database.IsModified = true;
         }
 
         public void Log([CallerMemberName] string memberName = "", [CallerFilePath] string filePath = "", params object[] args)

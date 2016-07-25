@@ -316,7 +316,7 @@ namespace AnkiU.Pages
             if (deckId != DeckNameViewModel.ALL_DECKS_ID)
             {
                 Stats.IsWholeCollection = false;
-                collection.Deck.Select(deckId);
+                collection.Deck.Select(deckId, false);
             }
             else
                 Stats.IsWholeCollection = true;

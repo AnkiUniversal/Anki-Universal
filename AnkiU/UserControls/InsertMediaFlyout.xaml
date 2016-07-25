@@ -27,7 +27,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Media folder:"/>
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Media Backup:"/>
                         <TextBox Margin="5,0,0,0" Grid.Column="1" x:Name="backupRootFolderTextBox"  TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True"  />
                         <Button x:Name="folderPickerButton" Style="{StaticResource ButtonGray}" BorderBrush="Black" BorderThickness="1" 
                                 Grid.Column="2" Padding="0" Margin="-2,0,0,0" Height="32" Width="40" Click="FolderPickerButtonClick" >

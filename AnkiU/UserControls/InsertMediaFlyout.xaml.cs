@@ -52,7 +52,10 @@ namespace AnkiU.UserControls
         private bool isNotAksAgain = false;
         private bool isReplace = false;
         private bool isCancel = false;
-        MessageDialog dialog;
+        ThreeOptionsDialog dialog;        
+
+        ProgressDialog progressDialog = null;
+        private bool isProgressDialogClose = false;
 
         public InsertMediaFlyout(Collection collection)
         {
@@ -92,6 +95,9 @@ namespace AnkiU.UserControls
                 return;
             }
 
+            PrepareProgessDialog();
+            ResetFlags();
+
             using (var stream = await mediaZipFile.OpenStreamForReadAsync())
             using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Read))
             {
@@ -101,9 +107,7 @@ namespace AnkiU.UserControls
                     await UIHelper.ShowMessageDialog("No files found.");
                     mediaInsertFlyout.ShowAt(placeToShow);
                     return;
-                }
-
-                ProgressDialog progress = PrepareProgessDialog();
+                }                
 
                 var deckList = await collection.Media.MapDeckIdToDeckIdFolder();
                 var deckFolder = deckList[currentSelectedDeck.Id];
@@ -114,7 +118,7 @@ namespace AnkiU.UserControls
                     collection.Media.Database.BeginTransaction();
                     foreach (var entry in archive.Entries)
                     {
-                        progress.ProgressBarLabel = String.Format(PROGESS_LABEL, index, total);
+                        progressDialog.ProgressBarLabel = String.Format(PROGESS_LABEL, index, total);
                         index++;
 
                         var existFile = await deckFolder.TryGetItemAsync(entry.Name) as StorageFile;
@@ -123,8 +127,8 @@ namespace AnkiU.UserControls
                             if (!isNotAksAgain)
                                 await AskUserConfirmationForReplacing(entry.Name);
 
-                            if (isCancel)                            
-                                return;                            
+                            if (isCancel)
+                                return;
 
                             if (!isReplace)
                                 continue;
@@ -133,23 +137,44 @@ namespace AnkiU.UserControls
                         collection.Media.MarkFileAddIntoDatabase(entry.Name, currentSelectedDeck.Id);
                     }
 
-                    progress.Hide();
+                    progressDialog.Hide();
                     await UIHelper.ShowMessageDialog("Finished inserting media files.");
                 }
                 finally
                 {
-                    progress.Hide();
+                    progressDialog.Hide();                    
                     collection.Media.Database.Commit();                    
                 }                
             }
         }
 
-        private static ProgressDialog PrepareProgessDialog()
+        private void ResetFlags()
         {
-            ProgressDialog progress = new ProgressDialog();
-            progress.ProgressBarLabel = "Extracting...";
-            progress.ShowInDeterminateStateNoStopAsync("Insert media files");
-            return progress;
+            isReplace = false;
+            isCancel = false;
+            isNotAksAgain = false;
+        }
+
+        private void PrepareProgessDialog()
+        {
+            if (progressDialog == null)
+            {
+                progressDialog = new ProgressDialog();
+                progressDialog.ProgressBarLabel = "Extracting...";
+                progressDialog.ShowInDeterminateStateNoStopAsync("Insert media files");
+                progressDialog.Closed += ProgressDialogClosed;
+                progressDialog.Opened += ProgressDialogOpened;
+            }
+        }
+
+        private void ProgressDialogOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            isProgressDialogClose = false;
+        }
+
+        private void ProgressDialogClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            isProgressDialogClose = true;
         }
 
         private async Task AskUserConfirmationForReplacing(string name)
@@ -158,30 +183,50 @@ namespace AnkiU.UserControls
             if (dialog == null)
                 InitMessageDialog(message);
             else
-                dialog.Content = message;
+                dialog.Message = message;
+
+            await WaitToCloseProgressDialog();
+            await GetUserConfirmation();
+        }
+
+        private async Task GetUserConfirmation()
+        {
             await dialog.ShowAsync();
+            if (dialog.IsLeftButtonClick())
+            {
+                isCancel = false;
+                isReplace = true;
+            }
+            else if (dialog.IsMiddleButtonClick())
+            {
+                isCancel = false;
+                isReplace = false;
+            }
+            else
+                isCancel = true;
+
+            isNotAksAgain = dialog.IsNotAskAgain();            
+
+            await dialog.WaitForDialogClosed();
+            progressDialog.ShowInDeterminateStateNoStopAsync("Insert media files");
+        }
+
+        private async Task WaitToCloseProgressDialog()
+        {
+            progressDialog.Hide();
+            while (!isProgressDialogClose)
+                await Task.Delay(50);
         }
 
         private void InitMessageDialog(string message)
         {
-            dialog = new MessageDialog(message);            
-            dialog.Commands.Add(new UICommand("Yes to all", (command) =>
-            {
-                isNotAksAgain = true;
-                isReplace = true;
-            }));
-            dialog.Commands.Add(new UICommand("Not to all", (command) =>
-            {
-                isNotAksAgain = true;
-                isReplace = false;
-            }));
-            dialog.Commands.Add(new UICommand("Cancel", (command) =>
-            {
-                isCancel = true;
-                isNotAksAgain = false;
-                isReplace = false;
-            }));
-            dialog.DefaultCommandIndex = 2;
+            dialog = new ThreeOptionsDialog();
+            dialog.Message = message;
+            dialog.Title = "Duplicate File(s)";
+            dialog.LeftButton.Content = "Yes";
+            dialog.MiddleButton.Content = "No";
+            dialog.RightButton.Content = "Cancel";
+            dialog.NotAskAgainVisibility = Visibility.Visible;            
         }
 
         private async void FolderPickerButtonClick(object sender, RoutedEventArgs e)

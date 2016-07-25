@@ -31,7 +31,7 @@ using Windows.Data.Json;
 
 namespace TestAnkiCore
 {
-    [TestClass]
+    [TestClass, Obsolete]
     public class TestSync
     {
         public StorageFolder tempFolder;

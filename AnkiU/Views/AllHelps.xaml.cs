@@ -619,7 +619,7 @@ namespace AnkiU.Views
                 cardCount = collection.CardCount(id);
                 if (cardCount > 0)
                 {
-                    collection.Deck.Select(id);                    
+                    collection.Deck.Select(id, false);                    
                     var model = collection.Models.GetCurrent();
                     if (model.GetNamedNumber("type") == 0)
                     {

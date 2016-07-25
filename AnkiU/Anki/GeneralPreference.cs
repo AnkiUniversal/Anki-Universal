@@ -306,7 +306,7 @@ namespace AnkiU.Anki
             userPrefs.IsFullSyncRequire = true;
             userPrefs.IsShowLeechActionOnce = false;
             userPrefs.IsCompressBackup = true;
-            userPrefs.NumberOfBackups = 10;
+            userPrefs.NumberOfBackups = 15;
             userPrefs.BackupsMinTime = 12;
             userPrefs.helpPreferencesJson = new JsonObject();
 

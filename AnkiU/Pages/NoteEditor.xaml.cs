@@ -429,30 +429,38 @@ namespace AnkiU.Pages
         {
             await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                string name = sender as string;
-                if (name == null)
-                    return;
-
-                switch (name)
+                try
                 {
-                    case ("media"):
-                        await AddMedia();
-                        break;
-                    case ("link"):
-                        await AddLink();
-                        break;
-                    case ("microphone"):
-                        await AudioRecorder();
-                        break;
-                    case ("cloze"):
-                        await AddCloze();
-                        break;
-                    case ("save"):
-                        mainPage.SaveButtonClickAnimateAsync();
-                        await SaveNote();
-                        break;
-                    default:
-                        break;
+                    string name = sender as string;
+                    if (name == null)
+                        return;
+
+                    switch (name)
+                    {
+                        case ("media"):
+                            await AddMedia();
+                            break;
+                        case ("link"):
+                            await AddLink();
+                            break;
+                        case ("microphone"):
+                            await AudioRecorder();
+                            break;
+                        case ("cloze"):
+                            await AddCloze();
+                            break;
+                        case ("save"):
+                            mainPage.SaveButtonClickAnimateAsync();
+                            await SaveNote();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    // This code should never be reached
+                    await UIHelper.ShowMessageDialog("Note Editor: " + ex.Message);
                 }
             });
         }
@@ -505,22 +513,17 @@ namespace AnkiU.Pages
             var existItem = await deckIdFolder.TryGetItemAsync(legalName) as StorageFile;
             if (existItem != null)
             {
-                MessageDialog dialog = new MessageDialog("This deck already has a file with the same name!\n");
-                dialog.Commands.Add(new UICommand("Rename and add", (command) =>
-                {
-                    isReuse = false;
-                }));
-                dialog.Commands.Add(new UICommand("Reuse", (command) =>
-                {
-                    isReuse = true;
-                }));
-                dialog.Commands.Add(new UICommand("Cancel", (command) =>
-                {
-                    isCancel = true;
-                }));
+                ThreeOptionsDialog dialog = new ThreeOptionsDialog();
+                dialog.Message = "This deck already has a media file with the same name.\n ";
+                dialog.Title = "Duplicate File";
+                dialog.LeftButton.Content = "Rename";
+                dialog.MiddleButton.Content = "Reuse";
+                dialog.RightButton.Content = "Cancel";
                 await dialog.ShowAsync();
+                isCancel = dialog.IsRightButtonClick();
                 if (isCancel)
                     return null;
+                isReuse = dialog.IsMiddleButtonClick();
             }
             
             if (!isReuse)                            

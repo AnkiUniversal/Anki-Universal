@@ -24,10 +24,13 @@ using Microsoft.OneDrive.Sdk;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls;
 
 namespace AnkiU.Anki.Syncer
 {
@@ -42,38 +45,64 @@ namespace AnkiU.Anki.Syncer
         private ISyncInstance syncInstance = null;     
         private GeneralPreference remoteUserPref = null;
         private MainPage mainPage;
-        private SyncDialog dialog;
+        private SyncDialog syncStateDialog;
+        private bool isSyncStateDialogClose = false;
 
-        private StorageFile remoteMediaDBFile;
+        private StorageFile remoteMediaDBFile;                       
 
         public FullSync(MainPage mainPage, ISyncInstance syncInstance)
         {
             this.mainPage = mainPage;
-            dialog = new SyncDialog(mainPage.CurrentDispatcher);
+            syncStateDialog = new SyncDialog(mainPage.CurrentDispatcher);
+            syncStateDialog.Opened += SyncStateDialogOpened;
+            syncStateDialog.Closed += SyncStateDialogClosed;
             this.syncInstance = syncInstance;            
+        }
+
+        private void SyncStateDialogOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            isSyncStateDialogClose = false;
+        }
+
+        private void SyncStateDialogClosed(ContentDialog sender, Windows.UI.Xaml.Controls.ContentDialogClosedEventArgs args)
+        {
+            isSyncStateDialogClose = true;
         }
 
         public async Task StartSync()
         {                       
             try
             {
-                dialog.Show(MainPage.UserPrefs.IsReadNightMode);
-                dialog.Label = "Authenticating...";
-                syncInstance.InitInstance();
-                await syncInstance.AuthenciateAccount();
-                
-                dialog.Label = "Preparing files...";
-                await syncInstance.InitSyncFolderIfNeeded();
-                await PrepareForSyncing();
+                await PreparingFilesAsync();
 
                 if (remoteUserPref == null || MainPage.UserPrefs.LastSyncTime >= remoteUserPref.LastSyncTime)
-                    await UploadToServer();
+                {
+                    if (GetLastModifiedTimeInSecond() > MainPage.UserPrefs.LastSyncTime)
+                        await UploadToServer();
+                }
                 else
-                    await DownloadFromServer();
+                {
+                    bool? isDownload = true;
+                    if (GetLastModifiedTimeInSecond() > MainPage.UserPrefs.LastSyncTime)
+                    {                        
+                        isDownload = await AskForceSyncInOneDirection();
+                        if (isDownload == null)
+                            return;
+                        else if(isDownload == true)
+                        {
+                            syncStateDialog.Label = "Backing up your database...";
+                            await MainPage.BackupDatabase();
+                        }
+                    }
+                    
+                    if (isDownload == true)                    
+                        await DownloadFromServer();                    
+                    else
+                        await UploadToServer();
+                }
 
                 await SyncMediaIfNeeded();
-                dialog.Label = "Finished.";
-                syncInstance.Close();
+                syncStateDialog.Label = "Finished.";
                 await Task.Delay(500);
             }
             catch (Exception ex)
@@ -82,17 +111,63 @@ namespace AnkiU.Anki.Syncer
             }
             finally
             {
-                if(tempSyncFolder != null)
+                syncInstance.Close();
+                if (tempSyncFolder != null)
                     await tempSyncFolder.DeleteAsync();
-                dialog.Close();
+                syncStateDialog.Close();
             }
+        }
+
+        private async Task PreparingFilesAsync()
+        {
+            syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
+            syncStateDialog.Label = "Authenticating...";
+            syncInstance.InitInstance();
+            await syncInstance.AuthenciateAccount();
+
+            syncStateDialog.Label = "Preparing files...";
+            mainPage.Collection.SaveAndCommit();
+            await syncInstance.InitSyncFolderIfNeeded();
+            await PrepareForSyncing();
+        }
+
+        private long GetLastModifiedTimeInSecond()
+        {
+            return mainPage.Collection.TimeModified / 1000;
+        }
+
+        private async Task<bool?> AskForceSyncInOneDirection()
+        {
+            await CloseSyncStateDialog();
+
+            ThreeOptionsDialog dialog = new ThreeOptionsDialog();
+            dialog.Message = "Your current collection has been modified without syncing to the server first." +
+                            " As a result, some of your changes will be lost.\n"
+                            + "Choosing \"Download\" will replace your current collection with the one from the server."
+                            + " (A backup will also be created.)\n"
+                            + "Choosing \"Upload\" will upload your current collection to the server.";
+            dialog.Title = "Out of Sync";
+            dialog.LeftButton.Content = "Download";
+            dialog.MiddleButton.Content = "Upload";
+            dialog.RightButton.Content = "Cancel";
+            await dialog.ShowAsync();
+            await dialog.WaitForDialogClosed();
+            syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
+            return dialog.ThreeStateChoose;
+        }
+
+        private async Task CloseSyncStateDialog()
+        {
+            syncStateDialog.Close();
+            while (!isSyncStateDialogClose)
+                await Task.Delay(50);
         }
 
         private async Task UploadToServer()
         {
-            dialog.Label = "Uploading database...";
+            syncStateDialog.Label = "Uploading database...";            
+            await UploadCollectionDatabase();
             await UploadPrefDatabase();
-            await UploadCollectionDatabase();            
             await UploadDeckImages();            
         }
 
@@ -106,9 +181,21 @@ namespace AnkiU.Anki.Syncer
 
         private async Task UploadCollectionDatabase()
         {
-            mainPage.Collection.SaveAndCommit();
+            StorageFile collectionFile = await CompressedDatabase();
+            await syncInstance.UploadItemWithPathAsync(collectionFile, Constant.ANKIROOT_SYNC_FOLDER + "/" + collectionFile.Name);
+        }
+
+        private async Task<StorageFile> CompressedDatabase()
+        {
             var collectionFile = await CopyToTempFolderAsync(await Storage.AppLocalFolder.GetFileAsync(Constant.COLLECTION_NAME));
-            await syncInstance.UploadItemWithPathAsync(collectionFile, Constant.ANKI_COL_SYNC_PATH);
+            var zipFile = await tempSyncFolder.CreateFileAsync(Constant.COLLECTION_NAME_ZIP);
+            using (var fileStream = await zipFile.OpenStreamForWriteAsync())
+            using (ZipArchive archive = new ZipArchive(fileStream, ZipArchiveMode.Create))
+            {
+                archive.CreateEntryFromFile(collectionFile.Path, collectionFile.Name);
+            }
+
+            return zipFile;
         }
 
         private async Task UploadDeckImages()
@@ -206,7 +293,7 @@ namespace AnkiU.Anki.Syncer
 
         private async Task DownloadFromServer()
         {
-            dialog.Label = "Donwloading database...";                   
+            syncStateDialog.Label = "Donwloading database...";                   
             await DownloadCollectionDatabase();
             await DownloadDeckImages();
 
@@ -224,13 +311,45 @@ namespace AnkiU.Anki.Syncer
 
         private async Task DownloadCollectionDatabase()
         {
-            var collectionDBFile = await CreateTempFileAsync(Constant.COLLECTION_NAME);            
-            await syncInstance.DownloadItemWithPathAsync(Constant.ANKI_COL_SYNC_PATH, collectionDBFile);            
+            StorageFile collectionFile = await GetUnCompressedDBFile();
+            if (collectionFile == null)
+            {
+                await UIHelper.ShowMessageDialog("Couldn't find database file.");
+                return;
+            }
+
             mainPage.Collection.Close();
-            await collectionDBFile.CopyAsync(Storage.AppLocalFolder, collectionDBFile.Name, NameCollisionOption.ReplaceExisting);            
-            mainPage.Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);            
+            await collectionFile.CopyAsync(Storage.AppLocalFolder, Constant.COLLECTION_NAME, NameCollisionOption.ReplaceExisting);
+            mainPage.Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
             await mainPage.NavigateToDeckSelectPage();
             mainPage.ContentFrame.BackStack.RemoveAt(0);
+        }
+
+        private async Task<StorageFile> GetUnCompressedDBFile()
+        {
+            StorageFile collectionFile;
+            try
+            {
+                var compressedRemoteDB = await CreateTempFileAsync(Constant.COLLECTION_NAME_ZIP);
+                await syncInstance.DownloadItemWithPathAsync(Constant.ANKIROOT_SYNC_FOLDER + "/" 
+                                                           + Constant.COLLECTION_NAME_ZIP, 
+                                                             compressedRemoteDB);
+                using (var fileStream = await compressedRemoteDB.OpenStreamForReadAsync())
+                using (ZipArchive archive = new ZipArchive(fileStream, ZipArchiveMode.Read))
+                {
+                    archive.ExtractToDirectory(tempSyncFolder.Path);
+                }
+                collectionFile = await tempSyncFolder.TryGetItemAsync(Constant.COLLECTION_NAME) as StorageFile;
+            }
+            catch
+            {// NO zipFile
+                await UIHelper.ShowMessageDialog("Please update all your devices to the newest version and re-sync your data.");
+                var oldSyncFile = await syncInstance.TryGetItemInRemotePathAsync(Constant.COLLECTION_NAME, Constant.ANKIROOT_SYNC_FOLDER);
+                if (oldSyncFile != null)
+                    await syncInstance.DeleteItemWithPathAsync(Constant.ANKI_COL_SYNC_PATH);
+                collectionFile = null;
+            }                                                        
+            return collectionFile;
         }
 
         private async Task DownloadDeckImages()
@@ -307,7 +426,7 @@ namespace AnkiU.Anki.Syncer
         {
             if (!MainPage.UserPrefs.IsSyncMedia)            
                 return;
-            dialog.Label = "Start syncing media files...";
+            syncStateDialog.Label = "Start syncing media files...";
             var remoteMediaDBItem = await TryGetItemInSyncFolderAsync(Constant.MEDIA_DB_NAME);
             if (remoteMediaDBItem == null)
             {
@@ -327,7 +446,7 @@ namespace AnkiU.Anki.Syncer
                                    
                 if (remoteMeta.LastUnixTimeSync > localLastMediaSync)
                 {
-                    await DownLoadMediaChanges(remoteMediaDB, deckMediaFolders, 
+                    await DownLoadAndUploadMediaChanges(remoteMediaDB, deckMediaFolders, 
                                                 remoteMediaFolderPath, remoteMeta, localLastMediaSync);
                 }
                 else
@@ -337,38 +456,105 @@ namespace AnkiU.Anki.Syncer
             }                         
         }      
 
-        private async Task DownLoadMediaChanges(DB remoteMediaDB, Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MetaTable remoteMeta, long localLastMediaSync)
+        private async Task DownLoadAndUploadMediaChanges(DB remoteMediaDB, Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MetaTable remoteMeta, long localLastMediaSync)
         {
-            var mediasModified = remoteMediaDB.QueryColumn<MediaTable>
+            var remoteMediasModified = remoteMediaDB.QueryColumn<MediaTable>
                                 ("Select * from media where mtime > ?", localLastMediaSync);
-            long count = 0;
-            long total = mediasModified.Count;
-            foreach (var media in mediasModified)
+
+            var localMediasModified = mainPage.Collection.Media.Database.QueryColumn<MediaTable>
+                                     ("Select * from media where mtime > ?", localLastMediaSync);            
+            ResolveConflictIfHas(remoteMediasModified, localMediasModified);
+
+            long total = remoteMediasModified.Count + localMediasModified.Count;
+            var outOfSyncRemoteFiles = await UpdateMediaFilesInLocal(deckMediaFolders, remoteMediaFolderPath, remoteMediasModified, 0, total);
+            await DeleteUnusedMediaDeckFolder(deckMediaFolders);
+
+            var outOfSyncLocalFiles = await UpdateMediaFilesInRemoteSever(deckMediaFolders, remoteMediaFolderPath, 
+                                                                     localMediasModified, total, remoteMediasModified.Count);
+            UpdateDownloadedRemoteMediaDB(remoteMediaDB, localMediasModified, outOfSyncLocalFiles, outOfSyncRemoteFiles);
+            
+            await UpdateLocalMediaDatabase();
+
+            if(localMediasModified.Count > 0 || outOfSyncRemoteFiles.Count > 0)
+                await UpdateSeverMediaDatabase();
+        }
+
+        private static void UpdateDownloadedRemoteMediaDB(DB remoteMediaDB, List<MediaTable> localMediasModified, 
+                                                        List<MediaTable> outOfSyncLocalFiles, List<MediaTable> outOfSyncRemoteFiles)
+        {
+            foreach (var file in outOfSyncLocalFiles)
             {
-                UpdateProgessDialog(SYNC_MEDIA_LABEL, count, total);                
+                localMediasModified.Remove(file);
+            }
+
+            foreach (var media in localMediasModified)
+            {
+                remoteMediaDB.InsertOrReplace(media);
+            }
+
+            foreach(var file in outOfSyncRemoteFiles)
+            {
+                remoteMediaDB.Delete<MediaTable>(file.RelativePathName);
+            }
+        }
+
+        private static void ResolveConflictIfHas(List<MediaTable> remoteMediasModified, List<MediaTable> localMediasModified)
+        {
+            for (int i = 0; i < localMediasModified.Count; i++)
+            {
+                var conflictIndex = remoteMediasModified.FindIndex(
+                                    (x) =>
+                                    {
+                                        return x.RelativePathName == localMediasModified[i].RelativePathName;
+                                    });
+                if (conflictIndex == -1)
+                    continue;
+
+                if (localMediasModified[i].IsAdded == remoteMediasModified[conflictIndex].IsAdded)
+                {
+                    remoteMediasModified.RemoveAt(conflictIndex);
+                    localMediasModified.RemoveAt(i);
+                    i--;
+                }           
+                else
+                {
+                    localMediasModified.RemoveAt(i);
+                    i--;
+                }
+           
+            }
+        }
+
+        private async Task<List<MediaTable>> UpdateMediaFilesInLocal(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, List<MediaTable> remoteMediasModified, long count, long total)
+        {
+            List<MediaTable> outOfSync = new List<MediaTable>();
+            foreach (var media in remoteMediasModified)
+            {
+                UpdateProgessDialog(SYNC_MEDIA_LABEL, count, total);
                 count++;
 
                 var splitString = media.RelativePathName.Split(new char[] { Media.DECK_NAME_SEPARATOR }, 2);
                 var deckId = long.Parse(splitString[0]);
+                if(!deckMediaFolders.ContainsKey(deckId))
+                {// If no deckIdFolder exists -> Deck in collection is removed and user did not sync media properly
+                    outOfSync.Add(media);
+                    continue;
+                }
+
                 var name = splitString[1];
                 if (media.IsAdded)
-                {
-                    var localMediaInfor = mainPage.Collection.Media.Database
-                                          .QueryFirstRow<MediaTable>("Select * from media where fname = ? ", media.RelativePathName);
-                    if (localMediaInfor.Count == 0 || localMediaInfor[0].IsAdded == false
-                        || localMediaInfor[0].ModifiedTime < media.ModifiedTime)
-                    {
-                        await DownloadMediaFilesFromSever(deckMediaFolders, remoteMediaFolderPath, media, deckId, name);
-                    }
+                {                   
+                    await DownloadMediaFilesFromSever(deckMediaFolders, remoteMediaFolderPath, media, deckId, name);                    
                 }
                 else
                 {
                     await RemoveMediaFilesInLocal(deckMediaFolders, media, deckId, name);
-                }                
+                }
             }
-            await DeleteUnusedMediaDeckFolder(deckMediaFolders);
-            await UpdateLocalMediaDatabase();
+
+            return outOfSync;
         }
+
         private async Task DownloadMediaFilesFromSever(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MediaTable media, long deckId, string name)
         {
             try
@@ -408,33 +594,51 @@ namespace AnkiU.Anki.Syncer
         {
             mainPage.Collection.Media.Database.Close();
             await remoteMediaDBFile.CopyAsync(Storage.AppLocalFolder, Constant.MEDIA_DB_NAME, NameCollisionOption.ReplaceExisting);
-            mainPage.Collection.Media.ConnectDatabaseAsync();
+            await mainPage.Collection.Media.ConnectDatabaseAsync();
         }
 
         private async Task UploadMediaChanges(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MetaTable remoteMeta)
         {
-            var mediasModified = mainPage.Collection.Media.Database.QueryColumn<MediaTable>
-                                                     ("Select * from media where mtime > ?", remoteMeta.LastUnixTimeSync);
-            long total = mediasModified.Count;
-            if (total == 0)
+            if (!mainPage.Collection.Media.IsDatabaseModified())
                 return;
 
-            long count = 0;            
-            List<Item> deletedFolders = new List<Item>();
+            var mediasModified = mainPage.Collection.Media.Database.QueryColumn<MediaTable>
+                                                     ("Select * from media where mtime > ?", remoteMeta.LastUnixTimeSync);
+            long total = mediasModified.Count;            
+
+            await UpdateMediaFilesInRemoteSever(deckMediaFolders, remoteMediaFolderPath, mediasModified, total, 0);
+
+            await DeleteUnusedFolderInServer(deckMediaFolders, remoteMediaFolderPath);
+            await UpdateSeverMediaDatabase();
+        }
+
+        private async Task<List<MediaTable>> UpdateMediaFilesInRemoteSever(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, List<MediaTable> mediasModified, long total, long count)
+        {
+            List<MediaTable> outOfSyncFiles = new List<MediaTable>();
             foreach (var media in mediasModified)
             {
-                UpdateProgessDialog(SYNC_MEDIA_LABEL, count, total);                
+                UpdateProgessDialog(SYNC_MEDIA_LABEL, count, total);
                 count++;
 
                 var splitString = media.RelativePathName.Split(new char[] { Media.DECK_NAME_SEPARATOR }, 2);
+
                 var deckId = long.Parse(splitString[0]);
+                if (!deckMediaFolders.ContainsKey(deckId))
+                {
+                    outOfSyncFiles.Add(media);
+                    continue;
+                }
+
                 var name = splitString[1];
                 string remoteFilePath = remoteMediaFolderPath + media.RelativePathName;
                 if (media.IsAdded)
                 {
                     var localFile = await deckMediaFolders[deckId].TryGetItemAsync(name) as StorageFile;
                     if (localFile == null)
+                    {
+                        outOfSyncFiles.Add(media);
                         continue;
+                    }
 
                     await syncInstance.UploadItemWithPathAsync(localFile, remoteFilePath);
                 }
@@ -443,10 +647,9 @@ namespace AnkiU.Anki.Syncer
                     await DeleteRemoteMediaFile(remoteFilePath);
                 }
             }
-
-            await DeleteUnusedFolderInServer(deckMediaFolders, remoteMediaFolderPath);
-            await UpdateSeverMediaDatabase();
+            return outOfSyncFiles;
         }
+
         private async Task DeleteRemoteMediaFile(string remoteFilePath)
         {
             try
@@ -492,12 +695,13 @@ namespace AnkiU.Anki.Syncer
 
         private void UpdateProgessDialog(string label, long count, long total)
         {            
-            dialog.Label = String.Format(label, count, total);
+            syncStateDialog.Label = String.Format(label, count, total);
         }
 
         private async Task UpdateSeverMediaDatabase()
         {
             mainPage.Collection.Media.SetLastUnixTimeSync(DateTimeOffset.Now.ToUnixTimeSeconds());
+            mainPage.Collection.Media.MarkDatabaseClean();
             var localFile = await Storage.AppLocalFolder.GetFileAsync(Constant.MEDIA_DB_NAME);
             var mediaDatabase = await localFile.CopyAsync(tempSyncFolder, localFile.Name + "_upload");            
             await syncInstance.UploadItemWithPathAsync(mediaDatabase, Constant.MEDIA_DB_SYNC_PATH);
@@ -514,7 +718,7 @@ namespace AnkiU.Anki.Syncer
             {
                 if (item.Name == Constant.USER_PREF)
                 {
-                    await GetRemotePrefs(item);
+                    await GetRemotePrefsAsync(item);
                     return;
                 }
             }
@@ -528,11 +732,11 @@ namespace AnkiU.Anki.Syncer
                 deckImageCacheFolder = await deckImageFolder.CreateFolderAsync(DeckInformation.DECK_IMAGE_SYNC_CACHE_FOLDER);
         }
 
-        private async Task GetRemotePrefs(RemoteItem item)
+        private async Task GetRemotePrefsAsync(RemoteItem item)
         {
             var file = await CreateTempFileAsync(Constant.USER_PREF);
             await syncInstance.DownloadItemWithPathAsync(Constant.USER_PREF_SYNC_PATH, file);            
-            using (var remotePrefDatabase = new DB(tempSyncFolder.Path + "\\" + Constant.USER_PREF))
+            using (var remotePrefDatabase = new DB(file.Path))
             {
                 remoteUserPref = remotePrefDatabase.GetTable<GeneralPreference>().First();
             }
@@ -548,9 +752,12 @@ namespace AnkiU.Anki.Syncer
             return await tempSyncFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
         }       
 
-        private async Task<StorageFile> CopyToTempFolderAsync(StorageFile file)
+        private async Task<StorageFile> CopyToTempFolderAsync(StorageFile file, string fileName = null)
         {
-            return await file.CopyAsync(tempSyncFolder, file.Name, NameCollisionOption.ReplaceExisting);
+            if (fileName == null)
+                fileName = file.Name;
+
+            return await file.CopyAsync(tempSyncFolder, fileName, NameCollisionOption.ReplaceExisting);
         }
       
         /// <summary>

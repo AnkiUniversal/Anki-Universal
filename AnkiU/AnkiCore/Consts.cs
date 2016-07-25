@@ -32,6 +32,7 @@ namespace AnkiU.AnkiCore
         public const string ANKIROOT_SYNC_FOLDER = "Anki Universal";
 
         public const string COLLECTION_NAME = "collection.anki2";
+        public const string COLLECTION_NAME_ZIP = COLLECTION_NAME + ".zip";
         public const string ANKI_COL_SYNC_PATH = ANKIROOT_SYNC_FOLDER + "/" + COLLECTION_NAME;
 
         public const string MEDIA_DB_NAME = "collection.media.au.db2";

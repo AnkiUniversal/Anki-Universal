@@ -120,6 +120,7 @@ namespace AnkiU.Pages
             mainPage.UpdateUserPreference();
 
             collectionOptionViewModel.SaveOptionsToJsonConfig();
+            mainPage.Collection.SetIsModified();
             mainPage.Collection.SaveAndCommitAsync();
         }
 
@@ -177,12 +178,13 @@ namespace AnkiU.Pages
         {
             BackupFlyout backupFlyout = new BackupFlyout(mainPage.Collection);
             backupFlyout.BackupRestoreFinish += BackupRestoreFinishHandler;
-            backupFlyout.ShowFlyout(restoreButton, FlyoutPlacementMode.Full);
+            backupFlyout.ShowFlyout(restoreButton, FlyoutPlacementMode.Top);
         }
 
         private async void BackupRestoreFinishHandler(object sender, RoutedEventArgs e)
         {
             mainPage.Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
+            mainPage.Collection.SetIsModified();
             Frame.GoBack();
         }
     }

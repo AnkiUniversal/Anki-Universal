@@ -391,7 +391,7 @@ namespace AnkiU.Pages
             if (deckIdValue.ValueType != JsonValueType.Null)
             {
                 var deckId = (long)deckIdValue.GetNumber();
-                if (collection.Deck.HasDeckId(deckId))
+                if (deckId != Constant.DEFAULTDECK_ID && collection.Deck.HasDeckId(deckId))
                 {
                     var deckName = collection.Deck.GetDeckName(deckId);
                     await UIHelper.ShowMessageDialog("Unable to delete. This note type is used by deck " + deckName + ".");

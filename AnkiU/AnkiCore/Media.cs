@@ -82,12 +82,28 @@ namespace AnkiU.AnkiCore
 
         public long GetLastUnixTimeSync()
         {
-             return database.QueryScalar<int>("select lastUsn from meta");
+             return database.QueryScalar<long>("select lastUsn from meta");
         }
 
         public void SetLastUnixTimeSync(long value)
         {
             database.Execute("update meta set lastUsn = ?", value);
+        }
+
+        public bool IsDatabaseModified()
+        {
+            int dirMod = database.QueryScalar<int>("select dirMod from meta");
+            return dirMod == 1;
+        }
+
+        public void SetDatabaseModified()
+        {
+            database.Execute("update meta set dirMod = ?", 1);
+        }
+
+        public void MarkDatabaseClean()
+        {
+            database.Execute("update meta set dirMod = ?", 0);
         }
 
         static Media()
@@ -118,7 +134,7 @@ namespace AnkiU.AnkiCore
 
             mediaFolderName = colection.RelativePath.ReplaceFirst(".anki2", ".media");            
             CreateOrOpenMediaFolderAsync();
-            ConnectDatabaseAsync();
+            ConnectDatabaseInNewThread();
         }
 
         public async void CreateOrOpenMediaFolderAsync()
@@ -128,7 +144,12 @@ namespace AnkiU.AnkiCore
                 mediaFolder = await appFolder.CreateFolderAsync(mediaFolderName, CreationCollisionOption.OpenIfExists);
         }
 
-        public async void ConnectDatabaseAsync()
+        public async void ConnectDatabaseInNewThread()
+        {
+            await ConnectDatabaseAsync();
+        }
+
+        public async Task ConnectDatabaseAsync()
         {
             if (collection.IsServer)
                 return;
@@ -142,7 +163,7 @@ namespace AnkiU.AnkiCore
 
             database = new DB(appFolder.Path + "\\" + mediaDatabaseName);
             if (create)
-                InitMediaDatabase();            
+                InitMediaDatabase();
         }
 
         public void InitMediaDatabase()
@@ -295,6 +316,7 @@ namespace AnkiU.AnkiCore
             mediaInfo.RelativePathName = deckId.ToString() + DECK_NAME_SEPARATOR + fileName;            
 
             database.InsertOrReplace(mediaInfo, typeof(MediaTable));
+            SetDatabaseModified();
         }
 
         [Obsolete]
@@ -704,12 +726,14 @@ namespace AnkiU.AnkiCore
                 return new KeyValuePair<string, int>(array[0].CheckSum, array[0].Dirty);
         }
 
+        [Obsolete]
         public void MarkClean(List<string> fNames)
         {
             foreach (string fName in fNames)
                 database.Execute("update media set dirty=0 where fname=?", new object[] { fName });
         }
       
+        [Obsolete]
         public async Task SyncDelete(string mediaNameInDatabase)
         {
             var splitString = mediaNameInDatabase.Split(new char[] { DECK_NAME_SEPARATOR }, 2);
@@ -826,7 +850,8 @@ namespace AnkiU.AnkiCore
                 mediaInfor.ModifiedTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             else
                 mediaInfor.ModifiedTime = (long)modifiedTime;
-            database.InsertOrReplace(mediaInfor);            
+            database.InsertOrReplace(mediaInfor);
+            SetDatabaseModified();
         }
 
         [Obsolete]
@@ -947,6 +972,7 @@ namespace AnkiU.AnkiCore
         public void RemoveDeckMediaFromtDatabase(long deckId)
         {            
             database.Execute("delete from media where deckid = ?", deckId);
+            SetDatabaseModified();
         }
 
         public async Task DeleteMediaFiles(List<KeyValuePair<string, long>> mediaFiles)
@@ -968,7 +994,7 @@ namespace AnkiU.AnkiCore
                     await storageFile.DeleteAsync();
                     MarkFileRemoveIntoDatabase(storageFile.Name, file.Value);
                 }
-            }
+            }            
         }
         #endregion
     }

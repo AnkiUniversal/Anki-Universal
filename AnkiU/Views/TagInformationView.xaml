@@ -22,7 +22,7 @@
                     <TextBox x:Name="newTagFlyoutTextBox" Grid.Row="0" Margin="0,0,0,5" PlaceholderText="Example: tag1 tag2 tag3" VerticalAlignment="Center" 
                              TextWrapping="Wrap" HorizontalAlignment="Stretch" KeyUp="NewTagFlyoutTextBoxEnterKeyDownHandler"
                              IsSpellCheckEnabled="False"/>
-                    <Button x:Name="newTagFlyoutOKButton" Margin="0,0,0,0" Width="140" Grid.Row="1" HorizontalAlignment="Left" Content="OK" Style="{StaticResource ButtonBlue}" Click="NewTagFlyoutOKButtonClickHandler" BorderThickness="0"/>
+                    <Button x:Name="newTagFlyoutOKButton" Margin="0,0,0,0" Width="140" Grid.Row="1" HorizontalAlignment="Left" Content="OK" Style="{StaticResource ButtonBlue}" Click="NewTagFlyoutOKButtonClickHandler" BorderThickness="1" BorderBrush="{StaticResource ButtonBackGroundNormal}"/>
                     <Button x:Name="newTagFlyoutCancelButton" Margin="0,0,0,0" Width="140" Grid.Row="1" HorizontalAlignment="Right" Content="Cancel" Style="{StaticResource ButtonGray}" Click="NewTagCancelButtonClickHandler" BorderBrush="Black" BorderThickness="1"/>
                 </Grid>
             </ContentPresenter>

@@ -183,7 +183,7 @@ namespace AnkiU.Anki.Syncer
             var oneDriveException = ex as OneDriveException;
             if(oneDriveException == null)
             {
-                await UIHelper.ShowMessageDialog("Unexpected error.");
+                await UIHelper.ShowMessageDialog(ex.Message);
                 return;
             }
 

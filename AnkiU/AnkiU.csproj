@@ -314,6 +314,7 @@
     <Compile Include="Anki\Syncer\ISyncInstance.cs" />
     <Compile Include="Anki\Syncer\OneDriveSync.cs" />
     <Compile Include="Anki\Syncer\RemoteItem.cs" />
+    <Compile Include="Anki\Syncer\SyncInstanceMock.cs" />
     <Compile Include="Anki\TextRecognizeResultBuilder.cs" />
     <Compile Include="Anki\TinymceStreamUriWinRTResolver.cs" />
     <Compile Include="App.xaml.cs">
@@ -449,6 +450,9 @@
     </Compile>
     <Compile Include="UserControls\SyncDialog.xaml.cs">
       <DependentUpon>SyncDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ThreeOptionsDialog.xaml.cs">
+      <DependentUpon>ThreeOptionsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AnkiModelInfomartionViewModel.cs" />
     <Compile Include="ViewModels\CardInformationViewModel.cs" />
@@ -758,6 +762,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\SyncDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ThreeOptionsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
