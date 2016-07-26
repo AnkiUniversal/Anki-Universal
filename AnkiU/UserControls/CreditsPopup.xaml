@@ -143,7 +143,8 @@
                     <Paragraph >
                         <Bold FontSize="18">OneDrive SDK</Bold>
                         <LineBreak/>
-                        <Hyperlink NavigateUri="https://github.com/OneDrive/onedrive-sdk-csharp">https://github.com/OneDrive/onedrive-sdk-csharp</Hyperlink>
+                        <Hyperlink NavigateUri="https://github.com/Microsoft/Win2D">https://github.com/Microsoft/Win2D</Hyperlink>
+                        <Hyperlink NavigateUri="https://github.com/OneDrive/onedrive-sdk-csharp">https://github.com/OneDrive</Hyperlink>
                         <LineBreak/>
                         Copyright (c) Microsoft Corporation. All rights reserved.
                         <LineBreak/>

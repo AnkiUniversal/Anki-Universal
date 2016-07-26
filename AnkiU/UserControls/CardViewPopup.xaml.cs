@@ -203,7 +203,12 @@ namespace AnkiU.UserControls
         }
         private async Task ChangeZoomLevel(double delta)
         {
-            zoomLevel += delta;            
+            zoomLevel += delta;
+            if (zoomLevel > MainPage.MAX_ZOOM)
+                zoomLevel = MainPage.MAX_ZOOM;
+            else if (zoomLevel < MainPage.MIN_ZOOM)
+                zoomLevel = MainPage.MIN_ZOOM;
+
             await cardView.ChangeZoomLevel(zoomLevel);
         }
 

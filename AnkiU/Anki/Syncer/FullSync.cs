@@ -149,7 +149,8 @@ namespace AnkiU.Anki.Syncer
                             " As a result, some of your changes will be lost.\n\n"
                             + "Choosing \"Download\" will replace your current collection with the one from the server."
                             + " (A backup will also be created.)\n\n"
-                            + "Choosing \"Upload\" will upload your current collection to the server.";
+                            + "Choosing \"Upload\" will upload your current collection to the server.\n\n"
+                            + "(If in doubt, choose \"Download\" as you can restore your data from the backup.)";
             dialog.Title = "Out of Sync";
             dialog.LeftButton.Content = "Download";
             dialog.MiddleButton.Content = "Upload";

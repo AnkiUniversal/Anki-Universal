@@ -104,7 +104,8 @@ namespace AnkiU.Views
             var filePath = backupFolder.Path + "\\" + backup.Name;
 
             bool isContinue = await UIHelper.AskUserConfirmation
-                ("This will permanently revert all your data (except media files) to the chosen backup file. Continue?\n" +
+                ("Backed up point: " + backup.DateCreate + "\n" +
+                 "This will permanently revert all your data (except media files) to the chosen backup file. Continue?\n" +
                  "(A backup will also be created automatically before restoring)");
             if (!isContinue)
                 return;
