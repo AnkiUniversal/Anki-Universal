@@ -103,7 +103,7 @@ namespace AnkiU.Pages
 
         public NoteEditor()
         {
-            this.InitializeComponent();             
+            this.InitializeComponent();         
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -111,11 +111,11 @@ namespace AnkiU.Pages
             base.OnNavigatedTo(e);
             var parameter = e.Parameter as NoteEditorPageParameter;
             if (parameter == null)
-                throw new Exception("Wrong input parameter!");
-
-            ShowProgessRing();
+                throw new Exception("Wrong input parameter!");            
 
             mainPage = parameter.Mainpage;
+            ShowProgessRing();
+
             collection = mainPage.Collection;
             collection.Database.SaveTransactionPoint();
             currentDeckId = collection.Deck.Selected();
@@ -134,6 +134,7 @@ namespace AnkiU.Pages
 
         private void ShowProgessRing()
         {
+            mainPage.IsCanNavigateBack = false;
             progessRing.Visibility = Visibility.Visible;
             progessRing.IsActive = true;
         }
@@ -611,6 +612,7 @@ namespace AnkiU.Pages
 
         private void HideProgressRing()
         {
+            mainPage.IsCanNavigateBack = true;
             progessRing.IsActive = false;
             progessRing.Visibility = Visibility.Collapsed;
         }

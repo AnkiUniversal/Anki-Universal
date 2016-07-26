@@ -566,7 +566,11 @@ namespace AnkiU
             var task = CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 if (UserPrefs.IsSyncOnOpen)
+                {
+                    //User just open the app so the collection should not be modified yet
+                    Collection.ClearIsModified();
                     SyncButtonClickHandler(null, null);
+                }
             });
         }
 
@@ -853,7 +857,7 @@ namespace AnkiU
             var fileToImport = await UIHelper.OpenFilePicker("ImportFolderToken", ".apkg");
             if (fileToImport == null)
                 return;
-
+            
             IsCanNavigateBack = false;
             progressDialog = new ProgressDialog();
             progressDialog.ProgressBarLabel = "This may take a little long if package is large...";
@@ -974,8 +978,8 @@ namespace AnkiU
                         dialog = new MessageDialog("Unexpeceted error.", "Error!");
                         break;
                 }
-                await dialog.ShowAsync();
                 IsCanNavigateBack = true;
+                await dialog.ShowAsync();                
                 ReloadDeckPage();
             });
         }
@@ -1559,8 +1563,8 @@ namespace AnkiU
                     dialog = new MessageDialog("Unable to export the collection.", "Error!");
 
                 Collection.ReOpen();
-                await dialog.ShowAsync();
                 IsCanNavigateBack = true;
+                await dialog.ShowAsync();                
             });
         }
 

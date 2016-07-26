@@ -43,7 +43,7 @@ namespace AnkiU.Pages
 {
     public sealed partial class DeckOptionsPage : Page, INightReadMode
     {
-        public const double DESIGN_WIDTH_SIZE = 360;
+        public const double DESIGN_WIDTH_SIZE = 450;
         public const double DESIGN_HEIGHT_SIZE = 600;
         public const double DESIGN_DIMENSION = DESIGN_HEIGHT_SIZE/ DESIGN_WIDTH_SIZE;
 
@@ -287,8 +287,8 @@ namespace AnkiU.Pages
 
         public static void ScaleWithWindow(double width, double height, CompositeTransform rootGridScale)
         {
-            double widthScale = (width - DESIGN_WIDTH_SIZE) / (1.5 * DESIGN_WIDTH_SIZE) + 1;
-            double heightScale = (height - DESIGN_HEIGHT_SIZE) / (1.5 * DESIGN_HEIGHT_SIZE) + 1;
+            double widthScale = (width - DESIGN_WIDTH_SIZE) / (DESIGN_WIDTH_SIZE) + 0.8;
+            double heightScale = (height - DESIGN_HEIGHT_SIZE) / (DESIGN_HEIGHT_SIZE) + 0.8;
 
             double scale = (widthScale > heightScale) ? heightScale : widthScale;
             if (scale >= 1)

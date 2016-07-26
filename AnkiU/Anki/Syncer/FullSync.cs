@@ -74,11 +74,15 @@ namespace AnkiU.Anki.Syncer
             try
             {
                 await PreparingFilesAsync();
-
-                if (remoteUserPref == null || MainPage.UserPrefs.LastSyncTime >= remoteUserPref.LastSyncTime)
+                var remoteCollectionZipFile = await TryGetItemInSyncFolderAsync(Constant.COLLECTION_NAME_ZIP);
+                if (remoteUserPref == null
+                    || MainPage.UserPrefs.LastSyncTime >= remoteUserPref.LastSyncTime)
                 {
-                    if (GetLastModifiedTimeInSecond() > MainPage.UserPrefs.LastSyncTime)
+                    if (GetLastModifiedTimeInSecond() > MainPage.UserPrefs.LastSyncTime
+                        || remoteCollectionZipFile == null)
+                    {
                         await UploadToServer();
+                    }
                 }
                 else
                 {
@@ -142,9 +146,9 @@ namespace AnkiU.Anki.Syncer
 
             ThreeOptionsDialog dialog = new ThreeOptionsDialog();
             dialog.Message = "Your current collection has been modified without syncing to the server first." +
-                            " As a result, some of your changes will be lost.\n"
+                            " As a result, some of your changes will be lost.\n\n"
                             + "Choosing \"Download\" will replace your current collection with the one from the server."
-                            + " (A backup will also be created.)\n"
+                            + " (A backup will also be created.)\n\n"
                             + "Choosing \"Upload\" will upload your current collection to the server.";
             dialog.Title = "Out of Sync";
             dialog.LeftButton.Content = "Download";
@@ -427,15 +431,11 @@ namespace AnkiU.Anki.Syncer
             if (!MainPage.UserPrefs.IsSyncMedia)            
                 return;
             syncStateDialog.Label = "Start syncing media files...";
-            var remoteMediaDBItem = await TryGetItemInSyncFolderAsync(Constant.MEDIA_DB_NAME);
-            if (remoteMediaDBItem == null)
-            {
-                await UploadAllMediaFiles();
+
+            remoteMediaDBFile = await TryGetUnCompressMediaDB();
+            if (remoteMediaDBFile == null)
                 return;
-            }
-            
-            remoteMediaDBFile = await CreateTempFileAsync(Constant.MEDIA_DB_NAME);
-            await syncInstance.DownloadItemWithPathAsync(Constant.MEDIA_DB_SYNC_PATH, remoteMediaDBFile);
+
             var deckMediaFolders = await mainPage.Collection.Media.MapDeckIdToDeckIdFolder();
 
             using (var remoteMediaDB = new DB(remoteMediaDBFile.Path))
@@ -455,6 +455,47 @@ namespace AnkiU.Anki.Syncer
                 }
             }                         
         }      
+
+        private async Task<StorageFile> TryGetUnCompressMediaDB()
+        {
+            StorageFile returnFile;
+            var remoteMediaDBZipItem = await TryGetItemInSyncFolderAsync(Constant.MEDIA_DB_NAME_ZIP);
+            if (remoteMediaDBZipItem == null)
+            {
+                var remoteMediaDBItem = await TryGetItemInSyncFolderAsync(Constant.MEDIA_DB_NAME);
+                if (remoteMediaDBItem == null)
+                {
+                    await UploadAllMediaFiles();
+                    return null;
+                }
+
+                returnFile = await CreateTempFileAsync(Constant.MEDIA_DB_NAME);
+                await syncInstance.DownloadItemWithPathAsync(Constant.MEDIA_DB_SYNC_PATH, returnFile);
+            }
+            else
+            {
+                var remoteMediaDBZip = await CreateTempFileAsync(Constant.MEDIA_DB_NAME_ZIP);
+                await syncInstance.DownloadItemWithPathAsync(Constant.ANKIROOT_SYNC_FOLDER + "/" + Constant.MEDIA_DB_NAME_ZIP,
+                                                             remoteMediaDBZip);
+                using (var fileStream = await remoteMediaDBZip.OpenStreamForReadAsync())
+                using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Read))
+                {
+                    zip.ExtractToDirectory(tempSyncFolder.Path);
+                }
+                returnFile = await tempSyncFolder.TryGetItemAsync(Constant.MEDIA_DB_NAME) as StorageFile;
+                if (returnFile == null)
+                {
+                    bool isUploadAll = await UIHelper.AskUserConfirmation("Media database in server is corrupted."
+                                                                         + " Do you want to re-upload all media files?");
+                    if (isUploadAll)
+                        await UploadAllMediaFiles();
+
+                    return null;
+                }                
+            }
+
+            return returnFile;
+        }
 
         private async Task DownLoadAndUploadMediaChanges(DB remoteMediaDB, Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MetaTable remoteMeta, long localLastMediaSync)
         {
@@ -703,8 +744,15 @@ namespace AnkiU.Anki.Syncer
             mainPage.Collection.Media.SetLastUnixTimeSync(DateTimeOffset.Now.ToUnixTimeSeconds());
             mainPage.Collection.Media.MarkDatabaseClean();
             var localFile = await Storage.AppLocalFolder.GetFileAsync(Constant.MEDIA_DB_NAME);
-            var mediaDatabase = await localFile.CopyAsync(tempSyncFolder, localFile.Name + "_upload");            
-            await syncInstance.UploadItemWithPathAsync(mediaDatabase, Constant.MEDIA_DB_SYNC_PATH);
+            var mediaDatabase = await localFile.CopyAsync(tempSyncFolder, localFile.Name + "_upload");
+
+            var zipFile = await tempSyncFolder.CreateFileAsync(Constant.MEDIA_DB_NAME_ZIP + "_upload");
+            using (var fileStream = await zipFile.OpenStreamForWriteAsync())
+            using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Create))
+            {
+                zip.CreateEntryFromFile(mediaDatabase.Path, Constant.MEDIA_DB_NAME);
+            }
+            await syncInstance.UploadItemWithPathAsync(zipFile, Constant.ANKIROOT_SYNC_FOLDER + "/" + Constant.MEDIA_DB_NAME_ZIP);
         }       
 
         private async Task PrepareForSyncing()

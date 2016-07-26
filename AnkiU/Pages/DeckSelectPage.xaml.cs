@@ -580,8 +580,8 @@ namespace AnkiU.Pages
                 else
                     dialog = new MessageDialog("Unable to export the specified deck.", "Error!");
 
-                await dialog.ShowAsync();
                 mainPage.IsCanNavigateBack = true;
+                await dialog.ShowAsync();                
             });
         }
 

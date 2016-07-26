@@ -38,8 +38,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace AnkiU.Pages
 {
     /// <summary>
@@ -56,19 +54,19 @@ namespace AnkiU.Pages
         public SettingPage()
         {
             this.InitializeComponent();
-            numberOfBackup.NumberChanged += BackupNumberChanged;
+            numberOfBackup.LostFocus += NumberOfBackupLostFocus;
         }
 
-        private async void BackupNumberChanged(object sender, TextChangedEventArgs e)
+        private async void NumberOfBackupLostFocus(object sender, RoutedEventArgs e)
         {
             if (numberOfBackup.Number < 5)
             {
                 bool isOk = await UIHelper.AskUserConfirmation
                                   ("Are you sure you only want to keep " + numberOfBackup.Number + " backup(s)?\n" +
-                                   "(With a collection of 5000 notes, one backup will normally cost 4MB)");
+                                   "(With a collection of 5000 cards and 2 years of learning, one backup will normally cost 4MB)");
                 if (!isOk)
                 {
-                    numberOfBackup.Number = 10;
+                    numberOfBackup.Number = 15;
                 }
             }
         }
@@ -79,7 +77,7 @@ namespace AnkiU.Pages
             mainPage = e.Parameter as MainPage;            
 
             collectionOptionViewModel = new CollectionOptionViewModel(mainPage.Collection.Conf);
-            collectionOptionView.ViewModel = collectionOptionViewModel;
+            collectionOptionView.ViewModel = collectionOptionViewModel;            
             numberOfBackup.Number = MainPage.UserPrefs.NumberOfBackups;
             backupTime.Number = MainPage.UserPrefs.BackupsMinTime;
             syncOnOpenCheckBox.IsChecked = MainPage.UserPrefs.IsSyncOnOpen;
@@ -112,16 +110,28 @@ namespace AnkiU.Pages
         }
 
         private void SaveButtonClickHandler(object sender, RoutedEventArgs e)
-        {            
+        {
+            SaveGeneralUserPref();
+            SaveCollectionPrefs();
+        }
+
+        private void SaveGeneralUserPref()
+        {
             MainPage.UserPrefs.NumberOfBackups = numberOfBackup.Number;
             MainPage.UserPrefs.BackupsMinTime = backupTime.Number;
             MainPage.UserPrefs.IsSyncMedia = (bool)syncMediaCheckBox.IsChecked;
             MainPage.UserPrefs.IsSyncOnOpen = (bool)syncOnOpenCheckBox.IsChecked;
             mainPage.UpdateUserPreference();
+        }
 
-            collectionOptionViewModel.SaveOptionsToJsonConfig();
-            mainPage.Collection.SetIsModified();
-            mainPage.Collection.SaveAndCommitAsync();
+        private void SaveCollectionPrefs()
+        {
+            if (collectionOptionViewModel.IsModified())
+            {
+                collectionOptionViewModel.SaveOptionsToJsonConfig();
+                mainPage.Collection.SetIsModified();
+                mainPage.Collection.SaveAndCommitAsync();                
+            }
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

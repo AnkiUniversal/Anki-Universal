@@ -28,13 +28,15 @@ namespace AnkiU.ViewModels
     public class CollectionOptionViewModel
     {
         public CollectionOptions Options { get; set; }
+        public CollectionOptions oldOptions;
 
-        public JsonObject Config { get; set; }
+        public JsonObject Config { get; set; }        
 
         public CollectionOptionViewModel(JsonObject config)
         {
             Config = config;
             Options = new CollectionOptions();
+            oldOptions = new CollectionOptions();
             GetOptionsToView();
         }
 
@@ -45,6 +47,8 @@ namespace AnkiU.ViewModels
                 Options.IsShowDueCount = Config.GetNamedBoolean("dueCounts");
                 Options.IsShowEstTime = Config.GetNamedBoolean("estTimes");
                 Options.ReviewType = (int)Config.GetNamedNumber("newSpread");
+
+                CopyOptions(Options, oldOptions);
             }
             catch //If any error happen we back to default
             {
@@ -52,11 +56,20 @@ namespace AnkiU.ViewModels
             }
         }
 
+        private void CopyOptions(CollectionOptions source, CollectionOptions dest)
+        {
+            dest.IsShowDueCount = source.IsShowDueCount;
+            dest.IsShowEstTime = source.IsShowEstTime;
+            dest.ReviewType = source.ReviewType;
+        }        
+
         public void SaveOptionsToJsonConfig()
         {
             Config["dueCounts"] = JsonValue.CreateBooleanValue(Options.IsShowDueCount);
             Config["estTimes"] = JsonValue.CreateBooleanValue(Options.IsShowEstTime);
             Config["newSpread"] = JsonValue.CreateNumberValue(Options.ReviewType);
+
+            CopyOptions(Options, oldOptions);
         }
 
         public static bool IsDueCountEnable(JsonObject config)
@@ -67,6 +80,14 @@ namespace AnkiU.ViewModels
         public static bool IsShowNextReviewTimeEnable(JsonObject config)
         {
             return config.GetNamedBoolean("estTimes");
+        }
+
+        public bool IsModified()
+        {
+            if (Options.IsTheSame(oldOptions))
+                return false;
+
+            return true;
         }
     }
 }

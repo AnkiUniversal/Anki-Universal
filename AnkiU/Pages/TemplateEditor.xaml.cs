@@ -98,6 +98,7 @@ namespace AnkiU.Pages
 
         private void ShowProgessRing()
         {
+            mainPage.IsCanNavigateBack = false;
             progressRing.Visibility = Visibility.Visible;
             progressRing.IsActive = true;
         }
@@ -190,6 +191,7 @@ namespace AnkiU.Pages
 
         private void HideProgessRing()
         {
+            mainPage.IsCanNavigateBack = true;
             progressRing.IsActive = false;
             progressRing.Visibility = Visibility.Collapsed;
         }

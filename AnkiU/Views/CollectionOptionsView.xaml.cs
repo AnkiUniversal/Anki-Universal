@@ -36,6 +36,7 @@ namespace AnkiU.Views
 {
     public sealed partial class CollectionOptionsView : UserControl
     {
+
         public CollectionOptionsView()
         {
             this.InitializeComponent();
@@ -50,8 +51,6 @@ namespace AnkiU.Views
             ViewModel.Options.IsShowEstTime = temp.IsShowEstTime;
             ViewModel.Options.IsShowDueCount = temp.IsShowDueCount;
             ViewModel.Options.ReviewType = temp.ReviewType;
-
-
         }
     }
 }

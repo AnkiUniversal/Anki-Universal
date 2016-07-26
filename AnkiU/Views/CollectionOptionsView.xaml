@@ -16,7 +16,7 @@
         <DataBindingConverters:BoolToNullableBoolConverter x:Key="BoolToNullableBoolConverter"/>
     </UserControl.Resources>
 
-    <Grid >
+    <Grid Margin="0,0,10,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -25,21 +25,21 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="*" MaxWidth="400"/>
+            <ColumnDefinition Width="*" MaxWidth="250"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Show next review time:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-        <CheckBox Grid.Row="0" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left"
+        <CheckBox Grid.Row="0" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" x:Name="reviewTimeCheck"
                     Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
                                   IsChecked="{x:Bind Options.IsShowEstTime, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
         
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Show card count:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-        <CheckBox Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left"
+        <CheckBox Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" x:Name="cardCountCheck" 
                     Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
                                   IsChecked="{x:Bind Options.IsShowDueCount, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Order:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-        <ComboBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Stretch" VerticalAlignment="Center"
+        <ComboBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Stretch" VerticalAlignment="Center" 
                     Foreground="{Binding Foreground, ElementName=userControl}" BorderThickness="1" BorderBrush="Black"
                                   SelectedIndex="{x:Bind Options.ReviewType, Mode=TwoWay}" >
             <TextBlock Text="Mix new and review cards" TextAlignment="Left"/>

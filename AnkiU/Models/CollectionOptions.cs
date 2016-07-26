@@ -91,5 +91,18 @@ namespace AnkiU.Models
         {
             return this.GetType().Name;
         }
+
+        public bool IsTheSame(CollectionOptions compared)
+        {
+            if (compared.isShowDueCount != isShowDueCount)
+                return false;
+            if (compared.IsShowEstTime != isShowEstTime)
+                return false;
+            if (compared.reviewType != reviewType)
+                return false;
+
+            return true;
+        }
+
     }
 }

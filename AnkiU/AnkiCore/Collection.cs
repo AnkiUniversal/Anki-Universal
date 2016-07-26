@@ -128,6 +128,11 @@ namespace AnkiU.AnkiCore
             database.IsModified = true;
         }
 
+        public void ClearIsModified()
+        {
+            database.IsModified = false;
+        }
+
         public Note GetNote(long id)
         {
             return new Note(this, id);
@@ -467,6 +472,7 @@ namespace AnkiU.AnkiCore
             sched.Reset();
         }
 
+        //TODO: Review if this function is really necessary
         public void LogRem(long[] ids, RemovalType type)
         {
             Database.RunInTransaction(() =>
