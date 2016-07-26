@@ -542,7 +542,7 @@ namespace AnkiU.Views
         {
             helpPopup.SubtitleVisibility = Visibility.Collapsed;
             helpPopup.Title = "How to Sync?";
-            helpPopup.Text = "To sync your data, simply press on the \"Sync\" incon in the deck select page.\n"
+            helpPopup.Text = "To sync your data, simply press on the \"Sync\" icon in the deck select page.\n"
                              + "To avoid losing your progress, you should ALWAYS sync your devices right after opening the app and right before closing it.";
             helpPopup.NextEvent = FirstDataSyncNext;
             helpPopup.ShowWithNext();
@@ -580,9 +580,9 @@ namespace AnkiU.Views
 
             helpPopup.Title = "Example: Manually Syncing";
             helpPopup.Text = "Assume you need to download 2000 media files uploaded from your laptop to your phone:\n"
-                             + "1. On the laptop, use \"Back up Media Files\", then copy the zip file(s) to your phone.\n" 
-                             + "2. Open the app, DISABLE media syncing, then sync your phone.\n"
-                             + "3. Use \"Insert Media Files\" to add media. ENABLE media syncing and sync your device again.\n";
+                             + "1. On your laptop, use \"Back up Media Files\", then copy the zip file(s) to your phone.\n" 
+                             + "2. On your phone, DISABLE media syncing, then sync your data.\n"
+                             + "3. Use \"Insert Media Files\" to add media. ENABLE media syncing and sync your phone again.\n";
             helpPopup.ShowWithNextAndBack();
         }
 

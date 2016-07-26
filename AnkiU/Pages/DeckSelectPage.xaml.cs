@@ -911,7 +911,7 @@ namespace AnkiU.Pages
             helpPopup.SubTitle = "(or \"learning\" for short)";
             helpPopup.Text = "Please press on your deck to start viewing your cards.";
             helpPopup.SetOffSet(0, DEFAULT_HELP_POPUP_VERTICAL_OFFSET);
-            helpPopup.Show();
+            helpPopup.ShowWithClose();
         }
 
         private void SharedDeckTutorialSetup()
@@ -955,7 +955,7 @@ namespace AnkiU.Pages
             helpPopup.Title = "Add a Note";
             helpPopup.SubTitle = "(Start adding contents to your cards.)";
             helpPopup.Text = "To add a note please right-click (or touch & hold) on your deck then choose \"Add Notes\".";            
-            helpPopup.Show();
+            helpPopup.ShowWithClose();
         }
 
         private void TutorialAddButtonClickHandler(object sender, RoutedEventArgs e)
@@ -972,7 +972,7 @@ namespace AnkiU.Pages
 
         private void NewDeckFlyoutClosedWithoutCreatingDeckHandler()
         {
-            if(helpPopup != null)
+            if(helpPopup != null && AllHelps.Tutorial == AllHelps.TutorialState.DeckCreation)
             {
                 helpPopup.Show();
             }
