@@ -1385,7 +1385,8 @@ namespace AnkiU.Pages
                 helpPopup.SubTitle = "(Keyboard shortcuts: 1 -> 4)";
                 helpPopup.SubtitleVisibility = Visibility.Visible;
                 helpPopup.Text = "Choosing \"AGAIN\" will let you relearn forgotten cards.\n"
-                      + "Other buttons will schedule the next time you see this card (due time) based on SuperMemo algorithm.";
+                      + "Other buttons will schedule the next time you see this card (due time) based on SuperMemo algorithm.\n"
+                      + "Please choose \"GOOD\" to continue.";
                 helpPopup.ShowWithClose();
             }
             else if(numerOfAnswerPress == 1)

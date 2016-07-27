@@ -784,7 +784,9 @@ namespace AnkiU.Pages
         {
             var image = await UIHelper.OpenFilePicker("ImageFolderToken", ".png", ".jpg", ".bmp", ".jpeg");
             if (image != null)
+            {
                 await deckShowContextMenu.ChangeImage(image);
+            }
         }
 
         private void AddNoteMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)

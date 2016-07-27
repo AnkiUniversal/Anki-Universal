@@ -50,6 +50,8 @@ namespace AnkiU.Views
     {
         public readonly string HTML_PATH;
 
+        private bool isDuplicatePopUpShown = false;
+
         public NoteFieldsViewModel fieldsViewModel;
 
         private Note currentNote;
@@ -68,8 +70,8 @@ namespace AnkiU.Views
                     else
                     {
                         Task task = htmlEditor.ChangeAllEditableFieldContent(currentNote.Fields);
-                    }
-
+                        task = RemoveDuplicatPopupIfNeeded(0);
+                    }                    
                 }
             }
         }
@@ -96,9 +98,12 @@ namespace AnkiU.Views
         private HtmlEditor htmlEditor;
         public HtmlEditor HtmlEditor { get { return htmlEditor; } }
 
+        private CoreDispatcher dispatcher;
+
         public NoteFieldView()
         {
             this.InitializeComponent();
+            dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             if (UIHelper.IsHasPhysicalKeyboard())
                 HTML_PATH = "/html/fieldeditor.html";
@@ -166,12 +171,40 @@ namespace AnkiU.Views
         private void NoteFieldPasteEventHandler()
         {
             NoteFieldPasteEvent?.Invoke();
-        }       
+        }
 
         private void NoteFieldTextChangedEventHandler(string fieldName, string html)
-        {  
+        {
             currentNote.SetItem(fieldName, html);
-        }   
+            WarnIfFirstFieldDuplicate(fieldName);
+        }
+                
+        private void WarnIfFirstFieldDuplicate(string fieldName)
+        {
+            var task = Task.Run(async () =>
+            {
+                if (fieldName != fieldsViewModel.Fields[0].Name)
+                    return;
+
+                var firstFieldValid = currentNote.DupeOrEmpty();
+                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    if (firstFieldValid == Note.FirstField.Duplicate)
+                    {
+                        if (isDuplicatePopUpShown)
+                            return;                        
+
+                        await ShowPopup(fieldName);
+                        isDuplicatePopUpShown = true;
+                    }
+                    else if (isDuplicatePopUpShown)
+                    {
+                        await RemovePopup();
+                        isDuplicatePopUpShown = false;
+                    }
+                });
+            });
+        }
 
         public async Task AddNewField(string name, Note newNote)
         {
@@ -189,6 +222,8 @@ namespace AnkiU.Views
 
         public async Task DeleteField(string name, int order, Note newNote)
         {
+            await RemoveDuplicatPopupIfNeeded(order);
+
             int count = fieldsViewModel.Fields.Count;
             fieldsViewModel.Fields.RemoveAt(order); 
 
@@ -207,21 +242,49 @@ namespace AnkiU.Views
             }
 
             currentNote = newNote;
+
+            ReOpenDuplicatePopupIfNeeded(order);
         }
 
         public async Task RenameField(string name, int order, Note newNote)
         {
+            await RemoveDuplicatPopupIfNeeded(order);
+
             await RenameField(fieldsViewModel.Fields[order].Name, name);
             fieldsViewModel.Fields[order].Name = name;
             newNote.Tags = currentNote.Tags;
-            for (int i = 0; i < fieldsViewModel.Fields.Count; i++)            
-                newNote.SetField(i, currentNote.Fields[i]);                
-            
+            for (int i = 0; i < fieldsViewModel.Fields.Count; i++)
+                newNote.SetField(i, currentNote.Fields[i]);
+
             currentNote = newNote;
+
+            ReOpenDuplicatePopupIfNeeded(order);
+        }
+
+        public async Task RemoveDuplicatPopupIfNeeded(params int[] orders)
+        {
+            if (orders.Contains(0))
+            {
+                if (isDuplicatePopUpShown)
+                {
+                    await RemovePopup();
+                    isDuplicatePopUpShown = false;
+                }
+            }
+        }
+
+        private void ReOpenDuplicatePopupIfNeeded(params int[] orders)
+        {
+            if (orders.Contains(0))
+            {
+                WarnIfFirstFieldDuplicate(fieldsViewModel.Fields[0].Name);
+            }
         }
 
         public async Task MoveField(int oldOrder, int newOrder, Note newNote)
-        {
+        {            
+            await RemoveDuplicatPopupIfNeeded(oldOrder, newOrder);
+
             await MoveField(fieldsViewModel.Fields[oldOrder].Name, newOrder);
 
             var temp = fieldsViewModel.Fields[oldOrder];
@@ -239,6 +302,8 @@ namespace AnkiU.Views
             newNote.Fields = fields.ToArray();
             
             currentNote = newNote;
+
+            ReOpenDuplicatePopupIfNeeded(oldOrder, newOrder);
         }
 
         private async Task CreateEditor(string id)
@@ -294,6 +359,30 @@ namespace AnkiU.Views
             try
             {
                 await htmlEditor.WebViewControl.InvokeScriptAsync("MoveField", new string[] { id, newOder.ToString() });
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ThrowJavascriptError(ex.HResult);
+            }
+        }
+
+        private async Task ShowPopup(string id)
+        {
+            try
+            {
+                await htmlEditor.WebViewControl.InvokeScriptAsync("ShowPopup", new string[] { id });
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ThrowJavascriptError(ex.HResult);
+            }
+        }
+
+        private async Task RemovePopup()
+        {
+            try
+            {
+                await htmlEditor.WebViewControl.InvokeScriptAsync("RemovePopup", null);
             }
             catch (Exception ex)
             {

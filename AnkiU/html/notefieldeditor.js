@@ -19,6 +19,8 @@ var editableFieldName = '<h2 class="noneditable">name</h2>';
 var editableFieldInputTinyMce = '<div contenteditable class="editable" id="fieldName" oncontextmenu="ContextMenuHandler(event)" tabindex="0" onfocusout="FocusOutHandler(this)">fieldcontent</div>';
 var editableClass = 'editable';
 
+var popUpHtml = '<span class="popuptext" id="firstFieldPopup">Duplicate</span>';
+
 var toolbarWideScreenWidth = 'undo redo | removeformat | bold italic underline subscript superscript forecolor backcolor |  mediabutton recorderbutton link cloze | charmap  code';
 var toolbarMediumScreenWidth = 'undo redo | removeformat bold italic underline subscript superscript forecolor backcolor mediagroupbutton link cloze';
 var toolbarNarrowScreenWidth = 'undo removeformat stylebutton forecolor backcolor mediagroupbutton link cloze';
@@ -222,11 +224,13 @@ function KeyPress(e) {
 function GetNameHeaderField(id) {
     var fieldNames = document.getElementsByClassName('noneditable');
     var nameHtml = editableFieldName.replace('name', id);
-    for (var i = 0; i < fieldNames.length; i++) {
+    for (var i = 0; i < fieldNames.length; i++) {        
         if (fieldNames[i].outerHTML == nameHtml) {
             return fieldNames[i];
         }
     }
+    
+    throw 'Invalid header id';
 }
 
 function RemoveField(id) {
@@ -271,4 +275,18 @@ function MoveField(id, newOrder) {
     }
 
     header.insertAdjacentElement('afterEnd', field);
+}
+
+function ShowPopup(id){
+    var header = GetNameHeaderField(id);   
+    header.insertAdjacentHTML('beforeEnd', popUpHtml);
+
+    var popup = document.getElementById('firstFieldPopup');
+    popup.classList.toggle('show');
+}
+
+function RemovePopup() {
+    var popup = document.getElementById('firstFieldPopup');
+    if (popup != null)
+        popup.parentNode.removeChild(popup);
 }

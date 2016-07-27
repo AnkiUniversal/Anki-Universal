@@ -823,6 +823,8 @@ namespace AnkiU.Pages
             mainPage.UndoButton.Visibility = Visibility.Collapsed;
 
             mainPage.SaveButton.Click -= SaveNewNoteButtonClick;
+            mainPage.SaveButton.Click -= SaveEditNoteButtonClickHandler;
+
             mainPage.SaveButton.Click += SaveEditNoteButtonClickHandler;
         }
 
@@ -831,8 +833,10 @@ namespace AnkiU.Pages
             noteTypeGrid.Visibility = Visibility.Visible;
             mainPage.UndoButton.Visibility = Visibility.Visible;
 
-            mainPage.SaveButton.Click += SaveNewNoteButtonClick;
             mainPage.SaveButton.Click -= SaveEditNoteButtonClickHandler;
+            mainPage.SaveButton.Click -= SaveNewNoteButtonClick;
+
+            mainPage.SaveButton.Click += SaveNewNoteButtonClick;            
         }
 
         private void EditTemplatesMenuClickHandler(object sender, RoutedEventArgs e)
@@ -1052,6 +1056,9 @@ namespace AnkiU.Pages
             await mainPage.CurrentDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 var newOrder = repositionFieldFlyout.Number - 1;
+                if (newOrder == oldFieldOrder)
+                    return;
+
                 var model = currentNote.Model;
                 var fieldJson = model.GetNamedArray("flds").GetObjectAt((uint)oldFieldOrder);
                 collection.Models.MoveField(model, fieldJson, newOrder);

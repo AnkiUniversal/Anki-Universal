@@ -35,7 +35,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="data:NoteField">
-                                <Button Style="{StaticResource FieldButton}" Background="Transparent" Height="35" VerticalAlignment="Center" 
+                                <Button Style="{StaticResource FieldButton}" Background="Transparent" MinHeight="35" VerticalAlignment="Center" 
                                             BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundCompliment}" 
                                             Foreground="{StaticResource ButtonBackGroundNormal}"
                                             Click="FieldFlyoutButtonClickHandler"

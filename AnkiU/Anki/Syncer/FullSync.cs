@@ -172,7 +172,7 @@ namespace AnkiU.Anki.Syncer
         {
             syncStateDialog.Label = "Uploading database...";            
             await UploadCollectionDatabase();
-            await UploadPrefDatabase();
+            await UploadPrefDatabase();            
             await UploadDeckImages();            
         }
 
@@ -204,17 +204,22 @@ namespace AnkiU.Anki.Syncer
         }
 
         private async Task UploadDeckImages()
-        {            
-            var files = await deckImageFolder.GetFilesAsync();
-            var remoteFolder = await TryGetItemInSyncFolderAsync(Constant.DEFAULT_DECK_IMAGE_FOLDER_NAME);
-            if (remoteFolder == null)
+        {
+            try
             {
-                await UploadAllDeckImages(files);
+                var files = await deckImageFolder.GetFilesAsync();
+                var remoteFolder = await TryGetItemInSyncFolderAsync(Constant.DEFAULT_DECK_IMAGE_FOLDER_NAME);
+                if (remoteFolder == null)
+                {
+                    await UploadAllDeckImages(files);
+                }
+                else
+                {
+                    await UploadChangedDeckImages(files);
+                }
             }
-            else
-            {
-                await UploadChangedDeckImages(files);
-            }
+            catch //Errors in uploading deck images should not stop syncing
+            { }
         }
         private async Task UploadAllDeckImages(IReadOnlyList<StorageFile> files)
         {

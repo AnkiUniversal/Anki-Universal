@@ -15,7 +15,7 @@ body{
     border-radius: 7.5px;
     border-width: 1.5px;    
     padding: 2.5px 15px 2.5px 2.5px;
-    word-wrap: break-word;
+    word-wrap: break-word; 
 }
 
 .night .editable {      
@@ -29,4 +29,53 @@ h2 {
     font-size: 20px;    
     font-weight: 400;    
     margin: 15px 0px 5px 0;
+}
+
+.noneditable {     
+    word-wrap: break-word;    
+} 
+
+.popuptext {
+    visibility: hidden;
+    width: 80px;
+    background-color: #088DC7;
+    color: white;
+    z-index: 0;
+    font-size: 14px;
+    text-align: center;
+    border-radius: 5px;
+    padding: 2px;
+    margin-left: 10px; 
+    position: absolute;    
+}
+
+/* Popup arrow */
+.popuptext::after {
+    content: "";
+    position: absolute;
+    top: 50%;    
+    left: 0%;
+    margin-left: -9px;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #088DC7 transparent transparent;
+}
+
+/* Hide and show the popup*/
+.show {
+    visibility: visible !important;
+    -webkit-animation: fadeIn 0.8s;
+    animation: fadeIn 0.8s
+}
+
+/* Animation */
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;} 
+    to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
 }
