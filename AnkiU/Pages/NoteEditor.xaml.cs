@@ -391,13 +391,14 @@ namespace AnkiU.Pages
         {
             var editNote = collection.GetNote(currentNote.DupeNoteId);
             RemoveNoteFromUndoQueueIfHas(editNote);        
-            SwitchToEditView();
+            SwitchToEditViewIfNeeded();
             currentNote = editNote;
             noteFieldView.CurrentNote = editNote;
             tagsViewModel.CurrentNote = currentNote;
             tagsViewModel.UpdateNoteTagsFromNote();
 
-            isFromUndo = true;
+            if(isNewNoteMode)
+                isFromUndo = true;
         }
 
         private void RemoveNoteFromUndoQueueIfHas(Note editNote)
@@ -787,7 +788,7 @@ namespace AnkiU.Pages
             var note = (sender as FrameworkElement).DataContext as NoteField;
             firstFieldsViewModel.RemoveFirstFieldFromList(note);
             DisableUndoButtonIfNoUndoLeft();
-            SwitchToEditView();
+            SwitchToEditViewIfNeeded();
 
             var editNote = collection.GetNote(note.Id);
             ChangeModelIfNeededAndUpdateNoteField(editNote);
@@ -817,8 +818,11 @@ namespace AnkiU.Pages
                 mainPage.UndoButton.IsEnabled = false;
         }
 
-        private void SwitchToEditView()
-        {
+        private void SwitchToEditViewIfNeeded()
+        {            
+            if (!isNewNoteMode)
+                return;
+
             noteTypeGrid.Visibility = Visibility.Collapsed;
             mainPage.UndoButton.Visibility = Visibility.Collapsed;
 
