@@ -358,6 +358,8 @@ namespace AnkiU.Pages
                 SwitchToNewNoteView();
                 await CacheAndMoveToNextNote();
                 isFromUndo = false;
+
+                await noteFieldView.HtmlEditor.FocusOn(noteFieldView.fieldsViewModel.Fields[0].Name);
             }
         }
 
@@ -377,11 +379,11 @@ namespace AnkiU.Pages
             ShowNumberOfCardsAdded(numberOfGenCards);
             noteFieldView.HtmlEditor.IsModified = false;
             noteFieldView.HtmlEditor.IsContentCheckOnce = false;
-            await CacheAndMoveToNextNote();
-
-            await noteFieldView.HtmlEditor.FocusOn(noteFieldView.fieldsViewModel.Fields[0].Name);
+            await CacheAndMoveToNextNote();            
 
             AddNewNoteEvent?.Invoke();
+
+            await noteFieldView.HtmlEditor.FocusOn(noteFieldView.fieldsViewModel.Fields[0].Name);
         }
 
         private void ShowNumberOfCardsAdded(int numberOfGenCards)
@@ -636,7 +638,7 @@ namespace AnkiU.Pages
         private async void NoteFieldViewInitCompleted()
         {
             await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, () => 
-            {
+            {                
                 HideProgressRing();
             });
         }

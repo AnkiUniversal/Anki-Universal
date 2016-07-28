@@ -71,10 +71,11 @@ function NotifyButtonClick(buttonName) {
     tinymce.get(id).focus();
 }
 
-function InitRichTextEditor() {
+function InitRichTextEditor() {    
     tinymce.init(tinymceInit);
+
     editableFieldNotify.editableFieldStateChangedEventFire('EditorReady');
-    isTinyMceInit = true;
+    isTinyMceInit = true;    
 }
 
 function PasteEventHandler() {
@@ -121,7 +122,7 @@ function InsertNewEditableField(name, content) {
     var fieldInput = editableFieldInputTinyMce.replace('fieldName', EDITABLE_FIELD_PREFIX + name);
     fieldInput = fieldInput.replace('fieldcontent', content);
 
-    document.body.insertAdjacentHTML('beforeend', '<div> ' + fieldName + fieldInput + '</div> ');
+    document.body.insertAdjacentHTML('beforeend', '<div>' + fieldName + fieldInput + '</div> ');
 }
 
 function ClearBody() {

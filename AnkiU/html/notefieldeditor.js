@@ -135,6 +135,10 @@ var tinymceInit = {
             return KeyPress(e);            
         });
 
+        editor.on("init", function () {
+            EditorInitEvent(editor);
+        });        
+
     },    
     paste_data_images: false,
     paste_preprocess: function(plugin, args) {        
@@ -156,6 +160,14 @@ var tinymceInit = {
     force_br_newlines: true,
     toolbar: toolbarNarrowScreenWidth
 };
+
+function EditorInitEvent(editor) {
+    //Since tinymce will include a space if field has no content
+    //we have to make sure to delete it.
+    if (editor.getElement().innerHTML == '<div>&nbsp;</div>') {
+        editor.getElement().innerHTML = '';
+    }
+}
 
 function KeyPress(e) {
     isKeydownHandle = true;

@@ -272,14 +272,13 @@ namespace AnkiU.AnkiCore
         /// </summary>
         /// <returns></returns>
         public FirstField DupeOrEmpty()
-        {
-            //TinyMce encode space as &nbsp; so we replace it first  
-            string val = fields[0].Replace("&nbsp;", " ");
-            if (val.Trim().Length == 0)
+        {            
+            string text = fields[0];
+            if (text.Trim().Length == 0)
             {
                 return FirstField.Empty;
             }
-            long csum = Utils.FieldChecksum(val);
+            long csum = Utils.FieldChecksum(text);
             var listNote = collection.Database.QueryColumn<NoteTable>
                         ("SELECT flds, id FROM notes WHERE csum = "
                         + csum + " AND id != " + (id != 0 ? id : 0) + " AND mid = " + modelId);            

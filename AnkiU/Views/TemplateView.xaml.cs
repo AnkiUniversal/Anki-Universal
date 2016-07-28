@@ -64,14 +64,20 @@ namespace AnkiU.Views
                     }
                     else
                     {
-                        Task task = htmlEditor.ChangeAllEditableFieldContent(
-                            new string[] { cardTemplate.GetNamedString("qfmt"),
-                                           cardTemplate.GetNamedString("afmt")
-                            });
+                        Task task = ChangeTemplateAsync();
                     }
 
                 }
             }
+        }
+
+        private async Task ChangeTemplateAsync()
+        {
+            await htmlEditor.ChangeAllEditableFieldContent(
+                                        new string[] { cardTemplate.GetNamedString("qfmt"),
+                                           cardTemplate.GetNamedString("afmt")
+                                        });
+            await htmlEditor.FocusOn(FRONT);
         }
 
         private string css;
