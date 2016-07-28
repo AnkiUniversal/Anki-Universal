@@ -151,7 +151,7 @@ namespace AnkiU.Views
 
         private async Task HtmlEditorFieldPopulateFinishEventHandler()
         {
-            await InsertAfterElement(FRONT, "<br> <br> <hr>");
+            await InsertAfterField(FRONT, "<br> <br> <hr>");
             InitCompleted?.Invoke();
         }
 
@@ -200,11 +200,11 @@ namespace AnkiU.Views
             }
         }
 
-        public async Task InsertAfterElement(string elementId, string html)
+        public async Task InsertAfterField(string name, string html)
         {
             try
             {
-                await htmlEditor.WebViewControl.InvokeScriptAsync("InsertAfterElement", new string[] { elementId, html });
+                await htmlEditor.WebViewControl.InvokeScriptAsync("InsertAfterField", new string[] { name, html });
             }
             catch (Exception ex)
             {

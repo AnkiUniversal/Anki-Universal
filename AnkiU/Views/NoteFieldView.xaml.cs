@@ -58,22 +58,6 @@ namespace AnkiU.Views
         public Note CurrentNote
         {
             get { return currentNote; }
-            set
-            {
-                currentNote = value;
-                if (htmlEditor.IsWebviewReady)
-                {
-                    if (!htmlEditor.IsEditableFieldPopulate)
-                    {
-                        Task task = PopulateNoteField();
-                    }
-                    else
-                    {
-                        Task task = htmlEditor.ChangeAllEditableFieldContent(currentNote.Fields);
-                        task = RemoveDuplicatPopupIfNeeded(0);
-                    }                    
-                }
-            }
         }
 
         private string deckMediaFolderName;
@@ -123,6 +107,23 @@ namespace AnkiU.Views
             htmlEditor.FieldPopulateFinishEvent += HtmlEditorFieldPopulateFinishHandler;                 
         }
 
+        public async Task SetCurrentNoteAsync(Note note)
+        {
+            currentNote = note;
+            if (htmlEditor.IsWebviewReady)
+            {
+                if (!htmlEditor.IsEditableFieldPopulate)
+                {
+                    await PopulateNoteField();
+                }
+                else
+                {
+                    await htmlEditor.ChangeAllEditableFieldContent(currentNote.Fields);
+                    await RemoveDuplicatPopupIfNeeded(0);
+                }
+            }
+        }
+
         private async Task PopulateNoteField()
         {
             //Make sure to change base reference before populating field
@@ -143,6 +144,7 @@ namespace AnkiU.Views
                 string name = f.GetObject().GetNamedString("name");
                 int ord = (int)f.GetObject().GetNamedNumber("ord");
                 string content = currentNote.GetItem(name);
+
                 fields.Add(name);
                 fields.Add(content);
 
@@ -209,9 +211,9 @@ namespace AnkiU.Views
         public async Task AddNewField(string name, Note newNote)
         {
             int count = fieldsViewModel.Fields.Count;
-            fieldsViewModel.Fields.Add(new NoteField(currentNote.Id, name, count, null));
-            await htmlEditor.InsertNewEditableField(name, "");
-            await CreateEditor(name);
+            fieldsViewModel.Fields.Add(new NoteField(currentNote.Id, name, count, null));            
+            await AddField(name);
+
 
             newNote.Tags = currentNote.Tags;
             for(int i = 0; i < count - 1; i++)            
@@ -227,7 +229,6 @@ namespace AnkiU.Views
             int count = fieldsViewModel.Fields.Count;
             fieldsViewModel.Fields.RemoveAt(order); 
 
-            await RemoveEditor(name);
             await RemoveField(name);
 
             newNote.Tags = currentNote.Tags;
@@ -306,11 +307,11 @@ namespace AnkiU.Views
             ReOpenDuplicatePopupIfNeeded(oldOrder, newOrder);
         }
 
-        private async Task CreateEditor(string id)
+        private async Task AddField(string name)
         {
             try
             {
-                await htmlEditor.WebViewControl.InvokeScriptAsync("CreateEditor", new string[] { id });
+                await htmlEditor.WebViewControl.InvokeScriptAsync("AddField", new string[] { name });
             }
             catch (Exception ex)
             {
@@ -318,11 +319,11 @@ namespace AnkiU.Views
             }
         }
 
-        private async Task RemoveEditor(string id)
+        private async Task RemoveField(string name)
         {
             try
             {
-                await htmlEditor.WebViewControl.InvokeScriptAsync("RemoveEditor", new string[] { id });
+                await htmlEditor.WebViewControl.InvokeScriptAsync("RemoveField", new string[] { name });
             }
             catch (Exception ex)
             {
@@ -330,11 +331,11 @@ namespace AnkiU.Views
             }
         }
 
-        private async Task RemoveField(string id)
+        private async Task RenameField(string oldName, string newName)
         {
             try
             {
-                await htmlEditor.WebViewControl.InvokeScriptAsync("RemoveField", new string[] { id });
+                await htmlEditor.WebViewControl.InvokeScriptAsync("RenameField", new string[] { oldName, newName });
             }
             catch (Exception ex)
             {
@@ -342,11 +343,11 @@ namespace AnkiU.Views
             }
         }
 
-        private async Task RenameField(string id, string name)
+        private async Task MoveField(string name, int newOder)
         {
             try
             {
-                await htmlEditor.WebViewControl.InvokeScriptAsync("RenameField", new string[] { id, name });
+                await htmlEditor.WebViewControl.InvokeScriptAsync("MoveField", new string[] { name, newOder.ToString() });
             }
             catch (Exception ex)
             {
@@ -354,23 +355,11 @@ namespace AnkiU.Views
             }
         }
 
-        private async Task MoveField(string id, int newOder)
+        private async Task ShowPopup(string name)
         {
             try
             {
-                await htmlEditor.WebViewControl.InvokeScriptAsync("MoveField", new string[] { id, newOder.ToString() });
-            }
-            catch (Exception ex)
-            {
-                UIHelper.ThrowJavascriptError(ex.HResult);
-            }
-        }
-
-        private async Task ShowPopup(string id)
-        {
-            try
-            {
-                await htmlEditor.WebViewControl.InvokeScriptAsync("ShowPopup", new string[] { id });
+                await htmlEditor.WebViewControl.InvokeScriptAsync("ShowPopup", new string[] { name });
             }
             catch (Exception ex)
             {
@@ -389,7 +378,6 @@ namespace AnkiU.Views
                 UIHelper.ThrowJavascriptError(ex.HResult);
             }
         }
-
 
         public async Task ChangeDeckMediaFolder(string path)
         {

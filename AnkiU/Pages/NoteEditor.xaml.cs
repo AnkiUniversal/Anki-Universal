@@ -38,6 +38,7 @@ using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -128,9 +129,30 @@ namespace AnkiU.Pages
             mainPage.SaveButton.Visibility = Visibility.Visible;            
 
             SetupCurrentNote(parameter);
-            SetupNoteFieldView();
+            await SetupNoteFieldViewAsync();
             SetupTagsView();
-        }  
+
+            CoreWindow.GetForCurrentThread().KeyDown += NoteEditorKeyUp;
+        }
+
+        private bool isProcessedKeyPressEvent = false;
+        private async void NoteEditorKeyUp(CoreWindow sender, KeyEventArgs args)
+        {
+            if (isProcessedKeyPressEvent)
+                return;
+
+            await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {                
+                var control = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                if(control.HasFlag(CoreVirtualKeyStates.Down) && args.VirtualKey == VirtualKey.S)
+                {
+                    isProcessedKeyPressEvent = true;
+                    await SaveNote();
+                    await Task.Delay(500);
+                    isProcessedKeyPressEvent = false;
+                }
+            });
+        }
 
         private void ShowProgessRing()
         {
@@ -191,9 +213,9 @@ namespace AnkiU.Pages
             //Different with python and java ver, we do not allow user to change deck model
             modelInformationView.DisableModelSelection();
         }
-        private void SetupNoteFieldView()
+        private async Task SetupNoteFieldViewAsync()
         {            
-            noteFieldView.CurrentNote = currentNote;
+            await noteFieldView.SetCurrentNoteAsync(currentNote);
             noteFieldView.DeckMediaFolderName = "/" + collection.Media.MediaFolder.Name + "/" + currentDeckId + "/";
             noteFieldView.WebviewButtonClickEvent += NoteFieldViewWebviewButtonClickEventHandler;
             noteFieldView.NoteFieldPasteEvent += NoteFieldPasteEventHandler;
@@ -309,6 +331,8 @@ namespace AnkiU.Pages
         }
         private void UnHookAllEvents()
         {
+            CoreWindow.GetForCurrentThread().KeyDown -= NoteEditorKeyUp;
+
             mainPage.UndoButton.Click -= UndoButtonClickHandler;
             mainPage.SaveButton.Click -= SaveEditNoteButtonClickHandler;
             mainPage.SaveButton.Click -= SaveNewNoteButtonClick;
@@ -332,7 +356,7 @@ namespace AnkiU.Pages
             else
             {
                 SwitchToNewNoteView();
-                CacheAndMoveToNextNote();
+                await CacheAndMoveToNextNote();
                 isFromUndo = false;
             }
         }
@@ -353,7 +377,10 @@ namespace AnkiU.Pages
             ShowNumberOfCardsAdded(numberOfGenCards);
             noteFieldView.HtmlEditor.IsModified = false;
             noteFieldView.HtmlEditor.IsContentCheckOnce = false;
-            CacheAndMoveToNextNote();
+            await CacheAndMoveToNextNote();
+
+            await noteFieldView.HtmlEditor.FocusOn(noteFieldView.fieldsViewModel.Fields[0].Name);
+
             AddNewNoteEvent?.Invoke();
         }
 
@@ -384,21 +411,23 @@ namespace AnkiU.Pages
         {
             bool isEdit = await UIHelper.AskUserConfirmation(UIConst.WARN_NOTE_EXIST);
             if (isEdit)            
-                EditExistingNote();            
+                await EditExistingNote();            
         }
 
-        private void EditExistingNote()
+        private async Task EditExistingNote()
         {
             var editNote = collection.GetNote(currentNote.DupeNoteId);
-            RemoveNoteFromUndoQueueIfHas(editNote);        
-            SwitchToEditViewIfNeeded();
+            RemoveNoteFromUndoQueueIfHas(editNote);                    
             currentNote = editNote;
-            noteFieldView.CurrentNote = editNote;
+            await noteFieldView.SetCurrentNoteAsync(editNote);
             tagsViewModel.CurrentNote = currentNote;
-            tagsViewModel.UpdateNoteTagsFromNote();
+            tagsViewModel.UpdateNoteTagsFromNote();            
 
-            if(isNewNoteMode)
+            if (isNewNoteMode)
+            {
+                SwitchToEditView();
                 isFromUndo = true;
+            }
         }
 
         private void RemoveNoteFromUndoQueueIfHas(Note editNote)
@@ -411,18 +440,18 @@ namespace AnkiU.Pages
             }
         }
 
-        private void CacheAndMoveToNextNote()
+        private async Task CacheAndMoveToNextNote()
         {     
             firstFieldsViewModel.AddFirstFieldToList(currentNote);
             mainPage.UndoButton.IsEnabled = true;
-            UpdateCurrentNote();
+            await UpdateCurrentNote();
             mainPage.SaveAndStartNewDatabaseSessionAsync();
         }
 
-        private void UpdateCurrentNote()
+        private async Task UpdateCurrentNote()
         {
             currentNote = collection.NewNote();
-            noteFieldView.CurrentNote = currentNote;
+            await noteFieldView.SetCurrentNoteAsync(currentNote);
             tagsViewModel.CurrentNote = currentNote;
             tagsViewModel.CloneUsedTagsToNewNote();
         }
@@ -451,8 +480,7 @@ namespace AnkiU.Pages
                         case ("cloze"):
                             await AddCloze();
                             break;
-                        case ("save"):
-                            mainPage.SaveButtonClickAnimateAsync();
+                        case ("save"):                            
                             await SaveNote();
                             break;
                         default:
@@ -469,6 +497,8 @@ namespace AnkiU.Pages
 
         private async Task SaveNote()
         {
+            mainPage.SaveButtonClickAnimateAsync();
+
             await noteFieldView.HtmlEditor.ForceNotifyContentChanged();
 
             //This delay is not important.
@@ -763,7 +793,7 @@ namespace AnkiU.Pages
             }
 
             SetupDeckModel(selected.Id);
-            UpdateCurrentNote();
+            await UpdateCurrentNote();
             noteFieldView.HtmlEditor.ReloadWebView();
             fieldListView = null;
         }
@@ -788,10 +818,10 @@ namespace AnkiU.Pages
             var note = (sender as FrameworkElement).DataContext as NoteField;
             firstFieldsViewModel.RemoveFirstFieldFromList(note);
             DisableUndoButtonIfNoUndoLeft();
-            SwitchToEditViewIfNeeded();
+            SwitchToEditView();
 
             var editNote = collection.GetNote(note.Id);
-            ChangeModelIfNeededAndUpdateNoteField(editNote);
+            await ChangeModelIfNeededAndUpdateNoteField(editNote);
             currentNote = editNote;
             tagsViewModel.CurrentNote = currentNote;
             tagsViewModel.UpdateNoteTagsFromNote();
@@ -799,17 +829,17 @@ namespace AnkiU.Pages
             isFromUndo = true;
         }
 
-        private void ChangeModelIfNeededAndUpdateNoteField(Note editNote)
+        private async Task ChangeModelIfNeededAndUpdateNoteField(Note editNote)
         {
             if (editNote.ModelId != currentNote.ModelId)
             {
                 noteFieldView.HtmlEditor.ReloadWebView();
                 SetupDeckModel(editNote.ModelId);                
                 ChangeSelectedModel(editNote.ModelId);
-                noteFieldView.CurrentNote = editNote;
+                await noteFieldView.SetCurrentNoteAsync(editNote);
             }
             else
-                noteFieldView.CurrentNote = editNote;
+                await noteFieldView.SetCurrentNoteAsync(editNote);
         }
 
         private void DisableUndoButtonIfNoUndoLeft()
@@ -818,11 +848,8 @@ namespace AnkiU.Pages
                 mainPage.UndoButton.IsEnabled = false;
         }
 
-        private void SwitchToEditViewIfNeeded()
+        private void SwitchToEditView()
         {            
-            if (!isNewNoteMode)
-                return;
-
             noteTypeGrid.Visibility = Visibility.Collapsed;
             mainPage.UndoButton.Visibility = Visibility.Collapsed;
 
@@ -920,7 +947,8 @@ namespace AnkiU.Pages
             await mainPage.CurrentDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 string name = addFieldFlyout.NewName;
-                var isValid = await UIHelper.CheckValidName(name, noteFieldView.fieldsViewModel.Fields, UIConst.WARN_NOTEFIELD_EXIST);
+
+                var isValid = await UIHelper.CheckValidName(name, noteFieldView.fieldsViewModel.GetExistedFieldsName(), UIConst.WARN_NOTEFIELD_EXIST);
 
                 if (!isValid)
                 {
@@ -1013,7 +1041,7 @@ namespace AnkiU.Pages
             {
                 string newName = renameFieldFlyout.NewName;
                 newName = newName.Trim();
-                bool isValid = await UIHelper.CheckValidName(newName, noteFieldView.fieldsViewModel.Fields, UIConst.WARN_NOTEFIELD_EXIST);
+                bool isValid = await UIHelper.CheckValidName(newName, noteFieldView.fieldsViewModel.GetExistedFieldsName(), UIConst.WARN_NOTEFIELD_EXIST);
                 if (!isValid)
                 {
                     renameFieldFlyout.Show(editModelButton);

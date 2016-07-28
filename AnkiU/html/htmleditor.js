@@ -19,6 +19,10 @@ var isTinyMceInit = false;
 var isKeydownHandle = false;
 var isTouchInput = false;
 
+//Use a prefix to avoid fields start with number cause problem
+const EDITABLE_FIELD_PREFIX = "Field_";        
+const EDITABLE_FIELD_PREFIX_LENGTH = 6;
+
 document.addEventListener("keydown", keyDownTextField, false);
 
 function keyDownTextField(e) {
@@ -93,7 +97,8 @@ function ForceNotifyContentChanged() {
 
 function NotifyContentChanged(id) {
     var html = GetHtmlContent(id);
-    editableFieldNotify.editableFieldTextChangedEventFire(id, html);
+    var name = id.substring(EDITABLE_FIELD_PREFIX_LENGTH);
+    editableFieldNotify.editableFieldTextChangedEventFire(name, html);
 }
 
 function GetHtmlContent(id) {
@@ -113,7 +118,7 @@ function PopulateAllEditableField() {
 function InsertNewEditableField(name, content) {
 
     var fieldName = editableFieldName.replace('name', name);
-    var fieldInput = editableFieldInputTinyMce.replace('fieldName', name);
+    var fieldInput = editableFieldInputTinyMce.replace('fieldName', EDITABLE_FIELD_PREFIX + name);
     fieldInput = fieldInput.replace('fieldcontent', content);
 
     document.body.insertAdjacentHTML('beforeend', '<div> ' + fieldName + fieldInput + '</div> ');
@@ -182,6 +187,11 @@ function GetMousePosition(e) {
         'y': e.clientY
     }
     return position;
+}
+
+function FocusOn(name) {    
+    var id = EDITABLE_FIELD_PREFIX + name;    
+    tinymce.get(id).focus();    
 }
 
 function HideEditor() {

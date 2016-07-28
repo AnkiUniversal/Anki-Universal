@@ -319,6 +319,18 @@ namespace AnkiU.Anki
             }
         }
 
+        public async Task FocusOn(string name)
+        {
+            try
+            {
+                await webViewControl.InvokeScriptAsync("FocusOn", new string[] { name });
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ThrowJavascriptError(ex.HResult);
+            }
+        }
+
         public async Task HideEditor()
         {
             try

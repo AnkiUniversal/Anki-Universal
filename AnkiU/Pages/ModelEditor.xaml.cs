@@ -194,7 +194,7 @@ namespace AnkiU.Pages
             await mainPage.CurrentDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 string name = addFieldFlyout.NewName;
-                var isValid = await UIHelper.CheckValidName(name, fieldsViewModel.Fields, UIConst.WARN_NOTEFIELD_EXIST);
+                var isValid = await UIHelper.CheckValidName(name, fieldsViewModel.GetExistedFieldsName(), UIConst.WARN_NOTEFIELD_EXIST);
 
                 if (!isValid)
                 {
@@ -237,7 +237,7 @@ namespace AnkiU.Pages
             {
                 string newName = renameFieldFlyout.NewName;
                 newName = newName.Trim();
-                bool isValid = await UIHelper.CheckValidName(newName, fieldsViewModel.Fields, UIConst.WARN_NOTEFIELD_EXIST);
+                bool isValid = await UIHelper.CheckValidName(newName, fieldsViewModel.GetExistedFieldsName(), UIConst.WARN_NOTEFIELD_EXIST);
                 if (!isValid)
                 {
                     renameFieldFlyout.Show(pointToShowFlyout);

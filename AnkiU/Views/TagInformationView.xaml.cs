@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using AnkiU.Models;
+using AnkiU.UIUtilities;
 using AnkiU.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -67,8 +68,18 @@ namespace AnkiU.Views
             DependencyProperty.Register("AddVisibility", typeof(Visibility), typeof(TagInformationView), new PropertyMetadata(Visibility.Visible));
 
 
-        private void ExpandTagButtonClickHandler(object sender, RoutedEventArgs e)
+        private async void ExpandTagButtonClickHandler(object sender, RoutedEventArgs e)
         {
+            if(ViewModel.Tags.Count == 0)
+            {
+                string message = "You do not have any tags yet.";
+                if (AddVisibility == Visibility.Visible)
+                    message += "\nTo add new tags please press on the \"Add\" icon.";
+
+                await UIHelper.ShowMessageDialog(message);
+                return;
+            }
+
             if(expandTagButton.ActualWidth < tagsNameGrid.MaxWidth)
                 tagsNameGrid.Width = expandTagButton.ActualWidth;
             else

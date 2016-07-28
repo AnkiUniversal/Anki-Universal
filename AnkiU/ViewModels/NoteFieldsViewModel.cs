@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using AnkiU.Anki;
 using AnkiU.AnkiCore;
+using AnkiU.Interfaces;
 using AnkiU.Models;
 using System;
 using System.Collections.Generic;
@@ -65,6 +66,13 @@ namespace AnkiU.ViewModels
         {
             for (int i = 0; i < Fields.Count; i++)
                 Fields[i].Order = i;
+        }
+
+        public List<IName> GetExistedFieldsName()
+        {
+            var existed = new List<IName>(Fields);
+
+            return existed;
         }
     }
 }

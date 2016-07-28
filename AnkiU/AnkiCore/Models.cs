@@ -662,9 +662,7 @@ namespace AnkiU.AnkiCore
                                                 Regex.Escape(field.GetNamedString("name")));
 
             if (newName == null)
-                newName = "";
-
-            string repl = "{{$1$2" + newName + "}}";
+                newName = "";            
 
             JsonArray tmpls = model.GetNamedArray("tmpls");
             for (uint i = 0; i < tmpls.Count; ++i)
@@ -674,13 +672,30 @@ namespace AnkiU.AnkiCore
                 {
                     string str = t.GetNamedString(fmt);
                     if (!newName.Equals(""))
-                        t[fmt] = JsonValue.CreateStringValue(Regex.Replace(str, pattern, repl));
+                    {
+                        t[fmt] = JsonValue.CreateStringValue(ReplaceFieldInTemplate(newName, pattern, str));                        
+                    }
                     else
                         t[fmt] = JsonValue.CreateStringValue(Regex.Replace(str, pattern, ""));
                 }
             }
             field["name"] = JsonValue.CreateStringValue(newName);
             Save(model);
+        }
+
+        //Use function as in python code instead of $1$2 as in java
+        //to avoid problems with fields start as numbers
+        private string ReplaceFieldInTemplate(string newName, string pattern, string text)
+        {
+            return Regex.Replace(text, pattern, (match) =>
+            {
+                return "{{" + GetGroup(match, 1) + GetGroup(match, 2) + newName + "}}";
+            });            
+        }
+
+        private string GetGroup(Match match, int index)
+        {
+            return match.Groups[index].Success ? match.Groups[index].Value : "";
         }
 
         public void MoveField(JsonObject m, JsonObject field, int idx)

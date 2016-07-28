@@ -342,7 +342,8 @@ function KeyPress(e) {
     return true;
 }
 
-function InsertAfterElement(id, html) {
+function InsertAfterField(name, html) {
+    var id = EDITABLE_FIELD_PREFIX + name;
     var ele = document.getElementById(id);
     ele.insertAdjacentHTML('afterend', html);
 }

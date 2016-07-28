@@ -135,7 +135,7 @@ var tinymceInit = {
             return KeyPress(e);            
         });
 
-    },
+    },    
     paste_data_images: false,
     paste_preprocess: function(plugin, args) {        
         if (args.content == '' || (args.content.indexOf("<img") != -1)) {
@@ -144,7 +144,7 @@ var tinymceInit = {
         } 
     },
     elementpath: false,
-    inline: true,
+    inline: true,    
     custom_undo_redo_levels: 10,
     statusbar: false,
     convert_fonts_to_spans: false,
@@ -152,7 +152,7 @@ var tinymceInit = {
     object_resizing: false,
     keep_styles: false,
     remove_trailing_brs: true,
-    forced_root_block : false,    
+    forced_root_block: 'div',
     force_br_newlines: true,
     toolbar: toolbarNarrowScreenWidth
 };
@@ -233,36 +233,48 @@ function GetNameHeaderField(id) {
     throw 'Invalid header id';
 }
 
-function RemoveField(id) {
+function AddField(name) {
+    InsertNewEditableField(name, "");
+    CreateEditor(EDITABLE_FIELD_PREFIX + name);
+}
 
-    var header = GetNameHeaderField(id);
+function RemoveField(name) {
+
+    var header = GetNameHeaderField(name);
     header.parentNode.removeChild(header); 
 
+    var id = EDITABLE_FIELD_PREFIX + name;
+    RemoveEditor(id);
     var field = document.getElementById(id);
     field.parentNode.removeChild(field);
 }
 
-function CreateEditor(id) {    
-    tinymce.EditorManager.execCommand('mceAddEditor', true, id);    
+function RenameField(oldName, newName) {    
+    var header = GetNameHeaderField(oldName);
+    header.innerText = newName;
+
+    var oldId = EDITABLE_FIELD_PREFIX + oldName;
+    RemoveEditor(oldId);
+
+    var newId = EDITABLE_FIELD_PREFIX + newName;
+    document.getElementById(oldId).id = newId;
+    CreateEditor(newId);
 }
 
-function RemoveEditor(id) {    
-    tinymce.get(id).remove();    
+function CreateEditor(id) {
+    tinymce.EditorManager.execCommand('mceAddEditor', true, id);
 }
 
-function RenameField(id, name) {    
-    var header = GetNameHeaderField(id);
-    header.innerText = name;
-    RemoveEditor(id);
-    document.getElementById(id).id = name;
-    CreateEditor(name);
+function RemoveEditor(id) {
+    tinymce.get(id).remove();
 }
 
-function MoveField(id, newOrder) {
-        
-    var header = GetNameHeaderField(id);
+function MoveField(name, newOrder) {    
+
+    var header = GetNameHeaderField(name);
     header.parentNode.removeChild(header);
 
+    var id = EDITABLE_FIELD_PREFIX + name;
     var field = document.getElementById(id);
     field.parentNode.removeChild(field);
        
@@ -277,8 +289,8 @@ function MoveField(id, newOrder) {
     header.insertAdjacentElement('afterEnd', field);
 }
 
-function ShowPopup(id){
-    var header = GetNameHeaderField(id);   
+function ShowPopup(name) {    
+    var header = GetNameHeaderField(name);   
     header.insertAdjacentHTML('beforeEnd', popUpHtml);
 
     var popup = document.getElementById('firstFieldPopup');

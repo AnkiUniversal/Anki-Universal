@@ -371,7 +371,7 @@ namespace AnkiU.AnkiCore.Templates
             }
             txt = repl.ToString();
             // and display other clozes normally
-            //WARNING: python ver use "\\1" why java ver use "$1"
+            //WARNING: python ver use "\\1" while java ver use "$1"
             return Regex.Replace(txt, String.Format(Media.locale, clozeReg, @"\d+"), "$1");
         }
 
