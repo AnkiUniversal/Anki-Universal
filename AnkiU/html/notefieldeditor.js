@@ -142,11 +142,16 @@ var tinymceInit = {
     },    
     paste_data_images: false,
     paste_preprocess: function(plugin, args) {        
-        if (args.content == '' || (args.content.indexOf("<img") != -1)) {
+        if (args.content == ''
+            || (args.content.indexOf("<img") != -1)
+            || (args.content.indexOf("&lt;img") != -1)
+            || (args.content.indexOf("<iframe") != -1)
+            || (args.content.indexOf("&lt;iframe") != -1)
+            ) {
             PasteEventHandler();
             args.content = '';
         } 
-    },
+    },    
     elementpath: false,
     inline: true,    
     custom_undo_redo_levels: 10,
@@ -162,10 +167,11 @@ var tinymceInit = {
 };
 
 function EditorInitEvent(editor) {
-    //Since tinymce will include a space if field has no content
-    //we have to make sure to delete it.
-    if (editor.getElement().innerHTML == '<div>&nbsp;</div>') {
-        editor.getElement().innerHTML = '';
+    //When the editor init, it will replace no content area with '<div>&nbsp;</div>'
+    //When adding note, this make the first note have a starting whitespace, white sequent notes does not 
+   //This will make it like there are no leading whitespace in the first note. In reality, it's still there
+    if (editor.getContent() == '<div>&nbsp;</div>') {
+        editor.setContent('');
     }
 }
 

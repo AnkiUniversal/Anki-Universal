@@ -91,6 +91,39 @@ namespace AnkiU.AnkiCore
             return new string[] { name, ext };
         }
 
+        public static async Task<bool> CompareByteToByte(StorageFile comparer, StorageFile compared)
+        {
+            if ((await comparer.GetBasicPropertiesAsync()).Size != (await compared.GetBasicPropertiesAsync()).Size)
+                return false;
+
+            byte[] buffer1 = new byte[CHECKSUM_BUFFER];
+            byte[] buffer2 = new byte[CHECKSUM_BUFFER];
+            int readCount1;
+            int readCount2;
+
+            using (var firstStream = (await comparer.OpenReadAsync()).AsStreamForRead())
+            using (var secondStream = (await compared.OpenReadAsync()).AsStreamForRead())
+            {
+                while (true)
+                {
+                    readCount1 = firstStream.Read(buffer1, 0, CHECKSUM_BUFFER);
+                    readCount2 = secondStream.Read(buffer2, 0, CHECKSUM_BUFFER);
+
+                    if (readCount1 != readCount2)
+                        return false;
+
+                    if (readCount1 == 0)
+                        return true;
+
+                    for(int i = 0; i < readCount1; i++)
+                    {
+                        if (buffer1[i] != buffer2[i])
+                            return false;
+                    }
+                }
+            }        
+        }
+
         public static async Task<string> FileChecksum(StorageFile file)
         {
             try

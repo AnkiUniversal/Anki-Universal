@@ -130,9 +130,8 @@ function ClearBody() {
 }
 
 function ChangeAllEditableFieldContent() {
-    var fields = document.getElementsByClassName(editableClass);
-    for (var i = 0; i < fields.length; i++) {
-        fields[i].innerHTML = arguments[i];
+    for (var i = 0; i < tinymce.editors.length; i++) {
+        tinymce.editors[i].setContent(arguments[i]);
     }
 }
 

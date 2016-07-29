@@ -121,13 +121,26 @@ namespace AnkiU.Anki
             IsContentCheckOnce = true;
             if (IsModified == false)
             {
-                var text = html.Replace("&nbsp;", " ");
+                var text = RemoveDivWrap(html).Replace("&nbsp;", " ");
                 if (String.IsNullOrWhiteSpace(text))
                     return;
 
                 IsModified = true;
             }
             EditableFieldTextChangedEvent?.Invoke(fieldName, html);
+        }
+
+        public static string RemoveDivWrap(string tinyMceText)
+        {
+            if (String.IsNullOrWhiteSpace(tinyMceText))
+                return tinyMceText;
+
+            if (!tinyMceText.StartsWith("<div>"))
+                return tinyMceText;
+
+            //"<div>".Length = 5
+            //"<div></div>".Length = 11
+            return tinyMceText.Substring(5, tinyMceText.Length - 11);
         }
 
         private void AddWebViewControlIntoGrid()

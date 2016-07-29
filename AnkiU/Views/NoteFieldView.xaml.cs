@@ -178,22 +178,9 @@ namespace AnkiU.Views
         private void NoteFieldTextChangedEventHandler(string fieldName, string html)
         {
             //TinyMce encode space as &nbsp; so we also replace it           
-            var text = RemoveDivWrap(html).Replace("&nbsp;", " ");
+            var text = HtmlEditor.RemoveDivWrap(html).Replace("&nbsp;", " ").Trim();
             currentNote.SetItem(fieldName, text);
             WarnIfFirstFieldDuplicate(fieldName);
-        }
-
-        public static string RemoveDivWrap(string tinyMceText)
-        {
-            if (String.IsNullOrWhiteSpace(tinyMceText))
-                return tinyMceText;
-
-            if (!tinyMceText.StartsWith("<div>"))
-                return tinyMceText;
-
-            //"<div>".Length = 5
-            //"<div></div>".Length = 11
-            return tinyMceText.Substring(5, tinyMceText.Length - 11);
         }
 
         private void WarnIfFirstFieldDuplicate(string fieldName)

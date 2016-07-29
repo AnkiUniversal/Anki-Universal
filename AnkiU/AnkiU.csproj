@@ -528,6 +528,9 @@
     <Compile Include="UserControls\CustomStudyFlyout.xaml.cs">
       <DependentUpon>CustomStudyFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\FourOptionsDialog.xaml.cs">
+      <DependentUpon>FourOptionsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\HelpButton.xaml.cs">
       <DependentUpon>HelpButton.xaml</DependentUpon>
     </Compile>
@@ -825,6 +828,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\CustomStudyFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\FourOptionsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

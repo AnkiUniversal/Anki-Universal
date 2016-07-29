@@ -228,14 +228,20 @@ namespace AnkiU.AnkiCore
             StorageFolder folder = null;
             if (deckId != 0)
             {
-                folder = await MediaFolder.TryGetItemAsync(deckId.ToString()) as StorageFolder;
-                if (folder == null)
-                    folder = await MediaFolder.CreateFolderAsync(deckId.ToString());
+                folder = await GetDeckMediaFolder(deckId);
             }
-            
+
             StorageFile sFile = await WriteData(file, folder);
             MarkFileAddIntoDatabase(sFile.Name, deckId);
             return sFile.Name;
+        }
+
+        public async Task<StorageFolder> GetDeckMediaFolder(long deckId)
+        {
+            var folder = await MediaFolder.TryGetItemAsync(deckId.ToString()) as StorageFolder;
+            if (folder == null)
+                folder = await MediaFolder.CreateFolderAsync(deckId.ToString());
+            return folder;
         }
 
         private async Task<StorageFile> WriteData(StorageFile sourceFile, StorageFolder deckIdFolder)
@@ -255,7 +261,10 @@ namespace AnkiU.AnkiCore
             string root = split[0];
             string ext = split[1];
 
-            string checkSum = await Utils.FileChecksum(sourceFile);
+            //WARNING: In python ver content of two files are compared and return if they are alike
+            //However checksum is an expensive operation for large files so AnkiU does not check the whole file
+            //Therefore we will only rename without checking content
+            //string checkSum = await Utils.FileChecksum(sourceFile);
             try
             {
                 StorageFile newFile;
@@ -269,10 +278,6 @@ namespace AnkiU.AnkiCore
                         return newFile;
                     }
 
-                    //WARNING: In python ver content of two files are compared and return if they are alike
-                    //However checksum is an expensive operation for large files so AnkiU does not check the whole file
-                    //and the buffer is different for each device type. Therefore we will only rename without checking
-                    //content
                     //string newCheckSum = await Utils.FileChecksum(newFile);
                     //if (newCheckSum.Equals(checkSum, StringComparison.OrdinalIgnoreCase))
                     //{
