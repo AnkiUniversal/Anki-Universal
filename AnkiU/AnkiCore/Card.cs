@@ -312,7 +312,15 @@ namespace AnkiU.AnkiCore
             JsonObject m = GetModel();
             if (m.GetNamedNumber("type") == (double)ModelType.STD)
             {
-                return m.GetNamedArray("tmpls").GetObjectAt((uint)ord);
+                try
+                {
+                    return m.GetNamedArray("tmpls").GetObjectAt((uint)ord);
+                }
+                catch
+                {   //This should only happen if user changes this card note type from cloze to standard
+                    //and the note of this card contains more than one cloze
+                    return GetModel().GetNamedArray("tmpls").GetObjectAt(0);
+                }
             }
             else
             {

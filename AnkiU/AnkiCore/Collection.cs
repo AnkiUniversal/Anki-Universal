@@ -1001,7 +1001,16 @@ namespace AnkiU.AnkiCore
             JsonObject template;
             if (model.GetNamedNumber("type") == (double)ModelType.STD)
             {
-                template = model.GetNamedArray("tmpls").GetObjectAt(Convert.ToUInt32(data[4]));
+                try
+                {
+                    template = model.GetNamedArray("tmpls").GetObjectAt(Convert.ToUInt32(data[4]));
+                }
+                catch
+                {                    
+                    //This should only happen if user changes this card note type from cloze to standard
+                    //and the note of this card contains more than one cloze
+                    template = model.GetNamedArray("tmpls").GetObjectAt(0);
+                }
             }
             else
             {
