@@ -543,27 +543,46 @@ namespace AnkiU.Pages
 
             bool isCancel = false;
             bool isReuse = false;
+            bool isReplace = false;
             string legalName = collection.Media.StripIllegal(file.Name);
             var existItem = await deckIdFolder.TryGetItemAsync(legalName) as StorageFile;
             if (existItem != null)
             {
-                ThreeOptionsDialog dialog = new ThreeOptionsDialog();
-                dialog.Message = "This deck already has a media file with the same name.\n ";
-                dialog.Title = "Duplicate File";
-                dialog.LeftButton.Content = "Rename";
-                dialog.MiddleButton.Content = "Reuse";
-                dialog.RightButton.Content = "Cancel";
+                FourOptionsDialog dialog = InitDuplicateDialog();
+                dialog.OpenButtonClicked += async (s, e) => { await Windows.System.Launcher.LaunchFileAsync(existItem); };
                 await dialog.ShowAsync();
-                isCancel = dialog.IsRightButtonClick();
+
+                isCancel = dialog.IsFourthButtonClick();
                 if (isCancel)
                     return null;
-                isReuse = dialog.IsMiddleButtonClick();
+
+                isReplace = dialog.IsFirstButtonClick();
+                isReuse = dialog.IsThirdButtonClick();
             }
-            
-            if (!isReuse)                            
-                legalName = AddNewFile(file);
+
+            if (!isReuse && !isReplace)                            
+                legalName = await AddNewFile(file);
+            else if(isReplace)
+            {
+                if (!existItem.IsEqual(file))
+                {
+                    await file.CopyAndReplaceAsync(existItem);
+                    collection.Media.MarkFileAddIntoDatabase(existItem.Name, currentDeckId);
+                }
+            }
 
             return legalName;
+        }
+
+        private static FourOptionsDialog InitDuplicateDialog()
+        {
+            FourOptionsDialog dialog = new FourOptionsDialog();
+            dialog.Message = "This deck already has a media file with the same name.\n ";
+            dialog.Title = "Duplicate File Name";
+            dialog.FirstButton.Content = "Replace";
+            dialog.SecondButton.Content = "Rename";
+            dialog.ThirdButton.Content = "Reuse";            
+            return dialog;
         }
 
         private async Task InsertHtmlTagIntoField(StorageFile file, string fileName)
@@ -577,15 +596,11 @@ namespace AnkiU.Pages
             await noteFieldView.HtmlEditor.InsertHtml(html);
         }
 
-        private string AddNewFile(StorageFile file)
+        private async Task<string> AddNewFile(StorageFile file)
         {
-            string fileName = null;
-            Task task = Task.Run(async () =>
-            {
-                fileName = await collection.Media.AddFile(file, currentDeckId);
-                newFileAdded.Add(fileName);
-            });
-            task.Wait();
+            string fileName = await collection.Media.AddFile(file, currentDeckId);
+            newFileAdded.Add(fileName);                        
+
             return fileName;
         }
 
