@@ -27,6 +27,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Contacts;
 using Windows.Devices.Input;
 using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
@@ -386,6 +387,17 @@ namespace AnkiU.UIUtilities
         public static void SetStoryBoardTarget(DoubleAnimationUsingKeyFrames animation, string targetName)
         {
             animation.SetValue(Storyboard.TargetNameProperty, targetName);
+        }
+
+        public static async Task LaunchEmailApp(string emailAddress, string messageBody)
+        {            
+            var message = new Windows.ApplicationModel.Email.EmailMessage();
+            message.Body = messageBody;
+
+            var emailRecipient = new Windows.ApplicationModel.Email.EmailRecipient(emailAddress);
+            message.To.Add(emailRecipient);            
+
+            await Windows.ApplicationModel.Email.EmailManager.ShowComposeNewEmailAsync(message);
         }
     }
 }

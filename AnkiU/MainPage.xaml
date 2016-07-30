@@ -475,6 +475,27 @@
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
+                            Click="SendFeedBackClick"
+                            HorizontalContentAlignment="Left">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="Mail" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Feedback" />
+                            </Grid>
+                        </Button>
+                        
+                        <Button 
+                            Style="{Binding Style, ElementName=button}"
+                            HorizontalAlignment="Stretch"                                                         
+                            Background="Transparent"
+                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            VerticalAlignment="Center" 
+                            Padding="0"
+                            Height="40"
                             Click="HelpButtonClick"
                             HorizontalContentAlignment="Left">
                             <Grid>

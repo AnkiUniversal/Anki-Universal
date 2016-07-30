@@ -2041,6 +2041,11 @@ namespace AnkiU
         {
             DeckImageChangedEvent(fileToChange, deckId, modifiedTime);
         }
+
+        private async void SendFeedBackClick(object sender, RoutedEventArgs e)
+        {
+            await UIHelper.LaunchEmailApp("ankiuniversal@outlook.com", "");
+        }
     }   
 
 }

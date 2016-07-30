@@ -44,6 +44,13 @@ namespace AnkiU.UserControls
             this.InitializeComponent();
             this.rootGrid = rootGrid;
             creditPopup.IsLightDismissEnabled = true;
+            creditPopup.Closed += CreditPopupClosedEvent;
+        }
+
+        private void CreditPopupClosedEvent(object sender, object e)
+        {
+            //Always makesure this function is called by manual or automatically closed
+            Hide();
         }
 
         public void Show()
