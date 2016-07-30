@@ -79,8 +79,7 @@ function ChangeReadMode(readMode) {
 
 function KeyDownHandler(event) {
     //notifyAppObj is injected into javascript from C# at runtime
-    notifyAppObj.keyDownEventFire(event.keyCode);
-    event.returnValue = false;
+    notifyAppObj.keyDownEventFire(event.keyCode);    
 }
 
 var audios;
