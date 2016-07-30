@@ -1259,6 +1259,12 @@ namespace AnkiU
                 InkRecognizerContainer.SetDefaultRecognizer(installedLanguagesList[comboBox.SelectedIndex]);
         }
 
+        public static void RemoveDeckInPrefsIfNeeded(long deckId)
+        {
+            if (DeckInkPrefs.HasId(deckId))
+                DeckInkPrefs.RemoveDeckInkPref(deckId);
+        }
+
         public void HideInkToTextFlyoutToggleOnContent()
         {
             languageSelectSymbol.Visibility = Visibility.Collapsed;
@@ -1492,17 +1498,24 @@ namespace AnkiU
 
         private async Task ChooseExportFolder()
         {
-            var folderPicker = new Windows.Storage.Pickers.FolderPicker();
-            folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-            folderPicker.FileTypeFilter.Add(".apkg");
-            exportFolder = await folderPicker.PickSingleFolderAsync();
-            if (exportFolder != null)
+            try
             {
-                Windows.Storage.AccessCache.StorageApplicationPermissions.
-                FutureAccessList.AddOrReplace("ExportFolderToken", exportFolder);
-                exportFlyoutTextBox.Text = exportFolder.Path;
+                var folderPicker = new Windows.Storage.Pickers.FolderPicker();
+                folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+                folderPicker.FileTypeFilter.Add(".apkg");
+                exportFolder = await folderPicker.PickSingleFolderAsync();
+                if (exportFolder != null)
+                {
+                    Windows.Storage.AccessCache.StorageApplicationPermissions.
+                    FutureAccessList.AddOrReplace("ExportFolderToken", exportFolder);
+                    exportFlyoutTextBox.Text = exportFolder.Path;
+                }
+                ShowExportFlyout(exportAllButton);
             }
-            ShowExportFlyout(exportAllButton);
+            catch
+            {
+                await UIHelper.ShowMessageDialog("Can't open the specified folder. Please choose another folder or run in administrator mode.");
+            }
         }
 
         private async void ExportOkButtonClickHandler(object sender, RoutedEventArgs e)
@@ -1560,7 +1573,7 @@ namespace AnkiU
                 if (message == "Successed")
                     dialog = new MessageDialog("Your deck has been exported successfully.", "Successed!");
                 else
-                    dialog = new MessageDialog("Unable to export the collection.", "Error!");
+                    dialog = new MessageDialog(UIConst.EXPORT_FAILED, "Error!");
 
                 Collection.ReOpen();
                 IsCanNavigateBack = true;

@@ -36,9 +36,20 @@ function ChangeCardStyle(htmlText) {
     cardstyle.innerHTML = htmlText;
 }
 
+var textBox;
+
 function ChangeCardContent(htmlText, cardClass) {
     //Reset user answer whether it has value or not
     userAnswer = '';
+
+    //Blur textBox if has to avoid cursor remain in answer side
+    if (textBox != null && textBox != undefined) {
+        //Keep the state of isFocusOnTextBox
+        var state = isFocusOnTextBox;
+        textBox.blur();
+        isFocusOnTextBox = state;
+    }
+
     var cardcontent = document.getElementById('cardcontent');
 
     while (cardcontent.firstChild) {
@@ -50,7 +61,7 @@ function ChangeCardContent(htmlText, cardClass) {
         cardcontent.className = cardClass;
     
     if (isFocusOnTextBox && !isTouchInput) {
-        var textBox = document.getElementById('typeAns');
+        textBox = document.getElementById('typeAns');
         if (textBox != null) {
             textBox.focus();
             textBox.click();

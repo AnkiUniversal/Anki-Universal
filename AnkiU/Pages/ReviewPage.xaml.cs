@@ -1089,8 +1089,11 @@ namespace AnkiU.Pages
             PopNextCard();
             if (currentCard == null)
             {
-                if (collection.Deck.IsDyn(currentDeckId))                                    
-                    collection.Deck.Remove(currentDeckId);                
+                if (collection.Deck.IsDyn(currentDeckId))
+                {
+                    collection.Deck.Remove(currentDeckId);
+                    MainPage.RemoveDeckInPrefsIfNeeded(currentDeckId);
+                }
                 if (isCanGoBack && Frame.CanGoBack)
                 {
                     FrameGoBack();

@@ -115,28 +115,36 @@ namespace AnkiU.UIUtilities
             return childList;
         }
 
-        public static async Task<StorageFile> OpenFilePicker(string tokenName, PickerLocationId location, params string[] fileTypes)
-        {
-            var filePicker = new FileOpenPicker();
-            filePicker.SuggestedStartLocation = location;
-            foreach (var type in fileTypes)
-                filePicker.FileTypeFilter.Add(type);
-            var filePick = await filePicker.PickSingleFileAsync();
-            if (filePick != null)
-            {
-                Windows.Storage.AccessCache.StorageApplicationPermissions.
-                FutureAccessList.AddOrReplace(tokenName, filePick);
-                return filePick;
-            }
-            else
-                return null;
-        }
-
         public static async Task<StorageFile> OpenFilePicker(string tokenName, params string[] fileTypes)
         {
             return await OpenFilePicker(tokenName, PickerLocationId.DocumentsLibrary, fileTypes);
         }
 
+        public static async Task<StorageFile> OpenFilePicker(string tokenName, PickerLocationId location, params string[] fileTypes)
+        {
+            try
+            {
+                var filePicker = new FileOpenPicker();
+                filePicker.SuggestedStartLocation = location;
+                foreach (var type in fileTypes)
+                    filePicker.FileTypeFilter.Add(type);
+                var filePick = await filePicker.PickSingleFileAsync();
+                if (filePick != null)
+                {
+                    Windows.Storage.AccessCache.StorageApplicationPermissions.
+                    FutureAccessList.AddOrReplace(tokenName, filePick);
+                    return filePick;
+                }
+                else
+                    return null;
+            }
+            catch(Exception ex)
+            {
+                ThrowUnHandleException(ex);
+                await UIHelper.ShowMessageDialog("Unable to open the specified file.");
+                return null;
+            }
+        }
 
         [Conditional("DEBUG")]
         public static void ThrowJavascriptError(int HResult, [CallerMemberName] string functionName = null)
@@ -325,16 +333,31 @@ namespace AnkiU.UIUtilities
 
         public static async Task<StorageFolder> OpenFolderPicker(string token)
         {
-            var folderPicker = new Windows.Storage.Pickers.FolderPicker();
-            folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-            folderPicker.FileTypeFilter.Add("*");
-            var folder = await folderPicker.PickSingleFolderAsync();
-            if (folder != null)
+            try
             {
-                Windows.Storage.AccessCache.StorageApplicationPermissions.
-                FutureAccessList.AddOrReplace(token, folder);
+                var folderPicker = new Windows.Storage.Pickers.FolderPicker();
+                folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+                folderPicker.FileTypeFilter.Add("*");
+                var folder = await folderPicker.PickSingleFolderAsync();
+                if (folder != null)
+                {
+                    Windows.Storage.AccessCache.StorageApplicationPermissions.
+                    FutureAccessList.AddOrReplace(token, folder);
+                }
+                return folder;
             }
-            return folder;
+            catch(Exception ex)
+            {
+                ThrowUnHandleException(ex);
+                await UIHelper.ShowMessageDialog("Unable to open the specified folder.");
+                return null;
+            }
+        }
+
+        [Conditional("DEBUG")]
+        private static void ThrowUnHandleException(Exception ex)
+        {
+            throw ex;
         }
 
         public static void AddToGridInFull(Grid mainGrid, FrameworkElement control)

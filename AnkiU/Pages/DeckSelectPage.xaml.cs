@@ -507,17 +507,24 @@ namespace AnkiU.Pages
 
         private async Task ChooseExportFolder()
         {
-            var folderPicker = new Windows.Storage.Pickers.FolderPicker();
-            folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-            folderPicker.FileTypeFilter.Add(".apkg");
-            exportFolder = await folderPicker.PickSingleFolderAsync();
-            if (exportFolder != null)
+            try
             {
-                Windows.Storage.AccessCache.StorageApplicationPermissions.
-                FutureAccessList.AddOrReplace("ExportFolderToken", exportFolder);
-                exportFlyoutTextBox.Text = exportFolder.Path;
+                var folderPicker = new Windows.Storage.Pickers.FolderPicker();
+                folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+                folderPicker.FileTypeFilter.Add(".apkg");
+                exportFolder = await folderPicker.PickSingleFolderAsync();
+                if (exportFolder != null)
+                {
+                    Windows.Storage.AccessCache.StorageApplicationPermissions.
+                    FutureAccessList.AddOrReplace("ExportFolderToken", exportFolder);
+                    exportFlyoutTextBox.Text = exportFolder.Path;
+                }
+                ShowFlyout(exportFlyout);
             }
-            ShowFlyout(exportFlyout);
+            catch
+            {
+                await UIHelper.ShowMessageDialog("Unable to open the specified folder. Please choose another folder or run in administrator mode.");
+            }
         }
 
         private async void ExportOkButtonClickHandler(object sender, RoutedEventArgs e)
@@ -578,7 +585,7 @@ namespace AnkiU.Pages
                 if (message == "Successed")
                     dialog = new MessageDialog("Your deck has been exported successfully.", "Successed!");
                 else
-                    dialog = new MessageDialog("Unable to export the specified deck.", "Error!");
+                    dialog = new MessageDialog(UIConst.EXPORT_FAILED, "Error!");
 
                 mainPage.IsCanNavigateBack = true;
                 await dialog.ShowAsync();                
@@ -719,13 +726,7 @@ namespace AnkiU.Pages
             collection.Save();
             collection.Database.Commit();
 
-            RemoveDeckInPrefsIfNeeded(deckId);
-        }
-
-        private static void RemoveDeckInPrefsIfNeeded(long deckId)
-        {
-            if (MainPage.DeckInkPrefs.HasId(deckId))
-                MainPage.DeckInkPrefs.RemoveDeckInkPref(deckId);
+            MainPage.RemoveDeckInPrefsIfNeeded(deckId);
         }
 
         private void UpdateParentsIfNeeded(List<Windows.Data.Json.JsonObject> parents)
@@ -746,7 +747,7 @@ namespace AnkiU.Pages
                 foreach (var deck in childs)
                 {
                     await RemoveMediaAndView(deck.Value);
-                    RemoveDeckInPrefsIfNeeded(deck.Value);
+                    MainPage.RemoveDeckInPrefsIfNeeded(deck.Value);
                 }
         }
 
