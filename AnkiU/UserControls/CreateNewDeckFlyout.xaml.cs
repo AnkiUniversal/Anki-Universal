@@ -111,8 +111,8 @@ namespace AnkiU.UserControls
 
         private async void OkButtonClick(object sender, RoutedEventArgs e)
         {            
-            string deckName = deckNameTextBox.Text.Trim();
-            string noteName = noteTypeNameTextBox.Text.Trim();
+            string deckName = Utils.GetValidName(deckNameTextBox.Text);
+            string noteName = Utils.GetValidName(noteTypeNameTextBox.Text);
 
             bool isValid = await CheckDeckAndNoteName(deckName, noteName);
             if (!isValid)

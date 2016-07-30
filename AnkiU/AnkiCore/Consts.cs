@@ -23,6 +23,10 @@ namespace AnkiU.AnkiCore
 {
     public static class Constant
     {
+        public static readonly char[] ILLEGAL_CHAR = new char[] { '`', '~', '!', '@', '#', '$', '%', '^', '&', '*',
+                                                                        '(', ')', '/', '<', '>', '.', ':', ';', '"', '\'',
+                                                                        '[', ']', '{', '}', '=', '-', '+', ',', '|', '\\' };
+
         public const int SCHEMA_VERSION = 11;
         public const int DEFAULTDECK_ID = 1;
         public const string DEFAULT_DECKNAME = "Default";

@@ -627,7 +627,16 @@ namespace AnkiU.AnkiCore
                 }
             }
             return builder.ToString();
-        }        
+        }
+
+        public static string GetValidName(string name)
+        {
+            var filterSplit = name.Trim().Split(Constant.ILLEGAL_CHAR, StringSplitOptions.RemoveEmptyEntries);
+            var filterText = String.Join("", filterSplit);
+
+            var stringSplit = filterText.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            return String.Join(" ", stringSplit);
+        }
 
     }
 

@@ -70,7 +70,7 @@ namespace AnkiU.UserControls
         private void OKButtonClick(object sender, RoutedEventArgs e)
         {
             nameFlyout.Hide();
-            NewName = renameFlyoutTextBox.Text;
+            NewName = AnkiCore.Utils.GetValidName(renameFlyoutTextBox.Text);
             OkButtonClickEvent?.Invoke(nameFlyout, null);            
         }
 

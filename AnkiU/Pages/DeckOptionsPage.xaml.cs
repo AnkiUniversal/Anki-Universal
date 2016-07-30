@@ -174,9 +174,9 @@ namespace AnkiU.Pages
         private async Task<bool> CheckNameEmpty()
         {
             if (isExpertMode)
-                CurrentName = currentNameExpertView.Text;
+                CurrentName = Utils.GetValidName(currentNameExpertView.Text);
             else
-                CurrentName = currentNameSimpleView.Text;
+                CurrentName = Utils.GetValidName(currentNameSimpleView.Text);
 
             if (String.IsNullOrWhiteSpace(CurrentName))
             {

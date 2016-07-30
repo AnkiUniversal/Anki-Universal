@@ -88,7 +88,20 @@ namespace AnkiU.UserControls
             includeTags.LabelVisibility = Visibility.Collapsed;
             excludeTags.LabelVisibility = Visibility.Collapsed;
             ResetSelection();
-            numberBox.NumberChanged += NumberChangedHandler;            
+            numberBox.NumberChanged += NumberChangedHandler;
+            numberBox.KeyUp += NumberBoxKeyDown;
+            cramNumberBox.KeyUp += NumberBoxKeyDown;
+        }
+
+        private async void NumberBoxKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                if (e.Key == Windows.System.VirtualKey.Enter)
+                {
+                    await CreateCustomStudy();
+                }
+            });
         }
 
         private void ResetSelection()
@@ -311,6 +324,11 @@ namespace AnkiU.UserControls
 
         private async void OkButtonClick(object sender, RoutedEventArgs e)
         {
+            await CreateCustomStudy();
+        }
+
+        private async Task CreateCustomStudy()
+        {
             var deck = collection.Deck.Current();
             if (HandleNotCreatingDynamicDeckCases(deck))
                 return;
@@ -355,7 +373,7 @@ namespace AnkiU.UserControls
             CreateDynamicDeckConfigs(dynamicDeck, deck);
 
             var task = Task.Run(async () =>
-            {                
+            {
                 var cards = collection.Sched.RebuildDyn();
                 collection.SaveAndCommitAsync();
 

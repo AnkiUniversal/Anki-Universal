@@ -928,8 +928,7 @@ namespace AnkiU.Pages
         {
             await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                var newName = renameNoteTypeFlyout.NewName;
-                newName = newName.Trim();
+                var newName = renameNoteTypeFlyout.NewName;                
                 var isValid = await UIHelper.CheckValidName(newName, modelInformationViewModel.Models, UIConst.WARN_NOTETYPE_EXIST);
                 if (!isValid)
                 {
@@ -1056,8 +1055,7 @@ namespace AnkiU.Pages
         {
             await CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                string newName = renameFieldFlyout.NewName;
-                newName = newName.Trim();
+                string newName = renameFieldFlyout.NewName;                
                 bool isValid = await UIHelper.CheckValidName(newName, noteFieldView.fieldsViewModel.GetExistedFieldsName(), UIConst.WARN_NOTEFIELD_EXIST);
                 if (!isValid)
                 {
