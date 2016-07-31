@@ -1000,11 +1000,11 @@ namespace AnkiU.AnkiCore
                     }
                 }
 
-                int delay = DelayForGrade(conf, card.Left);
+                double delay = DelayForGrade(conf, card.Left);
                 if (card.Due < DateTimeOffset.Now.ToUnixTimeSeconds())
                 {
                     // not collapsed; add some randomness
-                    delay *= (1 + (new Random().Next(25) / 100));
+                    delay *= (1 + (new Random().Next(25) / 100.0));
                 }
                 card.Due = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() + delay);
 
