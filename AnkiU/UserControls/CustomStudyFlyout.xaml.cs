@@ -439,8 +439,8 @@ namespace AnkiU.UserControls
 
                 case CustomStudyOption.CramMode:
                     StringBuilder tags = new StringBuilder();
-                    SearchPage.AppendTags(tags, "tag:", includeTagsViewModel);
-                    SearchPage.AppendTags(tags, "-tag:", excludeTagsViewModel);
+                    AdvancedSearchPopup.AppendTags(tags, "tag:", includeTagsViewModel);
+                    AdvancedSearchPopup.AppendTags(tags, "-tag:", excludeTagsViewModel);
 
                     dynamicDeck["delays"] = JsonValue.CreateNullValue();
                     dynamicDeck.GetNamedArray("terms")[0] = CreateTermArray(

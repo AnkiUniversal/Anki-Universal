@@ -21,6 +21,7 @@ using AnkiU.Models;
 using AnkiU.UIUtilities;
 using AnkiU.UserControls;
 using AnkiU.ViewModels;
+using AnkiU.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,31 +44,13 @@ namespace AnkiU.Pages
 {
     public sealed partial class SearchPage : Page, INightReadMode
     {
-
-        private const string IS_DUE = "is:due";
-        private const string IS_NEW = "is:new";
-        private const string IS_LEARN = "is:learn";
-        private const string IS_REVIEW = "is:review";
-        private const string IS_SUSPEND = "is:suspended";
-
-        private int numberOfCardsAPage;
-
-        private event EventHandler SearchStringChange;
+        private int numberOfCardsAPage;        
 
         private bool isNightMode = false;
 
         private MainPage mainPage;
         private Collection collection;
         private long currentDeckId;
-
-        private DeckNameViewModel deckNameSearchViewModel;
-        private string searchDeck = "";
-
-        private TagInformationViewModel tagInforViewModel;
-        private string searchTag = "";
-
-        private Dictionary<string, bool> cardState = new Dictionary<string, bool>();
-        private string searchCardState = "";
 
         private CardInformationViewModel cardInforViewModel = null;
         private Dictionary<int, List<long>> searchedCardId = new Dictionary<int, List<long>>();        
@@ -82,15 +65,11 @@ namespace AnkiU.Pages
 
         private CardViewPopup cardViewPopup;
 
+        private AdvancedSearchPopup advancedSearch;
+
         public SearchPage()
         {
-            this.InitializeComponent();      
-                  
-        }
-
-        private void SearchStringChangeHandler(object sender, EventArgs e)
-        {
-            searchTextBox.Text = searchDeck  + searchTag + searchCardState;
+            this.InitializeComponent();                        
         }
 
         public void ToggleReadMode()
@@ -99,6 +78,7 @@ namespace AnkiU.Pages
             ChangeBackgroundColor();
             if (cardViewPopup != null)
                 cardViewPopup.ToggleReadMode();
+            advancedSearch.ChangeReadMode(isNightMode);
         }
 
         private void ChangeBackgroundColor()
@@ -129,15 +109,28 @@ namespace AnkiU.Pages
 
             SetupDefaultCardsAPage();
             SetupCardListView();
-            SetupCartStateSelection();
-            SetupDeckSelection();
-            SetupTagSelection();
+            SetupAdvanceSearch();
             HookAllEvents();
         }
 
-        private void SetupCardListView()
+        private void SetupAdvanceSearch()
         {
-            SearchStringChange += SearchStringChangeHandler;
+            advancedSearch = new AdvancedSearchPopup(collection, -5, 35);
+            advancedSearch.VerticalAlignment =  VerticalAlignment.Stretch;
+            advancedSearch.HorizontalAlignment = HorizontalAlignment.Stretch;
+            Grid.SetRow(advancedSearch, 1);            
+            mainGrid.Children.Add(advancedSearch);
+            
+            advancedSearch.Closed += AdvancedSearchClosed;         
+        }
+
+        private void AdvancedSearchClosed(object sender, RoutedEventArgs e)
+        {
+            searchTextBox.Text = advancedSearch.GetSearchString().ToString();
+        }
+
+        private void SetupCardListView()
+        {            
             currentSortColumn = new KeyValuePair<SearchSortColumn, bool>(cardInformationView.CurrentSortColumn, false);
             cardInformationView.SortColumnChangedEvent += CardInformationViewSorttColumnChangedHandler;
             cardInformationView.CardListViewMenuFlyout = Resources["CardListViewContextMenu"] as MenuFlyout;
@@ -146,36 +139,12 @@ namespace AnkiU.Pages
             pageButtonRoot.Visibility = Visibility.Collapsed;
         }
 
-        private void SetupCartStateSelection()
-        {
-            cardState.Add(IS_DUE, false);
-            cardState.Add(IS_NEW, false);
-            cardState.Add(IS_LEARN, false);
-            cardState.Add(IS_REVIEW, false);
-            cardState.Add(IS_SUSPEND, false);
-        }
-
         private void SetupDefaultCardsAPage()
         {
             if (UIHelper.GetDeviceFamily() == "Windows.Mobile")
                 numberOfCardsAPage = 10;
             else
                 numberOfCardsAPage = 20;
-        }
-
-        private void SetupTagSelection()
-        {
-            tagInforViewModel = new TagInformationViewModel(collection, collection.NewNote());
-            tagInformationView.ViewModel = tagInforViewModel;
-            tagInformationView.TagFlyoutClosedEvent += TagFlyoutClosedEventHandler;
-        }
-
-        private void SetupDeckSelection()
-        {
-            deckNameSearchViewModel = new DeckNameViewModel(collection);
-            deckNameView.DataContext = deckNameSearchViewModel.Decks;
-            deckNameView.SelectionChangedEvent += DeckNameViewSelectionChangedHandler;
-            deckNameView.ChangeSelectedItem(currentDeckId);
         }
 
         private void CardInformationViewSorttColumnChangedHandler(SearchSortColumn column, bool isReverse)
@@ -205,24 +174,6 @@ namespace AnkiU.Pages
                 case SearchSortColumn.Lapse:
                     cardInforViewModel.SortWithLapse(isReverse);
                     break;
-            }
-        }
-
-        private void TagFlyoutClosedEventHandler(object sender, EventArgs e)
-        {
-            StringBuilder builder = new StringBuilder();
-            AppendTags(builder, "tag:", tagInforViewModel);
-            searchTag = builder.ToString();
-            SearchStringChange(null, null);
-        }
-
-        public static void AppendTags(StringBuilder tags, string prefix, TagInformationViewModel viewModel)
-        {
-            foreach (var tag in viewModel.CurrentNote.Tags)
-            {
-                tags.Append(prefix);
-                tags.Append(tag);
-                tags.Append(" ");
             }
         }
 
@@ -260,86 +211,26 @@ namespace AnkiU.Pages
             base.OnNavigatingFrom(e);
         }
 
-        private void DeckNameViewSelectionChangedHandler(object sender, SelectionChangedEventArgs e)
-        {            
-            var deck = (sender as ComboBox).SelectedItem as DeckInformation;
-            if (deck.Id == DeckNameViewModel.ALL_DECKS_ID)
-                searchDeck = "";
-            else
-                searchDeck =  "\"deck:" + deck.Name + "\" ";
-            SearchStringChange(null, null);
-        }
-
         private void FilterExpandToggleButtonClickHandler(object sender, RoutedEventArgs e)
         {
-            if (deckNameView.Visibility == Visibility.Visible)
-            {                
-                expandSymbolRotation.Rotation = 0;
-                deckNameView.Visibility = Visibility.Collapsed;
-                tagInformationView.Visibility = Visibility.Collapsed;
-                cardStateRoot.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                expandSymbolRotation.Rotation = 180;
-                deckNameView.Visibility = Visibility.Visible;
-                tagInformationView.Visibility = Visibility.Visible;
-                cardStateRoot.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void CheckBoxCheckedHandler(object sender, RoutedEventArgs e)
-        {
-            var checkBox = sender as CheckBox;
-            ChangeCardStateString(checkBox, true);
-        }
-
-        private void ChangeCardStateString(CheckBox checkBox, bool state)
-        {
-            switch (checkBox.Content.ToString().ToLower())
-            {
-                case "due":
-                    cardState[IS_DUE] = state;
-                    break;
-                case "new":
-                    cardState[IS_NEW] = state;
-                    break;
-                case "learn":
-                    cardState[IS_LEARN] = state;
-                    break;
-                case "review":
-                    cardState[IS_REVIEW] = state;
-                    break;
-                case "suspended":
-                    cardState[IS_SUSPEND] = state;
-                    break;
-            }
-            StringBuilder builder = new StringBuilder();
-            foreach(var key in cardState)
-            {
-                if (key.Value)
-                {
-                    builder.Append(key.Key);
-                    builder.Append(" ");
-                }
-            }
-            searchCardState = builder.ToString();
-            SearchStringChange(checkBox, null);
-        }
-
-        private void CheckBoxUncheckedHandler(object sender, RoutedEventArgs e)
-        {
-            var checkBox = sender as CheckBox;
-            ChangeCardStateString(checkBox, false);
+            searchTextBox.Text = "";
+            advancedSearch.Toggle(searchTextBox.ActualWidth);
         }
 
         private async void SearchPageKeyUpHandler(CoreWindow sender, KeyEventArgs args)
         {
             await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                if(args.VirtualKey == Windows.System.VirtualKey.Enter)     
-                    if(!isSuppressEnterKey)           
+                if (args.VirtualKey == Windows.System.VirtualKey.Enter)
+                    if (!isSuppressEnterKey)
+                    {
+                        if(advancedSearch.IsOpen)
+                        {
+                            searchTextBox.Text = advancedSearch.GetSearchString().ToString();
+                            advancedSearch.Hide();
+                        }
                         UpdateSeachResultsAsync();
+                    }
                 if (args.VirtualKey == Windows.System.VirtualKey.Left)
                     PreviousPageButtonClickHandler(null, null);
                 if (args.VirtualKey == Windows.System.VirtualKey.Right)
@@ -754,6 +645,18 @@ namespace AnkiU.Pages
             if (isNightMode)
                 cardViewPopup.ToggleReadMode();
             cardViewPopup.Show();
+        }
+
+        private void SearchTextBoxGotFocus(object sender, RoutedEventArgs e)
+        {
+            CoreWindow.GetForCurrentThread().KeyUp -= SearchPageKeyUpHandler;
+        }
+
+        private void SearchTextBoxLostFocus(object sender, RoutedEventArgs e)
+        {
+            //Always do this to make sure we won't accidentailly hook this event twice
+            CoreWindow.GetForCurrentThread().KeyUp -= SearchPageKeyUpHandler;
+            CoreWindow.GetForCurrentThread().KeyUp += SearchPageKeyUpHandler;
         }
     }
 }

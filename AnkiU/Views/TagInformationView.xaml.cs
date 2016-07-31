@@ -40,6 +40,7 @@ namespace AnkiU.Views
     {
         public string Label { get { return label.Text; } set { label.Text = value; } }
         public Visibility LabelVisibility { get { return label.Visibility; } set { label.Visibility = value; } }
+        public FlyoutPlacementMode Placement { get { return tagsViewFlyout.Placement; } set { tagsViewFlyout.Placement = value; } }
 
         public event EventHandler TagFlyoutClosedEvent;
 
@@ -62,8 +63,7 @@ namespace AnkiU.Views
             get { return (Visibility)GetValue(AddVisibilityProperty); }
             set { SetValue(AddVisibilityProperty, value); }
         }
-
-        // Using a DependencyProperty as the backing store for AddVisibility.  This enables animation, styling, binding, etc...
+        
         public static readonly DependencyProperty AddVisibilityProperty =
             DependencyProperty.Register("AddVisibility", typeof(Visibility), typeof(TagInformationView), new PropertyMetadata(Visibility.Visible));
 

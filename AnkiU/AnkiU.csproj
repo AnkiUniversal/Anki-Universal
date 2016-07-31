@@ -510,6 +510,9 @@
     <Compile Include="Anki\CardStreamUriWinRTResolver.cs" />
     <Compile Include="UIUtilities\UIConst.cs" />
     <Compile Include="UIUtilities\UIHelper.cs" />
+    <Compile Include="UserControls\AdvancedSearchPopup.xaml.cs">
+      <DependentUpon>AdvancedSearchPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\AudioRecorder.xaml.cs">
       <DependentUpon>AudioRecorder.xaml</DependentUpon>
     </Compile>
@@ -632,6 +635,9 @@
     </Compile>
     <Compile Include="Pages\ReviewPage.xaml.cs">
       <DependentUpon>ReviewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckMultiSelectFlyout.xaml.cs">
+      <DependentUpon>DeckMultiSelectFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DeckNameView.xaml.cs">
       <DependentUpon>DeckNameView.xaml</DependentUpon>
@@ -803,6 +809,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\AdvancedSearchPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\AudioRecorder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -936,6 +946,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\ReviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DeckMultiSelectFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
