@@ -115,6 +115,22 @@ namespace AnkiU.Models
             }
         }
 
+        /// <summary>
+        /// This is onle mean to be used with view and viewmodel have checkbox
+        /// </summary>
+        private bool? isChecked;
+        public bool? IsChecked
+        {
+            get
+            {
+                return isChecked;
+            }
+            set
+            {
+                isChecked = value;
+            }
+        }
+
         public DeckInformation(string Name, int NewCards, int DueCards, long Id, bool IsDynamic)
         {
             this.name = Name;
@@ -124,9 +140,11 @@ namespace AnkiU.Models
             this.id = Id;
             this.isDynamic = IsDynamic;
             imagePath = DEFAULT_FOLDER_PATH + Id;
-                        
+                                    
             if (!File.Exists(imagePath))
                 imagePath = DEFAULT_FOLDER_PATH + DEFAULT_IMAGE_NAME;
+
+            this.isChecked = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

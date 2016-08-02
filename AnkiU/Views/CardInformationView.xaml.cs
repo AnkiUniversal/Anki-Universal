@@ -102,6 +102,8 @@ namespace AnkiU.Views
             answerLabel.Visibility = Visibility.Visible;
             if (CurrentSortColumn == SearchSortColumn.Due || CurrentSortColumn == SearchSortColumn.Lapse)
                 currentSortBorder.Visibility = Visibility.Collapsed;
+            else
+                currentSortBorder.Visibility = Visibility.Visible;
 
             dueLabel.Visibility = Visibility.Collapsed;
             lapsesLabel.Visibility = Visibility.Collapsed;           
@@ -112,6 +114,8 @@ namespace AnkiU.Views
             answerLabel.Visibility = Visibility.Collapsed;
             if (CurrentSortColumn == SearchSortColumn.Answer)
                 currentSortBorder.Visibility = Visibility.Collapsed;
+            else
+                currentSortBorder.Visibility = Visibility.Visible;
 
             dueLabel.Visibility = Visibility.Visible;
             lapsesLabel.Visibility = Visibility.Visible;           
@@ -302,6 +306,8 @@ namespace AnkiU.Views
             questionButton.Visibility = Visibility.Visible;
             if (CurrentSortColumn == SearchSortColumn.SortField)
                 currentSortBorder.Visibility = Visibility.Collapsed;
+            else
+                currentSortBorder.Visibility = Visibility.Visible;
 
             sortFieldButton.Visibility = Visibility.Collapsed;            
         }
@@ -311,6 +317,8 @@ namespace AnkiU.Views
             sortFieldButton.Visibility = Visibility.Visible;
             if (CurrentSortColumn == SearchSortColumn.Question)
                 currentSortBorder.Visibility = Visibility.Collapsed;
+            else
+                currentSortBorder.Visibility = Visibility.Visible;
 
             questionButton.Visibility = Visibility.Collapsed;
         }

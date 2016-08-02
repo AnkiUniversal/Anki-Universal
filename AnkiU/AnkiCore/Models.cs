@@ -279,6 +279,19 @@ namespace AnkiU.AnkiCore
             return m;
         }
 
+        public JsonObject TryGetModel(long deckId)
+        {
+            JsonObject m = null;
+            var card = collection.Database.QueryFirstRow<CardTable>("Select nid from cards where did = ?", deckId);
+            if (card != null && card.Count != 0)
+            {
+                var note = collection.Database.QueryFirstRow<NoteTable>("Select mid from notes where id = ?", card[0].Nid);
+                m = collection.Models.Get(note[0].Mid);
+            }
+
+            return m;
+        }
+
         /// <summary>
         /// Get JsonObject by first get a long number in the input JsonObject
         /// by name. Then this number is used to get the model object

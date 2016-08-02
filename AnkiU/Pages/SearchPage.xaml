@@ -30,7 +30,7 @@
 
     </Page.Resources>
 
-    <Grid x:Name="mainGrid" Background="{Binding Background, ElementName=userControl}">
+    <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -40,8 +40,7 @@
         <ProgressRing x:Name="progressRing" Grid.Row="1"
                       Width="80" Height="80" Canvas.ZIndex="1" Visibility="Collapsed" />
 
-        <Grid x:Name="searchTextBoxRoot"
-              BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}"              
+        <Grid x:Name="searchTextBoxRoot"  BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}"              
               Padding="0,3,5,3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -58,10 +57,11 @@
             </Button>
             <TextBox Grid.Column="1"  PlaceholderText="Search..." x:Name="searchTextBox"
                      GotFocus="SearchTextBoxGotFocus" LostFocus="SearchTextBoxLostFocus"
+                     KeyUp="SearchTextBoxKeyUp"
                      Foreground="{Binding Foreground, ElementName=userControl}"          
-                                 BorderThickness="2,2,0,2"
+                                 BorderThickness="2,2,2,2"
                                  VerticalAlignment="Center" Style="{StaticResource SearchTextBox}"                 
-                                 HorizontalAlignment="Stretch" TextWrapping="Wrap"
+                                 HorizontalAlignment="Stretch" TextWrapping="NoWrap"
                                  TextAlignment="Left" IsSpellCheckEnabled="False" >
                 <TextBox.InputScope>
                     <InputScope>
@@ -72,12 +72,10 @@
                 </TextBox.InputScope>
             </TextBox>
 
-            <Button Style="{StaticResource ButtonGray}" 
-                Background="{Binding Background, ElementName=searchTextBox}"
-                BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}"
-                BorderThickness="2,2,2,2"
+            <Button Style="{StaticResource ButtonOrange}"                     
+                BorderThickness="0"
                 Grid.Column="2"
-                Margin="-3,-0.25,0,-0.6"
+                Margin="0,1.5,0,1.4"
                 Padding="0"
                 Width="30"
                 HorizontalAlignment="Stretch" 
@@ -89,8 +87,8 @@
                 <Button.RenderTransform>
                     <CompositeTransform x:Name="expandButtonTransform" TranslateX="0"/>
                 </Button.RenderTransform>
-                <Path Style="{StaticResource ChevronDoubleDownIcon}"  
-                          Fill="{StaticResource ButtonBackGroundCompliment}" 
+                <Path Style="{StaticResource ChevronDoubleDownIcon}"
+                          Fill="White" 
                           Margin="0">
                 </Path>
             </Button>
@@ -101,43 +99,23 @@
                         <ContentPresenter FontSize="15" FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" >
                             <RichTextBlock TextWrapping="Wrap" Width="330">
                                 <Paragraph >
+                                    Press on the button on the left for advanced search features.
+                                    <LineBreak/>
+                                </Paragraph>
+                                
+                                <Paragraph >
                                     Right-click (or touch &amp; hold) on column headers to change display contents.
                                     <LineBreak/>
+                                </Paragraph>
+
+                                <Paragraph >
                                     Right-click (or touch &amp; hold) on search results to see a list of possible actions.
                                     <LineBreak/>
                                 </Paragraph>
 
-                                <Paragraph >
-                                    Normal search combinations like "anki", "-anki", "anki u*", etc., will work.
-                                    <LineBreak/>
-                                </Paragraph>
-                                <Paragraph >
-                                    To search for cards in a deck:
-                                </Paragraph>
-                                <Paragraph TextAlignment="Center" >
-                                    <Italic>"deck:Default" anki</Italic>
-                                </Paragraph>
-
                                 <Paragraph>
-                                    To exclude a deck from seaching, use minus sign:
-                                </Paragraph>
-                                <Paragraph TextAlignment="Center" >
-                                    <Italic>-"deck:Default" anki</Italic>
-                                </Paragraph>
-
-                                <Paragraph  >
-                                    To search cards with tags:
-                                </Paragraph>
-                                <Paragraph TextAlignment="Center" >
-                                    <Italic>"deck:Default" tag:leech anki</Italic>
-                                </Paragraph>
-
-                                <Paragraph >
-                                    Similarly, use minus sign to exclude tags:
-                                </Paragraph>
-                                <Paragraph TextAlignment="Center" >
-                                    <Italic>"deck:Default" tag:leech -tag:grammar anki</Italic>
-                                    <LineBreak />
+                                    To exclude an item from seaching, add minus sign before it, for example:
+                                    <Italic>-"deck:Default"</Italic>
                                 </Paragraph>
 
                                 <Paragraph TextAlignment="Center">

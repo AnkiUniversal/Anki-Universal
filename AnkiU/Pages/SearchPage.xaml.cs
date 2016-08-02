@@ -121,12 +121,41 @@ namespace AnkiU.Pages
             Grid.SetRow(advancedSearch, 1);            
             mainGrid.Children.Add(advancedSearch);
             
-            advancedSearch.Closed += AdvancedSearchClosed;         
+            advancedSearch.SearchClick += AdvancedSearchOkHandler;
+            advancedSearch.CloseClick += AdvancedSearchCloseClick;
+            advancedSearch.ShowCommandCheckClick += AdvancedSearchShowCommandClick;
+
+            advancedSearch.InitDeckSelected(currentDeckId);
+            searchTextBox.Text = "\"deck:" + collection.Deck.GetDeckName(currentDeckId) + "\"";
         }
 
-        private void AdvancedSearchClosed(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// This function should be used to provide immediate feedback to user
+        /// when check/uncheck ShowCommandCheckBox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AdvancedSearchShowCommandClick(object sender, RoutedEventArgs e)
         {
-            searchTextBox.Text = advancedSearch.GetSearchString().ToString();
+            if(advancedSearch.IsShowCommands == false)
+                searchTextBox.Text = "";
+            else
+                searchTextBox.Text = advancedSearch.GetSearchString();
+        }
+
+        private void AdvancedSearchOkHandler(object sender, RoutedEventArgs e)
+        {
+            //Re-check again to avoid any errors
+            if(advancedSearch.IsShowCommands)
+                searchTextBox.Text = advancedSearch.GetSearchString();
+
+            UpdateSeachResultsAsync();
+        }
+
+        private void AdvancedSearchCloseClick(object sender, RoutedEventArgs e)
+        {
+            if (advancedSearch.IsShowCommands)
+                searchTextBox.Text = advancedSearch.GetSearchString();
         }
 
         private void SetupCardListView()
@@ -212,8 +241,7 @@ namespace AnkiU.Pages
         }
 
         private void FilterExpandToggleButtonClickHandler(object sender, RoutedEventArgs e)
-        {
-            searchTextBox.Text = "";
+        {            
             advancedSearch.Toggle(searchTextBox.ActualWidth);
         }
 
@@ -224,24 +252,32 @@ namespace AnkiU.Pages
                 if (args.VirtualKey == Windows.System.VirtualKey.Enter)
                     if (!isSuppressEnterKey)
                     {
-                        if(advancedSearch.IsOpen)
-                        {
-                            searchTextBox.Text = advancedSearch.GetSearchString().ToString();
-                            advancedSearch.Hide();
-                        }
-                        UpdateSeachResultsAsync();
+                        EnterKeyHandler();
                     }
-                if (args.VirtualKey == Windows.System.VirtualKey.Left)
-                    PreviousPageButtonClickHandler(null, null);
-                if (args.VirtualKey == Windows.System.VirtualKey.Right)
-                    NextButtonClickHandler(null, null);
+                if (advancedSearch.IsOpen == false)
+                {
+                    if (args.VirtualKey == Windows.System.VirtualKey.Left)
+                        PreviousPageButtonClickHandler(null, null);
+                    if (args.VirtualKey == Windows.System.VirtualKey.Right)
+                        NextButtonClickHandler(null, null);
+                }
             });            
+        }
+
+        private void EnterKeyHandler()
+        {
+            if (advancedSearch.IsOpen && advancedSearch.IsShowCommands)
+            {
+                searchTextBox.Text = advancedSearch.GetSearchString();
+                advancedSearch.Hide();
+            }
+            UpdateSeachResultsAsync();
         }
 
         private void UpdateSeachResultsAsync()
         {
             ShowProgressRing();
-            string text = searchTextBox.Text;
+            string text = GetSearchString();
             Task.Run(() =>
             {
                 var cardIdlist = collection.FindCards(text, false);
@@ -249,6 +285,14 @@ namespace AnkiU.Pages
                 ArrangeResultsIntoPages(cardIdlist);
                 HideProgressRingAsync();
             });
+        }
+
+        private string GetSearchString()
+        {
+            if(advancedSearch.IsShowCommands)
+                return searchTextBox.Text;
+            else
+                return advancedSearch.GetSearchString() + " " + searchTextBox.Text;
         }
 
         private void ArrangeResultsIntoPages(List<long> cardIdlist)
@@ -657,6 +701,17 @@ namespace AnkiU.Pages
             //Always do this to make sure we won't accidentailly hook this event twice
             CoreWindow.GetForCurrentThread().KeyUp -= SearchPageKeyUpHandler;
             CoreWindow.GetForCurrentThread().KeyUp += SearchPageKeyUpHandler;
+        }
+
+        private async void SearchTextBoxKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                await mainPage.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    EnterKeyHandler();
+                });
+            }
         }
     }
 }

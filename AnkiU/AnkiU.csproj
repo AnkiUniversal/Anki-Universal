@@ -590,6 +590,7 @@
     <Compile Include="ViewModels\DeckNewOptionsViewModel.cs" />
     <Compile Include="ViewModels\DeckReviewOptionsViewModel.cs" />
     <Compile Include="ViewModels\DeckSimpleOptionsViewModel.cs" />
+    <Compile Include="ViewModels\MultiNoteFieldsSelectViewModel.cs" />
     <Compile Include="ViewModels\ReviewChartViewModel.cs" />
     <Compile Include="ViewModels\InkToWordListViewModel.cs" />
     <Compile Include="Models\InkToWordList.cs" />
@@ -653,6 +654,9 @@
     </Compile>
     <Compile Include="Views\FieldListView.xaml.cs">
       <DependentUpon>FieldListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FieldMultiSelect.xaml.cs">
+      <DependentUpon>FieldMultiSelect.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MediaBackupFlyout.xaml.cs">
       <DependentUpon>MediaBackupFlyout.xaml</DependentUpon>
@@ -970,6 +974,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FieldListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FieldMultiSelect.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

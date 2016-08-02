@@ -2044,7 +2044,10 @@ namespace AnkiU
 
         private async void SendFeedBackClick(object sender, RoutedEventArgs e)
         {
-            await UIHelper.LaunchEmailApp("ankiuniversal@outlook.com", "");
+            string message = "For Bugs: Please describe the steps need to reproduce them.\n"
+                            + "For feature requests: Please mention briefly why you need them.\n"
+                            + "We will reply to your email in one business day.\n";
+            await UIHelper.LaunchEmailApp("ankiuniversal@outlook.com", message);
         }
     }   
 

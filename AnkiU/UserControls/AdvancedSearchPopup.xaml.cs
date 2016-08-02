@@ -1,4 +1,5 @@
 ﻿using AnkiU.AnkiCore;
+using AnkiU.Models;
 using AnkiU.UIUtilities;
 using AnkiU.ViewModels;
 using AnkiU.Views;
@@ -8,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
+using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Core;
@@ -35,9 +38,13 @@ namespace AnkiU.UserControls
 
         private Collection collection;              
 
-        private DeckNameViewModel deckNameSearchViewModel;
+        private DeckNameViewModel deckNameSearchViewModel;        
         private DeckMultiSelectFlyout deckSelectFlyout;
         private StringBuilder searchDeck = new StringBuilder();
+        private bool isDeckSelectsModified = true;
+
+        private MultiNoteFieldsSelectViewModel noteFieldsViewModel;
+        private FieldMultiSelect noteFieldsViewFlyout;
 
         private double HorizontalOffset;
 
@@ -48,8 +55,12 @@ namespace AnkiU.UserControls
         private string searchCardState = "";        
 
         public event RoutedEventHandler Closed;
+        public event RoutedEventHandler SearchClick;
+        public event RoutedEventHandler CloseClick;
+        public event RoutedEventHandler ShowCommandCheckClick;
 
         public bool IsOpen { get { return popup.IsOpen; } }
+        public bool IsShowCommands { get { return (bool)showCommandCheckBox.IsChecked; } set { showCommandCheckBox.IsChecked = value; } }        
 
         public AdvancedSearchPopup(Collection collection, double verticalOffset, double horizontalOffset)
         {
@@ -115,17 +126,67 @@ namespace AnkiU.UserControls
             popup.IsOpen = false;
         }
 
-        public StringBuilder GetSearchString()
+        public void InitDeckSelected(long deckId)
+        {
+            foreach (var deck in deckNameSearchViewModel.Decks)
+            {
+                if (deck.Id == deckId)
+                {
+                    deck.IsChecked = true;
+                    searchDeck.Clear();
+                    searchDeck.Append("\"deck:" + deck.Name + "\"");
+                    deckSelectTextBox.Text = searchDeck.ToString();
+                    deckSelectFlyout.SelectedDecks.Clear();
+                    deckSelectFlyout.SelectedDecks.Add(deck);
+                    isDeckSelectsModified = true;
+                }
+            }
+        }
+
+        public string GetSearchString()
         {
             StringBuilder builder = new StringBuilder();       
                  
             AppendWithSpaceIfNeeded(builder, searchDeck.ToString());
-
             AppendWithSpaceIfNeeded(builder, searchTag);
+            AppendWithSpaceIfNeeded(builder, GetFieldSearchString());
+            AppendWithSpaceIfNeeded(builder, searchCardState);
 
-            builder.Append(searchCardState);
+            if (addedCheckBox.IsChecked == true)
+                AppendWithSpaceIfNeeded(builder, "added:" + addedNumberBox.Number);
+            
+            return builder.ToString().Trim();
+        }
 
-            return builder;
+        private string GetFieldSearchString()
+        {
+            if (noteFieldsViewFlyout == null || noteFieldsViewFlyout.SelectedFields.Count == 0)            
+                return "";            
+
+            if (String.IsNullOrWhiteSpace(fieldContentTextBox.Text))            
+                return "";            
+
+            StringBuilder text = new StringBuilder();
+            var fields = noteFieldsViewFlyout.SelectedFields;
+            int lastPos = fields.Count - 1;
+            for (int i = 0; i <= lastPos; i++)
+            {
+                text.Append("\"");
+                text.Append(fields[i]);
+                text.Append("\":\"");
+                text.Append(fieldContentTextBox.Text);
+                text.Append("\"");
+                if (i < lastPos)
+                    text.Append(" or ");
+            }            
+
+            if(noteFieldsViewFlyout.SelectedFields.Count > 1)
+            {
+                text.Insert(0, "(");
+                text.Insert(text.Length, ")");
+            }
+
+            return text.ToString();
         }
 
         private static void AppendWithSpaceIfNeeded(StringBuilder builder, string text)
@@ -163,6 +224,7 @@ namespace AnkiU.UserControls
             }            
 
             deckSelectTextBox.Text = searchDeck.ToString();
+            isDeckSelectsModified = true;
         }
 
         private void SetupTagSelection()
@@ -258,6 +320,71 @@ namespace AnkiU.UserControls
         {
             if (popup.IsOpen)
                 Hide();
+            popup.MaxHeight = userControl.ActualHeight;
+            rootGrid.MaxHeight = popup.MaxHeight;
+        }
+
+        private void SearchButtonClick(object sender, RoutedEventArgs e)
+        {
+            Hide();
+            SearchClick?.Invoke(sender, e);
+        }
+
+        private void CloseButtonClick(object sender, RoutedEventArgs e)
+        {
+            Hide();
+            CloseClick?.Invoke(sender, e);
+        }
+
+        private void ShowCommandCheckBoxClick(object sender, RoutedEventArgs e)
+        {
+            ShowCommandCheckClick?.Invoke(sender, e);
+        }
+
+        private async void FieldListViewButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (!(await InitFieldFlyoutIfNeeded()))
+                return;
+
+            noteFieldsViewFlyout.ShowFlyout(fieldListViewButton, FlyoutPlacementMode.Bottom);
+        }
+
+        private async Task<bool> InitFieldFlyoutIfNeeded()
+        {
+            if (isDeckSelectsModified)
+            {
+                if (deckSelectFlyout.SelectedDecks.Count == 0)
+                {
+                    await UIHelper.ShowMessageDialog("Please choose the decks you want to search first.");
+                    return false;
+                }
+
+                List<JsonObject> models = new List<JsonObject>();
+                foreach (var deck in deckSelectFlyout.SelectedDecks)
+                {
+                    var model = collection.Models.TryGetModel(deck.Id);
+                    if (model != null)
+                        models.Add(model);
+                }
+
+                if (models.Count == 0)
+                {
+                    await UIHelper.ShowMessageDialog("The selected decks do not have any cards.");
+                    return false;
+                }
+
+                noteFieldsViewModel = new MultiNoteFieldsSelectViewModel(models);
+                noteFieldsViewFlyout = new FieldMultiSelect(noteFieldsViewModel);
+                noteFieldsViewFlyout.FlyoutClosed += NoteFieldsViewFlyoutClosed;
+                isDeckSelectsModified = false;
+            }
+
+            return true;
+        }
+
+        private void NoteFieldsViewFlyoutClosed(object sender, RoutedEventArgs e)
+        {
+            fieldListTextBox.Text = String.Join("; ", noteFieldsViewFlyout.SelectedFields);
         }
     }
 }
