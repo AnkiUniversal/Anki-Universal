@@ -31,10 +31,10 @@
     
     <ControlTemplate x:Key="CardItemListViewType" TargetType="ListViewItem">
         <ListViewItemPresenter
-          ContentTransitions="{TemplateBinding ContentTransitions}"
+          ContentTransitions="{TemplateBinding ContentTransitions}"            
           SelectionCheckMarkVisualEnabled="False"
-          CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-          CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+          CheckBrush="Transparent"
+          CheckBoxBrush="Transparent"
           DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
           DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
           FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"

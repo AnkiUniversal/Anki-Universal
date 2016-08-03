@@ -42,7 +42,7 @@ namespace AnkiU.ViewModels
         public void AddFirstFieldToList(Note note)
         {
             string fieldName = note.Model["flds"].GetArray().GetObjectAt(0).GetNamedString("name"); ;
-            NoteField firstField = new NoteField(note.Id, fieldName, 0, note.Fields[0]);
+            NoteField firstField = new NoteField(note.Id, fieldName, 0, HtmlEditor.RemoveDivWrap(note.Fields[0]).Trim());
             FirstFields.Insert(0, firstField);
         }
 

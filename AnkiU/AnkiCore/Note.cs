@@ -22,6 +22,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using System.Diagnostics;
+using AnkiU.Anki;
 
 namespace AnkiU.AnkiCore
 {
@@ -135,7 +136,9 @@ namespace AnkiU.AnkiCore
             {
                 return;
             }
-            long csum = Utils.FieldChecksum(this.fields[0]);
+            //WARNING: In AnkiU we always include content into <div> block
+            //so before checksum we have to remove and trim text first            
+            long csum = Utils.FieldChecksum(HtmlEditor.RemoveDivWrap(this.fields[0]).Trim());
             this.timeModified = (mod != null) ? (long)mod : DateTimeOffset.Now.ToUnixTimeSeconds();
             collection.Database.Execute("insert or replace into notes values (?,?,?,?,?,?,?,?,?,?,?)",
                     new object[] { this.id, guId, this.modelId, this.timeModified, usn, tags, fields, sfld, csum, this.flags, this.data });
@@ -273,8 +276,8 @@ namespace AnkiU.AnkiCore
         /// <returns></returns>
         public FirstField DupeOrEmpty()
         {            
-            string text = fields[0];
-            if (text.Trim().Length == 0)
+            string text = HtmlEditor.RemoveDivWrap(fields[0]).Trim();
+            if (text.Length == 0)
             {
                 return FirstField.Empty;
             }
@@ -285,8 +288,9 @@ namespace AnkiU.AnkiCore
             // find any matching csums and compare
             foreach (var note in listNote)
             {
-                if (Utils.StripHTMLMedia(
-                    Utils.SplitFields(note.Fields)[0]).Equals(Utils.StripHTMLMedia(fields[0])))
+                string compared = HtmlEditor.RemoveDivWrap(Utils.SplitFields(note.Fields)[0]).Trim();
+                if (Utils.StripHTMLMedia(compared)
+                    .Equals(Utils.StripHTMLMedia(text)))
                 {
                     DupeNoteId = note.Id;
                     return FirstField.Duplicate;

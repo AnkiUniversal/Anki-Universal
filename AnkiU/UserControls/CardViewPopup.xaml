@@ -12,11 +12,6 @@
     d:DesignWidth="400">
 
     <Popup x:Name="popUp" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-        <Popup.Transitions>
-            <TransitionCollection>
-                <PopupThemeTransition/>
-            </TransitionCollection>
-        </Popup.Transitions>
         <Grid   Background="{Binding Background, ElementName=userControl}" x:Name="mainGrid"
                 VerticalAlignment="Center" HorizontalAlignment="Center" 
                 BorderThickness="1" 

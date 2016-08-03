@@ -53,6 +53,27 @@ namespace AnkiU.ViewModels
             NextCards = new List<CardInformation>();
         }
 
+        public void UpdateCardContentWithSameNoteId(long noteId)
+        {
+            UpdateCardContent(noteId, Cards);
+            UpdateCardContent(noteId, PreviousCards);
+            UpdateCardContent(noteId, NextCards);
+        }
+
+        private void UpdateCardContent(long noteId, IEnumerable<CardInformation> cards)
+        {
+            foreach(var card in cards)
+            {
+                if(card.NoteId == noteId)
+                {
+                    var toUpdate = InitCardInformationBlandText(collection, card.Id);
+                    card.Question = toUpdate.Question;
+                    card.Answer = toUpdate.Answer;
+                    card.SortField = toUpdate.SortField;
+                }
+            }
+        }
+
         public void MoveToNextPage()
         {
             PreviousCards = new List<CardInformation>(Cards);

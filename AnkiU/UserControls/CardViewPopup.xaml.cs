@@ -41,10 +41,8 @@ namespace AnkiU.UserControls
     {
         private bool isNightMode = false;
 
-        private const double DEFAULT_HEIGHT_MARGIN = 80;
-        private const double DEFAULT_WIDTH_MARGIN = 10;
-        private const double STATUS_BAR_PORTRAIT_MARGIN = 20;
-        private const double STATUS_BAR_LANDSCAPE_MARGIN = 35;
+        private const double DEFAULT_HEIGHT_MARGIN = 0;
+        private const double DEFAULT_WIDTH_MARGIN = 0;
 
         private Collection collection;        
         private Card currentCard;
@@ -67,29 +65,15 @@ namespace AnkiU.UserControls
 
         private void CalculateSizeAndPosition()
         {
-            var winWidth = CoreWindow.GetForCurrentThread().Bounds.Width;
-            var winHeight = CoreWindow.GetForCurrentThread().Bounds.Height;
+            var winWidth = userControl.ActualWidth;
+            var winHeight = userControl.ActualHeight;
             var maxWidth = winWidth - DEFAULT_WIDTH_MARGIN;
             var maxHeight = winHeight - DEFAULT_HEIGHT_MARGIN;
-            IncludeMobileMarginIfNeeded(ref maxWidth, ref maxHeight);
 
             popUp.MaxWidth = maxWidth;
             mainGrid.Width = maxWidth;
             popUp.MaxHeight = maxHeight;
             mainGrid.Height = maxHeight;
-        }
-
-        private static void IncludeMobileMarginIfNeeded(ref double maxWidth, ref double maxHeight)
-        {
-            if (UIHelper.IsMobileDevice())
-            {
-                if (Windows.Graphics.Display.DisplayInformation.GetForCurrentView().CurrentOrientation == Windows.Graphics.Display.DisplayOrientations.Portrait)
-                    maxHeight -= STATUS_BAR_PORTRAIT_MARGIN;
-                else
-                {
-                    maxWidth -= STATUS_BAR_LANDSCAPE_MARGIN;
-                }
-            }
         }
 
         public void ChangeCard(long cardId)
@@ -162,9 +146,12 @@ namespace AnkiU.UserControls
             return answer;
         }
 
-        public void ToggleReadMode()
+        public void ChangeReadMode(bool isNightMode)
         {
-            isNightMode = !isNightMode;
+            if (this.isNightMode == isNightMode)
+                return;
+
+            this.isNightMode = isNightMode;
             cardView.ToggleReadMode();
             if (isNightMode)
             {

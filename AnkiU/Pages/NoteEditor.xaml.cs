@@ -307,6 +307,25 @@ namespace AnkiU.Pages
             await TryDeleteTempFolder();                     
         }
 
+        /// <summary>
+        /// Only use this method to clear page when won't navigate back
+        /// </summary>
+        /// <returns></returns>
+        public async Task ClearPage()
+        {
+            HideAllButtonOfThisPage();
+            UnHookAllEvents();
+
+            collection.SaveAndCommitAsync();
+            noteFieldView.HtmlEditor.ClearWebViewControl();
+            await TryDeleteTempFolder();
+        }
+
+        public long GetCurrentNoteId()
+        {
+            return currentNote.Id;
+        }
+
         private async Task TryDeleteTempFolder()
         {
             if (tempFolder == null)
@@ -340,13 +359,9 @@ namespace AnkiU.Pages
 
         private async void SaveEditNoteButtonClickHandler(object sender, RoutedEventArgs e)
         {
-            var isValid = await CheckNoteValidity();
-            if (!isValid)
+            bool success = await SaveEditNote();
+            if (!success)
                 return;
-
-            currentNote.SaveChangesToDatabase();
-            noteFieldView.HtmlEditor.IsModified = false;
-            noteFieldView.HtmlEditor.IsContentCheckOnce = true;
 
             if (!isFromUndo)
             {
@@ -361,6 +376,19 @@ namespace AnkiU.Pages
 
                 await noteFieldView.HtmlEditor.FocusOn(noteFieldView.fieldsViewModel.Fields[0].Name);
             }
+        }
+
+        public async Task<bool> SaveEditNote()
+        {
+            var isValid = await CheckNoteValidity();
+            if (!isValid)
+                return false;
+
+            currentNote.SaveChangesToDatabase();
+            noteFieldView.HtmlEditor.IsModified = false;
+            noteFieldView.HtmlEditor.IsContentCheckOnce = true;
+
+            return true;
         }
 
         private async void SaveNewNoteButtonClick(object sender, RoutedEventArgs e)

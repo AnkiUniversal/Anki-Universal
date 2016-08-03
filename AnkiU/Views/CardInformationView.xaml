@@ -196,17 +196,17 @@
                         </Grid.ColumnDefinitions>
 
 
-                        <TextBlock Margin="5,0,5,0" Grid.Column="0"  Text="{x:Bind Question}" 
+                        <TextBlock Margin="5,0,5,0" Grid.Column="0"  Text="{x:Bind Question, Mode=OneWay}" 
 							TextAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"
 							FontSize="{Binding FontSize, ElementName=userControl}"  Visibility="{Binding Visibility, ElementName=questionButton, Mode=OneWay}"
 							HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
 
-                        <TextBlock Margin="5,0,5,0" Grid.Column="0"  Text="{x:Bind SortField}" 
+                        <TextBlock Margin="5,0,5,0" Grid.Column="0"  Text="{x:Bind SortField, Mode=OneWay}" 
 							TextAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"
 							FontSize="{Binding FontSize, ElementName=userControl}" Visibility="{Binding Visibility, ElementName=sortFieldButton, Mode=OneWay}"
 							HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
 
-                        <TextBlock Margin="5,0,15,0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Answer}" 
+                        <TextBlock Margin="5,0,15,0" Grid.Column="1" Grid.ColumnSpan="2" Text="{x:Bind Answer, Mode=OneWay}" 
 							FontSize="{Binding FontSize, ElementName=userControl}"
 							TextAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"
 							HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" Visibility="{Binding Visibility, ElementName=answerLabel, Mode=OneWay}"/>

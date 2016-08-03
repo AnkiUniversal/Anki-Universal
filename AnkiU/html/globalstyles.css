@@ -6,6 +6,7 @@ body{
     max-width: 100%;
     margin: 15px 15px 15px 12px;    
     word-wrap: break-word;
+    overflow-wrap: break-word;    
 }
 
 img {
@@ -38,4 +39,6 @@ audio {
 
 * {
     font-family: 'Fira Sans', sans-serif;
+    word-wrap: break-word;
+    overflow-wrap: break-word;        
   }

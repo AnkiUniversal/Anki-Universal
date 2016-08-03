@@ -194,7 +194,7 @@ namespace AnkiU.Models
             set
             {
                 answer = value;
-                RaisePropertyChanged("Question");
+                RaisePropertyChanged("Answer");
             }
         }
 

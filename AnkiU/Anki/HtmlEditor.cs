@@ -135,7 +135,7 @@ namespace AnkiU.Anki
             if (String.IsNullOrWhiteSpace(tinyMceText))
                 return tinyMceText;
 
-            if (!tinyMceText.StartsWith("<div>"))
+            if (!tinyMceText.StartsWith("<div>") || !tinyMceText.EndsWith("</div>"))
                 return tinyMceText;
 
             //"<div>".Length = 5

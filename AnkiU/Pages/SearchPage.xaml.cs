@@ -67,17 +67,25 @@ namespace AnkiU.Pages
 
         private AdvancedSearchPopup advancedSearch;
 
+        private NoteEditorPopup noteEditorPopup;
+        private long editNoteId;
+
         public SearchPage()
         {
             this.InitializeComponent();                        
         }
 
         public void ToggleReadMode()
+        {            
+            ChangeReadMode(!isNightMode);
+        }
+
+        private void ChangeReadMode(bool isNightMode)
         {
-            isNightMode = !isNightMode;
+            this.isNightMode = isNightMode;
             ChangeBackgroundColor();
             if (cardViewPopup != null)
-                cardViewPopup.ToggleReadMode();
+                cardViewPopup.ChangeReadMode(isNightMode);
             advancedSearch.ChangeReadMode(isNightMode);
         }
 
@@ -98,7 +106,7 @@ namespace AnkiU.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
+            base.OnNavigatedTo(e);            
 
             mainPage = e.Parameter as MainPage;
             if (this.mainPage == null)
@@ -217,7 +225,15 @@ namespace AnkiU.Pages
             mainPage.EnableChangingReadMode(this);
             ChangeBackgroundColor();
 
+            mainPage.CommanBar.Opening += CommanBarOpening;
+            CoreWindow.GetForCurrentThread().KeyUp -= SearchPageKeyUpHandler;
             CoreWindow.GetForCurrentThread().KeyUp += SearchPageKeyUpHandler;
+        }
+
+        private void CommanBarOpening(object sender, object e)
+        {
+            if (cardViewPopup != null)
+                cardViewPopup.Hide();
         }
 
         private void UnHookAllEvents()
@@ -227,16 +243,21 @@ namespace AnkiU.Pages
                 mainPage.MoveZoomButtonToSecondary();
             
             mainPage.IsAutoSwitchZoomButtonToSecondary = true;            
-
             mainPage.DisableChangingReadMode();
+
+            mainPage.CommanBar.Opening -= CommanBarOpening;
             CoreWindow.GetForCurrentThread().KeyUp -= SearchPageKeyUpHandler;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             UnHookAllEvents();
+
             if (cardViewPopup != null)
                 cardViewPopup.Close();
+            if (noteEditorPopup != null)
+                noteEditorPopup.Close();
+
             base.OnNavigatingFrom(e);
         }
 
@@ -493,11 +514,33 @@ namespace AnkiU.Pages
         {
             if (cardInformationView.CardShowMenuFlyout == null)
                 return;
-
+            
             collection.Deck.Select(cardInformationView.CardShowMenuFlyout.DeckId, false);
             Note note = collection.GetNote(cardInformationView.CardShowMenuFlyout.NoteId);
-            NoteEditorPageParameter param = new NoteEditorPageParameter() { CurrentNote = note, Mainpage = mainPage };
-            Frame.Navigate(typeof(NoteEditor), param);
+            NoteEditorPageParameter param = new NoteEditorPageParameter() { CurrentNote = note, Mainpage = mainPage };            
+            
+            if (noteEditorPopup == null)
+                InitEditNotePopup(param);
+        }
+
+        private void InitEditNotePopup(NoteEditorPageParameter param)
+        {
+            UnHookAllEvents();         
+            noteEditorPopup = new NoteEditorPopup(param);
+            UIHelper.AddToGridInFull(mainGrid, noteEditorPopup);
+            noteEditorPopup.Show();
+            noteEditorPopup.CloseEvent += NoteEditorPopupCloseEvent;
+        }
+
+        private void NoteEditorPopupCloseEvent(object sender, RoutedEventArgs e)
+        {
+            //Edited note ID can be different with the initial note we show the UI
+            //so always get the current edit note from the popup
+            editNoteId = noteEditorPopup.EditNoteId;
+            noteEditorPopup = null;
+            cardInforViewModel.UpdateCardContentWithSameNoteId(editNoteId);
+            HookAllEvents();
+            ChangeReadMode(MainPage.UserPrefs.IsReadNightMode);            
         }
 
         private void SuspendMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
@@ -686,8 +729,7 @@ namespace AnkiU.Pages
         {            
             cardViewPopup = new CardViewPopup(collection, cardInformationView.CardShowMenuFlyout.Id);
             UIHelper.AddToGridInFull(mainGrid, cardViewPopup);            
-            if (isNightMode)
-                cardViewPopup.ToggleReadMode();
+            cardViewPopup.ChangeReadMode(isNightMode);
             cardViewPopup.Show();
         }
 

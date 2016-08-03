@@ -143,13 +143,25 @@ namespace AnkiU.Views
             {
                 string name = f.GetObject().GetNamedString("name");
                 int ord = (int)f.GetObject().GetNamedNumber("ord");
-                string content = currentNote.GetItem(name);
+                string content = AddDivWrapIfNeeded(currentNote.GetItem(name));
 
                 fields.Add(name);
                 fields.Add(content);
 
                 noteFields.Add(new NoteField(currentNote.Id, name, ord, null));
             }
+        }
+
+        /// <summary>
+        /// This function is used to make sure our content met TinyMce requirements
+        /// </summary>
+        /// <param name="content"></param>
+        private string AddDivWrapIfNeeded(string content)
+        {
+            if (content.StartsWith("<div>"))
+                return content;
+
+            return "<div>" + content + "</div>";
         }
 
         private Task HtmlEditorFieldPopulateFinishHandler()
@@ -177,8 +189,8 @@ namespace AnkiU.Views
 
         private void NoteFieldTextChangedEventHandler(string fieldName, string html)
         {
-            //TinyMce encode space as &nbsp; so we also replace it           
-            var text = HtmlEditor.RemoveDivWrap(html).Replace("&nbsp;", " ").Trim();
+            //TinyMce encode space as &nbsp; so we need to replace it           
+            var text = html.Replace("&nbsp;", " ");
             currentNote.SetItem(fieldName, text);
             WarnIfFirstFieldDuplicate(fieldName);
         }

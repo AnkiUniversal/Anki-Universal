@@ -129,7 +129,7 @@
     </Page.Resources>
 
     <Page.TopAppBar>
-        <CommandBar x:Name="commandBar" Foreground="Black" Background="{StaticResource BackgroundNormal}" 
+        <CommandBar x:Name="commandBar" Foreground="Black" Background="{StaticResource BackgroundNormal}"
                     BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,0,1">
             <CommandBar.CommandBarOverflowPresenterStyle>
                 <Style TargetType="CommandBarOverflowPresenter">
