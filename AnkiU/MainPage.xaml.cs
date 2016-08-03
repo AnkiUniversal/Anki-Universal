@@ -85,6 +85,7 @@ namespace AnkiU
         private const string WINSIZE_MEDIUM = "medium";
         private const string WINSIZE_WIDE = "wide";
 
+        public const int COMMAND_BAR_EXPAND_HEIGHT = 13;
         public const int CUSTOM_CURSOR_CIRCLE_ID = 101;
         public const bool IS_VISUAL_EFFECT_ENABLE = false;
         public const double DEFAULT_OPACITY = 0.8;

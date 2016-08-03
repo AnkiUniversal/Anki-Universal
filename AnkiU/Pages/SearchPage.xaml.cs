@@ -67,7 +67,6 @@ namespace AnkiU.Pages
 
         private AdvancedSearchPopup advancedSearch;
 
-        private NoteEditorPopup noteEditorPopup;
         private long editNoteId;
 
         public SearchPage()
@@ -238,6 +237,8 @@ namespace AnkiU.Pages
 
         private void UnHookAllEvents()
         {
+            noteEditorControl.ClosedEvent -= NoteEditorClosed;
+
             mainPage.UnhookZooming();            
             if (mainPage.WindowSizeState == WindowSizeState.narrow)                            
                 mainPage.MoveZoomButtonToSecondary();
@@ -255,8 +256,8 @@ namespace AnkiU.Pages
 
             if (cardViewPopup != null)
                 cardViewPopup.Close();
-            if (noteEditorPopup != null)
-                noteEditorPopup.Close();
+            if (noteEditorControl.IsNavigated)
+                noteEditorControl.Close();
 
             base.OnNavigatingFrom(e);
         }
@@ -517,30 +518,28 @@ namespace AnkiU.Pages
             
             collection.Deck.Select(cardInformationView.CardShowMenuFlyout.DeckId, false);
             Note note = collection.GetNote(cardInformationView.CardShowMenuFlyout.NoteId);
-            NoteEditorPageParameter param = new NoteEditorPageParameter() { CurrentNote = note, Mainpage = mainPage };            
-            
-            if (noteEditorPopup == null)
+            NoteEditorPageParameter param = new NoteEditorPageParameter() { CurrentNote = note, Mainpage = mainPage };                        
+            if (!noteEditorControl.IsNavigated)
                 InitEditNotePopup(param);
         }
 
         private void InitEditNotePopup(NoteEditorPageParameter param)
         {
-            UnHookAllEvents();         
-            noteEditorPopup = new NoteEditorPopup(param);
-            UIHelper.AddToGridInFull(mainGrid, noteEditorPopup);
-            noteEditorPopup.Show();
-            noteEditorPopup.CloseEvent += NoteEditorPopupCloseEvent;
+            UnHookAllEvents();
+            noteEditorControl.NavigateToNoteEditor(param);
+            noteEditorControl.ClosedEvent += NoteEditorClosed;
+            noteEditorControl.Visibility = Visibility.Visible;
         }
 
-        private void NoteEditorPopupCloseEvent(object sender, RoutedEventArgs e)
-        {
+        private void NoteEditorClosed(object sender, RoutedEventArgs e)
+        {            
             //Edited note ID can be different with the initial note we show the UI
-            //so always get the current edit note from the popup
-            editNoteId = noteEditorPopup.EditNoteId;
-            noteEditorPopup = null;
+            //so always get the current edit note 
+            editNoteId = noteEditorControl.EditNoteId;            
             cardInforViewModel.UpdateCardContentWithSameNoteId(editNoteId);
             HookAllEvents();
-            ChangeReadMode(MainPage.UserPrefs.IsReadNightMode);            
+            ChangeReadMode(MainPage.UserPrefs.IsReadNightMode);
+            noteEditorControl.Visibility = Visibility.Collapsed;
         }
 
         private void SuspendMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)

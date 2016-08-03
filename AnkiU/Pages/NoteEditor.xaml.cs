@@ -112,7 +112,7 @@ namespace AnkiU.Pages
             base.OnNavigatedTo(e);
             var parameter = e.Parameter as NoteEditorPageParameter;
             if (parameter == null)
-                throw new Exception("Wrong input parameter!");            
+                throw new Exception("Wrong input parameter!");
 
             mainPage = parameter.Mainpage;
             ShowProgessRing();
@@ -126,13 +126,25 @@ namespace AnkiU.Pages
             EnterTutorialModeIfNeeded();
             mainPage.EnableChangingReadMode(this, noteFieldView.HtmlEditor);
             ChangeBackgroundColor();
-            mainPage.SaveButton.Visibility = Visibility.Visible;            
 
             SetupCurrentNote(parameter);
             await SetupNoteFieldViewAsync();
             SetupTagsView();
 
+            HookEvents();
+        }
+
+        private void HookEvents()
+        {
+            mainPage.SaveButton.Visibility = Visibility.Visible;
             CoreWindow.GetForCurrentThread().KeyDown += NoteEditorKeyUp;
+
+            InputPane.GetForCurrentView().Hiding += TouchInputHiding;
+        }
+
+        private async void TouchInputHiding(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            await noteFieldView.HtmlEditor.ForceNotifyContentChanged();
         }
 
         private bool isProcessedKeyPressEvent = false;
@@ -350,7 +362,8 @@ namespace AnkiU.Pages
         }
         private void UnHookAllEvents()
         {
-            CoreWindow.GetForCurrentThread().KeyDown -= NoteEditorKeyUp;
+            CoreWindow.GetForCurrentThread().KeyDown -= NoteEditorKeyUp;            
+            InputPane.GetForCurrentView().Hiding -= TouchInputHiding;
 
             mainPage.UndoButton.Click -= UndoButtonClickHandler;
             mainPage.SaveButton.Click -= SaveEditNoteButtonClickHandler;

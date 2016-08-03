@@ -552,8 +552,8 @@
     <Compile Include="UserControls\MediaCheckContentDialog.xaml.cs">
       <DependentUpon>MediaCheckContentDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\NoteEditorPopup.xaml.cs">
-      <DependentUpon>NoteEditorPopup.xaml</DependentUpon>
+    <Compile Include="UserControls\NoteEditorControl.xaml.cs">
+      <DependentUpon>NoteEditorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\NotificationPopup.xaml.cs">
       <DependentUpon>NotificationPopup.xaml</DependentUpon>
@@ -876,7 +876,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\NoteEditorPopup.xaml">
+    <Page Include="UserControls\NoteEditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

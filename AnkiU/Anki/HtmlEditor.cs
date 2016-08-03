@@ -119,13 +119,15 @@ namespace AnkiU.Anki
         protected virtual void EditableFieldTextChangedEventHandler(string fieldName, string html)
         {
             IsContentCheckOnce = true;
+            //TODO: Considered changing the way we detect if a field do note have content
+            // vs a field has content changed
             if (IsModified == false)
             {
                 var text = RemoveDivWrap(html).Replace("&nbsp;", " ");
-                if (String.IsNullOrWhiteSpace(text))
-                    return;
-
-                IsModified = true;
+                if (!String.IsNullOrWhiteSpace(text))
+                {
+                    IsModified = true;
+                }
             }
             EditableFieldTextChangedEvent?.Invoke(fieldName, html);
         }
