@@ -25,7 +25,7 @@ namespace AnkiU.UIUtilities
 {
     public static class UIConst
     {
-        public const string EXPORT_FAILED = "Unable to export the specified deck.\n"
+        public const string EXPORT_FAILED = "Unable to export the specified deck(s).\n"
                                             + "This might happen if you do not have the permission to write to the choosen folder.";
 
         public const string CONFIG_INTERVALMOD_HELP = "Due time of a card is calculated by multiplying with this value.\n" + 
