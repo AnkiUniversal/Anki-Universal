@@ -143,6 +143,38 @@ namespace AnkiU.Pages
             mainPage.GridViewButton.Click += GridViewButtonClickHandler;
             mainPage.ListViewButton.Click += ListViewButtonClickHandler;
             mainPage.AddButton.Click += AddButtonClickHandler;
+            mainPage.DragAndDropButton.Click += DragAndDropButtonClick;
+        }
+
+        private void DragAndDropButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (!decksView.IsDragAndDropEnable)
+            {
+                mainPage.ListViewButton.IsEnabled = false;
+                mainPage.GridViewButton.IsEnabled = false;
+                mainPage.DragAndDropButton.Background = UIHelper.IndioBrush;
+                mainPage.DragAndDropButton.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
+                decksView.EnableDragAndDropMode();
+            }
+            else
+            {
+                mainPage.ListViewButton.IsEnabled = true;
+                mainPage.GridViewButton.IsEnabled = true;
+                mainPage.BindToCommandBarForeGround(mainPage.DragAndDropButton);
+                mainPage.DragAndDropButton.Background = new SolidColorBrush(Windows.UI.Colors.Transparent);
+                decksView.DisableDragAndDropMode();
+            }
+            
+        }
+
+        private void OnDeckDragAnDrop(DeckInformation parent, DeckInformation children)
+        {            
+            if(parent == null)
+                collection.Deck.RenameForDragAndDrop(children.Id, null);
+            else
+                collection.Deck.RenameForDragAndDrop(children.Id, parent.Id);
+
+            deckListViewModel.UpdateCardCountForDeck(children.Id);
         }
 
         private async void MainPageDeckImageChangedHandler(StorageFile fileToChange, long deckId, long modifiedTime)
@@ -194,6 +226,7 @@ namespace AnkiU.Pages
 
         private void ShowAllButtonOfThisPage()
         {
+            mainPage.DragAndDropButton.Visibility = Visibility.Visible;
             mainPage.RootSplitView.Pane.Visibility = Visibility.Visible;
             mainPage.HelpSplitView.Visibility = Visibility.Visible;
             mainPage.AddButton.Visibility = Visibility.Visible;
@@ -215,6 +248,7 @@ namespace AnkiU.Pages
 
         private void HideAllButtonOfThisPage()
         {
+            mainPage.DragAndDropButton.Visibility = Visibility.Collapsed;
             mainPage.RootSplitView.Pane.Visibility = Visibility.Collapsed;
             mainPage.HelpSplitView.Visibility = Visibility.Collapsed;
             mainPage.AddButton.Visibility = Visibility.Collapsed;
@@ -234,6 +268,7 @@ namespace AnkiU.Pages
             mainPage.GridViewButton.Click -= GridViewButtonClickHandler;
             mainPage.ListViewButton.Click -= ListViewButtonClickHandler;
             mainPage.AddButton.Click -= AddButtonClickHandler;
+            mainPage.DragAndDropButton.Click -= DragAndDropButtonClick;
         }
 
         private void ListViewButtonClickHandler(object sender, RoutedEventArgs e)
@@ -265,6 +300,7 @@ namespace AnkiU.Pages
                 decksView.DataContext = deckListViewModel.Decks;
                 HookDeckItemEvent();
             }
+            decksView = deckGridView;
             mainPage.ListViewButton.Visibility = Visibility.Visible;
             mainPage.GridViewButton.Visibility = Visibility.Collapsed;
             deckGridView.Visibility = Visibility.Visible;
@@ -282,6 +318,7 @@ namespace AnkiU.Pages
                 decksView.DataContext = deckListViewModel.Decks;
                 HookDeckItemEvent();
             }
+            decksView = deckListView;
             mainPage.ListViewButton.Visibility = Visibility.Collapsed;
             mainPage.GridViewButton.Visibility = Visibility.Visible;
             deckListView.Visibility = Visibility.Visible;
@@ -290,6 +327,7 @@ namespace AnkiU.Pages
         private void HookDeckItemEvent()
         {
             decksView.DeckItemClickEvent += DeckListViewItemClickEventHandler;
+            decksView.DragAnDropEvent += OnDeckDragAnDrop;
         }
 
         private void DeckListViewItemClickEventHandler(long deckId)
@@ -335,7 +373,7 @@ namespace AnkiU.Pages
             }
             else
             {
-                deckListViewModel.AddOrUpdateDeck(deckId);
+                deckListViewModel.AddOrUpdateDeckCardCount(deckId);
             }
 
             UpdateNoticeText();
@@ -391,6 +429,9 @@ namespace AnkiU.Pages
 
         private void ShowContextMenu(DeckInformation deck, UIElement target, Point offset)
         {
+            if (decksView.IsDragAndDropEnable)
+                return;
+
             if (deck != null)
             {
                 MakeSureNoFlyoutsOpen();

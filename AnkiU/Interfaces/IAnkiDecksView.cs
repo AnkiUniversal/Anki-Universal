@@ -15,6 +15,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using AnkiU.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,10 +25,17 @@ using System.Threading.Tasks;
 namespace AnkiU.Interfaces
 {
     public delegate void DeckItemClickEventHandler(long deckId);
+    public delegate void DeckDragAnDropEventHandler(DeckInformation parent, DeckInformation children);
 
     public interface IAnkiDecksView
     {
+        bool IsDragAndDropEnable { get; }
+
         Object DataContext { get; set; }
         event DeckItemClickEventHandler DeckItemClickEvent;
+        event DeckDragAnDropEventHandler DragAnDropEvent;
+
+        void EnableDragAndDropMode();
+        void DisableDragAndDropMode();
     }
 }

@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using AnkiU.Interfaces;
+using AnkiU.Models;
 using OxyPlot;
 using System;
 using System.Collections.Generic;
@@ -58,6 +59,7 @@ namespace AnkiU.UIUtilities
         private const int numberPadRangeMin = (int)Windows.System.VirtualKey.NumberPad0;
         private const int numberPadRangeMax = (int)Windows.System.VirtualKey.NumberPad9;
 
+        public static SolidColorBrush IndioBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 8, 141, 199));
         private static SolidColorBrush darkerBrush = Application.Current.Resources["DarkerGray"] as SolidColorBrush;
         public static SolidColorBrush DarkerBrush { get { return darkerBrush; } }
         private static SolidColorBrush contentNightModeBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 32, 32, 32));
@@ -398,6 +400,19 @@ namespace AnkiU.UIUtilities
             message.To.Add(emailRecipient);            
 
             await Windows.ApplicationModel.Email.EmailManager.ShowComposeNewEmailAsync(message);
+        }
+
+        public static DeckInformation GetDeck(object frameWorkElement)
+        {
+            var element = frameWorkElement as FrameworkElement;
+            if (element == null)
+                return null;
+
+            var deck = element.DataContext as DeckInformation;
+            if (deck == null)
+                return null;
+
+            return deck;
         }
     }
 }

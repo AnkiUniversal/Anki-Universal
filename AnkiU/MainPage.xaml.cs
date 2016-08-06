@@ -214,6 +214,16 @@ namespace AnkiU
             get { return splitViewToggleButton; }
         }
 
+        public AppBarButton DragAndDropButton
+        {
+            get
+            {
+                if (dragAndHoldButton == null)
+                    this.FindName("dragAndHoldButton");
+                return dragAndHoldButton;
+            }
+        }
+
         public AppBarButton AddButton
         {
             get
@@ -1470,6 +1480,17 @@ namespace AnkiU
         public void ShowCommanBar()
         {
             commandBar.Visibility = Visibility.Visible;
+        }
+
+        public void BindToCommandBarForeGround(FrameworkElement element)
+        {
+            Binding b = new Binding();
+            b.Source = commandBar;
+            b.Path = new PropertyPath("Foreground");
+            b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            b.Mode = BindingMode.OneWay;
+
+            element.SetBinding(ForegroundProperty, b);
         }
 
         private void ExportAllButtonClick(object sender, RoutedEventArgs e)

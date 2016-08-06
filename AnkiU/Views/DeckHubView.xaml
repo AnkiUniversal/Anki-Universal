@@ -13,12 +13,25 @@
 
     <UserControl.Resources>
         <DataBindingConverters:NumberOfCardToSolidBrushConverter x:Key="NumberOfCardToSolidBrushConverter"/>
-
         <Thickness x:Key="ShadowLayerThickness">0,0,1,1</Thickness>
+
+        <Storyboard x:Name="Enlarge">
+            <DoubleAnimationUsingKeyFrames x:Name="EnlargeX" Duration="0:0:0.2" 
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)"  Storyboard.TargetName="mainHub">
+                <LinearDoubleKeyFrame KeyTime="0" Value="1"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:0.2" Value="1.05"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames x:Name="EnlargeY" Duration="0:0:0.2" 
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)"  Storyboard.TargetName="mainHub">
+                <LinearDoubleKeyFrame KeyTime="0" Value="1"/>
+                <LinearDoubleKeyFrame KeyTime="0:0:0.2" Value="1.05"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </UserControl.Resources>
 
-    <Grid Background="Transparent"   >
+    <Grid Background="Transparent" RenderTransformOrigin="0.5,0.5"   >
 
+        <Button x:Name="hitTestBindingTarget" Visibility="Collapsed" />
         <Border x:Name="shadowBorderBindingTarget" BorderBrush="Transparent"  Background="Transparent" Width="0" Height="0" />
         <Hub x:Name="mainHub"
              Padding="0"  Style="{StaticResource DeckHubStyle}"             
@@ -28,14 +41,17 @@
             <HubSection x:Name="GroupsHubSection" Padding="0" 
                         HorizontalAlignment="Center" VerticalAlignment="Top" Background="Transparent">
                 <DataTemplate x:DataType="data:DeckInformation">
-                    <GridView        
-                        AutomationProperties.AutomationId="GroupGridView"
+                    <GridView  AutomationProperties.AutomationId="GroupGridView"
                         AutomationProperties.Name="Grouped Items"
-                        ItemsSource="{Binding}"                        
+                        ItemsSource="{Binding}"                                    
                         IsSwipeEnabled="False"
                         Background="Transparent"
                         IsItemClickEnabled="True"
-                        SelectionMode="None" 
+                        SelectionMode="None"                 
+                        CanDragItems="True"                        
+                        AllowDrop="True"
+                        DragItemsStarting="OnDragItemsStarting"
+                               DragItemsCompleted="OnDragItemsCompleted"
                         ItemClick="GridViewItemClickHandler" >
                         <GridView.Transitions>
                             <TransitionCollection>
@@ -66,7 +82,14 @@
                         </GridView.ItemContainerStyle>
                         <GridView.ItemTemplate>
                             <DataTemplate  x:DataType="data:DeckInformation">
-                                <Grid BorderThickness="0" Padding="0" Width="157" Background="Transparent"  >
+                                <Grid BorderThickness="0" Padding="0" Width="157" 
+                                      AutomationProperties.Name="ItemRootGrid"
+                                      DragStarting="OnElementDragStarting" Background="Transparent" DragLeave="OnDragLeave"
+                                      DragEnter="OnDragEnter" Drop="OnDrop" AllowDrop="True" RenderTransformOrigin="0,0">
+                                    <Grid.RenderTransform>
+                                        <CompositeTransform ScaleX="1" ScaleY="1"/>
+                                    </Grid.RenderTransform>
+
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
@@ -90,9 +113,10 @@
                                                AutomationProperties.Name="{x:Bind Name, Mode=OneWay}" HorizontalAlignment="Center"/>
                                         </Border>
 
-                                        <Button Grid.RowSpan="2" Style="{StaticResource HorverShowButton}"  Click="ButtonItemClickHandler" IsRightTapEnabled="False"                                                
-                                                Opacity="0.3" Background="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-                                        
+                                        <Button Grid.RowSpan="2" Style="{StaticResource HorverShowButton}" 
+                                                Click="ButtonItemClickHandler" IsRightTapEnabled="False" IsHitTestVisible="{Binding IsHitTestVisible, ElementName=hitTestBindingTarget}"
+                                                Opacity="0.3" Background="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+
                                         <TextBlock Margin="4,2,4,0" Text="{x:Bind Name, Mode=OneWay}"  VerticalAlignment="Top" 
                                                    HorizontalAlignment="Stretch" IsHitTestVisible="False" IsTapEnabled="False" IsRightTapEnabled="False"
                                                     TextAlignment="Left" FontSize="14" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap" />
@@ -117,7 +141,7 @@
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
-                                       
+
                                     </Grid>
                                 </Grid>
                             </DataTemplate>

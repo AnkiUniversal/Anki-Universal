@@ -44,6 +44,11 @@ namespace AnkiU.Views
     public sealed partial class DeckListView : UserControl, IAnkiDecksView
     {
         public event DeckItemClickEventHandler DeckItemClickEvent;
+        public event DeckDragAnDropEventHandler DragAnDropEvent;
+
+        private DeckInformation draggedDeck;
+
+        public bool IsDragAndDropEnable { get { return ListView.CanDragItems; } }
 
         public DeckListView()
         {
@@ -57,8 +62,37 @@ namespace AnkiU.Views
             if (item == null)
                 throw new Exception("Wrong data type");
 
-            DeckItemClickEvent?.Invoke(item.Id);
+            if(!IsDragAndDropEnable)
+                DeckItemClickEvent?.Invoke(item.Id);
         }
 
+
+        private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            draggedDeck = e.Items[0] as DeckInformation;
+        }
+
+        private void OnDragEnter(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Link;
+        }
+
+        private void OnDrop(object sender, DragEventArgs e)
+        {
+            var parent = UIHelper.GetDeck(sender);
+            if (draggedDeck == null)
+                return;
+            DragAnDropEvent?.Invoke(parent, draggedDeck);
+        }
+
+        public void EnableDragAndDropMode()
+        {
+            ListView.CanDragItems = true;
+        }
+
+        public void DisableDragAndDropMode()
+        {
+            ListView.CanDragItems = false;
+        }
     }
 }

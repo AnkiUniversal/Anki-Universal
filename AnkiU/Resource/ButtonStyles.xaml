@@ -430,7 +430,7 @@
         <Setter Property="Template" >
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid" BorderBrush="Transparent"
+                    <Grid x:Name="RootGrid" BorderBrush="Transparent" 
                           Background="{TemplateBinding Background}"  
                           BorderThickness="{TemplateBinding BorderThickness}">
                         <VisualStateManager.VisualStateGroups>

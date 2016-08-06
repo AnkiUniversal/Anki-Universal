@@ -225,6 +225,13 @@
                 </AppBarButton>
 
                 <AppBarButton x:Name="addButton" Icon="Add" Label="Add Deck" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Add Deck" />
+                <AppBarButton x:Name="dragAndHoldButton" Label="Drag Deck" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Drag Decks">
+                    <SymbolIcon Symbol="Pictures" RenderTransformOrigin="0.5,0.5" >
+                        <SymbolIcon.RenderTransform>
+                            <CompositeTransform ScaleX="0.9" ScaleY="1.4"/>
+                        </SymbolIcon.RenderTransform>
+                    </SymbolIcon>
+                </AppBarButton>
                 <AppBarButton x:Name="listViewButton" Icon="List" Label="List" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="List View"/>
                 <AppBarButton x:Name="gridViewButton" Visibility="Collapsed" Icon="ViewAll" Label="Panel" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Panel View"/>
                 <AppBarButton x:Name="syncButton" Visibility="Visible" Icon="Sync" Label="Sync" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Sync"/>
@@ -487,7 +494,7 @@
                                 <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Feedback" />
                             </Grid>
                         </Button>
-                        
+
                         <Button 
                             Style="{Binding Style, ElementName=button}"
                             HorizontalAlignment="Stretch"                                                         

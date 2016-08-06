@@ -140,7 +140,12 @@ namespace AnkiU.ViewModels
             Decks.Add(new DeckInformation(name, count.New, dueCards, did, Collection.Deck.IsDyn(did)));
         }
 
-        public void AddOrUpdateDeck(long deckId)
+        public void UpdateDeckName(DeckInformation deck)
+        {
+            deck.Name = Collection.Deck.GetDeckName(deck.Id);
+        }
+
+        public void AddOrUpdateDeckCardCount(long deckId)
         {            
             if (HasDeck(deckId))
                 UpdateCardCountForDeck(deckId);

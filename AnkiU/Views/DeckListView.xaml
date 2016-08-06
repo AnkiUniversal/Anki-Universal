@@ -53,6 +53,8 @@
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ItemsSource="{Binding}" 
+                  CanDragItems="False"       
+                  DragItemsStarting="OnDragItemsStarting"                  
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ItemClick="ListViewItemClickHandler">
             <ListView.Transitions>
@@ -62,6 +64,7 @@
             </ListView.Transitions>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="AllowDrop" Value="True" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="BorderBrush" Value="{StaticResource DeckListItemColorBrush}" />
                     <Setter Property="BorderThickness" Value="0,0,0,1" />
@@ -70,27 +73,27 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="data:DeckInformation">
-                    <Grid x:Name="GridDeckList" Margin="0,5,0,5" >
+                    <Grid x:Name="GridDeckList" Margin="0,5,0,5"  Drop="OnDrop" DragEnter="OnDragEnter"  AllowDrop="True" >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="Name" Grid.Column="0" Grid.ColumnSpan="2" Text="{x:Bind Name, Mode=OneWay}" 
-                                   Foreground="{Binding Foreground, ElementName=userControl}"
+                                   Foreground="{Binding Foreground, ElementName=userControl}"  
                            HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="Wrap"/>
 
-                        <Grid Grid.Column="2" >
+                        <Grid Grid.Column="2"  >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="NewCards" 
+                            <TextBlock x:Name="NewCards"
             			Text="{x:Bind NewCards, Mode=OneWay}" Grid.Column="0" 
             			HorizontalAlignment="Center" VerticalAlignment="Center" 
                         Foreground="{x:Bind NewCards, Converter={StaticResource NumberOfCardToSolidBrushConverter},  Mode=OneWay}"  />
 
-                            <TextBlock x:Name="DueCards" 
+                            <TextBlock x:Name="DueCards"
             			Text="{x:Bind DueCards, Mode=OneWay}" Grid.Column="1" 
                         Foreground="{x:Bind DueCards, Converter={StaticResource NumberOfCardToSolidBrushConverter},  Mode=OneWay}" 
             			HorizontalAlignment="Center" VerticalAlignment="Center" />

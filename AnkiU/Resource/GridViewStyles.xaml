@@ -6,7 +6,7 @@
     <ControlTemplate TargetType="GridViewItem" x:Key="DeckGridViewStyle">
         <ListViewItemPresenter
             ContentTransitions="{TemplateBinding ContentTransitions}"
-            SelectionCheckMarkVisualEnabled="True"
+            SelectionCheckMarkVisualEnabled="False"
             CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
             CheckBoxBrush="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
             DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"

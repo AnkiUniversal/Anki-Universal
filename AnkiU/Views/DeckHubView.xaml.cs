@@ -34,6 +34,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace AnkiU.Views
@@ -41,6 +42,11 @@ namespace AnkiU.Views
     public sealed partial class DeckHubView : UserControl, IAnkiDecksView
     {
         public event DeckItemClickEventHandler DeckItemClickEvent;
+        public event DeckDragAnDropEventHandler DragAnDropEvent;        
+
+        private DeckInformation draggedDeck;
+
+        public bool IsDragAndDropEnable { get; private set; }
 
         public DeckHubView()
         {
@@ -52,8 +58,9 @@ namespace AnkiU.Views
             var data = e.ClickedItem as DeckInformation;
             if (data == null)
                 throw new Exception("Wrong data type");
-            
-            DeckItemClickEvent?.Invoke(data.Id);
+
+            if (!IsDragAndDropEnable)
+                DeckItemClickEvent?.Invoke(data.Id);
         }
 
         public void ShowShadow()
@@ -72,7 +79,60 @@ namespace AnkiU.Views
             if (data == null)
                 throw new Exception("Wrong data type");
 
+            var button = sender as Button;
+
             DeckItemClickEvent?.Invoke(data.Id);
+        }
+
+        private void OnElementDragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            draggedDeck = UIHelper.GetDeck(sender);
+        }
+
+        private void OnDragEnter(object sender, DragEventArgs e)
+        {
+            Enlarge.Stop();
+            var viewItem = e.OriginalSource as Grid;
+            Storyboard.SetTarget(EnlargeX, viewItem);
+            Storyboard.SetTarget(EnlargeY, viewItem);
+            Enlarge.Begin();
+            e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Link;
+        }
+
+        private void OnDragLeave(object sender, DragEventArgs e)
+        {
+            Enlarge.Stop();
+        }
+
+        public void EnableDragAndDropMode()
+        {
+            IsDragAndDropEnable = true;
+            hitTestBindingTarget.IsHitTestVisible = false;
+        }
+
+        public void DisableDragAndDropMode()
+        {
+            IsDragAndDropEnable = false;
+            hitTestBindingTarget.IsHitTestVisible = true;            
+        }
+
+        private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            draggedDeck = e.Items[0] as DeckInformation;
+        }
+
+        private void OnDrop(object sender, DragEventArgs e)
+        {
+            var parent = UIHelper.GetDeck(sender);
+            if (draggedDeck == null)
+                return;
+
+            DragAnDropEvent?.Invoke(parent, draggedDeck);
+        }
+
+        private void OnDragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            Enlarge.Stop();
         }
     }
 }
