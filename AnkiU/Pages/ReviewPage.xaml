@@ -166,7 +166,7 @@
         </Popup>
         
         <controls:NotificationPopup Grid.Row="0" x:Name="popup" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                    Background="{Binding Background, ElementName=userControl}" 
+                                    Background="White"
                                     Foreground="{Binding Foreground, ElementName=userControl}" />
     </Grid>
 

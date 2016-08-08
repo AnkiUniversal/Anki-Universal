@@ -179,9 +179,9 @@ namespace AnkiU.Pages
             else
             {
                 if (collection.Sched.LapseConf(currentCard).GetNamedNumber("leechAction") == 0)
-                    popup.ShowAsync(mainPage.CurrentDispatcher, "Leech threshold reached. Card was suspended", 2000);
+                    popup.ShowAsync(mainPage.CurrentDispatcher, "Leech threshold reached. Card was suspended", 1000);
                 else
-                    popup.ShowAsync(mainPage.CurrentDispatcher, "Leech threshold reached.", 2000);
+                    popup.ShowAsync(mainPage.CurrentDispatcher, "Leech threshold reached.", 1000);
 
                 return true;
             }
@@ -1333,6 +1333,16 @@ namespace AnkiU.Pages
             UIHelper.ToggleNightLight(isNightMode, userControl);
             if (helpPopup != null)
                 helpPopup.ChangeReadMode(isNightMode);
+
+            ChangeNoticePopupBackGround();
+        }
+
+        private void ChangeNoticePopupBackGround()
+        {
+            if(isNightMode)            
+                popup.Background = new SolidColorBrush(Windows.UI.Colors.Black);            
+            else
+                popup.Background = new SolidColorBrush(Windows.UI.Colors.White);
         }
 
         private void TouchKeyboardShowing(InputPane sender, InputPaneVisibilityEventArgs args)
