@@ -530,6 +530,7 @@ namespace AnkiU.Pages
             await cardView.ChangeZoomLevel(MainPage.UserPrefs.ZoomLevel);
 
             PopNextCard();
+            currentDeckId = currentCard.DeckId;
             await ChangeHtmlheader();
             IsAutoPlay();
             await GetContentAndDisplayQuestion();
