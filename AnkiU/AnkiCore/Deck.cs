@@ -252,7 +252,7 @@ namespace AnkiU.AnkiCore
                     s.Append(path[i]);
                 else
                 {
-                    s.Append("::");
+                    s.Append(Constant.SUBDECK_SEPERATE);
                     s.Append(path[i]);
                 }
 
@@ -260,14 +260,14 @@ namespace AnkiU.AnkiCore
                 s.Clear();
                 s.Append(GetDeckName(did));
             }
-            s.Append("::");
+            s.Append(Constant.SUBDECK_SEPERATE);
             s.Append(path[path.Length - 1]);
             return s.ToString();
         }
 
         private string[] SplitPath(string name)
         {
-            string[] sep = new string[] { "::" };
+            string[] sep = new string[] { Constant.SUBDECK_SEPERATE };
             return name.Split(sep, StringSplitOptions.None);
         }
 
@@ -349,8 +349,9 @@ namespace AnkiU.AnkiCore
             Dictionary<string, long> actv = new Dictionary<string, long>();
             foreach (JsonObject g in All())
             {
-                if (g.GetNamedString("name").StartsWith(name + "::"))
-                    actv.Add(g.GetNamedString("name"), (long)g.GetNamedNumber("id"));
+                string deckName = g.GetNamedString("name");
+                if (deckName.StartsWith(name + Constant.SUBDECK_SEPERATE))
+                    actv.Add(deckName, (long)g.GetNamedNumber("id"));
             }
             return actv;
         }
@@ -377,7 +378,7 @@ namespace AnkiU.AnkiCore
                 // we won't allow the default deck to be deleted, but if it's a
                 // child of an existing deck then it needs to be renamed
                 deck = Get(deckId);
-                if (deck.GetNamedString("name").Contains("::"))
+                if (deck.GetNamedString("name").Contains(Constant.SUBDECK_SEPERATE))
                 {
                     deck["name"] = JsonValue.CreateStringValue("Default");
                     Save(deck);
@@ -534,12 +535,12 @@ namespace AnkiU.AnkiCore
             newName = EnsureParents(newName);
 
             // make sure we're not nesting under a filtered deck
-            if (newName.Contains("::"))
+            if (newName.Contains(Constant.SUBDECK_SEPERATE))
             {
-                string[] parts = newName.Split(new string[] { "::" }, StringSplitOptions.None);
+                string[] parts = newName.Split(new string[] { Constant.SUBDECK_SEPERATE }, StringSplitOptions.None);
                 string[] subParts = new string[parts.Length - 1];
                 Array.Copy(parts, subParts, subParts.Length);
-                string newParent = String.Join("::", subParts);
+                string newParent = String.Join(Constant.SUBDECK_SEPERATE, subParts);
                 if (GetDeckByName(newParent).GetNamedNumber("dyn") != 0)
                     throw new DeckRenameException(DeckRenameException.ErrorCode.FILTERED_NOSUBDEKCS);
             }
@@ -549,9 +550,9 @@ namespace AnkiU.AnkiCore
             string str;
             foreach (JsonObject grp in All())
             {
-                if(grp.GetNamedString("name").StartsWith(oldName + "::"))
+                if(grp.GetNamedString("name").StartsWith(oldName + Constant.SUBDECK_SEPERATE))
                 {
-                    str = grp.GetNamedString("name").ReplaceFirst(oldName + "::", newName + "::");
+                    str = grp.GetNamedString("name").ReplaceFirst(oldName + Constant.SUBDECK_SEPERATE, newName + Constant.SUBDECK_SEPERATE);
                     grp["name"] = JsonValue.CreateStringValue(str);
                     Save(grp);
                 }
@@ -586,7 +587,7 @@ namespace AnkiU.AnkiCore
                     draggedDeck = Get(draggedDeckDid);
                     draggedDeckName = draggedDeck.GetNamedString("name");
                     ontoDeckName = Get(ontoDeckDid).GetNamedString("name");
-                    Rename(draggedDeck, ontoDeckName + "::" + BaseName(draggedDeckName));
+                    Rename(draggedDeck, ontoDeckName + Constant.SUBDECK_SEPERATE + BaseName(draggedDeckName));
                 }
             }
         }
@@ -600,7 +601,7 @@ namespace AnkiU.AnkiCore
         private bool CanDragAndDrop(string draggedDeckName, string ontoDeckName)
         {
             if (draggedDeckName.Equals(ontoDeckName, StringComparison.OrdinalIgnoreCase)
-                    || IsParent(ontoDeckName, draggedDeckName)
+                    || IsOneOfDeckIsParent(ontoDeckName, draggedDeckName)
                     || IsAncestor(draggedDeckName, ontoDeckName))
             {
                 return false;
@@ -610,8 +611,8 @@ namespace AnkiU.AnkiCore
                 return true;
             }
         }
-
-        private bool IsParent(string parentDeckName, string childDeckName)
+        
+        private bool IsOneOfDeckIsParent(string parentDeckName, string childDeckName)
         {
             List<string> parentDeckPath = new List<string>(SplitPath(parentDeckName));
             parentDeckPath.Add(BaseName(childDeckName));
@@ -625,6 +626,20 @@ namespace AnkiU.AnkiCore
                     return false;
             }
             return true;
+        }
+
+        public bool IsParent(string parentDeckName, string childDeckName)
+        {
+            var baseParentName = BaseName(parentDeckName);
+            var childSplit = childDeckName.Split(new string[] { Constant.SUBDECK_SEPERATE }, StringSplitOptions.RemoveEmptyEntries);
+            if (childSplit.Length < 2)
+                return false;
+
+            var realParent = childSplit[childSplit.Length - 2];
+            if (baseParentName.Equals(realParent, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return false;
         }
 
         /// <summary>
@@ -835,10 +850,20 @@ namespace AnkiU.AnkiCore
             collection.Database.IsModified = mod;
         }
 
+        public bool HasParent(long did)
+        {
+            return Get(did).GetNamedString("name").Contains(Constant.SUBDECK_SEPERATE);            
+        }
+
+        public bool HasParent(string deckName)
+        {
+            return deckName.Contains(Constant.SUBDECK_SEPERATE);
+        }
+
         public List<JsonObject> Parents(long did)
         {
             List<string> parents = new List<string>();
-            string[] array = Get(did).GetNamedString("name").Split(new string[] { "::" }, 
+            string[] array = Get(did).GetNamedString("name").Split(new string[] { Constant.SUBDECK_SEPERATE }, 
                                                     StringSplitOptions.None);
             List<string> parts = new List<string>(array);
             for(int i = 0; i < parts.Count - 1; i++)
@@ -846,7 +871,7 @@ namespace AnkiU.AnkiCore
                 if (parents.Count == 0)
                     parents.Add(parts[i]);
                 else
-                    parents.Add(parents[parents.Count - 1] + "::" + parts[i]);
+                    parents.Add(parents[parents.Count - 1] + Constant.SUBDECK_SEPERATE + parts[i]);
             }
 
             List<JsonObject> oParents = new List<JsonObject>();
@@ -883,6 +908,19 @@ namespace AnkiU.AnkiCore
         public bool IsDyn(long did)
         {
             return Get(did).GetNamedNumber("dyn") != 0;
+        }
+
+        //WARNING: Not in java and python ver
+        public long? TryGetOriginalDeckId(long deckId)
+        {
+            if (!IsDyn(deckId))
+                return null;
+
+            var cards = collection.Database.QueryFirstRow<CardTable>("Select * from cards where did = ?", deckId);
+            if (cards.Count == 0 || cards[0].ODid == 0)
+                return null;
+
+            return cards[0].ODid;
         }
 
         public string GetActualDescription()

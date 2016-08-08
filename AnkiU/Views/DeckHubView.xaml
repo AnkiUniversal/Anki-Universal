@@ -49,7 +49,7 @@
                         IsItemClickEnabled="True"
                         SelectionMode="None"                 
                         CanDragItems="True"                        
-                        AllowDrop="True"
+                        AllowDrop="True"                        
                         DragItemsStarting="OnDragItemsStarting"
                                DragItemsCompleted="OnDragItemsCompleted"
                         ItemClick="GridViewItemClickHandler" >

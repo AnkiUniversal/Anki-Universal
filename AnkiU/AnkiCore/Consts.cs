@@ -48,6 +48,8 @@ namespace AnkiU.AnkiCore
 
         public const string DEFAULT_DECK_IMAGE_FOLDER_NAME = "DeckImages";
         public const string DEFAULT_DECK_IMAGE_FOLDER_SYNC_PATH = ANKIROOT_SYNC_FOLDER + "/" + DEFAULT_DECK_IMAGE_FOLDER_NAME;
+
+        public const string SUBDECK_SEPERATE = "::";
     }
 
     public enum ReviewType

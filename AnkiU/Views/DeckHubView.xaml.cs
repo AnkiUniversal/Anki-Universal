@@ -124,7 +124,7 @@ namespace AnkiU.Views
         private void OnDrop(object sender, DragEventArgs e)
         {
             var parent = UIHelper.GetDeck(sender);
-            if (draggedDeck == null)
+            if (parent == null || draggedDeck == null || parent.Id == draggedDeck.Id)
                 return;
 
             DragAnDropEvent?.Invoke(parent, draggedDeck);

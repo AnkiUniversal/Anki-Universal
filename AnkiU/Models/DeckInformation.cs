@@ -47,6 +47,21 @@ namespace AnkiU.Models
             }
         }
 
+
+        private string displayName;
+        public string DisplayName
+        {
+            get
+            {
+                return displayName;
+            }
+            set
+            {
+                displayName = value;
+                RaisePropertyChanged("DisplayName");
+            }
+        }
+
         private string imagePath;
         public string ImagePath
         {
@@ -116,7 +131,7 @@ namespace AnkiU.Models
         }
 
         /// <summary>
-        /// This is onle mean to be used with view and viewmodel have checkbox
+        /// This is only mean to be used with view and viewmodel have checkbox
         /// </summary>
         private bool? isChecked;
         public bool? IsChecked
@@ -134,6 +149,9 @@ namespace AnkiU.Models
         public DeckInformation(string Name, int NewCards, int DueCards, long Id, bool IsDynamic)
         {
             this.name = Name;
+            var split = Name.Split(new string[] { Constant.SUBDECK_SEPERATE }, StringSplitOptions.RemoveEmptyEntries);
+            displayName = split[split.Length - 1];
+
             this.imagePath = ImagePath;
             this.newCards = NewCards;
             this.dueCards = DueCards;

@@ -150,31 +150,57 @@ namespace AnkiU.Pages
         {
             if (!decksView.IsDragAndDropEnable)
             {
-                mainPage.ListViewButton.IsEnabled = false;
-                mainPage.GridViewButton.IsEnabled = false;
-                mainPage.DragAndDropButton.Background = UIHelper.IndioBrush;
-                mainPage.DragAndDropButton.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
-                decksView.EnableDragAndDropMode();
+                ChangeToDragAndDropMode();
             }
             else
             {
-                mainPage.ListViewButton.IsEnabled = true;
-                mainPage.GridViewButton.IsEnabled = true;
-                mainPage.BindToCommandBarForeGround(mainPage.DragAndDropButton);
-                mainPage.DragAndDropButton.Background = new SolidColorBrush(Windows.UI.Colors.Transparent);
-                decksView.DisableDragAndDropMode();
+                ReturnToDeckSelection();
             }
-            
+
         }
 
-        private void OnDeckDragAnDrop(DeckInformation parent, DeckInformation children)
-        {            
-            if(parent == null)
-                collection.Deck.RenameForDragAndDrop(children.Id, null);
-            else
-                collection.Deck.RenameForDragAndDrop(children.Id, parent.Id);
+        private void ChangeToDragAndDropMode()
+        {
+            mainPage.ListViewButton.IsEnabled = false;
+            mainPage.GridViewButton.IsEnabled = false;
+            mainPage.DragAndDropButton.Background = UIHelper.IndioBrush;
+            mainPage.DragAndDropButton.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
+            decksView.EnableDragAndDropMode();
+        }
 
-            deckListViewModel.UpdateCardCountForDeck(children.Id);
+        private void ReturnToDeckSelection()
+        {
+            mainPage.ListViewButton.IsEnabled = true;
+            mainPage.GridViewButton.IsEnabled = true;
+            mainPage.BindToCommandBarForeGround(mainPage.DragAndDropButton);
+            mainPage.DragAndDropButton.Background = new SolidColorBrush(Windows.UI.Colors.Transparent);
+            decksView.DisableDragAndDropMode();
+        }
+
+        private void OnDeckDragAnDrop(DeckInformation parent, DeckInformation child)
+        {
+            if (collection.Deck.IsParent(parent.Name, child.Name))
+                //Remove from children if child deck is dragged on parent deck
+                collection.Deck.RenameForDragAndDrop(child.Id, null);
+            else
+                collection.Deck.RenameForDragAndDrop(child.Id, parent.Id);
+
+            deckListViewModel.UpdateDeckName(child);
+            UpdateChildrenName(child);
+
+            deckListViewModel.UpdateCardCountAllDecks();
+            UpdateNoticeText();
+            collection.SaveAndCommitAsync();
+        }
+
+        private void UpdateChildrenName(DeckInformation child)
+        {
+            Dictionary<string, long> children = collection.Deck.Children(child.Id);
+            foreach (var deck in children)
+            {
+                var deckInfor = deckListViewModel.GetDeck(deck.Value);
+                deckListViewModel.UpdateDeckName(deckInfor);
+            }            
         }
 
         private async void MainPageDeckImageChangedHandler(StorageFile fileToChange, long deckId, long modifiedTime)
@@ -240,6 +266,9 @@ namespace AnkiU.Pages
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
+            if(decksView.IsDragAndDropEnable)
+                ReturnToDeckSelection();
+
             HideAllButtonOfThisPage();
             UnHookAllEvents();
 
@@ -607,7 +636,8 @@ namespace AnkiU.Pages
                 exporter.IncludeSched = true;
             exporter.ExportFinishedEvent += ExporterExportFinishedEventHandler;
 
-            string fileName = deckShowContextMenu.Name + ".apkg";
+            var split = deckShowContextMenu.Name.Split(UIHelper.ILLEGAL_NAME_CHAR, StringSplitOptions.RemoveEmptyEntries);
+            var fileName = String.Join("_", split) + ".apkg";            
 
             Task task = Task.Run(async () =>
             {
@@ -680,11 +710,17 @@ namespace AnkiU.Pages
         {
             configNameViewModel.SetDeckConfigToSelected();
             configureFlyout.Hide();
+            
             //Need to update cardcount because user may have changed card limits
             deckListViewModel.UpdateCardCountForDeck(selectedDeckId);
+            var children = collection.Deck.Children(selectedDeckId);
+            deckListViewModel.UpdateCardCountMultiDecks(children.Values);
+            var parent = collection.Deck.Parents(selectedDeckId);
+            UpdateParentsCardCountIfNeeded(parent);
+
             UpdateNoticeText();
             collection.SaveAndCommitAsync();
-        }
+        }        
 
         private async void ConfigureFlyoutDeleteButtonClick(object sender, RoutedEventArgs e)
         {
@@ -694,13 +730,10 @@ namespace AnkiU.Pages
 
             if (isDelete)
             {
-                var config = (e.OriginalSource as FrameworkElement).DataContext as DeckConfigName;
-                var deckIds = collection.Deck.DeckIdsForConf(config.Id);
+                var config = (e.OriginalSource as FrameworkElement).DataContext as DeckConfigName;                
                 collection.Deck.RemoveConfiguration(config.Id);
-                
-                foreach(var id in deckIds)
-                    deckListViewModel.UpdateCardCountForDeck(id);
-                
+
+                deckListViewModel.UpdateCardCountAllDecks();
                 UpdateNoticeText();                
                 collection.SaveAndCommit();
             }
@@ -752,6 +785,7 @@ namespace AnkiU.Pages
         private async Task DeleteDeckAsync(long deckId, Dictionary<string, long> childs = null)
         {
             var parents = collection.Deck.Parents(deckId);
+            var originalDeckId = collection.Deck.TryGetOriginalDeckId(deckId);
 
             ProgressDialog dialog = new ProgressDialog();
             dialog.ProgressBarLabel = "This may take a while...";
@@ -759,8 +793,9 @@ namespace AnkiU.Pages
             collection.Deck.Remove(deckId, true, true);
             await RemoveMediaAndView(deckId);
 
-            await DeleteChildrenIfNeeded(childs);
-            UpdateParentsIfNeeded(parents);
+            await DeleteChildrenIfNeeded(childs);            
+            UpdateOriginalDeckCardCountIfNeeded(originalDeckId);
+            UpdateParentsCardCountIfNeeded(parents);
 
             UpdateNoticeText();
             dialog.Hide();
@@ -770,7 +805,7 @@ namespace AnkiU.Pages
             MainPage.RemoveDeckInPrefsIfNeeded(deckId);
         }
 
-        private void UpdateParentsIfNeeded(List<Windows.Data.Json.JsonObject> parents)
+        private void UpdateParentsCardCountIfNeeded(List<Windows.Data.Json.JsonObject> parents)
         {
             if (parents != null)
             {
@@ -780,6 +815,18 @@ namespace AnkiU.Pages
                     deckListViewModel.UpdateCardCountForDeck(id);
                 }
             }
+        }
+
+        public void UpdateOriginalDeckCardCountIfNeeded(long? originalId)
+        {            
+            if (originalId == null)
+                return;
+
+            var deckId = (long)originalId;
+
+            deckListViewModel.UpdateCardCountForDeck(deckId);
+            var parents = collection.Deck.Parents(deckId);
+            UpdateParentsCardCountIfNeeded(parents);            
         }
 
         private async Task DeleteChildrenIfNeeded(Dictionary<string, long> childs)
