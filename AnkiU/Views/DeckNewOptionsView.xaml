@@ -52,8 +52,8 @@
         <ComboBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Stretch" VerticalAlignment="Center"
                     Foreground="{Binding Foreground, ElementName=userControl}" BorderThickness="1" BorderBrush="Black"
                                   SelectedIndex="{x:Bind Options.Order, Mode=TwoWay}" >
-            <TextBlock Text="Show new cards in order added" TextAlignment="Left"/>
             <TextBlock Text="Show new cards in random order" TextAlignment="Left"/>
+            <TextBlock Text="Show new cards in order added" TextAlignment="Left"/>
         </ComboBox>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="New cards/day" VerticalAlignment="Center" HorizontalAlignment="Right"/>

@@ -57,9 +57,9 @@
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Order" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
         <ComboBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=userControl}"
-                                  SelectedIndex="{x:Bind Options.NewcardOrder, Mode=TwoWay}" BorderThickness="1"  BorderBrush="Black"> 
-            <TextBlock Text="Show new cards in order added" TextAlignment="Left"/>
+                                  SelectedIndex="{x:Bind Options.NewcardOrder, Mode=TwoWay}" BorderThickness="1"  BorderBrush="Black">
             <TextBlock Text="Show new cards in random order" TextAlignment="Left"/>
+            <TextBlock Text="Show new cards in order added" TextAlignment="Left"/>
         </ComboBox>
 
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Interval modifier" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
