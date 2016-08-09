@@ -65,15 +65,15 @@ namespace AnkiU.AnkiCore.Exporter
                     JsonObject mediaAnkiU = null;
                     if (includeSched && deckId == null)
                     {
-                        mediaPair = await exportVerbatim(archive);
-                        media = mediaPair.Key;
-                        mediaAnkiU = mediaPair.Value;
+                        mediaPair = await ExportVerbatim(archive);                        
                     }
                     else
                     {
                         // otherwise, filter
-                        media = await exportFiltered(tempExportPackageFolder, archive, fileName, (long)deckId);
+                        mediaPair = await ExportFiltered(tempExportPackageFolder, archive, fileName);
                     }
+                    media = mediaPair.Key;
+                    mediaAnkiU = mediaPair.Value;
                     // media map
                     ZipArchiveEntry entry = archive.CreateEntry("media");
                     using (StreamWriter writer = new StreamWriter(entry.Open()))
@@ -111,7 +111,7 @@ namespace AnkiU.AnkiCore.Exporter
             }
         }
 
-        private async Task<KeyValuePair<JsonObject, JsonObject>> exportVerbatim(ZipArchive archive)
+        private async Task<KeyValuePair<JsonObject, JsonObject>> ExportVerbatim(ZipArchive archive)
         {
             // close our deck & write it into the zip file, and reopen
             count = sourceCol.CardCount();
@@ -120,37 +120,7 @@ namespace AnkiU.AnkiCore.Exporter
             try
             {
                 archive.CreateEntryFromFile(sourcePath, "collection.anki2");
-                // copy all media
-                JsonObject media = new JsonObject();
-                JsonObject mediaAnkiU = new JsonObject();
-                if (!includeMedia)
-                {
-                    return new KeyValuePair<JsonObject,JsonObject>(media, mediaAnkiU);
-                }
-
-                if (sourceCol.Media.MediaFolder != null)
-                {
-                    int c = 0;
-                    
-                    foreach (var folder in await sourceCol.Media.MediaFolder.GetFoldersAsync())
-                    {
-                        JsonObject mediaFolderJson = new JsonObject();
-                        var mediaFiles = await folder.GetFilesAsync();
-                        if (mediaFiles != null && mediaFiles.Count != 0)
-                        {
-                            foreach (var f in mediaFiles)
-                            {
-                                string index = c.ToString();                                
-                                archive.CreateEntryFromFile(f.Path, index);                                
-                                media[index] = JsonValue.CreateStringValue(f.Name);
-                                mediaFolderJson[index] = JsonValue.CreateStringValue(f.Name);
-                                c++;
-                            }
-                            mediaAnkiU[folder.Name] = mediaFolderJson;
-                        }
-                    }
-                }
-                return new KeyValuePair<JsonObject, JsonObject>(media, mediaAnkiU);
+                return await PackageMediaFiles(archive);
             }
             catch (Exception)
             {
@@ -162,7 +132,44 @@ namespace AnkiU.AnkiCore.Exporter
             }                        
         }
 
-        private async Task<JsonObject> exportFiltered(StorageFolder folder, ZipArchive archive, string fileName, long deckId)
+        private async Task<KeyValuePair<JsonObject, JsonObject>> PackageMediaFiles(ZipArchive archive)
+        {            
+            JsonObject media = new JsonObject();
+            JsonObject mediaAnkiU = new JsonObject();            
+
+            if (sourceCol.Media.MediaFolder != null && includeMedia)
+            {
+                var folders = await sourceCol.Media.MediaFolder.GetFoldersAsync();
+                await MapAndAddMediafires(archive, media, mediaAnkiU, folders);
+            }
+            return new KeyValuePair<JsonObject, JsonObject>(media, mediaAnkiU);
+        }
+
+        private async Task MapAndAddMediafires(ZipArchive archive, JsonObject media, 
+                                                    JsonObject mediaAnkiU, IReadOnlyList<StorageFolder> deckIdFolders)
+        {
+            int c = 0;
+            foreach (var folder in deckIdFolders)
+            {
+                JsonObject mediaFolderJson = new JsonObject();
+                var mediaFiles = await folder.GetFilesAsync();
+                if (mediaFiles != null && mediaFiles.Count != 0)
+                {
+                    foreach (var f in mediaFiles)
+                    {
+                        string index = c.ToString();
+                        archive.CreateEntryFromFile(f.Path, index);
+                        media[index] = JsonValue.CreateStringValue(f.Name);
+                        mediaFolderJson[index] = JsonValue.CreateStringValue(f.Name);
+                        c++;
+                    }
+                    mediaAnkiU[folder.Name] = mediaFolderJson;
+                }
+            }
+        }
+
+        private async Task<KeyValuePair<JsonObject, JsonObject>> ExportFiltered(StorageFolder folder, ZipArchive archive, 
+                                                                                string fileName)
         {
             // export into the anki2 file
             string colfile = fileName.Replace(".apkg", ".anki2");
@@ -173,27 +180,42 @@ namespace AnkiU.AnkiCore.Exporter
 
             // and media
             prepareMedia();
+
             JsonObject media = new JsonObject();
+            JsonObject mediaAnkiU = new JsonObject();
             StorageFolder sourMediaFolder = sourceCol.Media.MediaFolder;
-            if (sourMediaFolder != null)
+
+            if (sourMediaFolder != null && includeMedia)
             {
+                var folders = await GetDeckMediaFolders(deckId, sourMediaFolder);
+                await MapAndAddMediafires(archive, media, mediaAnkiU, folders);
+            }
+
+            return new KeyValuePair<JsonObject, JsonObject>(media, mediaAnkiU);
+        }
+
+        private async Task<IReadOnlyList<StorageFolder>> GetDeckMediaFolders(long? deckId, StorageFolder sourMediaFolder)
+        {            
+            if (deckId != null)
+            {
+                List<StorageFolder> folders = new List<StorageFolder>();
                 var deckIdFolder = await sourMediaFolder.TryGetItemAsync(deckId.ToString()) as StorageFolder;
                 if (deckIdFolder != null)
+                    folders.Add(deckIdFolder);
+
+                var children = sourceCol.Deck.Children((long)deckId);
+                foreach (var deck in children)
                 {
-                    int c = 0;                    
-                    foreach (string f in mediaFiles)
-                    {
-                        StorageFile sf = await deckIdFolder.TryGetItemAsync(f) as StorageFile;
-                        if (sf != null)
-                        {
-                            archive.CreateEntryFromFile(sf.Path, c.ToString());
-                            media[c.ToString()] = JsonValue.CreateStringValue(f);
-                            c++;
-                        }
-                    }
-                }                
+                    deckIdFolder = await sourMediaFolder.TryGetItemAsync(deck.Value.ToString()) as StorageFolder;
+                    if (deckIdFolder != null)
+                        folders.Add(deckIdFolder);
+                }
+                return folders;
             }
-            return media;
+            else
+            {
+                return await sourMediaFolder.GetFoldersAsync();
+            }            
         }
 
         protected void prepareMedia()
