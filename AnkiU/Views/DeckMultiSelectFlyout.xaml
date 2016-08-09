@@ -14,25 +14,28 @@
         <Flyout x:Name="flyout" x:Key="MultiDeckSelectFlyoutTemplate" Closed="FlyoutClosedEvent">
             <ContentPresenter>
                 <Grid x:Name="rootGrid" MaxWidth="400">
-                    <ItemsControl ItemsSource="{Binding}"   
+                    <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" 
+                                  HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding}"   
                                   x:Name="deckListView" Margin="5,5,15,5"
                                   HorizontalAlignment="Stretch"
                                   Padding="0" >
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical"  />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="data:DeckInformation" x:Name="deckTemplate">
-                                <CheckBox  Background="Transparent" VerticalAlignment="Center" IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"  />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="data:DeckInformation" x:Name="deckTemplate">
+                                    <CheckBox  Background="Transparent" VerticalAlignment="Center" IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                                            Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"
                                            Foreground="Black" HorizontalContentAlignment="Left"  HorizontalAlignment="Stretch">
-                                    <TextBlock TextAlignment="Left" FontSize="14" TextWrapping="Wrap" Text="{x:Bind Name, Mode=OneTime}"/>
-                                </CheckBox>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                        <TextBlock TextAlignment="Left" FontSize="14" TextWrapping="Wrap" Text="{x:Bind Name, Mode=OneTime}"/>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
                 </Grid>
             </ContentPresenter>
         </Flyout>
