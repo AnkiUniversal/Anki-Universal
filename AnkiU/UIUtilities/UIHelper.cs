@@ -241,7 +241,7 @@ namespace AnkiU.UIUtilities
             }
             foreach (var ex in existing)
             {
-                if (ex.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
+                if (ex.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                 {
                     await ShowMessageDialog(errorMessage);
                     return false;
