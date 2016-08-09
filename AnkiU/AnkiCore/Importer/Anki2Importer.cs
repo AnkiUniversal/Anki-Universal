@@ -110,13 +110,14 @@ namespace AnkiU.AnkiCore.Importer
         private async Task MakeSureNoConflictDeckName()
         {            
             var destDeckNames = destCol.Deck.AllNames();
-            bool isDefaultDeck = false;
-            foreach (var name in sourceCol.Deck.AllNames())
+            bool isDefaultDeck = false;           
+            
+            foreach (var deck in sourceCol.Deck.All())
             {                
-                string deckName = name;
+                string deckName = deck.GetNamedString("name");
                 if (deckName.Equals(Constant.DEFAULT_DECKNAME, StringComparison.OrdinalIgnoreCase))
                 {
-                    deckName = ChangeDefaultDeckname(name, deckName);
+                    deckName = ChangeDefaultDeckname(deck.GetNamedString("name"), deckName);
                     isDefaultDeck = true;
                 }
 
@@ -127,7 +128,9 @@ namespace AnkiU.AnkiCore.Importer
 
                     bool isRename;
                     if (isDefaultDeck)
-                        isRename = true;
+                    {
+                        isRename = true;                        
+                    }
                     else
                         isRename = await DuplicateDeckEvent(deckName);
                     if (isRename)
@@ -148,6 +151,8 @@ namespace AnkiU.AnkiCore.Importer
                         RenameDeckInSource(deckName, newName);
                     }
                 }
+
+                isDefaultDeck = false;
             }
         }
 
