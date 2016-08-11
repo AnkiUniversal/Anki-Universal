@@ -206,21 +206,13 @@ namespace AnkiU.Pages
             return false;
         }
         private void SaveConfigToDeck()
-        {            
+        {
             config["name"] = JsonValue.CreateStringValue(CurrentName);
 
             foreach (var option in Options)
                 option.Key.SaveOptionsToJsonConfig();
 
-            var newOrder = (int)config.GetNamedObject("new").GetNamedNumber("order");
-            if (oldCardOrder != newOrder)
-            {
-                //Order of current deck has changed, so have to resort
-                if (newOrder == (int)NewCardInsertOrder.RANDOM)
-                    collection.Sched.RandomizeCards(currentDeckId);
-                else
-                    collection.Sched.OrderCards(currentDeckId);
-            }
+            ResortAllCardsOfDecksIfNeeded();
 
             if (deckSelectPage.IsCreatingNewConfig)
             {
@@ -229,10 +221,31 @@ namespace AnkiU.Pages
             }
             var currentDeck = collection.Deck.Get(currentDeckId);
             currentDeck["conf"] = config.GetNamedValue("id");
-            collection.Deck.Save(currentDeck);            
+            collection.Deck.Save(currentDeck);
             collection.Deck.Save(config);
             collection.SaveAndCommitAsync();
-            Frame.GoBack(); 
+            Frame.GoBack();
+        }
+
+        private void ResortAllCardsOfDecksIfNeeded()
+        {
+            var newOrder = (int)config.GetNamedObject("new").GetNamedNumber("order");
+            if (oldCardOrder != newOrder)
+            {
+                //Resort all other decks using this conf first
+                if (!deckSelectPage.IsCreatingNewConfig)
+                    collection.Sched.ResortConf(config);
+
+                //Make sure current deck is also sorted
+                var deckIds = collection.Deck.DeckIdsForConf(config);
+                if (!deckIds.Contains(currentDeckId))
+                {
+                    if (newOrder == (int)NewCardInsertOrder.RANDOM)
+                        collection.Sched.RandomizeCards(currentDeckId);
+                    else
+                        collection.Sched.OrderCards(currentDeckId);
+                }
+            }
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
