@@ -407,7 +407,7 @@ namespace AnkiU.UserControls
         }
 
         private void CreateDynamicDeckConfigs(JsonObject dynamicDeck, JsonObject deck)
-        {
+        {            
             switch (studyOption)
             {
                 case CustomStudyOption.ReviewForgotten:
@@ -447,7 +447,10 @@ namespace AnkiU.UserControls
                                                             tags.ToString().Trim(),
                                                             cramNumberBox.Number,
                                                             (int)DynamicDeckOrder.RANDOM);
-                    dynamicDeck["resched"] = JsonValue.CreateBooleanValue(false);
+                    if(rescheduleCheckBox.IsChecked == true)
+                        dynamicDeck["resched"] = JsonValue.CreateBooleanValue(true);
+                    else
+                        dynamicDeck["resched"] = JsonValue.CreateBooleanValue(false);
                     break;
                 default:
                     break;

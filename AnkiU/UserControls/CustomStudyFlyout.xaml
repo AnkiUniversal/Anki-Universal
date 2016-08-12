@@ -110,7 +110,7 @@
 
                     <Border Grid.Row="1" BorderThickness="1" Margin="10,0,10,5"  BorderBrush="{StaticResource ButtonBackGroundCompliment}">
                         <Grid Margin="5" >
-                            <StackPanel Visibility="Visible" Grid.Row="1" x:Name="standardOptionsRoot">
+                            <StackPanel Visibility="Visible" x:Name="standardOptionsRoot">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock x:Name="chosenLabel" Text="New cards in deck:" Margin="0,0,5,0" Foreground="{Binding Foreground, ElementName=userControl}" />
                                     <TextBlock x:Name="chosenLabelValue" FontWeight="SemiBold" Text="0" Foreground="{Binding Foreground, ElementName=userControl}" />
@@ -124,6 +124,7 @@
 
                             <Grid x:Name="cramModeRoot" Visibility="Collapsed">
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -143,6 +144,8 @@
                                     <TextBlock Text="Exclude tags:"  Foreground="{Binding Foreground, ElementName=userControl}"/>
                                     <views:TagInformationView x:Name="excludeTags" AddVisibility="Collapsed" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}"/>
                                 </StackPanel>
+
+                                <CheckBox Grid.Row="3" Content="Reschedule cards based on my answer" x:Name="rescheduleCheckBox" IsThreeState="False"/>
                             </Grid>
                         </Grid>
                     </Border>
