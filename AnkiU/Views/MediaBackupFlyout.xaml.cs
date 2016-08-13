@@ -73,7 +73,7 @@ namespace AnkiU.Views
                 string name = collection.Deck.GetDeckName(id);
                 allDecks.Add(new DeckInformation(name, 0, 0, id, false));
             }
-            allDecks.Sort((x, y) => { return x.Name.CompareTo(y.Name); });
+            allDecks.Sort((x, y) => { return x.BaseName.CompareTo(y.BaseName); });
             deckListView.DataContext = allDecks;
         }
 
@@ -139,7 +139,7 @@ namespace AnkiU.Views
                     if (total == 0)
                         continue;
 
-                    string deckName = collection.Deck.GetDeckName(folder.Key);
+                    string deckName = collection.Deck.GetDeckName(folder.Key).Replace(Constant.SUBDECK_SEPERATE, "_");
                     await UpdateProgessDialog(deckName);
 
                     string zipFileName = deckName + "_" + folder.Value.Name + ".zip";
