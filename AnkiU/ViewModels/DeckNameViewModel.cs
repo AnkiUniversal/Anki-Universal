@@ -39,9 +39,6 @@ namespace AnkiU.ViewModels
             var deckList = collection.Deck.All();
             List<DeckInformation> temp = new List<DeckInformation>();
 
-            if (isIncludeAllDeck)
-                temp.Add(new DeckInformation("All decks", 0, 0, ALL_DECKS_ID, false));
-
             foreach (var deck in deckList)
             {
                 long did = (long)deck.GetNamedNumber("id");
@@ -57,8 +54,13 @@ namespace AnkiU.ViewModels
             }
             temp.Sort((a, b) =>
             {
-                return a.Name.CompareTo(b.Name);
+                return a.BaseName.CompareTo(b.BaseName);
             });
+
+
+            if (isIncludeAllDeck)
+                temp.Insert(0, new DeckInformation("All decks", 0, 0, ALL_DECKS_ID, false));
+
             Decks = new ObservableCollection<DeckInformation>(temp);
         }
 
