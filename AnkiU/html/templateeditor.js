@@ -286,12 +286,14 @@ function KeyPress(e) {
 
     var evtobj = window.event ? event : e
 
+    //Updated (13_08_2016): this function is no longer needed on new Windows Phone 10 Vers
+    //But we still keeps it here if it appears again in future updates
     //For touch input, enter key does not function well in
     //tinymce so we have to handle it separately    
-    if (isTouchInput && evtobj.keyCode == 13) {
-        NotifyButtonClick('enter');
-        return false;
-    }
+    //if (isTouchInput && evtobj.keyCode == 13) {
+    //    NotifyButtonClick('enter');
+    //    return false;
+    //}
 
     if (evtobj.ctrlKey) {
         if (evtobj.keyCode == 69) {
