@@ -57,7 +57,7 @@ namespace AnkiU.ViewModels
             }
             temp.Sort((a, b) =>
             {
-                return a.Id.CompareTo(b.Id);
+                return a.Name.CompareTo(b.Name);
             });
             Decks = new ObservableCollection<DeckInformation>(temp);
         }
