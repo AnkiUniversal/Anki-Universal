@@ -122,8 +122,7 @@
         </Storyboard>
     </Page.Resources>
 
-    <Grid x:Name="mainGrid" Background="{Binding Background, ElementName=userControl}" 
-          >
+    <Grid x:Name="mainGrid" Background="{Binding Background, ElementName=userControl}" >
         <Grid.RowDefinitions>
             <RowDefinition x:Name="cardViewGrid" Height="*"/>
             <RowDefinition x:Name="buttonGrid" Height="50"/>

@@ -209,13 +209,14 @@ namespace AnkiU.Pages
             isCanGoBack = true;
             if (currentCard == null)
                 FrameGoBack();
-            if (currentCard.Id == card.Id && isSuspend)
+            else if (currentCard.Id == card.Id && isSuspend)
                 await GotoNextQuestionWithoutAnswering();
         }
 
         private void FrameGoBack()
         {            
-            Frame.GoBack();
+            if(Frame.CanGoBack)
+                Frame.GoBack();
         }
 
         private void updateNumberOfCardFirstLeech()
@@ -500,12 +501,12 @@ namespace AnkiU.Pages
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             mainPage.ChangeCusorToArrow();
-            collection.SaveAndCommit();
+            collection.SaveAndCommitAsync();
             if (!isCanNavigateFrom)
                 e.Cancel = true;
 
             HideAllButtonOfThisPage();
-            UnhookAllEvents();                        
+            UnhookAllEvents();
             cardView.ClearWebViewControl();
             if (inkToTextRecognizer != null)
                 inkToTextRecognizer.Close();
@@ -538,6 +539,10 @@ namespace AnkiU.Pages
 
         private async Task ChangeHtmlheader()
         {
+            //WARNING: Added to prevent async code problem on slow devices (like mobile)            
+            if (currentCard == null)
+                return;
+
             await ChangeDeckMediaFolder();
             await ChangeCardStyle();
         }
@@ -599,6 +604,10 @@ namespace AnkiU.Pages
         }
         private async Task GetContentAndDisplayQuestion()
         {
+            //WARNING: Added to prevent async code problem on slow devices (like mobile)            
+            if (currentCard == null)
+                return;
+
             GetQuestionAndAnswer();
             await DisplayQuestionView();
         }
@@ -742,17 +751,24 @@ namespace AnkiU.Pages
         }
         private void DisplayNumberOfAllCardTypes()
         {
+            CardTypeCounts typeCounts = GetRemainCardCount();
+            string text = String.Format(NUM_CARDS_STR, typeCounts.New, typeCounts.Learn, typeCounts.Review);
+            if (CollectionOptionViewModel.IsDueCountEnable(collection.Conf))
+                showAnswerButton.Header = text;
+            showAnswerButton.Body = "Show Answer";
+        }
+
+        private CardTypeCounts GetRemainCardCount()
+        {
             CardTypeCounts typeCounts;
             //If it's come from the undo queue, don't count it separately
             if (isCardFromQueue)
                 typeCounts = collection.Sched.AllCardTypeCounts();
             else
                 typeCounts = collection.Sched.AllCardTypeCounts(currentCard);
-            string text = String.Format(NUM_CARDS_STR, typeCounts.New, typeCounts.Learn, typeCounts.Review);        
-            if(CollectionOptionViewModel.IsDueCountEnable(collection.Conf))    
-                showAnswerButton.Header = text;
-            showAnswerButton.Body = "Show Answer";
+            return typeCounts;
         }
+
         private void DisplayOnlyShowAnswerButton()
         {
             HideAnswerButtons();
@@ -1030,8 +1046,8 @@ namespace AnkiU.Pages
         }
 
         private async Task ShowNextCardAndSaveAnswer(Sched.AnswerEase ease)
-        {
-            PopCardFromUndoQueueIfNeeded();
+        {            
+            RemoveCardFromUndoQueueIfNeeded();
             collection.Sched.AnswerCard(currentCard, ease);
             await ShowNextQuestion();
             mainPage.UndoButton.IsEnabled = true;
@@ -1040,12 +1056,12 @@ namespace AnkiU.Pages
 
         private async Task GotoNextQuestionWithoutAnswering()
         {            
-            PopCardFromUndoQueueIfNeeded();
+            RemoveCardFromUndoQueueIfNeeded();
             await ShowNextQuestion();
             mainPage.UndoButton.IsEnabled = true;
         }
 
-        private void PopCardFromUndoQueueIfNeeded()
+        private void RemoveCardFromUndoQueueIfNeeded()
         {
             if (isCardFromQueue)
             {
@@ -1067,19 +1083,31 @@ namespace AnkiU.Pages
                 }
             }
         }
-
+        
         private async Task ShowNextQuestion()
         {
-            if (TryPopNextCard())
+            try
             {
-                await ChangeHtmlHeaderIfNeeded();
-                await GetContentAndDisplayQuestion();
-                ClearInkCanVasIfNeeded();                
+                if (TryPopNextCard())
+                {
+                    await ChangeHtmlHeaderIfNeeded();
+                    await GetContentAndDisplayQuestion();
+                    ClearInkCanVasIfNeeded();
+                }
+                else
+                {
+                    if (isCanGoBack)                    
+                        FrameGoBack();                        
+                }
             }
+            catch //If any error happen we go back to release the cache
+            {
+                FrameGoBack();
+            }           
         }
         private async Task ChangeHtmlHeaderIfNeeded()
         {
-            if(currentDeckId != currentCard.DeckId)
+            if(currentCard != null && currentDeckId != currentCard.DeckId)
             {
                 currentDeckId = currentCard.DeckId;
                 await ChangeHtmlheader();
@@ -1095,11 +1123,7 @@ namespace AnkiU.Pages
                     collection.Deck.Remove(currentDeckId);
                     MainPage.RemoveDeckInPrefsIfNeeded(currentDeckId);
                 }
-                if (isCanGoBack && Frame.CanGoBack)
-                {
-                    FrameGoBack();
-                    return false;
-                }
+                return false;                
             }
             return true;
         }
@@ -1135,8 +1159,9 @@ namespace AnkiU.Pages
         private async void GobackToCardViewHtmlLoadedEvent()
         {
             cardView.CardHtmlLoadedEvent -= GobackToCardViewHtmlLoadedEvent;
+            cardView.CardHtmlLoadedEvent -= CardViewLoadedHandler;
             cardView.CardHtmlLoadedEvent += CardViewLoadedHandler;
-            await ChangeCardStyle();
+            await ChangeHtmlheader();
             await cardView.ChangeCardContent(question);
             DisplayShowAnswerButton();
         }
