@@ -23,6 +23,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 using System.Collections.Generic;
+using Windows.UI.Xaml;
 
 namespace AnkiU.Models
 {
@@ -44,21 +45,84 @@ namespace AnkiU.Models
             {
                 name = value;
                 RaisePropertyChanged("Name");
+
+                var split = name.Split(new string[] { Constant.SUBDECK_SEPERATE }, StringSplitOptions.RemoveEmptyEntries);
+                ChildLevel = split.Length;
+                BaseName = split[split.Length - 1];
+                if (split.Length < 2)
+                    ParentName = "";
+                else
+                    ParentName = split[split.Length - 2];
             }
         }
 
-
-        private string displayName;
-        public string DisplayName
+        private string baseName;
+        public string BaseName
         {
             get
             {
-                return displayName;
+                return baseName;
             }
             set
             {
-                displayName = value;
-                RaisePropertyChanged("DisplayName");
+                baseName = value;
+                RaisePropertyChanged("BaseName");
+            }
+        }
+
+        private string parentName;
+        public string ParentName
+        {
+            get
+            {
+                return parentName;
+            }
+            set
+            {
+                parentName = value;
+                RaisePropertyChanged("ParentName");
+            }
+        }
+
+        private int childLevel;
+        public int ChildLevel
+        {
+            get
+            {
+                return childLevel;
+            }
+            set
+            {
+                childLevel = value;
+                RaisePropertyChanged("ChildLevel");
+            }
+        }
+
+        private bool isParent;
+        public bool IsParent
+        {
+            get
+            {
+                return isParent;
+            }
+            set
+            {
+                isParent = value;
+                RaisePropertyChanged("IsParent");
+            }
+        }
+
+        private bool isShowChildren;
+        public bool IsShowChildren
+        {
+            get
+            {
+                return isShowChildren;
+            }
+            set
+            {
+                isShowChildren = value;
+                RaisePropertyChanged("IsShowChildren");
             }
         }
 
@@ -104,6 +168,20 @@ namespace AnkiU.Models
             }
         }
 
+        private Visibility visibility;
+        public Visibility Visibility
+        {
+            get
+            {
+                return visibility;
+            }
+            set
+            {
+                visibility = value;
+                RaisePropertyChanged("Visibility");
+            }
+        }
+
         private long id;
         public long Id
         {
@@ -128,7 +206,7 @@ namespace AnkiU.Models
             {
                 isDynamic = value;
             }
-        }
+        }        
 
         /// <summary>
         /// This is only mean to be used with view and viewmodel have checkbox
@@ -150,7 +228,20 @@ namespace AnkiU.Models
         {
             this.name = Name;
             var split = Name.Split(new string[] { Constant.SUBDECK_SEPERATE }, StringSplitOptions.RemoveEmptyEntries);
-            displayName = split[split.Length - 1];
+            childLevel = split.Length;
+            baseName = split[split.Length - 1];
+            if (split.Length < 2)
+            {
+                parentName = "";
+                visibility = Visibility.Visible;
+            }
+            else
+            {
+                parentName = split[split.Length - 2];
+                visibility = Visibility.Collapsed;
+            }
+            isShowChildren = false;
+            isParent = false;
 
             this.imagePath = ImagePath;
             this.newCards = NewCards;

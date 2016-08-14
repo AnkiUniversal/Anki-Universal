@@ -30,7 +30,7 @@
                   HorizontalAlignment="Stretch" SelectionChanged="ComboBoxSelectionChangedHandler">
             <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="data:DeckInformation">
-                    <TextBlock Text="{x:Bind Name}"  TextWrapping="Wrap" />
+                    <TextBlock Text="{x:Bind BaseName}"  TextWrapping="Wrap" />
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>

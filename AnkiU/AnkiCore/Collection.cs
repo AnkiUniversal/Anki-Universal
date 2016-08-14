@@ -133,6 +133,11 @@ namespace AnkiU.AnkiCore
             database.IsModified = false;
         }
 
+        public bool IsModified()
+        {
+            return database.IsModified;
+        }
+
         public Note GetNote(long id)
         {
             return new Note(this, id);
@@ -833,6 +838,11 @@ namespace AnkiU.AnkiCore
         }
 
         public int CardCount(params long[] deckIds)
+        {
+            return database.QueryScalar<int>("SELECT count() FROM cards WHERE did IN " + Utils.Ids2str(deckIds));
+        }
+
+        public int CardCount(List<long> deckIds)
         {
             return database.QueryScalar<int>("SELECT count() FROM cards WHERE did IN " + Utils.Ids2str(deckIds));
         }

@@ -50,7 +50,12 @@ namespace AnkiU.Pages
         private DeckSelectPage deckSelectPage;
         private Collection collection;
         private long currentDeckId;
-        private int oldCardOrder;
+
+        private int oldCardOrder;        
+        //If user select add or edit then old deck config != selected config
+        //Use this variable to dectect order changes
+        private int oldCardOrderOfSelectedDeck;
+
         private JsonObject config;
         private string oldName;
         private bool isExpertMode = false;
@@ -89,6 +94,8 @@ namespace AnkiU.Pages
             currentDeckId = deckSelectPage.SelectedDeckId;
             config = collection.Deck.GetConf(deckSelectPage.SelectedConfigId);
             oldCardOrder = (int)config.GetNamedObject("new").GetNamedNumber("order");
+            oldCardOrderOfSelectedDeck = (int)collection.Deck.ConfForDeckId(currentDeckId)
+                                              .GetNamedObject("new").GetNamedNumber("order");
 
             if (!deckSelectPage.IsCreatingNewConfig)
             {
@@ -210,15 +217,15 @@ namespace AnkiU.Pages
             config["name"] = JsonValue.CreateStringValue(CurrentName);
 
             foreach (var option in Options)
-                option.Key.SaveOptionsToJsonConfig();
-
-            ResortAllCardsOfDecksIfNeeded();
+                option.Key.SaveOptionsToJsonConfig();            
 
             if (deckSelectPage.IsCreatingNewConfig)
             {
                 long newConfigId = collection.Deck.CreateNewConfiguration(CurrentName, Utils.JsonToString(config));
                 config = collection.Deck.GetConf(newConfigId);
             }
+            ResortAllCardsOfDecksIfNeeded();
+
             var currentDeck = collection.Deck.Get(currentDeckId);
             currentDeck["conf"] = config.GetNamedValue("id");
             collection.Deck.Save(currentDeck);
@@ -240,12 +247,21 @@ namespace AnkiU.Pages
                 var deckIds = collection.Deck.DeckIdsForConf(config);
                 if (!deckIds.Contains(currentDeckId))
                 {
-                    if (newOrder == (int)NewCardInsertOrder.RANDOM)
-                        collection.Sched.RandomizeCards(currentDeckId);
-                    else
-                        collection.Sched.OrderCards(currentDeckId);
+                    ResortSelectedDeck(newOrder);
                 }
             }
+            else if(oldCardOrderOfSelectedDeck != newOrder)
+            {
+                ResortSelectedDeck(newOrder);
+            }
+        }
+
+        private void ResortSelectedDeck(int newOrder)
+        {
+            if (newOrder == (int)NewCardInsertOrder.RANDOM)
+                collection.Sched.RandomizeCards(currentDeckId);
+            else
+                collection.Sched.OrderCards(currentDeckId);
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

@@ -38,6 +38,7 @@ using AnkiU.Models;
 using AnkiU.ViewModels;
 using Windows.UI;
 using AnkiU.Interfaces;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace AnkiU.Views
 {
@@ -45,15 +46,21 @@ namespace AnkiU.Views
     {
         public event DeckItemClickEventHandler DeckItemClickEvent;
         public event DeckDragAnDropEventHandler DragAnDropEvent;
+        public event ExpandChildrenClickEventHandler ExpandChildrenClickEvent;
 
         private DeckInformation draggedDeck;
-
-        public bool IsDragAndDropEnable { get { return ListView.CanDragItems; } }
+        
+        public bool IsDragAndDropEnable { get { return ListView.CanDragItems; } }        
 
         public DeckListView()
         {
             this.InitializeComponent();
+        }
 
+        public FrameworkElement GetViewOfItem(DeckInformation deck)
+        {
+            var item = ListView.ContainerFromItem(deck);
+            return item as FrameworkElement;
         }
 
         private void ListViewItemClickHandler(object sender, ItemClickEventArgs e)
@@ -63,9 +70,8 @@ namespace AnkiU.Views
                 throw new Exception("Wrong data type");
 
             if(!IsDragAndDropEnable)
-                DeckItemClickEvent?.Invoke(item.Id);
+                DeckItemClickEvent?.Invoke(item);
         }
-
 
         private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
@@ -74,11 +80,38 @@ namespace AnkiU.Views
 
         private void OnDragEnter(object sender, DragEventArgs e)
         {
-            e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Link;
+            var deckInfor = (sender as FrameworkElement).DataContext as DeckInformation;
+            if (deckInfor == null)
+                return;
+
+            if(deckInfor.Id == draggedDeck.Id)
+                e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
+            else
+                e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Link;
+            
+            var viewItem = ListView.ContainerFromItem(deckInfor) as ListViewItem;
+            viewItem.Background = UIHelper.IndioBrush;
+        }
+
+        private void OnDragLeave(object sender, DragEventArgs e)
+        {            
+            ChangeToTransparent(sender);
+        }
+
+        private void ChangeToTransparent(object sender)
+        {
+            var deckInfor = (sender as FrameworkElement).DataContext as DeckInformation;
+            if (deckInfor == null)
+                return;
+
+            var viewItem = ListView.ContainerFromItem(deckInfor) as ListViewItem;
+            viewItem.Background = UIHelper.Transparent;
         }
 
         private void OnDrop(object sender, DragEventArgs e)
         {
+            ChangeToTransparent(sender);
+
             var parent = UIHelper.GetDeck(sender);
             if (parent == null || draggedDeck == null || parent.Id == draggedDeck.Id)
                 return;
@@ -93,6 +126,47 @@ namespace AnkiU.Views
         public void DisableDragAndDropMode()
         {
             ListView.CanDragItems = false;
+        }
+
+        private void OnExpandChildren(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button == null)
+                return;
+
+            var deckInfor = button.DataContext as DeckInformation;
+            if (deckInfor == null)
+                return;
+
+            ExpandChildrenClickEvent?.Invoke(deckInfor);
+        }
+
+        private void ButtonPointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            UIHelper.ChangeToHandCusor();
+        }
+
+        private void ButtonPointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            UIHelper.ChangeToArrowCusor();
+        }
+
+        public FrameworkElement GetItemView(DeckInformation deck)
+        {
+            return (ListView.ContainerFromItem(deck) as FrameworkElement);
+        }
+
+        private void OnGridDeckListDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            var deckInfor = sender.DataContext as DeckInformation;
+            if (deckInfor == null)
+                return;
+
+            var item = ListView.ContainerFromItem(deckInfor) as ListViewItem;
+            if (item == null)
+                return;
+
+            item.Visibility = deckInfor.Visibility;
         }
     }
 }

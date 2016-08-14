@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AnkiU.Views"
     xmlns:data="using:AnkiU.Models"
+    xmlns:panel="using:AnkiU.UIUtilities"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:DataBindingConverters="using:AnkiU.UIUtilities.DataBindingConverters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,6 +14,11 @@
 
     <UserControl.Resources>
         <DataBindingConverters:NumberOfCardToSolidBrushConverter x:Key="NumberOfCardToSolidBrushConverter"/>
+        <DataBindingConverters:ChildLevelToMarginConverter x:Key="ChildLevelToMarginConverter"/>
+        <DataBindingConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <DataBindingConverters:BoolToExpandRotateConverter x:Key="BoolToExpandRotateConverter"/>
+        <DataBindingConverters:ChildLevelToVisibilityConverter x:Key="ChildLevelToVisibilityConverter"/>
+
         <Thickness x:Key="ShadowLayerThickness">0,0,1,1</Thickness>
 
         <Storyboard x:Name="Enlarge">
@@ -27,129 +33,153 @@
                 <LinearDoubleKeyFrame KeyTime="0:0:0.2" Value="1.05"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+
+        <Storyboard x:Name="StoryboardSample">
+            <DoubleAnimation Duration="0:0:2" To="0"
+    			Storyboard.TargetProperty="Opacity"
+    			Storyboard.TargetName="MyGrid" />
+        </Storyboard>
+
     </UserControl.Resources>
 
     <Grid Background="Transparent" RenderTransformOrigin="0.5,0.5"   >
 
         <Button x:Name="hitTestBindingTarget" Visibility="Collapsed" />
         <Border x:Name="shadowBorderBindingTarget" BorderBrush="Transparent"  Background="Transparent" Width="0" Height="0" />
-        <Hub x:Name="mainHub"
-             Padding="0"  Style="{StaticResource DeckHubStyle}"             
-             HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-             Orientation="Vertical" Background="Transparent">
 
-            <HubSection x:Name="GroupsHubSection" Padding="0" 
-                        HorizontalAlignment="Center" VerticalAlignment="Top" Background="Transparent">
-                <DataTemplate x:DataType="data:DeckInformation">
-                    <GridView  AutomationProperties.AutomationId="GroupGridView"
-                        AutomationProperties.Name="Grouped Items"
-                        ItemsSource="{Binding}"                                    
-                        IsSwipeEnabled="False"
-                        Background="Transparent"
-                        IsItemClickEnabled="True"
-                        SelectionMode="None"                 
-                        CanDragItems="True"                        
-                        AllowDrop="True"                        
-                        DragItemsStarting="OnDragItemsStarting"
-                               DragItemsCompleted="OnDragItemsCompleted"
-                        ItemClick="GridViewItemClickHandler" >
-                        <GridView.Transitions>
+
+        <GridView  AutomationProperties.AutomationId="GroupGridView"
+                   x:Name="deckGridView"
+                    VerticalAlignment="Stretch" HorizontalAlignment="Center"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ScrollViewer.HorizontalScrollMode="Disabled"
+                    ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                    ScrollViewer.VerticalScrollMode="Auto"
+                    AutomationProperties.Name="Grouped Items"
+                    ItemsSource="{Binding}"                         
+                    IsSwipeEnabled="False"
+                    Background="Transparent"
+                    IsItemClickEnabled="True"
+                    SelectionMode="None"                 
+                    CanDragItems="True"                        
+                    AllowDrop="True"                        
+                    DragItemsStarting="OnDragItemsStarting"
+                    DragItemsCompleted="OnDragItemsCompleted">
+            <GridView.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </GridView.Transitions>
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid x:Name="GroupItemsWrapGrid" Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                    <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    <Setter Property="TabNavigation" Value="Local"/>
+                    <Setter Property="IsHoldingEnabled" Value="True"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
+                    <Setter Property="Margin" Value="2,0,2,4"/>
+                    <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
+                    <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
+                    <Setter Property="Template" Value="{StaticResource DeckGridViewStyle}" />
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemTemplate>
+                <DataTemplate  x:DataType="data:DeckInformation">
+                    <Grid
+                        BorderThickness="0" Padding="0" Width="157" 
+                        AutomationProperties.Name="ItemRootGrid" x:Name="rootGrid"
+                        DragStarting="OnElementDragStarting" Background="Transparent" DragLeave="OnDragLeave"
+                        DragEnter="OnDragEnter" Drop="OnDrop" AllowDrop="True" RenderTransformOrigin="0,0">
+                        <Grid.Transitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition/>
                             </TransitionCollection>
-                        </GridView.Transitions>
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid x:Name="GroupItemsWrapGrid" Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <GridView.ItemContainerStyle>
-                            <Style TargetType="GridViewItem">
-                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                <Setter Property="TabNavigation" Value="Local"/>
-                                <Setter Property="IsHoldingEnabled" Value="True"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
-                                <Setter Property="Margin" Value="2,0,2,4"/>
-                                <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
-                                <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
-                                <Setter Property="Template" Value="{StaticResource DeckGridViewStyle}"/>
-                            </Style>
-                        </GridView.ItemContainerStyle>
-                        <GridView.ItemTemplate>
-                            <DataTemplate  x:DataType="data:DeckInformation">
-                                <Grid BorderThickness="0" Padding="0" Width="157" 
-                                      AutomationProperties.Name="ItemRootGrid"
-                                      DragStarting="OnElementDragStarting" Background="Transparent" DragLeave="OnDragLeave"
-                                      DragEnter="OnDragEnter" Drop="OnDrop" AllowDrop="True" RenderTransformOrigin="0,0">
-                                    <Grid.RenderTransform>
-                                        <CompositeTransform ScaleX="1" ScaleY="1"/>
-                                    </Grid.RenderTransform>
+                        </Grid.Transitions>
 
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <Border x:Name="Shadow" Grid.Row="0" BorderBrush="{StaticResource ShadowOuterlayer}"  BorderThickness="1" Visibility="{Binding Visibility, ElementName=shadowBorderBindingTarget}" >
-                                        <Border BorderBrush="{StaticResource ShadowMiddleLayer}"  BorderThickness="{StaticResource ShadowLayerThickness}">
-                                            <Border BorderBrush="{StaticResource ShadowInnerLayer}" BorderThickness="{StaticResource ShadowLayerThickness}">
-                                            </Border>
-                                        </Border>
-                                    </Border>
-                                    <Grid Margin="1,1,3,3"  Height="152" Width="153"
+                        <Grid.RenderTransform>
+                            <CompositeTransform ScaleX="1" ScaleY="1"/>
+                        </Grid.RenderTransform>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Shadow" Grid.Row="0" BorderBrush="{StaticResource ShadowOuterlayer}"  BorderThickness="1" Visibility="{Binding Visibility, ElementName=shadowBorderBindingTarget}" >
+                            <Border BorderBrush="{StaticResource ShadowMiddleLayer}"  BorderThickness="{StaticResource ShadowLayerThickness}">
+                                <Border BorderBrush="{StaticResource ShadowInnerLayer}" BorderThickness="{StaticResource ShadowLayerThickness}">
+                                </Border>
+                            </Border>
+                        </Border>
+                        <Grid Margin="1,1,3,3"  Height="152" Width="153"
                                           BorderBrush="White" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="120"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="120"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
 
-                                        <Border Background="{StaticResource DeckListItemColorBrush}" 
+                            <Border Background="{StaticResource DeckListItemColorBrush}" 
                                                 VerticalAlignment="Top" HorizontalAlignment="Left"  Grid.Row="0">
-                                            <Image Source="{x:Bind ImagePath, Mode=OneWay}" Stretch="Fill" 
+                                <Image Source="{x:Bind ImagePath, Mode=OneWay}" Stretch="Fill" 
                                                AutomationProperties.Name="{x:Bind Name, Mode=OneWay}" HorizontalAlignment="Center"/>
-                                        </Border>
+                            </Border>
 
-                                        <Button Grid.RowSpan="2" Style="{StaticResource HorverShowButton}" 
+                            <Border VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="20" Opacity="0.5" 
+                                    Visibility="{x:Bind ChildLevel, Converter={StaticResource ChildLevelToVisibilityConverter},  Mode=OneWay}" >
+                                <Border.Background>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="Black" Offset="1"/>
+                                        <GradientStop Color="Gray" Offset="0"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+                            <TextBlock Margin="2,0,0,2" Text="{x:Bind ParentName, Mode=OneWay}"  VerticalAlignment="Bottom" HorizontalAlignment="Stretch" 
+                                       Visibility="{x:Bind ChildLevel, Converter={StaticResource ChildLevelToVisibilityConverter},  Mode=OneWay}"
+                                                    TextAlignment="Center" FontSize="12" FontWeight="SemiBold" Foreground="White" TextWrapping="NoWrap" />
+
+                            <Button Grid.RowSpan="2" Style="{StaticResource HorverShowButton}"
                                                 Click="ButtonItemClickHandler" IsRightTapEnabled="False" IsHitTestVisible="{Binding IsHitTestVisible, ElementName=hitTestBindingTarget}"
                                                 Opacity="0.3" Background="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
-                                        <TextBlock Margin="4,2,4,0" Text="{x:Bind Name, Mode=OneWay}"  VerticalAlignment="Top" 
+
+                            <TextBlock Margin="4,2,4,0" Text="{x:Bind BaseName, Mode=OneWay}"  VerticalAlignment="Top" 
                                                    HorizontalAlignment="Stretch" IsHitTestVisible="False" IsTapEnabled="False" IsRightTapEnabled="False"
                                                     TextAlignment="Left" FontSize="14" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap" />
 
-                                        <Border IsHitTestVisible="False" IsTapEnabled="False" Height="30"
+                            <Border IsHitTestVisible="False" IsTapEnabled="False" Height="30"
                                                 VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="Transparent" 
                                                 Grid.Row="1" BorderBrush="White" BorderThickness="0,1,0,0" >
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Border BorderThickness="0,0,0,0" Grid.Column="0" Background="{Binding NewCards, Converter={StaticResource NumberOfCardToSolidBrushConverter},  Mode=OneWay}"/>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"  VerticalAlignment="Center" Grid.Column="0">
-                                                    <TextBlock Text="New:" FontSize="14" Foreground="White" Margin="2,0,0,0" />
-                                                    <TextBlock x:Name="TextNewCards" Text="{x:Bind NewCards, Mode=OneWay}" FontSize="14" Margin="2,0,2,0" Foreground="White"/>
-                                                </StackPanel>
-                                                <Border BorderThickness="1,0,0,0" BorderBrush="White" Grid.Column="1" Background="{Binding DueCards, Converter={StaticResource NumberOfCardToSolidBrushConverter},  Mode=OneWay}"/>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" >
-                                                    <TextBlock Text="Due:" FontSize="14"  Foreground="White"/>
-                                                    <TextBlock x:Name="TextDueCards" Text="{x:Bind DueCards, Mode=OneWay}" FontSize="14" Margin="2,0,2,0" Foreground="White" />
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
-
-                                    </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border BorderThickness="0,0,0,0" Grid.Column="0" Background="{Binding NewCards, Converter={StaticResource NumberOfCardToSolidBrushConverter},  Mode=OneWay}"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"  VerticalAlignment="Center" Grid.Column="0">
+                                        <TextBlock Text="New:" FontSize="14" Foreground="White" Margin="2,0,0,0" />
+                                        <TextBlock x:Name="TextNewCards" Text="{x:Bind NewCards, Mode=OneWay}" FontSize="14" Margin="2,0,2,0" Foreground="White"/>
+                                    </StackPanel>
+                                    <Border BorderThickness="1,0,0,0" BorderBrush="White" Grid.Column="1" Background="{Binding DueCards, Converter={StaticResource NumberOfCardToSolidBrushConverter},  Mode=OneWay}"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" >
+                                        <TextBlock Text="Due:" FontSize="14"  Foreground="White"/>
+                                        <TextBlock x:Name="TextDueCards" Text="{x:Bind DueCards, Mode=OneWay}" FontSize="14" Margin="2,0,2,0" Foreground="White" />
+                                    </StackPanel>
                                 </Grid>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
+                            </Border>
+
+                        </Grid>
+                    </Grid>
                 </DataTemplate>
-            </HubSection>
-        </Hub>
+            </GridView.ItemTemplate>
+        </GridView>
 
     </Grid>
 </UserControl>

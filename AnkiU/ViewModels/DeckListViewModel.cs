@@ -26,6 +26,9 @@ using AnkiU.AnkiCore;
 using Windows.Data.Json;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Windows.UI.Xaml;
+using AnkiU.Interfaces;
+using AnkiU.UIUtilities;
 
 namespace AnkiU.ViewModels
 {
@@ -66,20 +69,49 @@ namespace AnkiU.ViewModels
         }
 
         public long TotalNewCards { get; set; }
-        public long TotalDueCards { get; set; }
+        public long TotalDueCards { get; set; }        
 
         public DeckListViewModel (Collection collection)
         {
             this.Collection = collection;
             ResetCardsCount();
             sortBy = (SortBy)MainPage.UserPrefs.SortDeckBy;
-            Decks = new ObservableCollection<DeckInformation>();
+            Decks = new ObservableCollection<DeckInformation>();            
+        }  
+
+        public void ToggleChildrenVisibility(DeckInformation parent, IAnkiDecksView decksView)
+        {
+            var children = GetChildren(parent);            
+            parent.IsShowChildren = !parent.IsShowChildren;
+
+            foreach (var deck in children.Desks)
+            {
+                if (parent.IsShowChildren)
+                {
+                    if (Collection.Deck.IsParent(parent.Name, deck.Name))
+                        deck.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    deck.Visibility = Visibility.Collapsed;
+                    deck.IsShowChildren = false;
+                }
+                var item = decksView.GetItemView(deck);
+                if (item != null)
+                    item.Visibility = deck.Visibility;                
+            }
         }
 
-        private void ResetCardsCount()
+        public void ShowAllDecks(IAnkiDecksView decksView)
         {
-            TotalNewCards = 0;
-            TotalDueCards = 0;
+            foreach (var deck in Decks)
+            {                
+                deck.Visibility = Visibility.Visible;
+                deck.IsShowChildren = true;                
+                var item = decksView.GetItemView(deck);
+                if (item != null)
+                    item.Visibility = deck.Visibility;
+            }
         }
 
         public bool HasDeck(long deckId)
@@ -88,6 +120,16 @@ namespace AnkiU.ViewModels
                 if (deck.Id == deckId)
                     return true;
             return false;
+        }
+
+        public DeckInformation GetDeck(string baseName)
+        {
+            foreach(var deck in decks)
+            {
+                if (deck.BaseName.Equals(baseName, StringComparison.OrdinalIgnoreCase))
+                    return deck;
+            }
+            return null;
         }
 
         public DeckInformation GetDeck(long deckId)
@@ -152,9 +194,36 @@ namespace AnkiU.ViewModels
             return deckCount;
         }
 
-        public void UpdateDeckName(DeckInformation deck)
+        public List<string> GetAllDeckBaseName()
         {
-            deck.Name = Collection.Deck.GetDeckName(deck.Id);
+            List<string> names = new List<string>();
+            foreach (var deck in decks)
+                names.Add(deck.BaseName);
+            return names;
+        }
+
+        public string GetNewFullName(DeckInformation deck, string newBaseName)
+        {
+            var split = deck.Name.Split(new string[] { Constant.SUBDECK_SEPERATE }, StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length < 2)
+                return newBaseName;
+
+            split[split.Length - 1] = newBaseName;
+            return String.Join(Constant.SUBDECK_SEPERATE, split);
+        }
+
+        public void UpdateDeckName(DeckInformation deck, bool isAlsoUpdateChildren = true)
+        {
+            deck.Name = Collection.Deck.GetDeckName(deck.Id);            
+
+            if(isAlsoUpdateChildren)
+            {
+                var children = GetChildren(deck);
+                foreach(var child in children.Desks)
+                {
+                    child.Name = Collection.Deck.GetDeckName(child.Id);
+                }
+            }
         }
 
         public void AddOrUpdateDeckCardCount(long deckId)
@@ -215,7 +284,7 @@ namespace AnkiU.ViewModels
             UpdateUserPrefs();
 
             var listDeck = Decks.ToList();
-            SortIntoSubDeck(listDeck, DoSortByName);
+            SortAllDecks(listDeck, DoSortByName);
             UpdateDecks(listDeck);
         }
 
@@ -225,23 +294,22 @@ namespace AnkiU.ViewModels
             UpdateUserPrefs();
 
             var listDeck = Decks.ToList();            
-            SortIntoSubDeck(listDeck, DoSortByDate);
+            SortAllDecks(listDeck, DoSortByDate);
             UpdateDecks(listDeck);
         }
 
-        private void SortIntoSubDeck(List<DeckInformation> decks, Comparison<DeckInformation> comarison)
+        private void SortAllDecks(List<DeckInformation> decks, Comparison<DeckInformation> comarison)
         {
             decks.Sort(comarison);
 
             for (int i = 0; i < decks.Count; i++)
             {
-                for (int j = i; j < decks.Count; j++)
+                for (int j = i + 1; j < decks.Count; j++)
                 {
                     if (Collection.Deck.IsParent(decks[i].Name, decks[j].Name))
                     {
-                        var temp = decks[j];
-                        decks.RemoveAt(j);
-                        decks.Insert(i + 1, temp);
+                        decks[i].IsParent = true;
+                        ChangePosition(decks, i + 1, j);
                     }
                 }
             }
@@ -249,7 +317,7 @@ namespace AnkiU.ViewModels
 
         private int DoSortByName(DeckInformation first, DeckInformation second)
         {
-            return SortBySubDeckLevel(first, second, (x, y) => { return x.DisplayName.CompareTo(y.DisplayName); });
+            return SortBySubDeckLevel(first, second, (x, y) => { return x.BaseName.CompareTo(y.BaseName); });
         }
 
         private int DoSortByDate(DeckInformation first, DeckInformation second)
@@ -259,10 +327,8 @@ namespace AnkiU.ViewModels
 
         private int SortBySubDeckLevel(DeckInformation first, DeckInformation second, Comparison<DeckInformation> comarison)
         {
-            int firstChildLevel = first.Name.Split(new string[] { Constant.SUBDECK_SEPERATE }, 
-                StringSplitOptions.RemoveEmptyEntries).Length;
-            int secondChildLevel = second.Name.Split(new string[] { Constant.SUBDECK_SEPERATE }, 
-                StringSplitOptions.RemoveEmptyEntries).Length;
+            int firstChildLevel = first.ChildLevel;
+            int secondChildLevel = second.ChildLevel;
 
             if (firstChildLevel > secondChildLevel)
                 return 1;
@@ -274,6 +340,205 @@ namespace AnkiU.ViewModels
                     return comarison(first, second);
                 else // Child deck in reverse so the next sort will put them in the correct order
                     return -comarison(first, second);
+            }
+        }
+
+        public void DragAnDrop(DeckInformation parent, DeckInformation child, IAnkiDecksView deckView)
+        {
+            var oldName = child.Name;
+            var oldParent = child.ParentName;
+            var childrenOfChild = GetChildren(child);
+
+            if (Collection.Deck.IsParent(parent.Name, child.Name))
+                RemoveFromSubDeck(child); //Remove from children if child deck is dragged on parent deck
+            else
+                CreateSubDeck(parent, child);
+
+            //Children name of child must be updated later
+            UpdateDeckName(child, false);
+            //If name does not change no need to update anything
+            if (oldName.Equals(child.Name, StringComparison.OrdinalIgnoreCase))            
+                return;
+
+            //Remove children of child first to avoid sorting errors
+            RemoveChildrenFromDecks(childrenOfChild);
+
+            if (Collection.Deck.IsParent(parent.Name, child.Name))
+            {
+                parent.IsParent = true;
+                if(!parent.IsShowChildren)
+                    ToggleChildrenVisibility(parent, deckView);
+                SortIntoSubdeck(parent, child);
+            }
+            else
+                ResortNonSubdeck(child);
+
+            SetInShowChildrenState(child);
+            UpdateChildrenPositionAndName(child, childrenOfChild);
+            UpdateOldParent(oldParent);
+
+            UpdateCardCountAllDecks();
+            Collection.SaveAndCommitAsync();
+        }
+
+        private void RemoveFromSubDeck(DeckInformation child)
+        {            
+            Collection.Deck.RenameForDragAndDrop(child.Id, null);
+        }
+
+        private void CreateSubDeck(DeckInformation parent, DeckInformation child)
+        {            
+            Collection.Deck.RenameForDragAndDrop(child.Id, parent.Id);
+        }
+
+        private static void SetInShowChildrenState(DeckInformation child)
+        {
+            child.Visibility = Visibility.Visible;
+            child.IsShowChildren = true;
+        }
+
+        private void UpdateOldParent(string parentName)
+        {
+            if (String.IsNullOrEmpty(parentName))
+                return;
+
+            var parent = GetDeck(parentName);
+            if (parent == null)
+                return;
+
+            var nextIndex = decks.IndexOf(parent) + 1;
+            if ((nextIndex >= decks.Count )
+                || (decks[nextIndex].ChildLevel <= parent.ChildLevel))
+                parent.IsParent = false;
+            else
+                parent.IsParent = true;
+        }
+
+        private struct SubDecks
+        {
+            /// <summary>
+            /// The index of the first sub-deck
+            /// </summary>
+            public int StartIndex { get; set; }
+            public List<DeckInformation> Desks { get; set; }
+        }
+        private SubDecks GetChildren(DeckInformation deck)
+        {
+            SubDecks children = new SubDecks();
+            children.Desks = new List<DeckInformation>();
+            children.StartIndex = decks.IndexOf(deck) + 1;
+
+            var level = deck.ChildLevel;
+            for (int i = children.StartIndex; i < decks.Count; i++)
+            {
+                var childLevel = decks[i].ChildLevel;
+                if (level >= childLevel)
+                    break;
+                children.Desks.Add(decks[i]);
+            }
+            return children;
+        }
+
+        /// <summary>
+        /// Sort a sub-deck into its parent
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="child"></param>
+        private void SortIntoSubdeck(DeckInformation parent, DeckInformation child)
+        {
+            int currentIndex = decks.IndexOf(child);
+            int parentIndex = decks.IndexOf(parent);
+            //No need to do anything if it's already next to its parent
+            if (currentIndex == parentIndex + 1)
+                return;
+
+            Decks.Remove(child);
+            int childLevel = child.ChildLevel;
+            parentIndex = decks.IndexOf(parent);
+
+            for (int i = parentIndex + 1; i < decks.Count; i++)
+            {
+                int level = decks[i].ChildLevel;
+                if (level > childLevel)
+                    continue;
+
+                if ((level < childLevel) || (Compare(child, decks[i]) < 0))
+                {
+                    Decks.Insert(i, child);
+                    return;
+                }
+            }
+
+            Decks.Add(child);
+        }
+
+        /// <summary>
+        /// Re-Sort a non-subdeck
+        /// </summary>
+        /// <param name="deck"></param>
+        public void ResortNonSubdeck(DeckInformation deck)
+        {
+            Decks.Remove(deck);
+            for(int i = 0; i < decks.Count; i++)
+            {
+                if (decks[i].Name.Contains(Constant.SUBDECK_SEPERATE))
+                    continue;
+
+                if(Compare(deck, decks[i]) < 0)
+                {
+                    Decks.Insert(i, deck);
+                    return;
+                }
+            }
+            Decks.Add(deck);
+        }
+
+        private void RemoveChildrenFromDecks(SubDecks children)
+        {
+            for (int i = 0; i < children.Desks.Count; i++)
+                Decks.RemoveAt(children.StartIndex);
+        }
+
+        private void UpdateChildrenPositionAndName(DeckInformation parent, SubDecks children)
+        {
+            if (children.Desks.Count == 0)
+                return;
+
+            var newStartIndex = decks.IndexOf(parent) + 1;
+            for (int i = 0; i < children.Desks.Count; i++)
+            {
+                //No need to update children of a child
+                //as they will be aslo updated in this for loop
+                UpdateDeckName(children.Desks[i], false);
+                if (parent.IsShowChildren)
+                {
+                    children.Desks[i].IsShowChildren = true;
+                    children.Desks[i].Visibility = Visibility.Visible;
+                }
+
+                Decks.Insert(newStartIndex + i, children.Desks[i]);
+            }
+        }
+
+        private static void ChangePosition(List<DeckInformation> decks, int newIndex, int oldIndex)
+        {
+            var temp = decks[oldIndex];
+            decks.RemoveAt(oldIndex);
+            if (newIndex < decks.Count)
+                decks.Insert(newIndex, temp);
+            else //Use add here to prevent index go out of range
+                decks.Add(temp);
+        }
+
+        private int Compare(DeckInformation comparer, DeckInformation compared)
+        {
+            if (sortBy == SortBy.Name)
+            {
+                return comparer.BaseName.CompareTo(compared.BaseName);
+            }
+            else
+            {
+                return comparer.Id.CompareTo(compared.Id);
             }
         }
 
@@ -304,16 +569,11 @@ namespace AnkiU.ViewModels
             TotalDueCards += dueCards;
         }
 
-        private int GetNewCountOfDeck(long deckId, JsonObject deckConf)
+        private void ResetCardsCount()
         {
-            int lim = (int)deckConf.GetNamedObject("new").GetNamedNumber("perDay");
-            return Collection.Sched.NewCountForDeck(deckId, lim);
+            TotalNewCards = 0;
+            TotalDueCards = 0;
         }
 
-        private int GetDueCountOfDeck(long deckId, JsonObject deckConf)
-        {
-            int lim = (int)deckConf.GetNamedObject("rev").GetNamedNumber("perDay");
-            return Collection.Sched.ReviewCountForDeck(deckId, lim);
-        }
     }
 }

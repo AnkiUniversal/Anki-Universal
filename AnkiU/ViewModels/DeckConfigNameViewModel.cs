@@ -73,6 +73,20 @@ namespace AnkiU.ViewModels
         public void SetDeckConfigToSelected()
         {
             var config = GetSelectedConfig();
+
+            var deckId = (long)selectedDeck.GetNamedNumber("id");
+            var oldConfig = Collection.Deck.ConfForDeckId(deckId);
+            var newConfig = Collection.Deck.GetConf(config.Id);
+            var oldOrder = (int)oldConfig.GetNamedObject("new").GetNamedNumber("order");
+            var newOrder = (int)newConfig.GetNamedObject("new").GetNamedNumber("order");            
+            if (oldOrder != newOrder)
+            {                
+                if (newOrder == (int)NewCardInsertOrder.RANDOM)
+                    Collection.Sched.RandomizeCards(deckId);
+                else
+                    Collection.Sched.OrderCards(deckId);
+            }
+
             selectedDeck["conf"] = JsonValue.CreateNumberValue(config.Id);                    
             Collection.Deck.Save(selectedDeck);     
         }

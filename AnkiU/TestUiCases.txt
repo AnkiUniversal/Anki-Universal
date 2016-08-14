@@ -23,6 +23,9 @@ ReviewPage:
 
 	8) Make sure first time show a leech card works properly and Deck Option is saved
 
+	9) Sub-decks: Make sure "Ink On/Off" only affects the selected deck (parent deck) from the deck select page.
+			      Ink on/off of Sub-decks should not be affected.
+	
 	Ink To Text:
 		1) Turn off Ink and then open it again:
 			- Test automatic text recognition
@@ -51,7 +54,9 @@ Option page:
     1) Make sure all default button work
 	2) Make sure simple view and expert view sync
 	3) Make sure we won't save if user just return
-
+	4) Make sure new card order changes work properly for all decks used the same config
+	5) Make sure delete random config will resort deck when switch back to default
+	
 NoteEditore page:
 	1) Make sure undo appeare in reverse order (last added to olddest)
 

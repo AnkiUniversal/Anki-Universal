@@ -53,7 +53,7 @@
                                     <CheckBox  Background="Transparent" VerticalAlignment="Center" 
                                            Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"
                                            Foreground="Black" HorizontalContentAlignment="Left"  HorizontalAlignment="Stretch">
-                                        <TextBlock TextAlignment="Left" FontSize="13" TextWrapping="Wrap" Text="{x:Bind Name, Mode=OneTime}"/>
+                                        <TextBlock TextAlignment="Left" FontSize="13" TextWrapping="Wrap" Text="{x:Bind BaseName, Mode=OneTime}"/>
                                     </CheckBox>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

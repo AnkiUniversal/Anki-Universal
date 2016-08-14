@@ -285,7 +285,7 @@ namespace AnkiU.UserControls
 
         private void ChangeCardStateString(CheckBox checkBox, bool state)
         {
-            switch (checkBox.Content.ToString().ToLower())
+            switch (checkBox.Content.ToString().ToLowerInvariant())
             {
                 case "due":
                     cardState[IS_DUE] = state;

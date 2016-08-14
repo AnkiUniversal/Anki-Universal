@@ -7,14 +7,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" x:Name="userControl"
     x:Class="AnkiU.Views.DeckListView"
     xmlns:data="using:AnkiU.Models"
+    xmlns:binding="using:AnkiU.UIUtilities"
     mc:Ignorable="d"   
     d:DesignHeight="300" 
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        
+
         <DataBindingConverters:NumberOfCardToSolidBrushConverter x:Key="NumberOfCardToSolidBrushConverter"/>
-             
+        <DataBindingConverters:ChildLevelToMarginConverter x:Key="ChildLevelToMarginConverter"/>
+        <DataBindingConverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <DataBindingConverters:BoolToExpandRotateConverter x:Key="BoolToExpandRotateConverter"/>
+      
     </UserControl.Resources>
 
     <Grid x:Name="MainGrid">
@@ -53,9 +57,10 @@
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ItemsSource="{Binding}" 
-                  CanDragItems="False"       
-                  DragItemsStarting="OnDragItemsStarting"                  
+                  CanDragItems="False"                         
+                  DragItemsStarting="OnDragItemsStarting"                     
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  
                   ItemClick="ListViewItemClickHandler">
             <ListView.Transitions>
                 <TransitionCollection>
@@ -68,20 +73,45 @@
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="BorderBrush" Value="{StaticResource DeckListItemColorBrush}" />
                     <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter Property="Visibility" Value="Visible" />
                     <Setter Property="Template" Value="{StaticResource DeckItemListViewType}"/>
+                    <Setter Property="RenderTransformOrigin" Value="0.5, 0.5" />
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="data:DeckInformation">
-                    <Grid x:Name="GridDeckList" Margin="0,5,0,5"  Drop="OnDrop" DragEnter="OnDragEnter"  AllowDrop="True" >
+                    <Grid x:Name="GridDeckList" Margin="0,5,0,5"
+                          DataContextChanged="OnGridDeckListDataContextChanged" 
+                          Drop="OnDrop" DragEnter="OnDragEnter" DragLeave="OnDragLeave"  AllowDrop="True"  >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="Name" Grid.Column="0" Grid.ColumnSpan="2" Text="{x:Bind Name, Mode=OneWay}" 
+
+                        <Grid Grid.Column="0" Grid.ColumnSpan="2" 
+                            Margin="{x:Bind ChildLevel, Converter={StaticResource ChildLevelToMarginConverter},  Mode=OneWay}">
+                           
+                            <Button Style="{StaticResource ButtonStatic}"
+                                Foreground="{Binding Foreground, ElementName=userControl}"  Background="Transparent"
+                                Width="30" Margin="-15,-13,-15,-13"  VerticalAlignment="Stretch" Padding="0"
+                                HorizontalContentAlignment="Center" Visibility="{x:Bind IsParent, Converter={StaticResource BoolToVisibilityConverter},  Mode=OneWay}"
+                                VerticalContentAlignment="Center" PointerEntered="ButtonPointerEntered" PointerExited="ButtonPointerExited" 
+                                Click="OnExpandChildren" RenderTransformOrigin="0.5,0.5">
+                                <Path Style="{StaticResource TriangleUpIcon}"  Fill="{Binding Foreground, ElementName=userControl}" 
+                                      RenderTransformOrigin="0.5,0.5" VerticalAlignment="Center" Margin="0"
+                                      HorizontalAlignment="Center">
+                                    <Path.RenderTransform>
+                                        <CompositeTransform ScaleX="0.6" ScaleY="0.5" Rotation="{x:Bind IsShowChildren, Converter={StaticResource BoolToExpandRotateConverter},  Mode=OneWay}"/>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Button>
+
+                            <TextBlock x:Name="Name" Margin="15,0,0,0"                                   
+                                   Text="{x:Bind BaseName, Mode=OneWay}" 
                                    Foreground="{Binding Foreground, ElementName=userControl}"  
-                           HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                   HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                        </Grid>
 
                         <Grid Grid.Column="2"  >
                             <Grid.ColumnDefinitions>

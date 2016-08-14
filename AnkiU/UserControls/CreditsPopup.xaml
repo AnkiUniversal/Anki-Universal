@@ -152,6 +152,17 @@
                         <LineBreak/>
                     </Paragraph>
 
+                    <Paragraph >
+                        <Bold FontSize="18">WinRTXamlToolkit</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/xyzzer/WinRTXamlToolkit">https://github.com/xyzzer/WinRTXamlToolkit</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) 2012 Filip Skakun.
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://github.com/xyzzer/WinRTXamlToolkit/blob/master/License.md">License (MIT)</Hyperlink>
+                        <LineBreak/>
+                    </Paragraph>
+
                     <Paragraph>
                         <Bold  FontSize="18">Icons: Elegant Font</Bold>
                         <LineBreak/>

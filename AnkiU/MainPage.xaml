@@ -225,7 +225,7 @@
                 </AppBarButton>
 
                 <AppBarButton x:Name="addButton" Icon="Add" Label="Add Deck" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Add Deck" />
-                <AppBarButton x:Name="dragAndHoldButton" Label="Drag Deck" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Drag Decks">
+                <AppBarButton x:Name="dragAndHoldButton" Label="Drag Deck" Click="OnDragAndHoldButtonClick" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Drag Decks">
                     <SymbolIcon Symbol="Pictures" RenderTransformOrigin="0.5,0.5" >
                         <SymbolIcon.RenderTransform>
                             <CompositeTransform ScaleX="0.9" ScaleY="1.4"/>

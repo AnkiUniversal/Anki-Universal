@@ -189,7 +189,7 @@ namespace AnkiU.UserControls
         {            
             foreach (var name in existsName)
             {
-                if (name.Equals(newName, StringComparison.CurrentCultureIgnoreCase))
+                if (name.Equals(newName, StringComparison.OrdinalIgnoreCase))
                 {
                     isError = true;
                     await UIHelper.ShowMessageDialog(errorMessage);

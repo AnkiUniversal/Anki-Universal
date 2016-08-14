@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -42,25 +43,17 @@ namespace AnkiU.Views
     public sealed partial class DeckHubView : UserControl, IAnkiDecksView
     {
         public event DeckItemClickEventHandler DeckItemClickEvent;
-        public event DeckDragAnDropEventHandler DragAnDropEvent;        
+        public event DeckItemClickEventHandler DeckItemDoubleClickEvent;
+        public event DeckDragAnDropEventHandler DragAnDropEvent;
+        public event ExpandChildrenClickEventHandler ExpandChildrenClickEvent;
 
-        private DeckInformation draggedDeck;
+        private DeckInformation draggedDeck;        
 
         public bool IsDragAndDropEnable { get; private set; }
 
         public DeckHubView()
         {
-            this.InitializeComponent();            
-        }
-
-        private void GridViewItemClickHandler(object sender, ItemClickEventArgs e)
-        {
-            var data = e.ClickedItem as DeckInformation;
-            if (data == null)
-                throw new Exception("Wrong data type");
-
-            if (!IsDragAndDropEnable)
-                DeckItemClickEvent?.Invoke(data.Id);
+            this.InitializeComponent();                        
         }
 
         public void ShowShadow()
@@ -77,11 +70,8 @@ namespace AnkiU.Views
         {
             var data = (sender as FrameworkElement).DataContext as DeckInformation;
             if (data == null)
-                throw new Exception("Wrong data type");
-
-            var button = sender as Button;
-
-            DeckItemClickEvent?.Invoke(data.Id);
+                return;            
+            DeckItemClickEvent?.Invoke(data);
         }
 
         private void OnElementDragStarting(UIElement sender, DragStartingEventArgs args)
@@ -134,5 +124,40 @@ namespace AnkiU.Views
         {
             Enlarge.Stop();
         }
+
+        public FrameworkElement GetItemView(DeckInformation deck)
+        {
+            //We only return null as we don't allow item to be modified for gridview
+            return null;
+        }
+
+        private void ButtonPointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            UIHelper.ChangeToHandCusor();
+        }
+
+        private void ButtonPointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            UIHelper.ChangeToArrowCusor();
+        }
+
+        /// <summary>
+        /// WARNING: This function is currently not used. As showing/hiding panel is an expensive operation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnExpandChildren(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button == null)
+                return;
+
+            var deckInfor = button.DataContext as DeckInformation;
+            if (deckInfor == null)
+                return;
+
+            ExpandChildrenClickEvent?.Invoke(deckInfor);
+        }
+
     }
 }

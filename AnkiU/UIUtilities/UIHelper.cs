@@ -35,6 +35,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -59,6 +60,10 @@ namespace AnkiU.UIUtilities
         private const int numberPadRangeMin = (int)Windows.System.VirtualKey.NumberPad0;
         private const int numberPadRangeMax = (int)Windows.System.VirtualKey.NumberPad9;
 
+        public static readonly CoreCursor HandCursor = new CoreCursor(CoreCursorType.Hand, 1);
+        public static readonly CoreCursor ArrowCursor = new CoreCursor(CoreCursorType.Arrow, 1);
+
+        public static SolidColorBrush Transparent = new SolidColorBrush(Windows.UI.Colors.Transparent);
         public static SolidColorBrush IndioBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 8, 141, 199));
         private static SolidColorBrush darkerBrush = Application.Current.Resources["DarkerGray"] as SolidColorBrush;
         public static SolidColorBrush DarkerBrush { get { return darkerBrush; } }
@@ -229,6 +234,7 @@ namespace AnkiU.UIUtilities
             name = name.Replace("\\", "_");
             name = name.Replace("/", "_");
             name = name.Replace(":", "_");
+            name = name.Replace(".", "_");
             return name;
         }
 
@@ -413,6 +419,16 @@ namespace AnkiU.UIUtilities
                 return null;
 
             return deck;
+        }
+
+        public static void ChangeToHandCusor()
+        {
+            Window.Current.CoreWindow.PointerCursor = HandCursor;
+        }
+
+        public static void ChangeToArrowCusor()
+        {
+            Window.Current.CoreWindow.PointerCursor = ArrowCursor;
         }
     }
 }

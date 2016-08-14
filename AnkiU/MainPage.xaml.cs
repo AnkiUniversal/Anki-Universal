@@ -108,7 +108,14 @@ namespace AnkiU
         private FullSync sync = null;
 
         private AllHelps allHelps;        
-        public AllHelps AllHelps { get { return allHelps; } }
+        public AllHelps AllHelps
+        {
+            get
+            {
+                InitAllHelpsIfNeeded();
+                return allHelps;
+            }
+        }
 
         private bool isFinishInitation = false;
 
@@ -971,7 +978,7 @@ namespace AnkiU
                         dialog = new MessageDialog("The pakage has been imported successfully.\n" + message + " note(s) imported.", "Successed!");
                         break;
                     case AnkiImportFinishCode.MediaFileIsCorrupted:
-                        dialog = new MessageDialog("Media files are corrupted.", "Error!");
+                        dialog = new MessageDialog("Not found media files of imported deck(s).", "Importing Media");
                         break;
                     case AnkiImportFinishCode.NotFoundCollection:
                         dialog = new MessageDialog("Not found collection.", "Error!");
@@ -1270,7 +1277,7 @@ namespace AnkiU
                 InkRecognizerContainer.SetDefaultRecognizer(installedLanguagesList[comboBox.SelectedIndex]);
         }
 
-        public static void RemoveDeckInPrefsIfNeeded(long deckId)
+        public static void RemoveDeckInKPrefsIfNeeded(long deckId)
         {
             if (DeckInkPrefs.HasId(deckId))
                 DeckInkPrefs.RemoveDeckInkPref(deckId);
@@ -1457,19 +1464,35 @@ namespace AnkiU
             return InkOffSymbol.Visibility == Visibility.Visible;
         }
 
+        /// <summary>
+        /// Return true if ink canvas is enabled
+        /// This function is used when we need to check whether user use ink input or not
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInkOn(long deckId)
+        {
+            return DeckInkPrefs.HasId(deckId);
+        }
+
+        private bool isCusorNotArrow = false;
         public void ChangeCursorIfNeeded()
         {
             if (UIHelper.IsHasPen())
             {
                 cursor = new CoreCursor(CoreCursorType.Custom, MainPage.CUSTOM_CURSOR_CIRCLE_ID);
                 Window.Current.CoreWindow.PointerCursor = cursor;
+                isCusorNotArrow = true;
             }
         }
 
         public void ChangeCusorToArrow()
         {
-            cursor = new CoreCursor(CoreCursorType.Arrow, 0);
-            Window.Current.CoreWindow.PointerCursor = cursor;
+            if (isCusorNotArrow)
+            {
+                cursor = new CoreCursor(CoreCursorType.Arrow, 0);
+                Window.Current.CoreWindow.PointerCursor = cursor;
+                isCusorNotArrow = false;
+            }
         }
 
         public void HideCommanBar()
@@ -1601,16 +1624,6 @@ namespace AnkiU
                 IsCanNavigateBack = true;
                 await dialog.ShowAsync();                
             });
-        }
-
-        /// <summary>
-        /// Return true if ink canvas is enabled
-        /// This function is used when we need to check whether user use ink input or not
-        /// </summary>
-        /// <returns></returns>
-        public bool IsInkOn()
-        {
-            return DeckInkPrefs.HasId(Collection.Deck.Selected());
         }
 
         private void ReadModeButtonClickHandler(object sender, RoutedEventArgs e)
@@ -2070,6 +2083,16 @@ namespace AnkiU
                             + "For feature requests: Please mention briefly why you need them.\n"
                             + "We will reply to your email in one business day.\n";
             await UIHelper.LaunchEmailApp("ankiuniversal@gmail.com", message);
+        }
+
+        private void OnDragAndHoldButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (!UserPrefs.IsHelpAlreadyShown(AnkiU.Views.AllHelps.HELP_SUBDECK))
+            {
+                AllHelps.ShowSubDeckHelp();
+            }
+
+            DragAndDropButton.Click -= OnDragAndHoldButtonClick;
         }
     }   
 

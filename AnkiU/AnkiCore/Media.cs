@@ -393,7 +393,7 @@ namespace AnkiU.AnkiCore
                     foreach (Match m in matches)
                     {
                         string fName = m.Groups["fname"].Value;
-                        bool isLocal = !remoteRegex.IsMatch(fName.ToLower());
+                        bool isLocal = !remoteRegex.IsMatch(fName.ToLowerInvariant());
                         if (isLocal || includeRemote)
                             returnList.Add(fName);
                     }
@@ -669,7 +669,7 @@ namespace AnkiU.AnkiCore
                 if (file == null)
                     continue;
 
-                if (file.Name.Equals("thumbs.db", StringComparison.CurrentCultureIgnoreCase))
+                if (file.Name.Equals("thumbs.db", StringComparison.OrdinalIgnoreCase))
                     continue;
                 if (HasIllegal(file.Name))
                     continue;

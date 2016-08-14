@@ -285,12 +285,26 @@ namespace AnkiU.AnkiCore
 
         public string Css()
         {
-            return String.Format(locale, "<style>{0}</style>", GetModel().GetNamedString("css"));
+            try
+            {
+                return String.Format("<style>{0}</style>", GetModel().GetNamedString("css"));
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public string CssWithoutStyleTag()
         {
-            return  GetModel().GetNamedString("css");
+            try
+            {
+                return GetModel().GetNamedString("css");
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public JsonObject GetModel()

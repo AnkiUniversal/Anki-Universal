@@ -212,7 +212,7 @@ namespace AnkiU.AnkiCore
             name = name.Replace("\"", "");
             foreach (KeyValuePair<long, JsonObject> d in deckDict)
             {
-                if (d.Value.GetNamedString("name").Equals(name, StringComparison.CurrentCultureIgnoreCase))
+                if (d.Value.GetNamedString("name").Equals(name, StringComparison.OrdinalIgnoreCase))
                     return d.Key;
             }
             if (!create)
@@ -529,8 +529,11 @@ namespace AnkiU.AnkiCore
 
         public void Rename(JsonObject jObj, string newName)
         {
-            if (AllNames().Contains(newName))
-                throw new DeckRenameException(DeckRenameException.ErrorCode.ALREADY_EXISTS);
+            //Different with java and python ver, we don't throw exception here and only add "_"            
+            //Check for unique name should be done in other function
+            //This is just the last check to ensure we never create a deck with the same name
+            while (AllNames().Contains(newName))
+                newName += "_";            
 
             newName = EnsureParents(newName);
 
@@ -629,11 +632,15 @@ namespace AnkiU.AnkiCore
         }
 
         public bool IsParent(string parentDeckName, string childDeckName)
-        {
-            var baseParentName = BaseName(parentDeckName);
+        {           
             var childSplit = childDeckName.Split(new string[] { Constant.SUBDECK_SEPERATE }, StringSplitOptions.RemoveEmptyEntries);
             if (childSplit.Length < 2)
                 return false;
+
+            var parentSplit = parentDeckName.Split(new string[] { Constant.SUBDECK_SEPERATE }, StringSplitOptions.RemoveEmptyEntries);
+            if (childSplit.Length <= parentSplit.Length)
+                return false;
+            var baseParentName = parentSplit[parentSplit.Length - 1];
 
             var realParent = childSplit[childSplit.Length - 2];
             if (baseParentName.Equals(realParent, StringComparison.OrdinalIgnoreCase))

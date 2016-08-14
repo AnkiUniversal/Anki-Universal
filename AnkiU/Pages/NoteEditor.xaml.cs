@@ -386,8 +386,7 @@ namespace AnkiU.Pages
                 SwitchToNewNoteView();
                 await CacheAndMoveToNextNote();
                 isFromUndo = false;
-
-                await noteFieldView.HtmlEditor.FocusOn(noteFieldView.fieldsViewModel.Fields[0].Name);
+                await FocusOnFirstField();
             }
         }
 
@@ -424,6 +423,11 @@ namespace AnkiU.Pages
 
             AddNewNoteEvent?.Invoke();
 
+            await FocusOnFirstField();
+        }
+
+        private async Task FocusOnFirstField()
+        {                        
             await noteFieldView.HtmlEditor.FocusOn(noteFieldView.fieldsViewModel.Fields[0].Name);
         }
 
@@ -565,7 +569,7 @@ namespace AnkiU.Pages
 
         private static bool IsMediaFileType(StorageFile file)
         {
-            return Media.ALLOWED_EXTENSION.Contains(file.FileType.ToLower());
+            return Media.ALLOWED_EXTENSION.Contains(file.FileType.ToLowerInvariant());
         }
         private async Task TryAddMedia(StorageFile file)
         {

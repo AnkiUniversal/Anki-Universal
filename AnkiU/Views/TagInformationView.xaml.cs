@@ -79,7 +79,7 @@ namespace AnkiU.Views
                 await UIHelper.ShowMessageDialog(message);
                 return;
             }
-
+            searchTextBox.Text = "";
             if(expandTagButton.ActualWidth < tagsNameGrid.MaxWidth)
                 tagsNameGrid.Width = expandTagButton.ActualWidth;
             else
@@ -139,7 +139,7 @@ namespace AnkiU.Views
             foreach (var item in allTagsView.Items)
             {
                 var tag = item as TagInformation;
-                if(tag.Name.ToLower().Contains(searchTextBox.Text.ToLower()))
+                if(tag.Name.ToUpperInvariant().Contains(searchTextBox.Text.ToUpperInvariant()))
                     tag.Visibility = Visibility.Visible;
                 else
                     tag.Visibility = Visibility.Collapsed;

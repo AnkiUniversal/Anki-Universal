@@ -368,6 +368,11 @@
     <Compile Include="Pages\StatsPage.xaml.cs">
       <DependentUpon>StatsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIUtilities\BindingHelper.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\BoolToExpandRotateConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\BoolToVisibilityConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\ChildLevelToMarginConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\ChildLevelToVisibilityConverter.cs" />
     <Compile Include="UIUtilities\DataBindingConverters\VisibilityInvertConverter.cs" />
     <Compile Include="UIUtilities\DataBindingConverters\BoolToNullableBoolConverter.cs" />
     <Compile Include="UIUtilities\DataBindingConverters\CardStateToSolidBrushConverter.cs" />
@@ -387,8 +392,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AnkiCore\StringExtensionMethods.cs" />
     <Compile Include="Anki\CardStreamUriWinRTResolver.cs" />
+    <Compile Include="UIUtilities\OrientedSize.cs" />
     <Compile Include="UIUtilities\UIConst.cs" />
     <Compile Include="UIUtilities\UIHelper.cs" />
+    <Compile Include="UIUtilities\WrapPanel.cs" />
     <Compile Include="UserControls\AdvancedSearchPopup.xaml.cs">
       <DependentUpon>AdvancedSearchPopup.xaml</DependentUpon>
     </Compile>

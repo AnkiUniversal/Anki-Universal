@@ -79,18 +79,29 @@ namespace AnkiU.UserControls
                 playButton.IsEnabled = false;
                 StartRecordTimerCount();
 
-                await SetupRecordProcess();
-                if (UIHelper.GetDeviceFamily() != "Windows.Mobile")
-                    await capture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp3(AudioEncodingQuality.Auto), buffer);
-                else
-                { //No mp3 or wma on win mobile so we use mp4 instead, still give better compressed size than using raw format                   
-                    await capture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto), buffer);
-                }
-                if (isRecording)
-                    throw new InvalidOperationException();
+                if (await SetupRecordProcess())
+                {
+                    if (UIHelper.GetDeviceFamily() != "Windows.Mobile")
+                        await capture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp3(AudioEncodingQuality.Auto), buffer);
+                    else
+                    { //No mp3 or wma on win mobile so we use mp4 instead, still give better compressed size than using raw format                   
+                        await capture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto), buffer);
+                    }
+                    if (isRecording)
+                    {
+                        ThrowInvalidOperantionException();
+                        return;
+                    }
 
-                isRecording = true;
+                    isRecording = true;
+                }
             });
+        }
+
+        [Conditional("DEBUG")]
+        private static void ThrowInvalidOperantionException()
+        {
+            throw new InvalidOperationException();
         }
 
         private async Task<bool> SetupRecordProcess()
@@ -118,13 +129,20 @@ namespace AnkiU.UserControls
             }
             catch (Exception ex)
             {
-                if (ex.InnerException != null && ex.InnerException.GetType() == typeof(UnauthorizedAccessException))
-                {
-                    throw ex.InnerException;
-                }
-                throw;
+                ThrowException(ex);
+                return false;                         
             }
             return true;
+        }
+
+        [Conditional("DEBUG")]
+        private void ThrowException(Exception ex)
+        {
+            if (ex.InnerException != null && ex.InnerException.GetType() == typeof(UnauthorizedAccessException))
+            {
+                throw ex.InnerException;
+            }
+            throw ex;
         }
 
         private async void RecordLimitExceedEventHandler(MediaCapture sender)

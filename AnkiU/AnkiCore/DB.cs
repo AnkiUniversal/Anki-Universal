@@ -80,7 +80,7 @@ namespace AnkiU.AnkiCore
 
         private void CheckIfModfied(string sql)
         {
-            string s = sql.Trim().ToLower();
+            string s = sql.Trim().ToLowerInvariant();
             foreach (string stmt in MOD_SQLS)
                 if (s.StartsWith(stmt))
                 {

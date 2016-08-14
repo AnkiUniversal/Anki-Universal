@@ -432,7 +432,7 @@ namespace AnkiU.AnkiCore
                 else if (token.Contains(":"))
                 {
                     string[] spl = token.Split(new char[] {':' }, 2);
-                    string cmd = spl[0].ToLower();
+                    string cmd = spl[0].ToLowerInvariant();
                     string val = spl[1];
 
                     if (cmd.Equals("added"))
@@ -678,7 +678,7 @@ namespace AnkiU.AnkiCore
             {
                 return null;
             }
-            string prop = match.GetGroup(1).ToLower();
+            string prop = match.GetGroup(1).ToLowerInvariant();
             string cmp = match.GetGroup(2);
             string sval = match.GetGroup(3);
             int val;
@@ -1010,10 +1010,10 @@ namespace AnkiU.AnkiCore
                 for (uint fi = 0; fi < flds.Count; ++fi)
                 {
                     JsonObject f = flds.GetObjectAt(fi);
-                    if (!fields.Contains(f.GetNamedString("name").ToLower()))
+                    if (!fields.Contains(f.GetNamedString("name").ToLowerInvariant()))
                     {
                         names.Add(f.GetNamedString("name"));
-                        fields.Add(f.GetNamedString("name").ToLower());
+                        fields.Add(f.GetNamedString("name").ToLowerInvariant());
                     }
                 }
             }

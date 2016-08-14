@@ -55,9 +55,10 @@ namespace AnkiU.UserControls
         private TagInformationViewModel includeTagsViewModel;
         private TagInformationViewModel excludeTagsViewModel;
 
-        private double DEFAULT_HEIGHT_MARGIN = 50;
+        private double VERTICAL_OFFSET = -30;
+        private double DEFAULT_HEIGHT_MARGIN = 40;
         private double DEFAULT_WIDTH_MARGIN = 15;
-        private double DEFAULT_SCROLLVIEWER_MARGIN = 100;
+        private double DEFAULT_SCROLLVIEWER_MARGIN = 140;
 
         public enum CustomStudyOption
         {
@@ -74,6 +75,8 @@ namespace AnkiU.UserControls
 
         public delegate void CustomStudyCreateHandler(CustomStudyOption studyOption, long deckID);
         public event CustomStudyCreateHandler CustomStudyCreateEvent;
+
+        public bool IsOpen { get { return customStudyFlyout.IsOpen; } }
 
         public CustomStudyFlyout(CoreDispatcher dispatcher)
         {
@@ -160,7 +163,7 @@ namespace AnkiU.UserControls
             customStudyFlyout.MaxHeight = maxHeight;
             scrollViewer.MaxHeight = maxHeight - DEFAULT_SCROLLVIEWER_MARGIN;
 
-            customStudyFlyout.VerticalOffset = - DEFAULT_HEIGHT_MARGIN / 5;
+            customStudyFlyout.VerticalOffset = VERTICAL_OFFSET;
         }
 
         private void NumberChangedHandler(object sender, TextChangedEventArgs e)
@@ -271,12 +274,20 @@ namespace AnkiU.UserControls
         private long GetReviewCardsForecast(long end)
         {
             string lim = " and day < " + (end + 1);
-
+            string deckIdStr = GetParentAndChildrenDeckIdsStr();
             string query = String.Format("select count(), (due - {0}) as day " +
-                                         "from cards where did = {1} and queue in (2,3) {2}",
-                                         collection.Sched.Today, currentDeckId, lim);
+                                         "from cards where did in {1} and queue in (2,3) {2}",
+                                         collection.Sched.Today, deckIdStr, lim);
 
             return collection.Database.QueryScalar<long>(query);
+        }
+
+        private string GetParentAndChildrenDeckIdsStr()
+        {
+            var deckIdList = collection.Deck.Children(currentDeckId).Values.ToList();
+            deckIdList.Add(currentDeckId);
+            var deckIdStr = Utils.Ids2str(deckIdList);
+            return deckIdStr;
         }
 
         private void PreviewCardsCheckedhandler(object sender, RoutedEventArgs e)
@@ -294,8 +305,9 @@ namespace AnkiU.UserControls
         private long GetNewCardsAdded(int days)
         {
             long cutoff = (collection.Sched.DayCutoff - 86400 * days) * 1000;
-            string query = String.Format("select count() from cards where did = {0} and (type = 0 and queue = 0 and id > {1}) ",
-                                          currentDeckId, cutoff);
+            var deckidstr = GetParentAndChildrenDeckIdsStr();
+            string query = String.Format("select count() from cards where did in {0} and (type = 0 and queue = 0 and id > {1}) ",
+                                          deckidstr, cutoff);
             return collection.Database.QueryScalar<long>(query);
         }
 
@@ -303,7 +315,9 @@ namespace AnkiU.UserControls
         {
             cramNumberBox.Number = 1;
             cramNumberBox.MinNumber = 1;
-            cramNumberBox.MaxNumber = collection.CardCount(currentDeckId);
+            var deckIds = collection.Deck.Children(currentDeckId).Values.ToList();            
+            deckIds.Add(currentDeckId);
+            cramNumberBox.MaxNumber = collection.CardCount(deckIds);
             standardOptionsRoot.Visibility = Visibility.Collapsed;
             cramModeRoot.Visibility = Visibility.Visible;
             if (includeTagsViewModel == null)
@@ -494,7 +508,7 @@ namespace AnkiU.UserControls
         }
 
         private void WindowSizeChanged(object sender, SizeChangedEventArgs e)
-        {
+        {            
             CalculateSizeAndPosition();
         }
     }

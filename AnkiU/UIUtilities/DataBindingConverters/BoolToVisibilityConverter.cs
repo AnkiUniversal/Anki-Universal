@@ -15,31 +15,34 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using AnkiU.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Data;
 
-namespace AnkiU.Interfaces
+namespace AnkiU.UIUtilities.DataBindingConverters
 {
-    public delegate void DeckItemClickEventHandler(DeckInformation deckId);
-    public delegate void DeckDragAnDropEventHandler(DeckInformation parent, DeckInformation children);
-    public delegate void ExpandChildrenClickEventHandler(DeckInformation parent);
-
-    public interface IAnkiDecksView
+    class BoolToVisibilityConverter : IValueConverter
     {
-        bool IsDragAndDropEnable { get; }
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var b = (bool)value;
+            if (b)
+                return Visibility.Visible;
+            else
+                return Visibility.Collapsed;
+        }
 
-        Object DataContext { get; set; }
-        event DeckItemClickEventHandler DeckItemClickEvent;
-        event DeckDragAnDropEventHandler DragAnDropEvent;
-        event ExpandChildrenClickEventHandler ExpandChildrenClickEvent;
-
-        void EnableDragAndDropMode();
-        void DisableDragAndDropMode();
-        FrameworkElement GetItemView(DeckInformation deck);
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            var b = (Visibility)value;
+            if (b == Visibility.Visible)
+                return true;
+            else
+                return false;
+        }
     }
 }

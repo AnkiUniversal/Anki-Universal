@@ -75,6 +75,7 @@ namespace AnkiU.Pages
         private string answer;
         private string cardClass;
         private bool isAutoPlayEnable;
+        private long selectedDeckId;
         private long currentDeckId;
         private bool isCanNavigateFrom;
         private bool isCustomDueTimeFlyoutOpen = false;
@@ -295,7 +296,8 @@ namespace AnkiU.Pages
                 throw new Exception("Wrong input parameter!");
 
             collection = mainPage.Collection;
-            currentDeckId = collection.Deck.Selected();
+            selectedDeckId = collection.Deck.Selected();
+            currentDeckId = selectedDeckId;
 
             //WANRING: Run in transaction to ensure performance
             //remember to call commit ro rollback to database
@@ -305,7 +307,7 @@ namespace AnkiU.Pages
             await ShowAllButtonOfThisPage();            
             HookAllEventsExceptCardViewLoaded();
 
-            if (mainPage.IsInkOn())
+            if (mainPage.IsInkOn(selectedDeckId))
                 SwitchToInkCanvasAndInkInput();
         }
 
@@ -338,12 +340,12 @@ namespace AnkiU.Pages
 
         private async Task UpdateInkButton()
         {
-            if (!mainPage.IsInkOn())
+            if (!mainPage.IsInkOn(selectedDeckId))
                 mainPage.ShowOnlyInkOnOffButton();            
             else
             {
                 mainPage.ShowAllInkButtons();
-                if (MainPage.DeckInkPrefs.IsEnableInkToText(currentDeckId))
+                if (MainPage.DeckInkPrefs.IsEnableInkToText(selectedDeckId))
                 {
                     mainPage.InkToTextEnable.IsOn = true;
                     UpdateFlyoutButton(true);
@@ -359,11 +361,11 @@ namespace AnkiU.Pages
 
         private void ChooseTextAutomaticallyCheckedHandler(object sender, RoutedEventArgs e)
         {
-            MainPage.DeckInkPrefs.SetIsAutoInkToTextEnable(currentDeckId, true);
+            MainPage.DeckInkPrefs.SetIsAutoInkToTextEnable(selectedDeckId, true);
         }
         private void ChooseTextManuallyCheckedHandler(object sender, RoutedEventArgs e)
         {
-            MainPage.DeckInkPrefs.SetIsAutoInkToTextEnable(currentDeckId, false);
+            MainPage.DeckInkPrefs.SetIsAutoInkToTextEnable(selectedDeckId, false);
         }    
 
         private void ReadModeButtonClickHandler(object sender, RoutedEventArgs e)
@@ -372,7 +374,7 @@ namespace AnkiU.Pages
         }
         private void ChangeInkColorIfNeeded()
         {
-            if (mainPage.IsInkOn())
+            if (mainPage.IsInkOn(selectedDeckId))
             {
                 if (MainPage.UserPrefs.IsReadNightMode)
                     ChangeInkCorlor(UIHelper.DefaultInkColorNight);
@@ -385,12 +387,12 @@ namespace AnkiU.Pages
         {
             if (mainPage.IsInkOnState())
             {
-                MainPage.DeckInkPrefs.RemoveDeckInkPref(currentDeckId);
+                MainPage.DeckInkPrefs.RemoveDeckInkPref(selectedDeckId);
                 SwitchBackToCardView();
             }
             else
             {
-                MainPage.DeckInkPrefs.AddNewDeckPref(currentDeckId);
+                MainPage.DeckInkPrefs.AddNewDeckPref(selectedDeckId);
                 SwitchToInkCanvasAndInkInput();
                 ClearInkCanvas();
                 ChangeInkToPen();
@@ -410,7 +412,7 @@ namespace AnkiU.Pages
             else
                 ChangeInkCorlor(UIHelper.DefaultInkColorDay);
 
-            if (MainPage.DeckInkPrefs.IsEnableInkToText(currentDeckId))
+            if (MainPage.DeckInkPrefs.IsEnableInkToText(selectedDeckId))
                 userInputGetter = InkToTextRecognizer;
         }
 
@@ -462,7 +464,7 @@ namespace AnkiU.Pages
         private void InkToTextToggleHandler()
         {
             var enable = mainPage.InkToTextEnable.IsOn;
-            MainPage.DeckInkPrefs.SetIsEnableInkToText(currentDeckId, enable);
+            MainPage.DeckInkPrefs.SetIsEnableInkToText(selectedDeckId, enable);
             UpdateFlyoutButton(enable);
             if (enable)                            
                 SwitchToInkCanvasAndInkInput();            
@@ -474,7 +476,7 @@ namespace AnkiU.Pages
             if (enable)
             {
                 mainPage.ShowInkToTextFlyoutToggleOnContent();
-                if (MainPage.DeckInkPrefs.IsAutoInkToTextEnable(currentDeckId))
+                if (MainPage.DeckInkPrefs.IsAutoInkToTextEnable(selectedDeckId))
                     mainPage.ChooseTextAutomatically.IsChecked = true;
                 else
                     mainPage.ChooseTextManually.IsChecked = true;
@@ -1121,7 +1123,7 @@ namespace AnkiU.Pages
                 if (collection.Deck.IsDyn(currentDeckId))
                 {
                     collection.Deck.Remove(currentDeckId);
-                    MainPage.RemoveDeckInPrefsIfNeeded(currentDeckId);
+                    MainPage.RemoveDeckInKPrefsIfNeeded(currentDeckId);
                 }
                 return false;                
             }
@@ -1129,7 +1131,7 @@ namespace AnkiU.Pages
         }
         private void ClearInkCanVasIfNeeded()
         {
-            if (mainPage.IsInkOn())
+            if (mainPage.IsInkOn(selectedDeckId))
                 ClearInkCanvas();
         }
 

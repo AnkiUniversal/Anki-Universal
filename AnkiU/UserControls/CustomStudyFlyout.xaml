@@ -145,7 +145,8 @@
                                     <views:TagInformationView x:Name="excludeTags" AddVisibility="Collapsed" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}"/>
                                 </StackPanel>
 
-                                <CheckBox Grid.Row="3" Content="Reschedule cards based on my answer" x:Name="rescheduleCheckBox" IsThreeState="False"/>
+                                <CheckBox Grid.Row="3" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=userControl}"
+                                          Content="Reschedule cards based on my answer" x:Name="rescheduleCheckBox" IsThreeState="False"/>
                             </Grid>
                         </Grid>
                     </Border>

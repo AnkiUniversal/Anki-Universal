@@ -44,7 +44,7 @@ namespace AnkiU.Anki
             deckPrefDict = new Dictionary<long, T>();
             foreach (var deck in deckInkPrefList)
             {
-                deckPrefDict.Add(deck.Id, deck);
+                deckPrefDict[deck.Id] =  deck;
             }
         }
 
@@ -77,7 +77,7 @@ namespace AnkiU.Anki
         {
             T newDeck = new T();
             newDeck.Id = deckId;
-            deckPrefDict.Add(deckId, newDeck);
+            deckPrefDict[deckId] =  newDeck;
             ToAddToDatabaseDeckList.Add(deckId);
             ToRemoveFromDatabaseList.Remove(deckId);
         }

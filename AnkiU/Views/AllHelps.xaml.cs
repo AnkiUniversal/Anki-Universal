@@ -53,6 +53,7 @@ namespace AnkiU.Views
         public const string HELP_ClOZE_FIELD = "ClozeField";
         public const string HELP_DECK_OPTION = "DeckOption";
         public const string HELP_SYNC = "Sync";
+        public const string HELP_SUBDECK = "SubDeck";
 
         public const string NOTE_TYPE_DEFINITION = "A note type determines how many fields each note will have.\n" +
                                                 "When you add, reposition, or delete fields of a note type, all notes using it will be affected.";
@@ -488,7 +489,7 @@ namespace AnkiU.Views
         #endregion
 
         #region Deck Options
-        public void DeckOptionHelpShown(object sender, RoutedEventArgs e)
+        public void ShowDeckOptionHelp(object sender, RoutedEventArgs e)
         {
             MainPage.UserPrefs.SetHelpShown(HELP_DECK_OPTION, true);
             DeckOption.Visibility = Visibility.Visible;
@@ -597,6 +598,49 @@ namespace AnkiU.Views
         }
         #endregion
 
+        #region Sub Deck
+        public void ShowSubDeckHelp()
+        {
+            MainPage.UserPrefs.SetHelpShown(HELP_SUBDECK, true);
+            InitHelpPopupIfNeeded();
+            StartSubDeckHelp();
+        }
+
+        private void StartSubDeckHelp()
+        {
+            helpPopup.SubtitleVisibility = Visibility.Collapsed;
+            helpPopup.Title = "Create a SubDeck";
+            helpPopup.Text = "To make a deck become a subdeck, drag and drop it onto another deck. That deck will become its parent.\n"
+                             + "To remove a deck from subdecks, drag and drop it onto its parent again.";
+            helpPopup.NextEvent = FirstSubDeckNext;
+            helpPopup.ShowWithNext();
+        }
+
+        private void FirstSubDeckNext()
+        {
+            helpPopup.BackEvent = StartSubDeckHelp;
+            helpPopup.NextEvent = SecondSubDeckNext;
+
+            helpPopup.Title = "Card Display Order";
+            helpPopup.Text = "When learning/reviewing, cards from the parent deck are shown first. "
+                              +"If the maximum number of new/review cards has not been reached, cards from subdecks will be shown based on alphabetical order. Ex: cards from subdeck \"A\" are shown before cards from subdeck \"B\".";
+
+            helpPopup.ShowWithNextAndBack();
+        }
+
+        private void SecondSubDeckNext()
+        {
+            helpPopup.BackEvent = FirstSubDeckNext;            
+
+            helpPopup.Title = "WARNING";
+            helpPopup.Text = "Delete a parent deck will also remove all of its subdecks." +
+                             " Even though you can restore your decks from backups in \"Settings\", mediafiles won't be restored automatically. "
+                             + " To restore them, please use \"Insert Media Files\" and choose a zip file that contains the deleted media files.";
+
+            helpPopup.ShowWithBackAndClose();
+        }
+        #endregion
+
         private void InitHelpPopupIfNeeded()
         {
             if(helpPopup == null)
@@ -672,10 +716,15 @@ namespace AnkiU.Views
 
         private void HelpPopupCloseHandler()
         {
-            helpPopup.Closed -= HelpPopupCloseHandler;
-            helpPopup.Image.Visibility = Visibility.Collapsed;
-            helpPopup.Image.Source = null;
-            HelpClose?.Invoke();
+            try
+            {
+                helpPopup.Closed -= HelpPopupCloseHandler;
+                helpPopup.Image.Visibility = Visibility.Collapsed;
+                helpPopup.Image.Source = null;
+                HelpClose?.Invoke();
+            }
+            catch //Make sure no crash occur
+            { }
         }
 
         private void CreditClick(object sender, RoutedEventArgs e)

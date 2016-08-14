@@ -144,6 +144,13 @@ namespace AnkiU.Pages
             mainPage.ListViewButton.Click += ListViewButtonClickHandler;
             mainPage.AddButton.Click += AddButtonClickHandler;
             mainPage.DragAndDropButton.Click += DragAndDropButtonClick;
+            mainPage.CommanBar.Opening += OnCommanBarOpening;
+        }
+
+        private void OnCommanBarOpening(object sender, object e)
+        {
+            if(customStudyFlyout != null && customStudyFlyout.IsOpen)            
+                customStudyFlyout.Hide();            
         }
 
         private void DragAndDropButtonClick(object sender, RoutedEventArgs e)
@@ -177,31 +184,33 @@ namespace AnkiU.Pages
             decksView.DisableDragAndDropMode();
         }
 
-        private void OnDeckDragAnDrop(DeckInformation parent, DeckInformation child)
+        private async void OnDeckDragAnDrop(DeckInformation parent, DeckInformation child)
         {
-            if (collection.Deck.IsParent(parent.Name, child.Name))
-                //Remove from children if child deck is dragged on parent deck
-                collection.Deck.RenameForDragAndDrop(child.Id, null);
-            else
-                collection.Deck.RenameForDragAndDrop(child.Id, parent.Id);
-
-            deckListViewModel.UpdateDeckName(child);
-            UpdateChildrenName(child);
-
-            deckListViewModel.UpdateCardCountAllDecks();
-            UpdateNoticeText();
-            collection.SaveAndCommitAsync();
-        }
-
-        private void UpdateChildrenName(DeckInformation child)
-        {
-            Dictionary<string, long> children = collection.Deck.Children(child.Id);
-            foreach (var deck in children)
+            try
             {
-                var deckInfor = deckListViewModel.GetDeck(deck.Value);
-                deckListViewModel.UpdateDeckName(deckInfor);
-            }            
-        }
+                deckListViewModel.DragAnDrop(parent, child, decksView);
+
+                UpdateNoticeText();
+            }
+            catch(DeckRenameException ex)
+            {
+                if (ex.Error == DeckRenameException.ErrorCode.ALREADY_EXISTS)
+                {
+                    await UIHelper.ShowMessageDialog("A deck with the same name already exists.");
+                    return;
+                }
+                if(ex.Error == DeckRenameException.ErrorCode.FILTERED_NOSUBDEKCS)
+                {
+                    await UIHelper.ShowMessageDialog("A \"Custom Study Deck\" can't become a parent deck.");
+                    return;
+                }
+            }
+            catch
+            {
+                await UIHelper.ShowMessageDialog("Unexpected error.");
+                return;
+            }
+        }  
 
         private async void MainPageDeckImageChangedHandler(StorageFile fileToChange, long deckId, long modifiedTime)
         {
@@ -222,6 +231,8 @@ namespace AnkiU.Pages
             await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 deckListViewModel.AddNewDeck(deckId);
+                var deckInfor = deckListViewModel.GetDeck(deckId);
+                deckListViewModel.ResortNonSubdeck(deckInfor);
                 NewDeckCreatedEvent?.Invoke(deckId);
             });
         }
@@ -240,8 +251,13 @@ namespace AnkiU.Pages
             var deltaTime = (currentDate - lastRefreshDate).TotalHours;
             if (deltaTime > REFRESH_RATE)
             {
+                var isModified = collection.IsModified();
                 deckListViewModel.UpdateCardCountAllDecks();
                 lastRefreshDate = currentDate;
+
+                //Make sure we don't accidentally bump this up
+                if (!isModified)
+                    collection.ClearIsModified();
             }
         }
 
@@ -298,6 +314,7 @@ namespace AnkiU.Pages
             mainPage.ListViewButton.Click -= ListViewButtonClickHandler;
             mainPage.AddButton.Click -= AddButtonClickHandler;
             mainPage.DragAndDropButton.Click -= DragAndDropButtonClick;
+            mainPage.CommanBar.Opening -= OnCommanBarOpening;
         }
 
         private void ListViewButtonClickHandler(object sender, RoutedEventArgs e)
@@ -321,55 +338,65 @@ namespace AnkiU.Pages
         {
             MainPage.UserPrefs.IsDeckListView = false;
             if (deckListView != null)
+            {
                 deckListView.Visibility = Visibility.Collapsed;
+                deckListView.DataContext = null;
+            }
             if (deckGridView == null)
             {
                 this.FindName("deckGridView");
-                decksView = deckGridView as IAnkiDecksView;
-                decksView.DataContext = deckListViewModel.Decks;
+                decksView = deckGridView as IAnkiDecksView;                
                 HookDeckItemEvent();
-            }
+            }            
             decksView = deckGridView;
+            decksView.DataContext = deckListViewModel.Decks;
             mainPage.ListViewButton.Visibility = Visibility.Visible;
             mainPage.GridViewButton.Visibility = Visibility.Collapsed;
-            deckGridView.Visibility = Visibility.Visible;
+
+            deckListViewModel.ShowAllDecks(decksView);
+            deckGridView.Visibility = Visibility.Visible;            
         }
 
         private void SwitchToListView()
         {
             MainPage.UserPrefs.IsDeckListView = true;
             if (deckGridView != null)
+            {
                 deckGridView.Visibility = Visibility.Collapsed;
+                deckGridView.DataContext = null;
+            }
             if (deckListView == null)
             {
                 this.FindName("deckListView");
-                decksView = deckListView as IAnkiDecksView;
-                decksView.DataContext = deckListViewModel.Decks;
+                decksView = deckListView as IAnkiDecksView;                            
                 HookDeckItemEvent();
-            }
+            }            
             decksView = deckListView;
+            decksView.DataContext = deckListViewModel.Decks;
             mainPage.ListViewButton.Visibility = Visibility.Collapsed;
             mainPage.GridViewButton.Visibility = Visibility.Visible;
-            deckListView.Visibility = Visibility.Visible;
+
+            deckListViewModel.ShowAllDecks(decksView);
+            deckListView.Visibility = Visibility.Visible;            
         }
 
         private void HookDeckItemEvent()
         {
             decksView.DeckItemClickEvent += DeckListViewItemClickEventHandler;
             decksView.DragAnDropEvent += OnDeckDragAnDrop;
+            decksView.ExpandChildrenClickEvent += OnExpandChildrenClick;
         }
 
-        private void DeckListViewItemClickEventHandler(long deckId)
+        private void DeckListViewItemClickEventHandler(DeckInformation deck)
         {
-            mainPage.Collection.Deck.Select(deckId, false);
-            var deck = deckListViewModel.GetDeck(deckId);
+            mainPage.Collection.Deck.Select(deck.Id, false);            
             if (deck.NewCards > 0 || deck.DueCards > 0)
             {
                 MakesureCleanState();
                 mainPage.Collection.Sched.Reset();
                 Frame.Navigate(typeof(ReviewPage), mainPage);
             }
-            else if (!collection.Deck.IsDyn(deckId))
+            else if (!collection.Deck.IsDyn(deck.Id))
             {
                 if (customStudyFlyout == null)
                     InitCustomStudyFlyout();
@@ -384,6 +411,11 @@ namespace AnkiU.Pages
                     await UIHelper.ShowMessageDialog("This \"Custom Study\" deck has no cards to learn or review. Please delete it.");
                 });
             }
+        }
+
+        private void OnExpandChildrenClick(DeckInformation parent)
+        {
+            deckListViewModel.ToggleChildrenVisibility(parent, decksView);
         }
 
         private void InitCustomStudyFlyout()
@@ -403,6 +435,8 @@ namespace AnkiU.Pages
             else
             {
                 deckListViewModel.AddOrUpdateDeckCardCount(deckId);
+                var deckInfor = deckListViewModel.GetDeck(deckId);
+                deckListViewModel.ResortNonSubdeck(deckInfor);
             }
 
             UpdateNoticeText();
@@ -510,7 +544,7 @@ namespace AnkiU.Pages
                 renameFlyout.OkButtonClickEvent += RenameFlyoutOKButtonClickHandler;
             }
 
-            renameFlyout.Show(pointToShowFlyout, deckShowContextMenu.Name);
+            renameFlyout.Show(pointToShowFlyout, deckShowContextMenu.BaseName);
         }
 
         private void ShowFlyout(Flyout flyout)
@@ -530,15 +564,23 @@ namespace AnkiU.Pages
         {
             await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                var text = renameFlyout.NewName;
-                if (String.IsNullOrWhiteSpace(text))
+                var baseName = renameFlyout.NewName;
+                if (String.IsNullOrWhiteSpace(baseName))
                     return;
+
+                var existingName = deckListViewModel.GetAllDeckBaseName();
+                if (existingName.Contains(baseName))
+                {
+                    await NotifyNameAlreadyExist();
+                    return;
+                }
 
                 try
                 {
+                    var newName = deckListViewModel.GetNewFullName(deckShowContextMenu, baseName);
                     var deck = collection.Deck.Get(deckShowContextMenu.Id);
-                    collection.Deck.Rename(deck, text);
-                    deckListViewModel.GetDeck(deckShowContextMenu.Id).Name = text;
+                    collection.Deck.Rename(deck, newName);
+                    deckListViewModel.UpdateDeckName(deckShowContextMenu);
 
                     collection.Deck.Save(deck);
                     collection.SaveAndCommitAsync();
@@ -547,8 +589,7 @@ namespace AnkiU.Pages
                 {
                     if (ex.Error == DeckRenameException.ErrorCode.ALREADY_EXISTS)
                     {
-                        await UIHelper.ShowMessageDialog("A deck with the same name already exists!");                        
-                        renameFlyout.Show(pointToShowFlyout);
+                        await NotifyNameAlreadyExist();
                     }
                     else
                     {
@@ -560,6 +601,12 @@ namespace AnkiU.Pages
                     await UIHelper.ShowMessageDialog("Unexpected error!");                    
                 }
             });
+        }
+
+        private async Task NotifyNameAlreadyExist()
+        {
+            await UIHelper.ShowMessageDialog("A deck with the same name already exists!");
+            renameFlyout.Show(pointToShowFlyout);
         }
 
         private void ExportMenuFlyoutItemClickHanlder(object sender, RoutedEventArgs e)
@@ -676,9 +723,8 @@ namespace AnkiU.Pages
 
         private void ShowDeckOpTionTutorial()
         {
-            mainPage.InitAllHelpsIfNeeded();
             mainPage.AllHelps.HelpClose += AllHelpsClosedEventHandler;
-            mainPage.AllHelps.DeckOptionHelpShown(null, null);                        
+            mainPage.AllHelps.ShowDeckOptionHelp(null, null);                        
         }
 
         private void AllHelpsClosedEventHandler()
@@ -724,18 +770,29 @@ namespace AnkiU.Pages
 
         private async void ConfigureFlyoutDeleteButtonClick(object sender, RoutedEventArgs e)
         {
-            string content = "Delete this preset will revert all decks use it to Default.\n" +
+            string content = "Delete this preset will revert all decks using it to Default.\n" +
                              "Are you sure you want to continue?";
             bool isDelete = await ShowYesNoMessageDialog(content);
 
             if (isDelete)
             {
-                var config = (e.OriginalSource as FrameworkElement).DataContext as DeckConfigName;                
+                var config = (e.OriginalSource as FrameworkElement).DataContext as DeckConfigName;
+                ReorderCardsIfRandom(config);
                 collection.Deck.RemoveConfiguration(config.Id);
-
                 deckListViewModel.UpdateCardCountAllDecks();
-                UpdateNoticeText();                
+                UpdateNoticeText();
                 collection.SaveAndCommit();
+            }
+        }
+
+        private void ReorderCardsIfRandom(DeckConfigName config)
+        {
+            var order = (int)collection.Deck.GetConf(config.Id).GetNamedObject("new").GetNamedNumber("order");
+            if (order == (int)NewCardInsertOrder.RANDOM)
+            {
+                var deckIds = collection.Deck.DeckIdsForConf(config.Id);
+                foreach (var id in deckIds)
+                    collection.Sched.OrderCards(id);
             }
         }
 
@@ -772,7 +829,7 @@ namespace AnkiU.Pages
                 string savePoint = collection.Database.SaveTransactionPoint();
                 try
                 {
-                    await DeleteDeckAsync(deckId, childs);
+                    DeleteDeckAsync(deckId, childs);
                 }
                 catch
                 {
@@ -782,27 +839,35 @@ namespace AnkiU.Pages
             }
         }
 
-        private async Task DeleteDeckAsync(long deckId, Dictionary<string, long> childs = null)
+        private void DeleteDeckAsync(long deckId, Dictionary<string, long> childs = null)
         {
-            var parents = collection.Deck.Parents(deckId);
-            var originalDeckId = collection.Deck.TryGetOriginalDeckId(deckId);
-
             ProgressDialog dialog = new ProgressDialog();
             dialog.ProgressBarLabel = "This may take a while...";
             dialog.ShowInDeterminateStateNoStopAsync("Deleting deck");
-            collection.Deck.Remove(deckId, true, true);
-            await RemoveMediaAndView(deckId);
 
-            await DeleteChildrenIfNeeded(childs);            
-            UpdateOriginalDeckCardCountIfNeeded(originalDeckId);
-            UpdateParentsCardCountIfNeeded(parents);
+            Task.Run( async () =>
+            {//Run these in async to avoid blocking UI
+                var parents = collection.Deck.Parents(deckId);
+                var originalDeckId = collection.Deck.TryGetOriginalDeckId(deckId);
 
-            UpdateNoticeText();
-            dialog.Hide();
-            collection.Save();
-            collection.Database.Commit();
+                collection.Deck.Remove(deckId, true, true);
 
-            MainPage.RemoveDeckInPrefsIfNeeded(deckId);
+                await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    await RemoveMediaAndView(deckId);
+
+                    await DeleteChildrenIfNeeded(childs);
+                    UpdateOriginalDeckCardCountIfNeeded(originalDeckId);
+                    UpdateParentsCardCountIfNeeded(parents);
+
+                    UpdateNoticeText();
+                    dialog.Hide();
+                    collection.Save();
+                    collection.Database.Commit();
+
+                    MainPage.RemoveDeckInKPrefsIfNeeded(deckId);
+                });
+            });
         }
 
         private void UpdateParentsCardCountIfNeeded(List<Windows.Data.Json.JsonObject> parents)
@@ -835,7 +900,7 @@ namespace AnkiU.Pages
                 foreach (var deck in childs)
                 {
                     await RemoveMediaAndView(deck.Value);
-                    MainPage.RemoveDeckInPrefsIfNeeded(deck.Value);
+                    MainPage.RemoveDeckInKPrefsIfNeeded(deck.Value);
                 }
         }
 
