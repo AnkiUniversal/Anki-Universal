@@ -338,6 +338,7 @@ namespace AnkiU.Anki
         {
             try
             {
+                webViewControl.Focus(FocusState.Programmatic);
                 await webViewControl.InvokeScriptAsync("FocusOn", new string[] { name });
             }
             catch (Exception ex)
@@ -430,6 +431,8 @@ namespace AnkiU.Anki
         }
 
         /// <summary>
+        /// Updated (13_08_2016): this function is no longer needed on new Windows Phone 10 Vers
+        /// But we still keeps it here if it appears again in future updates
         /// This function should only be used to deal with touch input only.
         /// Tinymce and enter key of touch keyboard on win 10 mobile does not work well with each other
         /// so we have to handle it differently
