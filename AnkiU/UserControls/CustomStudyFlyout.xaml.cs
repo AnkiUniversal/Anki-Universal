@@ -54,11 +54,11 @@ namespace AnkiU.UserControls
 
         private TagInformationViewModel includeTagsViewModel;
         private TagInformationViewModel excludeTagsViewModel;
-
-        private double VERTICAL_OFFSET = -30;
-        private double DEFAULT_HEIGHT_MARGIN = 40;
-        private double DEFAULT_WIDTH_MARGIN = 15;
-        private double DEFAULT_SCROLLVIEWER_MARGIN = 140;
+        
+        private double DEFAULT_HEIGHT_MARGIN = 0;
+        private double DEFAULT_WIDTH_MARGIN = 0;
+        private double DEFAULT_SCROLLVIEWER_MARGIN = 125;
+        private double DESIGN_WIDTH = 335; //Max width of content grid
 
         public enum CustomStudyOption
         {
@@ -71,18 +71,19 @@ namespace AnkiU.UserControls
         }
 
         private CustomStudyOption studyOption;
-        private CoreDispatcher dispatcher;        
+        private CoreDispatcher dispatcher;
+        private Grid rootGrid;
 
         public delegate void CustomStudyCreateHandler(CustomStudyOption studyOption, long deckID);
         public event CustomStudyCreateHandler CustomStudyCreateEvent;
 
         public bool IsOpen { get { return customStudyFlyout.IsOpen; } }
 
-        public CustomStudyFlyout(CoreDispatcher dispatcher)
+        public CustomStudyFlyout(CoreDispatcher dispatcher, Grid rootGrid)
         {
             this.InitializeComponent();
             this.dispatcher = dispatcher;
-
+            this.rootGrid = rootGrid;
             InitFlyout();
         }
 
@@ -154,16 +155,27 @@ namespace AnkiU.UserControls
 
         private void CalculateSizeAndPosition()
         {
-            var winWidth = CoreWindow.GetForCurrentThread().Bounds.Width;
-            var winHeight = CoreWindow.GetForCurrentThread().Bounds.Height;
+            var winWidth = rootGrid.ActualWidth;
+            var winHeight = rootGrid.ActualHeight;
             var maxWidth = winWidth - DEFAULT_WIDTH_MARGIN;
             var maxHeight = winHeight - DEFAULT_HEIGHT_MARGIN;
             customStudyFlyout.MaxWidth = maxWidth;
             scrollViewer.MaxWidth = MaxWidth;
             customStudyFlyout.MaxHeight = maxHeight;
             scrollViewer.MaxHeight = maxHeight - DEFAULT_SCROLLVIEWER_MARGIN;
+            ScaleIfNotFit();
+        }
 
-            customStudyFlyout.VerticalOffset = VERTICAL_OFFSET;
+        private void ScaleIfNotFit()
+        {
+            if ((DESIGN_WIDTH > rootGrid.ActualWidth))
+            {
+                var scale = rootGrid.ActualWidth / DESIGN_WIDTH;                
+                contentScale.ScaleX = scale;
+                contentScale.ScaleY = scale;
+                //Make it center in screen
+                customStudyFlyout.HorizontalOffset = -((DESIGN_WIDTH - rootGrid.ActualWidth) / 2 - 1);
+            }            
         }
 
         private void NumberChangedHandler(object sender, TextChangedEventArgs e)

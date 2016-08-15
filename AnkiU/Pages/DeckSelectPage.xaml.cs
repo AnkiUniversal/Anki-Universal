@@ -420,7 +420,7 @@ namespace AnkiU.Pages
 
         private void InitCustomStudyFlyout()
         {
-            customStudyFlyout = new CustomStudyFlyout(mainPage.CurrentDispatcher);
+            customStudyFlyout = new CustomStudyFlyout(mainPage.CurrentDispatcher, mainGrid);
             customStudyFlyout.CustomStudyCreateEvent += CustomStudyCreateEventHandler;
             UIHelper.AddToGridInFull(mainGrid, customStudyFlyout);            
         }

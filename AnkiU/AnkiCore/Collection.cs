@@ -275,7 +275,7 @@ namespace AnkiU.AnkiCore
             var list = database.QueryColumn<CollectionTable>(
                     "SELECT crt, mod, scm, dty, usn, ls, " +
                     "conf, models, decks, dconf, tags FROM col");
-            if (list == null)
+            if (list == null || list.Count == 0)
                 return;
             CollectionTable col = list[0];
             this.crt = col.Crt;

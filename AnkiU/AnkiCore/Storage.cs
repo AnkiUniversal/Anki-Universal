@@ -93,7 +93,8 @@ namespace AnkiU.AnkiCore
             catch(Exception e)
             {
                 db.Close();
-                throw new Exception("Storage unable to open or create collection!", e);
+                await UIHelper.ShowMessageDialog("Unable to open or create collection!");
+                return null;                
             }
         }
 

@@ -579,9 +579,9 @@ namespace AnkiU
             }
         }
 
-        private void SyncOnStarupIfNeeded()
+        private async void SyncOnStarupIfNeeded()
         {
-            var task = CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 if (UserPrefs.IsSyncOnOpen)
                 {
@@ -645,7 +645,7 @@ namespace AnkiU
         private static void SetMinWindowSupported()
         {
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize
-                        (new Size { Width = 360, Height = 600 });
+                         (new Size { Width = UIConst.SMALEST_SCREEN_WIDTH, Height = UIConst.SMALEST_SCREEN_HEIGHT });
         }
         private void NavigationSetup()
         {

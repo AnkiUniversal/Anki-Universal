@@ -10,12 +10,16 @@
     d:DesignHeight="400"
     Background="White"
     x:Name="userControl"    
-             SizeChanged="WindowSizeChanged"
+      SizeChanged="WindowSizeChanged"
     d:DesignWidth="400">
 
-    <Popup x:Name="customStudyFlyout" IsOpen="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="335" Height="400">
-        <Grid   Background="{Binding Background, ElementName=userControl}" BorderThickness="1"
-               BorderBrush="{Binding Foreground, ElementName=userControl}">
+    <Popup x:Name="customStudyFlyout" IsOpen="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="335" Height="500" >
+        <Grid x:Name="contentGrid"   Background="{Binding Background, ElementName=userControl}" BorderThickness="1" 
+              VerticalAlignment="Center" HorizontalAlignment="Center"
+               BorderBrush="{Binding Foreground, ElementName=userControl}" RenderTransformOrigin="0.5,0.5" >
+            <Grid.RenderTransform>
+                <CompositeTransform x:Name="contentScale" ScaleX="1" ScaleY="1"/>
+            </Grid.RenderTransform>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -168,5 +172,5 @@
             </Grid>
         </Grid>
     </Popup>
-    
+
 </UserControl>
