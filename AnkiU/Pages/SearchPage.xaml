@@ -100,7 +100,7 @@
                 <Button.Flyout>
                     <Flyout>
                         <ContentPresenter FontSize="15" FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" >
-                            <RichTextBlock TextWrapping="Wrap" Width="330">
+                            <RichTextBlock TextWrapping="Wrap" Width="315">
                                 <Paragraph >
                                     Press on the button on the left for advanced search features.
                                     <LineBreak/>
