@@ -26,8 +26,10 @@
     <Popup x:Name="popup" Closed="PopupClosed" HorizontalAlignment="Left" VerticalAlignment="Stretch" MinWidth="350">
         <Grid Background="{Binding Background, ElementName=userControl}" x:Name="rootGrid"
               BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}"
-              BorderThickness="1" Padding="5">
-
+              BorderThickness="1" Padding="5" RenderTransformOrigin="0.5,0.5" >
+            <Grid.RenderTransform>
+                <CompositeTransform x:Name="contentScale" ScaleX="1" ScaleY="1"/>
+            </Grid.RenderTransform>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />

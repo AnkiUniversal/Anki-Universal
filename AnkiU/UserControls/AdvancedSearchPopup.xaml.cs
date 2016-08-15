@@ -62,6 +62,7 @@ namespace AnkiU.UserControls
         private FieldMultiSelect noteFieldsViewFlyout;
 
         private double HorizontalOffset;
+        private double VerticalOffset;
 
         private TagInformationViewModel tagInforViewModel;
         private string searchTag = "";
@@ -82,6 +83,7 @@ namespace AnkiU.UserControls
             this.InitializeComponent();
             this.collection = collection;
             HorizontalOffset = horizontalOffset;
+            VerticalOffset = verticalOffset;
             popup.HorizontalOffset = horizontalOffset;
             popup.VerticalOffset = verticalOffset;
 
@@ -122,8 +124,13 @@ namespace AnkiU.UserControls
                 popup.Width = popup.MinWidth;
                 rootGrid.Width = popup.MinWidth;
 
-                if (rootGrid.Width + HorizontalOffset > userControl.ActualWidth)                
-                    popup.HorizontalOffset = DEFAULT_WIDTH_MARGIN;                
+                if (rootGrid.Width + HorizontalOffset > userControl.ActualWidth)
+                {
+                    if (rootGrid.Width + DEFAULT_WIDTH_MARGIN < userControl.ActualWidth)
+                        popup.HorizontalOffset = DEFAULT_WIDTH_MARGIN;
+                    else
+                        popup.HorizontalOffset = -(popup.MinWidth - userControl.ActualWidth) / 2;
+                }
                 else
                     popup.HorizontalOffset = HorizontalOffset;
 
@@ -337,6 +344,20 @@ namespace AnkiU.UserControls
                 Hide();
             popup.MaxHeight = userControl.ActualHeight;
             rootGrid.MaxHeight = popup.MaxHeight;
+
+            if(popup.MinWidth > userControl.ActualWidth)
+            {
+                var scale = userControl.ActualWidth / popup.MinWidth;
+                contentScale.ScaleX = scale;
+                contentScale.ScaleY = scale;
+                popup.VerticalOffset = VerticalOffset - (popup.ActualHeight*(1 - scale)/2);
+            }
+            else
+            {
+                contentScale.ScaleX = 1;
+                contentScale.ScaleY = 1;
+                popup.VerticalOffset = VerticalOffset;
+            }
         }
 
         private void SearchButtonClick(object sender, RoutedEventArgs e)
