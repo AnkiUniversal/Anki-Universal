@@ -645,7 +645,7 @@ namespace AnkiU
         private static void SetMinWindowSupported()
         {
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize
-                         (new Size { Width = UIConst.SMALEST_SCREEN_WIDTH, Height = UIConst.SMALEST_SCREEN_HEIGHT });
+                         (new Size { Width = 360, Height = 600 });
         }
         private void NavigationSetup()
         {

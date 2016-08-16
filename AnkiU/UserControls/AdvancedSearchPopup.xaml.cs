@@ -191,24 +191,57 @@ namespace AnkiU.UserControls
             StringBuilder text = new StringBuilder();
             var fields = noteFieldsViewFlyout.SelectedFields;
             int lastPos = fields.Count - 1;
+
+            bool isAddedDivWrap = false;
             for (int i = 0; i <= lastPos; i++)
             {
-                text.Append("\"");
-                text.Append(fields[i]);
-                text.Append("\":\"");
-                text.Append(fieldContentTextBox.Text);
-                text.Append("\"");
+                AddFieldContent(text, fields[i], fieldContentTextBox.Text);
+                isAddedDivWrap = AddDivWrapIfNeeded(text, fields[i], isAddedDivWrap);
+
                 if (i < lastPos)
                     text.Append(" or ");
-            }            
+            }
 
-            if(noteFieldsViewFlyout.SelectedFields.Count > 1)
+            if (noteFieldsViewFlyout.SelectedFields.Count > 1 || isAddedDivWrap)
             {
                 text.Insert(0, "(");
                 text.Insert(text.Length, ")");
             }
 
             return text.ToString();
+        }
+
+        private bool AddDivWrapIfNeeded(StringBuilder text, string field, bool isAddedDivWrap)
+        {
+            if (!fieldContentTextBox.Text.StartsWith("*") && !fieldContentTextBox.Text.EndsWith("*"))
+            {
+                text.Append(" or ");
+                AddFieldContent(text, field, "<div>" + fieldContentTextBox.Text + "</div>");
+                return true;
+            }
+            else if (!fieldContentTextBox.Text.StartsWith("*"))
+            {
+                text.Append(" or ");
+                AddFieldContent(text, field, "<div>" + fieldContentTextBox.Text);
+                return true;
+            }
+            else if (!fieldContentTextBox.Text.EndsWith("*"))
+            {
+                text.Append(" or ");
+                AddFieldContent(text, field, fieldContentTextBox.Text + "</div>");
+                return true;
+            }
+
+            return isAddedDivWrap;
+        }
+
+        private void AddFieldContent(StringBuilder text, string field, string content)
+        {
+            text.Append("\"");
+            text.Append(field);
+            text.Append("\":\"");
+            text.Append(content);
+            text.Append("\"");
         }
 
         private static void AppendWithSpaceIfNeeded(StringBuilder builder, string text)
