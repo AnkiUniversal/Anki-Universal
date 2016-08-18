@@ -119,7 +119,7 @@ namespace AnkiU.Views
                 else
                 {
                     await htmlEditor.ChangeAllEditableFieldContent(currentNote.Fields);
-                    await RemoveDuplicatPopupIfNeeded(0);
+                    await RemoveDuplicatPopupIfNeededAsync(0);
                 }
             }
         }
@@ -192,34 +192,31 @@ namespace AnkiU.Views
             //TinyMce encode space as &nbsp; so we need to replace it           
             var text = html.Replace("&nbsp;", " ");
             currentNote.SetItem(fieldName, text);
-            WarnIfFirstFieldDuplicate(fieldName);
+            var task = WarnIfFirstFieldDuplicateAsync(fieldName);
         }
 
-        private void WarnIfFirstFieldDuplicate(string fieldName)
+        private async Task WarnIfFirstFieldDuplicateAsync(string fieldName)
         {
-            var task = Task.Run(async () =>
+            if (fieldName != fieldsViewModel.Fields[0].Name)
+                return;
+
+            var firstFieldValid = currentNote.DupeOrEmpty();
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                if (fieldName != fieldsViewModel.Fields[0].Name)
-                    return;
-
-                var firstFieldValid = currentNote.DupeOrEmpty();
-                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                if (firstFieldValid == Note.FirstField.Duplicate)
                 {
-                    if (firstFieldValid == Note.FirstField.Duplicate)
-                    {
-                        if (isDuplicatePopUpShown)
-                            return;                        
+                    if (isDuplicatePopUpShown)
+                        return;                        
 
-                        await ShowPopup(fieldName);
-                        isDuplicatePopUpShown = true;
-                    }
-                    else if (isDuplicatePopUpShown)
-                    {
-                        await RemovePopup();
-                        isDuplicatePopUpShown = false;
-                    }
-                });
-            });
+                    await ShowPopup(fieldName);
+                    isDuplicatePopUpShown = true;
+                }
+                else if (isDuplicatePopUpShown)
+                {
+                    await RemovePopup();
+                    isDuplicatePopUpShown = false;
+                }
+            });            
         }
 
         public async Task AddNewField(string name, Note newNote)
@@ -238,7 +235,7 @@ namespace AnkiU.Views
 
         public async Task DeleteField(string name, int order, Note newNote)
         {
-            await RemoveDuplicatPopupIfNeeded(order);
+            await RemoveDuplicatPopupIfNeededAsync(order);
 
             int count = fieldsViewModel.Fields.Count;
             fieldsViewModel.Fields.RemoveAt(order); 
@@ -258,12 +255,12 @@ namespace AnkiU.Views
 
             currentNote = newNote;
 
-            ReOpenDuplicatePopupIfNeeded(order);
+            await ReOpenDuplicatePopupIfNeededAsync(order);
         }
 
         public async Task RenameField(string name, int order, Note newNote)
         {
-            await RemoveDuplicatPopupIfNeeded(order);
+            await RemoveDuplicatPopupIfNeededAsync(order);
 
             await RenameField(fieldsViewModel.Fields[order].Name, name);
             fieldsViewModel.Fields[order].Name = name;
@@ -273,10 +270,10 @@ namespace AnkiU.Views
 
             currentNote = newNote;
 
-            ReOpenDuplicatePopupIfNeeded(order);
+            await ReOpenDuplicatePopupIfNeededAsync(order);
         }
 
-        public async Task RemoveDuplicatPopupIfNeeded(params int[] orders)
+        public async Task RemoveDuplicatPopupIfNeededAsync(params int[] orders)
         {
             if (orders.Contains(0))
             {
@@ -288,17 +285,17 @@ namespace AnkiU.Views
             }
         }
 
-        private void ReOpenDuplicatePopupIfNeeded(params int[] orders)
+        private async Task ReOpenDuplicatePopupIfNeededAsync(params int[] orders)
         {
             if (orders.Contains(0))
             {
-                WarnIfFirstFieldDuplicate(fieldsViewModel.Fields[0].Name);
+                await WarnIfFirstFieldDuplicateAsync(fieldsViewModel.Fields[0].Name);
             }
         }
 
         public async Task MoveField(int oldOrder, int newOrder, Note newNote)
         {            
-            await RemoveDuplicatPopupIfNeeded(oldOrder, newOrder);
+            await RemoveDuplicatPopupIfNeededAsync(oldOrder, newOrder);
 
             await MoveField(fieldsViewModel.Fields[oldOrder].Name, newOrder);
 
@@ -306,8 +303,7 @@ namespace AnkiU.Views
             fieldsViewModel.Fields.RemoveAt(oldOrder);
             fieldsViewModel.Fields.Insert(newOrder, temp);
             for(int i = 0; i < fieldsViewModel.Fields.Count; i++)
-                fieldsViewModel.Fields[i].Order = i;
-            
+                fieldsViewModel.Fields[i].Order = i;            
 
             newNote.Tags = currentNote.Tags;
             List<string> fields = new List<string>(currentNote.Fields);
@@ -318,7 +314,7 @@ namespace AnkiU.Views
             
             currentNote = newNote;
 
-            ReOpenDuplicatePopupIfNeeded(oldOrder, newOrder);
+            await ReOpenDuplicatePopupIfNeededAsync(oldOrder, newOrder);
         }
 
         private async Task AddField(string name)

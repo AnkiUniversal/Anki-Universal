@@ -42,8 +42,7 @@ namespace AnkiU.Views
 {
     public sealed partial class DeckHubView : UserControl, IAnkiDecksView
     {
-        public event DeckItemClickEventHandler DeckItemClickEvent;
-        public event DeckItemClickEventHandler DeckItemDoubleClickEvent;
+        public event DeckItemClickEventHandler DeckItemClickEvent;        
         public event DeckDragAnDropEventHandler DragAnDropEvent;
         public event ExpandChildrenClickEventHandler ExpandChildrenClickEvent;
 

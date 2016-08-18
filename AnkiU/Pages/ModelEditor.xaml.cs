@@ -283,6 +283,12 @@ namespace AnkiU.Pages
 
         private async void DeleteMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
         {
+            if(fieldsViewModel.Fields.Count <= 2)
+            {
+                await UIHelper.ShowMessageDialog(UIConst.CAN_NOT_DELETE__FIELD);
+                return;
+            }
+
             var isContinue = await MainPage.WarnFullSyncIfNeeded();
             if (!isContinue)
                 return;

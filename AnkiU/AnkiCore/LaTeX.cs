@@ -46,37 +46,44 @@ namespace AnkiU.AnkiCore
         */                            
         public static string MungeQA(string html, Collection col)
         {
-            StringBuilder sb = new StringBuilder();
-            bool isMatchOne = false;
-            MatchCollection matches = standardPattern.Matches(html);
-            foreach (Match matcher in matches)
+            try
             {
-                sb.AppendAndReplace(ImgLink(col, matcher.GetGroup(1)), html, matcher);
-                isMatchOne = true;
-            }
+                StringBuilder sb = new StringBuilder();
+                bool isMatchOne = false;
+                MatchCollection matches = standardPattern.Matches(html);
+                foreach (Match matcher in matches)
+                {
+                    sb.AppendAndReplace(ImgLink(col, matcher.GetGroup(1)), html, matcher);
+                    isMatchOne = true;
+                }
 
-            matches = expressionPattern.Matches(sb.ToString());
-            sb = new StringBuilder();
-            foreach (Match matcher in matches)
-            {
-                sb.AppendAndReplace(ImgLink(col, "$" + matcher.GetGroup(1) + "$"),
-                                    html, matcher);
-                isMatchOne = true;
-            }
+                matches = expressionPattern.Matches(sb.ToString());
+                sb = new StringBuilder();
+                foreach (Match matcher in matches)
+                {
+                    sb.AppendAndReplace(ImgLink(col, "$" + matcher.GetGroup(1) + "$"),
+                                        html, matcher);
+                    isMatchOne = true;
+                }
 
-            matches = mathPattern.Matches(sb.ToString());
-            sb = new StringBuilder();
-            foreach (Match matcher in matches)
-            {
-                sb.AppendAndReplace(ImgLink(col, "\\begin{displaymath}"
-                                    + matcher.GetGroup(1) + "\\end{displaymath}"),
-                                    html, matcher);
-                isMatchOne = true;
+                matches = mathPattern.Matches(sb.ToString());
+                sb = new StringBuilder();
+                foreach (Match matcher in matches)
+                {
+                    sb.AppendAndReplace(ImgLink(col, "\\begin{displaymath}"
+                                        + matcher.GetGroup(1) + "\\end{displaymath}"),
+                                        html, matcher);
+                    isMatchOne = true;
+                }
+                if (isMatchOne)
+                    return sb.ToString();
+                else
+                    return html;
             }
-            if (isMatchOne)
-                return sb.ToString();
-            else
+            catch
+            {
                 return html;
+            }
         }
 
         /// <summary>

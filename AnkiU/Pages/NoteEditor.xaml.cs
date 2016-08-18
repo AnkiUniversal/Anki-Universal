@@ -1028,6 +1028,12 @@ namespace AnkiU.Pages
 
         private async void DeleteFieldMenuClickHandler(object sender, RoutedEventArgs e)
         {
+            if (noteFieldView.fieldsViewModel.Fields.Count <= 2)
+            {
+                await UIHelper.ShowMessageDialog(UIConst.CAN_NOT_DELETE__FIELD);
+                return;
+            }
+
             await ShowWarnThenFieldList(DeleteField);
         }
 
@@ -1036,7 +1042,8 @@ namespace AnkiU.Pages
             var isContinue = await MainPage.WarnFullSyncIfNeeded();
             if (!isContinue)
                 return;
-            InitFieldListViewIfNeeded();
+            InitFieldListViewIfNeeded();            
+
             fieldButtonClickFunction = func;
             fieldListView.Show(editModelButton);
         }
