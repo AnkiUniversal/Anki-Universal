@@ -132,23 +132,30 @@ namespace AnkiU.Views
 
             var noteFields = new List<NoteField>();
             List<string> fields = new List<string>();
-            InitNoteFieldAndFieldString(noteFields, fields);
+            await InitNoteFieldAndFieldString(noteFields, fields);
             await htmlEditor.PopulateAllEditableField(fields);
             fieldsViewModel = new NoteFieldsViewModel(noteFields);
         }
 
-        private void InitNoteFieldAndFieldString(List<NoteField> noteFields, List<string> fields)
+        private async Task InitNoteFieldAndFieldString(List<NoteField> noteFields, List<string> fields)
         {
-            foreach (var f in currentNote.Model["flds"].GetArray())
+            try
             {
-                string name = f.GetObject().GetNamedString("name");
-                int ord = (int)f.GetObject().GetNamedNumber("ord");
-                string content = AddDivWrapIfNeeded(currentNote.GetItem(name));
+                foreach (var f in currentNote.Model["flds"].GetArray())
+                {
+                    string name = f.GetObject().GetNamedString("name");
+                    int ord = (int)f.GetObject().GetNamedNumber("ord");
+                    string content = AddDivWrapIfNeeded(currentNote.GetItem(name));
 
-                fields.Add(name);
-                fields.Add(content);
+                    fields.Add(name);
+                    fields.Add(content);
 
-                noteFields.Add(new NoteField(currentNote.Id, name, ord, null));
+                    noteFields.Add(new NoteField(currentNote.Id, name, ord, null));
+                }
+            }
+            catch
+            {
+                await UIHelper.ShowMessageDialog("This note or its note type is corrupted.", "Failed!");
             }
         }
 

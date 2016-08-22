@@ -82,6 +82,9 @@ namespace AnkiU.Views
         {
             Enlarge.Stop();
             var viewItem = e.OriginalSource as Grid;
+            if (viewItem == null)
+                return;
+
             Storyboard.SetTarget(EnlargeX, viewItem);
             Storyboard.SetTarget(EnlargeY, viewItem);
             Enlarge.Begin();

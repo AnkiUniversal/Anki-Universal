@@ -80,7 +80,11 @@ namespace AnkiU.Views
 
         private void OnDragEnter(object sender, DragEventArgs e)
         {
-            var deckInfor = (sender as FrameworkElement).DataContext as DeckInformation;
+            var element = sender as FrameworkElement;
+            if (element == null)
+                return;
+
+            var deckInfor = element.DataContext as DeckInformation;
             if (deckInfor == null)
                 return;
 
