@@ -67,7 +67,7 @@ namespace AnkiU.AnkiCore.Importer
             string collectionName = "collection.anki2";
             string mapFileName = "media";
             string mapAnkiU = "mediaAnkiU";
-            AnkiImportFinishCode code = AnkiImportFinishCode.Success;
+            AnkiImportFinishCode code = AnkiImportFinishCode.UnableToUnzip;
             try
             {
                 using (archive = new ZipArchive(new FileStream(packageFile.Path, FileMode.Open), ZipArchiveMode.Read))
@@ -156,6 +156,7 @@ namespace AnkiU.AnkiCore.Importer
                         //    }
                         //}
                         destCol.Database.Commit();
+                        code = AnkiImportFinishCode.Success;
 
                         //Only in AnkiU we perform this step to move all mediafiles into DeckIdFolder 
                         //when importing the whole collection                  
@@ -178,9 +179,11 @@ namespace AnkiU.AnkiCore.Importer
                 tempDir =  await destCol.Folder.TryGetItemAsync(tempDirName) as StorageFolder;
                 if (tempDir != null)
                 {
-                    sourceCol.Close(false);
-                    sourceCol = null;
-
+                    if (sourceCol != null)
+                    {
+                        sourceCol.Close(false);
+                        sourceCol = null;
+                    }
                     sourceFolder = null;
                     await tempDir.DeleteAsync();
                     tempDir = null;

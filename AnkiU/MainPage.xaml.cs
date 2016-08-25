@@ -990,7 +990,9 @@ namespace AnkiU
                         dialog = new MessageDialog("Not found media mapping file.", "Error!");
                         break;
                     case AnkiImportFinishCode.UnableToUnzip:
-                        dialog = new MessageDialog("Can't extract package.", "Error!");
+                        dialog = new MessageDialog("Can't extract the package.\n" + 
+                                                    "This may happen if the app is not allowed to access your package or the package is corrupted.",
+                                                    "Error!");
                         break;
                     case AnkiImportFinishCode.UnknownExpception:
                         dialog = new MessageDialog("Unexpeceted error.", "Error!");
