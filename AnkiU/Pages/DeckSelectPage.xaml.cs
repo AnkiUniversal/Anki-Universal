@@ -253,11 +253,13 @@ namespace AnkiU.Pages
             {
                 var isModified = collection.IsModified();
                 deckListViewModel.UpdateCardCountAllDecks();
-                lastRefreshDate = currentDate;
+                lastRefreshDate = currentDate;                
 
                 //Make sure we don't accidentally bump this up
                 if (!isModified)
                     collection.ClearIsModified();
+
+                UpdateNoticeText();
             }
         }
 
