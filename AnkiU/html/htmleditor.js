@@ -51,24 +51,29 @@ function InsertLineBreak() {
 }
 
 function InsertCloze(count) {
-    tinymce.activeEditor.execCommand('mceInsertContent', false, '{{c' + count + '::');
+    InsertTinyMceContent('{{c' + count + '::');    
     var bm = tinymce.activeEditor.selection.getBookmark(2, false);
-    tinymce.activeEditor.execCommand('mceInsertContent', false, '}}');
+    InsertTinyMceContent('}}');    
     tinymce.activeEditor.selection.moveToBookmark(bm);
     NotifyContentChanged(tinymce.activeEditor.id);
 }
 
 function InsertIntoTinymce(text) {
-    tinymce.activeEditor.execCommand('mceInsertContent', false, text);
+    InsertTinyMceContent(text);    
     NotifyContentChanged(tinymce.activeEditor.id);
+}
+
+function InsertTinyMceContent(text) {
+    try {
+        tinymce.activeEditor.execCommand('mceInsertContent', false, text);
+    }
+    catch (error) {
+    }
 }
 
 function NotifyButtonClick(buttonName) {
     var id = tinymce.activeEditor.id;
     buttonNotify.clickEventFire(buttonName);
-    //Immediately get focus again to avoid race event
-    //when inserting html back to editor
-    tinymce.get(id).focus();
 }
 
 function InitRichTextEditor() {    
@@ -211,4 +216,39 @@ function IsTouchInput(value) {
 
 function RemoveAllEditor() {
     tinymce.remove();
+}
+
+var selectedRange;
+
+function NotifyChangeForeColor() {
+    selectedRange = tinymce.activeEditor.selection.getRng();
+    NotifyButtonClick('forecolor');
+}
+
+function NotifyChangeBackColor() {
+    selectedRange = tinymce.activeEditor.selection.getRng();
+    NotifyButtonClick('backcolor');
+}
+
+function ChangeForeColor(color) {
+    try {
+        RestoreSelection();
+        tinymce.activeEditor.execCommand('ForeColor', false, color);
+    }
+    catch (err) {
+    }
+}
+
+function ChangeBackColor(color) {
+    try {
+        RestoreSelection();
+        tinymce.activeEditor.execCommand('HiliteColor', false, color);
+    }
+    catch (err) {
+    }
+}
+
+function RestoreSelection() {
+        if (selectedRange != undefined && selectedRange != null)
+            tinymce.activeEditor.selection.setRng(selectedRange);
 }

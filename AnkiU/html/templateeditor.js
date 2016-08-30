@@ -25,9 +25,9 @@ var toolbarMediumScreenWidth = ['undo redo removeformat | styleselect fontselect
 var toolbarNarrowScreenWidth = ['undo styleselect fontselect fontsizeselect',
                                 'removeformat stylebutton forecolor backcolor addField miscbutton table'];
 
-var toolbarWideScreenWidthTouch = 'undo redo removeformat | bold italic underline | addField addTypeField addClozeField | CSS code hr';
-var toolbarMediumScreenWidthTouch = 'undo redo removeformat | bold italic underline | addField addTypeField addClozeField | CSS code hr ';
-var toolbarNarrowScreenWidthTouch = 'undo removeformat bold italic underline addField addTypeField addClozeField CSS';
+var toolbarWideScreenWidthTouch = 'undo redo | selectallbutton removeformat | bold italic underline subscript superscript forecolorbutton backcolorbutton | addField addTypeField addClozeField | CSS hr';
+var toolbarMediumScreenWidthTouch = 'undo redo selectallbutton removeformat bold italic underline forecolorbutton backcolorbutton | addField addTypeField addClozeField CSS hr ';
+var toolbarNarrowScreenWidthTouch = 'undo selectallbutton removeformat stylebutton forecolorbutton backcolorbutton addField miscbuttontouch';
 
 var tinymceInit = {
     selector: '.card',
@@ -80,7 +80,10 @@ var tinymceInit = {
                     editor.execCommand('superscript');
                 },
             }
-            ]
+            ],
+            onclick: function () {
+                NotifyButtonClick('groupbutton');
+            }
         });
 
         editor.addButton('miscbutton', {
@@ -116,7 +119,40 @@ var tinymceInit = {
                 onclick: function () {
                     NotifyButtonClick('stylecode');
                 },
-            }]
+            }],
+        });
+
+        editor.addButton('miscbuttontouch', {
+            type: 'menubutton',
+            text: 'Misc',
+            menu: [{
+                text: 'Add type field',
+                image: '/html/tinymce/img/input.png',
+                onclick: function () {
+                    AddTypeField();
+                }
+            }, {
+                text: 'Add Cloze Field',
+                image: '/html/tinymce/img/cloze.png',
+                onclick: function () {
+                    NotifyButtonClick('addCloze');
+                }
+            }, {
+                text: 'Horizontal Line',
+                icon: 'hr',
+                onclick: function () {
+                    editor.execCommand('InsertHorizontalRule');
+                }
+            }, {
+                text: 'CSS Code',
+                icon: 'code',
+                onclick: function () {
+                    NotifyButtonClick('stylecode');
+                },
+            }],
+            onclick: function () {
+                NotifyButtonClick('groupbutton');
+            }
         });
 
         editor.addButton('miscbuttonshort', {
@@ -175,6 +211,29 @@ var tinymceInit = {
             },
         });
 
+        editor.addButton('forecolorbutton', {
+            title: 'Text Color',
+            image: '/html/tinymce/img/forecolor.png',
+            onclick: function () {
+                NotifyChangeForeColor();
+            }
+        });
+
+        editor.addButton('backcolorbutton', {
+            title: 'Background Color',
+            image: '/html/tinymce/img/backcolor.png',
+            onclick: function () {
+                NotifyChangeBackColor();
+            }
+        });
+
+        editor.addButton('selectallbutton', {
+            title: 'Select All',
+            image: '/html/tinymce/img/selectall.png',
+            onclick: function () {
+                tinymce.activeEditor.execCommand('selectAll');
+            }
+        });
     },
     style_formats: [
     {title: 'Alignment', items: [

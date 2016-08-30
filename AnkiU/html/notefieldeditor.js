@@ -21,13 +21,13 @@ var editableClass = 'editable';
 
 var popUpHtml = '<span class="popuptext" id="firstFieldPopup">Duplicate</span>';
 
-var toolbarWideScreenWidth = 'undo redo | removeformat | bold italic underline subscript superscript forecolor backcolor |  mediabutton recorderbutton link cloze | charmap  code';
+var toolbarWideScreenWidth = 'undo redo | removeformat bold italic underline subscript superscript forecolor backcolor |  mediabutton recorderbutton link cloze | charmap  code';
 var toolbarMediumScreenWidth = 'undo redo | removeformat bold italic underline subscript superscript forecolor backcolor mediagroupbutton link cloze';
 var toolbarNarrowScreenWidth = 'undo removeformat stylebutton forecolor backcolor mediagroupbutton link cloze';
 
-var toolbarWideScreenWidthTouch = 'undo redo | removeformat bold italic underline subscript superscript |  mediabutton recorderbutton link cloze ';
-var toolbarMediumScreenWidthTouch = 'undo redo | removeformat bold italic underline subscript superscript mediabutton recorderbutton link cloze';
-var toolbarNarrowScreenWidthTouch = 'undo removeformat bold italic underline mediabutton recorderbutton link cloze';
+var toolbarWideScreenWidthTouch = 'undo redo | pastebutton selectallbutton removeformat | bold italic underline subscript superscript forecolorbutton backcolorbutton  |  mediabutton recorderbutton link cloze ';
+var toolbarMediumScreenWidthTouch = 'undo redo | pastebutton selectallbutton removeformat | bold italic underline forecolorbutton backcolorbutton | mediabutton recorderbutton link cloze';
+var toolbarNarrowScreenWidthTouch = 'undo pastebutton selectallbutton removeformat stylebutton forecolorbutton backcolorbutton mediagroupbutton cloze';
 
 var tinymceInit = {
     selector: '.editable',
@@ -58,7 +58,10 @@ var tinymceInit = {
                 onclick: function () {
                     NotifyButtonClick('microphone');
                 }
-            }]
+            }],
+            onclick: function () {
+                NotifyButtonClick('groupbutton');
+            }
         });
 
         editor.addButton('stylebutton', {
@@ -95,9 +98,11 @@ var tinymceInit = {
                 onclick: function () {
                     editor.execCommand('superscript');
                 },
+            }],
+            onclick: function () {
+                NotifyButtonClick('groupbutton');
             }
-            ]
-        });
+        });   
 
         editor.addButton('link', {
             title: 'Link',
@@ -128,6 +133,38 @@ var tinymceInit = {
             image: '/html/tinymce/img/microphone.png',
             onclick: function () {
                 NotifyButtonClick('microphone');
+            }
+        });
+
+        editor.addButton('pastebutton', {
+            title: 'Paste',
+            icon: 'paste',
+            onclick: function () {
+                PasteEventHandler();
+            }
+        });
+
+        editor.addButton('selectallbutton', {
+            title: 'Select All',
+            image: '/html/tinymce/img/selectall.png',
+            onclick: function () {
+                tinymce.activeEditor.execCommand('selectAll');
+            }
+        });
+
+        editor.addButton('forecolorbutton', {
+            title: 'Text Color',
+            image: '/html/tinymce/img/forecolor.png',
+            onclick: function () {
+                NotifyChangeForeColor();            
+            }
+        });
+
+        editor.addButton('backcolorbutton', {
+            title: 'Background Color',
+            image: '/html/tinymce/img/backcolor.png',
+            onclick: function () {
+                NotifyChangeBackColor();
             }
         });
 

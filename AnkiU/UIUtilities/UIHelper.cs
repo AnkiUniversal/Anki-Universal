@@ -430,5 +430,12 @@ namespace AnkiU.UIUtilities
         {
             Window.Current.CoreWindow.PointerCursor = ArrowCursor;
         }
+
+        public static string GetHexColor(Brush brush)
+        {
+            var color = (brush as SolidColorBrush).Color;
+            string hex = "#" + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
+            return hex;
+        }
     }
 }

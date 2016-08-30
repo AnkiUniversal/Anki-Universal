@@ -19,6 +19,7 @@ using AnkiRuntimeComponent;
 using AnkiU.AnkiCore;
 using AnkiU.Interfaces;
 using AnkiU.UIUtilities;
+using AnkiU.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,9 @@ namespace AnkiU.Anki
 
         private ButtonPassingWebToWinRT buttonEventNotify;
         private EditableFieldPassWebToWinRT editableFieldNotify;
+
+        private ColorPicker foreColorPicker = null;
+        private ColorPicker backColorPicker = null;
 
         private WebView webViewControl;
         public WebView WebViewControl { get { return webViewControl; } }
@@ -476,6 +480,64 @@ namespace AnkiU.Anki
             ClearWebViewControl();
             AddWebViewControlIntoGrid();
             NavigateWebviewToLocalPage();
+        }
+
+        public void ShowForeColorPickerFlyout(FrameworkElement target, Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode placement)
+        {
+            if (foreColorPicker == null)
+            {
+                foreColorPicker = new ColorPicker();
+                foreColorPicker.ColorChoose += OnForeColorChoose;
+            }
+            foreColorPicker.ShowFlyout(target, placement);
+        }
+
+        private async void OnForeColorChoose(Windows.UI.Xaml.Media.Brush brush)
+        {
+            foreColorPicker.HideFlyout();
+            string hex = UIHelper.GetHexColor(brush);
+            await ChangeForeColor(hex);
+        }
+
+        public void ShowBackColorPickerFlyout(FrameworkElement target, Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode placement)
+        {
+            if (backColorPicker == null)
+            {
+                backColorPicker = new ColorPicker();
+                backColorPicker.ColorChoose += OnBackColorChoose;
+            }
+            backColorPicker.ShowFlyout(target, placement);
+        }
+
+        private async void OnBackColorChoose(Windows.UI.Xaml.Media.Brush brush)
+        {
+            backColorPicker.HideFlyout();
+            string hex = UIHelper.GetHexColor(brush);
+            await ChangeBackColor(hex);
+        }
+
+        private async Task ChangeForeColor(string color)
+        {
+            try
+            {
+                await webViewControl.InvokeScriptAsync("ChangeForeColor", new string[] { color });
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ThrowJavascriptError(ex.HResult);
+            }
+        }
+
+        private async Task ChangeBackColor(string color)
+        {
+            try
+            {
+                await webViewControl.InvokeScriptAsync("ChangeBackColor", new string[] { color });
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ThrowJavascriptError(ex.HResult);
+            }
         }
     }
 }

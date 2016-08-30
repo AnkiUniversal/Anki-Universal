@@ -94,6 +94,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="html\tinymce\img\backcolor.png" />
+    <Content Include="html\tinymce\img\forecolor.png" />
+    <Content Include="html\tinymce\img\selectall.png" />
     <Content Include="Todo.txt" />
     <None Include="AnkiCore\Log.txt" />
     <Content Include="ApplicationInsights.config">
@@ -409,6 +412,9 @@
     <Compile Include="UserControls\CardViewPopup.xaml.cs">
       <DependentUpon>CardViewPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ColorPicker.xaml.cs">
+      <DependentUpon>ColorPicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\CreateNewDeckFlyout.xaml.cs">
       <DependentUpon>CreateNewDeckFlyout.xaml</DependentUpon>
     </Compile>
@@ -720,6 +726,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\CardViewPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ColorPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

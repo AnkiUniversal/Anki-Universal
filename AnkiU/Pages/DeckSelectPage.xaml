@@ -21,11 +21,11 @@
             <MenuFlyoutSubItem Text="Edit" Style="{StaticResource IconMenuFlyoutSubItem}" Tag="Edit" >
                 <MenuFlyoutItem Text="Rename Deck" Click="RenameMenuFlyoutItemClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Rename" />
                 <MenuFlyoutItem Text="Change Image" Click="MenuFlyoutChangeImageItemClickHandler" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource ImageIcon}"/>
-                <MenuFlyoutItem Text="Options" Click="MenuFlyoutConfigureClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Setting"/>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Text="Delete Deck" Click="MenuFlyoutDeleteClickHandler"  Style="{StaticResource IconMenuFlyoutItem}" Tag="Delete"/>
             </MenuFlyoutSubItem>
             <MenuFlyoutSeparator />
+            <MenuFlyoutItem Text="Options" Click="MenuFlyoutConfigureClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Setting"/>
             <MenuFlyoutItem Text="Export Deck" Click= "ExportMenuFlyoutItemClickHanlder" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource ExportIcon}"/>
         </MenuFlyout>
 

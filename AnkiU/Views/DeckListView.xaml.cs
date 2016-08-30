@@ -80,11 +80,7 @@ namespace AnkiU.Views
 
         private void OnDragEnter(object sender, DragEventArgs e)
         {
-            var element = sender as FrameworkElement;
-            if (element == null)
-                return;
-
-            var deckInfor = element.DataContext as DeckInformation;
+            var deckInfor = UIHelper.GetDeck(sender);
             if (deckInfor == null)
                 return;
 
@@ -104,12 +100,13 @@ namespace AnkiU.Views
 
         private void ChangeToTransparent(object sender)
         {
-            var deckInfor = (sender as FrameworkElement).DataContext as DeckInformation;
+            var deckInfor = UIHelper.GetDeck(sender);
             if (deckInfor == null)
                 return;
 
             var viewItem = ListView.ContainerFromItem(deckInfor) as ListViewItem;
-            viewItem.Background = UIHelper.Transparent;
+            if(viewItem != null)
+                viewItem.Background = UIHelper.Transparent;
         }
 
         private void OnDrop(object sender, DragEventArgs e)

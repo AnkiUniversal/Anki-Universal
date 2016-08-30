@@ -100,6 +100,8 @@ namespace AnkiU.Pages
         private bool isGoToModelPage = false;
         private bool isNightMode = false;
 
+        private InputPane touchKeyboard = null;
+
         public event NoticeRoutedHandler AddNewNoteEvent;
 
         public NoteEditor()
@@ -139,11 +141,13 @@ namespace AnkiU.Pages
             mainPage.SaveButton.Visibility = Visibility.Visible;
             CoreWindow.GetForCurrentThread().KeyDown += NoteEditorKeyUp;
 
-            InputPane.GetForCurrentView().Hiding += TouchInputHiding;
+            touchKeyboard = InputPane.GetForCurrentView();
+            if (touchKeyboard != null)                    
+                touchKeyboard.Hiding += TouchInputHiding;            
         }
 
         private async void TouchInputHiding(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
+        {            
             await noteFieldView.HtmlEditor.ForceNotifyContentChanged();
         }
 
@@ -362,8 +366,9 @@ namespace AnkiU.Pages
         }
         private void UnHookAllEvents()
         {
-            CoreWindow.GetForCurrentThread().KeyDown -= NoteEditorKeyUp;            
-            InputPane.GetForCurrentView().Hiding -= TouchInputHiding;
+            CoreWindow.GetForCurrentThread().KeyDown -= NoteEditorKeyUp;                        
+            if (touchKeyboard != null)
+                touchKeyboard.Hiding -= TouchInputHiding;
 
             mainPage.UndoButton.Click -= UndoButtonClickHandler;
             mainPage.SaveButton.Click -= SaveEditNoteButtonClickHandler;
@@ -530,6 +535,15 @@ namespace AnkiU.Pages
                         case ("save"):                            
                             await SaveNote();
                             break;
+                        case ("groupbutton"):
+                            HideTouchKeyboad();
+                            break;
+                        case ("forecolor"):
+                            noteFieldView.HtmlEditor.ShowForeColorPickerFlyout(mainPage.CommanBar, FlyoutPlacementMode.Bottom);
+                            break;
+                        case ("backcolor"):
+                            noteFieldView.HtmlEditor.ShowBackColorPickerFlyout(mainPage.CommanBar, FlyoutPlacementMode.Bottom);
+                            break;
                         default:
                             break;
                     }
@@ -540,6 +554,12 @@ namespace AnkiU.Pages
                     await UIHelper.ShowMessageDialog("Note Editor: " + ex.Message);
                 }
             });
+        }
+
+        private void HideTouchKeyboad()
+        {
+            if (touchKeyboard != null)
+                touchKeyboard.TryHide();
         }
 
         private async Task SaveNote()
@@ -712,15 +732,18 @@ namespace AnkiU.Pages
 
         private async void NoteFieldPasteEventHandler()
         {
-            try
+            await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                await TryPasteContentFromClipboard();
-            }
-            catch
-            { //Failed to paste should not make the program crashs
-            }
+                try
+                {                    
+                    await TryPasteContentFromClipboard();
+                }
+                catch
+                { //Failed to paste should not make the program crashs
+                }
+            });
         }
-
+        
         private async Task TryPasteContentFromClipboard()
         {
             var dataPackageView = Clipboard.GetContent();
@@ -786,9 +809,10 @@ namespace AnkiU.Pages
         }
 
         private async Task PasteHtmlFormat(DataPackageView dataPackageView)
-        {
+        {            
             var html = await dataPackageView.GetHtmlFormatAsync();
-            await noteFieldView.HtmlEditor.InsertHtml(html);
+            var htmlFragment = HtmlFormatHelper.GetStaticFragment(html);            
+            await noteFieldView.HtmlEditor.InsertHtml(htmlFragment);
         }
 
         private async Task PasteAndAutoLinkUri(DataPackageView dataPackageView)

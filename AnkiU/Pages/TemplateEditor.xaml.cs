@@ -63,6 +63,7 @@ namespace AnkiU.Pages
 
         private FieldListView fieldListView = null;
         private NoteFieldsViewModel noteFieldsViewModel = null;
+        private InputPane touchKeyboard = null;
 
         private HelpPopup helpPopup = null;
 
@@ -93,7 +94,7 @@ namespace AnkiU.Pages
 
             ShowAllButtons();
             EnterTutorialModeIfNeeded();
-            HookAllMethods();
+            HookAllMethods();            
         }        
 
         private void ShowProgessRing()
@@ -172,13 +173,28 @@ namespace AnkiU.Pages
                     case "addTypeBack":
                         await AddTypeBackButtonhandler();
                         break;
+                    case ("groupbutton"):
+                        HideTouchKeyboad();
+                        break;
                     case "stylecode":
                         await StyleCodeButtonhandler();
+                        break;
+                    case ("forecolor"):
+                        templateView.HtmlEditor.ShowForeColorPickerFlyout(templateInformationView, FlyoutPlacementMode.Bottom);
+                        break;
+                    case ("backcolor"):
+                        templateView.HtmlEditor.ShowBackColorPickerFlyout(templateInformationView, FlyoutPlacementMode.Bottom);
                         break;
                     default:
                         break;
                 }
             });
+        }
+
+        private void HideTouchKeyboad()
+        {
+            if(touchKeyboard != null)
+                touchKeyboard.TryHide();
         }
 
         private async void TemplateViewInitCompleted()
@@ -362,6 +378,10 @@ namespace AnkiU.Pages
 
         private void HookAllMethods()
         {
+            touchKeyboard = InputPane.GetForCurrentView();
+            if (touchKeyboard != null)
+                touchKeyboard.Hiding += TouchInputHiding;
+
             mainPage.SaveButton.Click += SaveButtonClickHandler;
             mainPage.EnableChangingReadMode(this, templateView.HtmlEditor);
             ChangeBackgroundColor();
@@ -370,9 +390,17 @@ namespace AnkiU.Pages
 
         private void UnHookAllMethods()
         {
+            if (touchKeyboard != null)
+                touchKeyboard.Hiding -= TouchInputHiding;
+
             mainPage.SaveButton.Click -= SaveButtonClickHandler;
             mainPage.DisableChangingReadMode();
             mainPage.UnhookZooming();
+        }
+
+        private async void TouchInputHiding(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            await templateView.HtmlEditor.ForceNotifyContentChanged();
         }
 
         private void SaveButtonClickHandler(object sender, RoutedEventArgs e)
