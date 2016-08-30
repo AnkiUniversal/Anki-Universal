@@ -482,7 +482,7 @@ namespace AnkiU.Pages
             helpPopup.NextEvent -= ThirdHelpPopupNext;
             helpPopup.BackEvent = SecondHelpPopupNext;
 
-            helpPopup.Text = "Try adding a field into FRONTSIDE by pressing on its content area then press on the \"{{...}}\" button.\n (Certain features like font color and family require a physical keyboard.)";
+            helpPopup.Text = "Try adding a field into FRONTSIDE by pressing on its content area then press on the \"{{...}}\" button.\n (To change font size and family, a physical keyboard is required.)";
             AddFieldClick += TutorialAddFieldClick;
             helpPopup.ShowWithBackAndClose();
         }
