@@ -115,10 +115,21 @@ function GetHtmlContent(id) {
 }
 
 function PopulateAllEditableField() {
-    for (var i = 0; i < arguments.length;) {
-        InsertNewEditableField(arguments[i], arguments[i + 1])
+    var length = arguments.length,
+        insertHtml = '',
+        fieldName,
+        fieldInput;
+
+    for (var i = 0; i < length;) {
+        fieldName = editableFieldName.replace('name', arguments[i]);
+        fieldInput = editableFieldInputTinyMce.replace('fieldName', EDITABLE_FIELD_PREFIX + arguments[i]);
+        fieldInput = fieldInput.replace('fieldcontent', arguments[i + 1]);
+        insertHtml += '<div>' + fieldName + fieldInput + '</div> ';
+
         i = i + 2;
     }
+
+    document.body.insertAdjacentHTML('beforeend', insertHtml);
 }
 
 function InsertNewEditableField(name, content) {
