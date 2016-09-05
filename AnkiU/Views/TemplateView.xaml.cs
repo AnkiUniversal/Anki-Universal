@@ -131,6 +131,7 @@ namespace AnkiU.Views
 
         private void EditableFieldTextChangedEventHandler(string fieldName, string html)
         {
+            html = System.Net.WebUtility.HtmlDecode(html);
             if (fieldName == FRONT)
                 cardTemplate["qfmt"] = JsonValue.CreateStringValue(html);
             else

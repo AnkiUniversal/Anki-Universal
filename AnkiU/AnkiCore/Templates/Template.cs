@@ -117,7 +117,7 @@ namespace AnkiU.AnkiCore.Templates
                 string section = match.GetGroup(0);
                 string section_name = match.GetGroup(1);
                 string inner = match.GetGroup(2);
-                section_name = section_name.Trim();
+                section_name = System.Net.WebUtility.HtmlDecode(section_name.Trim());
                 string it;
 
                 // check for cloze
@@ -180,6 +180,7 @@ namespace AnkiU.AnkiCore.Templates
                 string tag = match.GetGroup(0);
                 string tag_type = match.GetGroup(1);
                 string tag_name = match.GetGroup(2).Trim();
+                tag_name = System.Net.WebUtility.HtmlDecode(tag_name);
                 string replacement;
                 if (tag_type == null)
                 {
