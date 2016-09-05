@@ -110,8 +110,7 @@ namespace AnkiU.Anki.Syncer
                 else
                 {
                     syncStateDialog.Label = "Failed.";
-                    await UIHelper.ShowMessageDialog("Failed to sync your data. Please check your internet connection.\n" +
-                                                     "If this error happens repeatedly, please restart your OneDrive app and wait for a while before trying to sync again.");
+                    await UIHelper.ShowMessageDialog("Failed to sync your data. Please check your internet connection.\n");
                 }                
             }
             catch (Exception ex)
@@ -396,13 +395,18 @@ namespace AnkiU.Anki.Syncer
         }
 
         private async Task DownloadDeckImages()
-        {            
-            var files = (await deckImageFolder.GetFilesAsync()).ToList();
-            var remoteFolder = await TryGetItemInSyncFolderAsync(Constant.DEFAULT_DECK_IMAGE_FOLDER_NAME);
-            if (remoteFolder != null)            
+        {
+            try
             {
-                await DownloadChangedDeckImages(files);
+                var files = (await deckImageFolder.GetFilesAsync()).ToList();
+                var remoteFolder = await TryGetItemInSyncFolderAsync(Constant.DEFAULT_DECK_IMAGE_FOLDER_NAME);
+                if (remoteFolder != null)
+                {
+                    await DownloadChangedDeckImages(files);
+                }
             }
+            catch //error in download deck image should not stop syncing
+            { }
         }
         private async Task DownloadChangedDeckImages(List<StorageFile> files)
         {
