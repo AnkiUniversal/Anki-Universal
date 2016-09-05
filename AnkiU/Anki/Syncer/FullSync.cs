@@ -73,16 +73,13 @@ namespace AnkiU.Anki.Syncer
         {                       
             try
             {
+                bool isSuccess = false;
                 await PreparingFilesAsync();
                 var remoteCollectionZipFile = await TryGetItemInSyncFolderAsync(Constant.COLLECTION_NAME_ZIP);
                 if (remoteUserPref == null
                     || MainPage.UserPrefs.LastSyncTime >= remoteUserPref.LastSyncTime)
                 {
-                    if (GetLastModifiedTimeInSecond() > MainPage.UserPrefs.LastSyncTime
-                        || remoteCollectionZipFile == null)
-                    {
-                        await UploadToServer();
-                    }
+                    isSuccess = await UploadToserverIfNeeded(isSuccess, remoteCollectionZipFile);
                 }
                 else
                 {
@@ -99,15 +96,23 @@ namespace AnkiU.Anki.Syncer
                         }
                     }
                     
-                    if (isDownload == true)                    
-                        await DownloadFromServer();                    
+                    if (isDownload == true)
+                        isSuccess = await DownloadFromServer();                    
                     else
-                        await UploadToServer();
+                        isSuccess = await UploadToServer();
                 }
-
-                await SyncMediaIfNeeded();
-                syncStateDialog.Label = "Finished.";
-                await Task.Delay(500);
+                if (isSuccess)
+                {
+                    await SyncMediaIfNeeded();
+                    syncStateDialog.Label = "Finished.";
+                    await Task.Delay(500);
+                }
+                else
+                {
+                    syncStateDialog.Label = "Failed.";
+                    await UIHelper.ShowMessageDialog("Failed to sync your data. Please check your internet connection.\n" +
+                                                     "If this error happens repeatedly, please restart your OneDrive app and wait for a while before trying to sync again.");
+                }                
             }
             catch (Exception ex)
             {
@@ -120,6 +125,18 @@ namespace AnkiU.Anki.Syncer
                     await tempSyncFolder.DeleteAsync();
                 syncStateDialog.Close();
             }
+        }
+
+        private async Task<bool> UploadToserverIfNeeded(bool isSuccess, RemoteItem remoteCollectionZipFile)
+        {
+            if (GetLastModifiedTimeInSecond() > MainPage.UserPrefs.LastSyncTime
+                                    || remoteCollectionZipFile == null)
+            {
+                isSuccess = await UploadToServer();
+            }
+            else //No need to upload -> sync is success by default
+                isSuccess = true;
+            return isSuccess;
         }
 
         private async Task PreparingFilesAsync()
@@ -168,12 +185,21 @@ namespace AnkiU.Anki.Syncer
                 await Task.Delay(50);
         }
 
-        private async Task UploadToServer()
+        private async Task<bool> UploadToServer()
         {
-            syncStateDialog.Label = "Uploading database...";            
-            await UploadCollectionDatabase();
-            await UploadPrefDatabase();            
-            await UploadDeckImages();            
+            try
+            {
+                syncStateDialog.Label = "Uploading database...";
+                await UploadCollectionDatabase();
+                await UploadPrefDatabase();
+                await UploadDeckImages();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private async Task UploadPrefDatabase()
@@ -301,13 +327,23 @@ namespace AnkiU.Anki.Syncer
             }
         }
 
-        private async Task DownloadFromServer()
-        {
-            syncStateDialog.Label = "Donwloading database...";                   
-            await DownloadCollectionDatabase();
-            await DownloadDeckImages();
-
-            UpdatePrefDatabase();
+        private async Task<bool> DownloadFromServer()
+        {            
+            try
+            {
+                syncStateDialog.Label = "Donwloading database...";
+                if (await DownloadCollectionDatabase())
+                {
+                    await DownloadDeckImages();
+                    UpdatePrefDatabase();
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void UpdatePrefDatabase()
@@ -319,13 +355,13 @@ namespace AnkiU.Anki.Syncer
                 mainPage.AllHelps.SetupTutorialsVisibility();
         }
 
-        private async Task DownloadCollectionDatabase()
+        private async Task<bool> DownloadCollectionDatabase()
         {
             StorageFile collectionFile = await GetUnCompressedDBFile();
             if (collectionFile == null)
             {
-                await UIHelper.ShowMessageDialog("Couldn't find database file.");
-                return;
+                await UIHelper.ShowMessageDialog("Couldn't download database file.");
+                return false;
             }
 
             mainPage.Collection.Close();
@@ -333,13 +369,14 @@ namespace AnkiU.Anki.Syncer
             mainPage.Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
             await mainPage.NavigateToDeckSelectPage();
             mainPage.ContentFrame.BackStack.RemoveAt(0);
+            return true;
         }
 
         private async Task<StorageFile> GetUnCompressedDBFile()
-        {
-            StorageFile collectionFile;
+        {            
             try
             {
+                StorageFile collectionFile;
                 var compressedRemoteDB = await CreateTempFileAsync(Constant.COLLECTION_NAME_ZIP);
                 await syncInstance.DownloadItemWithPathAsync(Constant.ANKIROOT_SYNC_FOLDER + "/" 
                                                            + Constant.COLLECTION_NAME_ZIP, 
@@ -350,16 +387,12 @@ namespace AnkiU.Anki.Syncer
                     archive.ExtractToDirectory(tempSyncFolder.Path);
                 }
                 collectionFile = await tempSyncFolder.TryGetItemAsync(Constant.COLLECTION_NAME) as StorageFile;
+                return collectionFile;
             }
             catch
-            {// NO zipFile
-                await UIHelper.ShowMessageDialog("Please update all your devices to the newest version and re-sync your data.");
-                var oldSyncFile = await syncInstance.TryGetItemInRemotePathAsync(Constant.COLLECTION_NAME, Constant.ANKIROOT_SYNC_FOLDER);
-                if (oldSyncFile != null)
-                    await syncInstance.DeleteItemWithPathAsync(Constant.ANKI_COL_SYNC_PATH);
-                collectionFile = null;
-            }                                                        
-            return collectionFile;
+            {
+                return null;
+            }                                                                    
         }
 
         private async Task DownloadDeckImages()
