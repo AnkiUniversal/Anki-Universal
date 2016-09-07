@@ -81,7 +81,7 @@ namespace AnkiU.Views
         private void OnDragEnter(object sender, DragEventArgs e)
         {
             var deckInfor = UIHelper.GetDeck(sender);
-            if (deckInfor == null)
+            if (deckInfor == null || draggedDeck == null)
                 return;
 
             if(deckInfor.Id == draggedDeck.Id)
@@ -90,7 +90,8 @@ namespace AnkiU.Views
                 e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Link;
             
             var viewItem = ListView.ContainerFromItem(deckInfor) as ListViewItem;
-            viewItem.Background = UIHelper.IndioBrush;
+            if(viewItem != null)
+                viewItem.Background = UIHelper.IndioBrush;
         }
 
         private void OnDragLeave(object sender, DragEventArgs e)
