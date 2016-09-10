@@ -180,19 +180,33 @@ namespace AnkiU.UIUtilities
 
         public static async Task<bool> AskUserConfirmation(string content, string title = "")
         {
-            MessageDialog dialog = new MessageDialog(content, title);
-            bool isContinue = false;
-            dialog.Commands.Add(new UICommand("Yes", (command) =>
+            try
             {
-                isContinue = true;
-            }));
-            dialog.Commands.Add(new UICommand("No", (command) =>
+                MessageDialog dialog = new MessageDialog(content, title);
+                bool isContinue = false;
+                dialog.Commands.Add(new UICommand("Yes", (command) =>
+                {
+                    isContinue = true;
+                }));
+                dialog.Commands.Add(new UICommand("No", (command) =>
+                {
+                    isContinue = false;
+                }));
+                dialog.DefaultCommandIndex = 1;
+                await dialog.ShowAsync();
+                return isContinue;
+            }
+            catch(Exception ex)
             {
-                isContinue = false;
-            }));
-            dialog.DefaultCommandIndex = 1;
-            await dialog.ShowAsync();
-            return isContinue;
+                ShowDebugException(ex);
+                return false;
+            }
+        }
+
+        public static void ShowDebugException(Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            Debug.WriteLine(ex.StackTrace);
         }
 
         public static string GetDeviceFamily()

@@ -341,22 +341,35 @@ namespace AnkiU.Pages
         private async Task UpdateInkButton()
         {
             if (!mainPage.IsInkOn(selectedDeckId))
-                mainPage.ShowOnlyInkOnOffButton();            
+                mainPage.ShowOnlyInkOnOffButton();
             else
             {
                 mainPage.ShowAllInkButtons();
-                if (MainPage.DeckInkPrefs.IsEnableInkToText(selectedDeckId))
+                try
                 {
-                    mainPage.InkToTextEnable.IsOn = true;
-                    UpdateFlyoutButton(true);
-                    await mainPage.InitInkRecognizeIfNeeded();
+                    if (MainPage.DeckInkPrefs.IsEnableInkToText(selectedDeckId))
+                    {
+                        mainPage.InkToTextEnable.IsOn = true;
+                        UpdateInkToTextFlyoutAndDatabase(true);
+                        await mainPage.InitInkRecognizeIfNeeded();
+                    }
+                    else
+                    {
+                        TurnOffInkToTestFlyout();
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    mainPage.InkToTextEnable.IsOn = false;
-                    UpdateFlyoutButton(false);
+                    TurnOffInkToTestFlyout();
+                    UIHelper.ShowDebugException(ex);
                 }
             }
+        }
+
+        private void TurnOffInkToTestFlyout()
+        {
+            mainPage.InkToTextEnable.IsOn = false;
+            UpdateInkToTextFlyoutAndDatabase(false);
         }
 
         private void ChooseTextAutomaticallyCheckedHandler(object sender, RoutedEventArgs e)
@@ -465,13 +478,13 @@ namespace AnkiU.Pages
         {
             var enable = mainPage.InkToTextEnable.IsOn;
             MainPage.DeckInkPrefs.SetIsEnableInkToText(selectedDeckId, enable);
-            UpdateFlyoutButton(enable);
+            UpdateInkToTextFlyoutAndDatabase(enable);
             if (enable)                            
                 SwitchToInkCanvasAndInkInput();            
             else
                 userInputGetter = cardView;
         }
-        private void UpdateFlyoutButton(bool enable)
+        private void UpdateInkToTextFlyoutAndDatabase(bool enable)
         {
             if (enable)
             {

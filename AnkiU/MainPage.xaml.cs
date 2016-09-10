@@ -1191,7 +1191,19 @@ namespace AnkiU
                 return;
             }
 
-            await InitInkRecognizeIfNeeded();
+            try
+            {
+                await InitInkRecognizeIfNeeded();
+            }
+            catch(Exception ex)
+            {
+                InkRecognizerContainer = null;
+                InkToTextEnable.IsOn = false;
+                HideInkToTextFlyoutToggleOnContent();
+                var task = UIHelper.ShowMessageDialog("Unable to init ink recognizer.");
+                UIHelper.ShowDebugException(ex);
+                return;
+            }
         }
 
         public async Task InitInkRecognizeIfNeeded()
