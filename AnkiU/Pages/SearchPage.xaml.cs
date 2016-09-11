@@ -171,8 +171,14 @@ namespace AnkiU.Pages
             cardInformationView.SortColumnChangedEvent += CardInformationViewSorttColumnChangedHandler;
             cardInformationView.CardListViewMenuFlyout = Resources["CardListViewContextMenu"] as MenuFlyout;
             cardInformationView.CardListViewMenuFlyout.Closed += (s, args) => { cardInformationView.CardShowMenuFlyout = null; };
+            cardInformationView.CardDoubleClicked += OnCardInformationViewDoubleClicked;
 
             pageButtonRoot.Visibility = Visibility.Collapsed;
+        }
+
+        private void OnCardInformationViewDoubleClicked(CardInformation card)
+        {
+            ShowCardPopupView(card.Id);
         }
 
         private void SetupDefaultCardsAPage()
@@ -714,19 +720,23 @@ namespace AnkiU.Pages
         {
             if (cardInformationView.CardShowMenuFlyout == null)
                 return;
-
-            if (cardViewPopup == null)
-                InitCardViewPopup();
-            else
-            {
-                cardViewPopup.ChangeCard(cardInformationView.CardShowMenuFlyout.Id);
-                cardViewPopup.Show();
-            }            
+            ShowCardPopupView(cardInformationView.CardShowMenuFlyout.Id);
         }
 
-        private void InitCardViewPopup()
+        private void ShowCardPopupView(long cardId)
+        {
+            if (cardViewPopup == null)
+                InitCardViewPopup(cardId);
+            else
+            {
+                cardViewPopup.ChangeCard(cardId);
+                cardViewPopup.Show();
+            }
+        }
+
+        private void InitCardViewPopup(long cardId)
         {            
-            cardViewPopup = new CardViewPopup(collection, cardInformationView.CardShowMenuFlyout.Id);
+            cardViewPopup = new CardViewPopup(collection, cardId);
             UIHelper.AddToGridInFull(mainGrid, cardViewPopup);            
             cardViewPopup.ChangeReadMode(isNightMode);
             cardViewPopup.Show();

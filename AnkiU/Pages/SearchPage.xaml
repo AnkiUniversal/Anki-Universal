@@ -75,12 +75,13 @@
                 </TextBox.InputScope>
             </TextBox>
 
-            <Button Style="{StaticResource ButtonOrange}"                     
+            <Button Style="{StaticResource ButtonGray}"                     
+                    Background="Transparent"
                 BorderThickness="0"
                 Grid.Column="2"
-                Margin="0,1.5,0,1.4"
+                Margin="0,1.5,5,1.4"
                 Padding="0"
-                Width="30"
+                Width="25"
                 HorizontalAlignment="Stretch" 
                 VerticalAlignment="Stretch"                
                 HorizontalContentAlignment="Center"
@@ -90,9 +91,12 @@
                 <Button.RenderTransform>
                     <CompositeTransform x:Name="expandButtonTransform" TranslateX="0"/>
                 </Button.RenderTransform>
-                <Path Style="{StaticResource ChevronDoubleDownIcon}"
-                          Fill="White" 
-                          Margin="0">
+                <Path Style="{StaticResource TriangleUpIcon}" Width="12" Height="10"
+                          Fill="{StaticResource ButtonBackGroundNormal}" 
+                          Margin="0" RenderTransformOrigin="0.5,0.5">
+                    <Path.RenderTransform>
+                        <CompositeTransform Rotation="180"/>
+                    </Path.RenderTransform>
                 </Path>
             </Button>
 
@@ -105,7 +109,7 @@
                                     Press on the button on the left for advanced search features.
                                     <LineBreak/>
                                 </Paragraph>
-                                
+
                                 <Paragraph >
                                     Right-click (or touch &amp; hold) on column headers to change display contents.
                                     <LineBreak/>

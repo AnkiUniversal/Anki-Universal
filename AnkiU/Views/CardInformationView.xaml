@@ -169,11 +169,13 @@
 			AutomationProperties.Name="List Items"
 			IsSwipeEnabled="False"
 			IsItemClickEnabled="True"
+            ItemClick="OnCardListViewItemClick"
 			SelectionMode="Multiple"
-			ItemsSource="{Binding}" 
+			ItemsSource="{Binding}"                   
 			RightTapped="CardListRightTappedHandler"
 			PointerPressed="CardListPointerPressedHandler" 
 			Holding="CardListHoldingHandler"
+            DoubleTapped="OnItemDoubleTapped" 
 			Padding="0"
 			ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemContainerStyle>
@@ -187,7 +189,7 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="CardListViewTemplate" x:DataType="data:CardInformation">
-                    <Grid x:Name="GridDeckList"  Margin="0" BorderThickness="4,0,0,0"  
+                    <Grid x:Name="GridDeckList"  Margin="0" BorderThickness="4,0,0,0" 
                           BorderBrush="{x:Bind Queue, Converter={StaticResource CardStateToSolidBrushConverter}, Mode=OneWay}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>

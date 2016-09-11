@@ -45,6 +45,10 @@ namespace AnkiU.Views
         private bool isPointerPressed = false;
         private MenuFlyout rightColumnMenuFlyout = null;
         private MenuFlyout leftColumnMenuFlyout = null;
+        private CardInformation tappedCard = null;
+
+        public delegate void CardDoubleClickedHandler(CardInformation card);
+        public event CardDoubleClickedHandler CardDoubleClicked;
 
         public FrameworkElement PointToShowFlyout { get { return pointToShowFlyout; } }
         public MenuFlyout CardListViewMenuFlyout { get; set; }
@@ -321,6 +325,19 @@ namespace AnkiU.Views
                 currentSortBorder.Visibility = Visibility.Visible;
 
             questionButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void OnItemDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (tappedCard == null)
+                return;
+            CardListView.SelectedItems.Clear();
+            CardDoubleClicked?.Invoke(tappedCard);
+        }
+
+        private void OnCardListViewItemClick(object sender, ItemClickEventArgs e)
+        {
+            tappedCard = e.ClickedItem as CardInformation;            
         }
     }
 }
