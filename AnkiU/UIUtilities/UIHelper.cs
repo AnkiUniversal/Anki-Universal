@@ -63,13 +63,18 @@ namespace AnkiU.UIUtilities
         public static readonly CoreCursor HandCursor = new CoreCursor(CoreCursorType.Hand, 1);
         public static readonly CoreCursor ArrowCursor = new CoreCursor(CoreCursorType.Arrow, 1);
 
+        public static SolidColorBrush BackgroundWhiteNormal { get; private set; } 
+                       = Application.Current.Resources["BackgroundNormal"] as SolidColorBrush;
+        public static SolidColorBrush ForeGroundLight { get; private set; }
+               = Application.Current.Resources["ForeGroundLight"] as SolidColorBrush;
+        public static SolidColorBrush DarkerBrush { get; private set; } 
+                       = Application.Current.Resources["DarkerGray"] as SolidColorBrush;        
+        public static SolidColorBrush ContentNightModeBrush { get; private set; } 
+                       = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 32, 32, 32));
         public static SolidColorBrush Transparent = new SolidColorBrush(Windows.UI.Colors.Transparent);
         public static SolidColorBrush IndioBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 8, 141, 199));
-        private static SolidColorBrush darkerBrush = Application.Current.Resources["DarkerGray"] as SolidColorBrush;
-        public static SolidColorBrush DarkerBrush { get { return darkerBrush; } }
-        private static SolidColorBrush contentNightModeBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 32, 32, 32));
-        public static SolidColorBrush ContentNightModeBrush { get { return contentNightModeBrush; } }
-        public static Windows.UI.Color ContentNightModeColor { get { return contentNightModeBrush.Color; } }
+
+        public static Windows.UI.Color ContentNightModeColor { get { return ContentNightModeBrush.Color; } }
         private static Windows.UI.Color defaultInkColorDay = Windows.UI.Color.FromArgb(255, 11, 96, 181);
         public static Windows.UI.Color DefaultInkColorDay { get { return defaultInkColorDay; } }
         private static Windows.UI.Color defaultInkColorNight = Windows.UI.Color.FromArgb(255, 0, 79, 159);

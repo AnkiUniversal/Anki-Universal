@@ -85,14 +85,23 @@ namespace AnkiU.UserControls
         public void Show()
         {
             CalculateSizeAndPosition();
+            ReinitSpeechSynthesizerIfNeeded();
             popUp.IsOpen = true;
+        }
+
+        private void ReinitSpeechSynthesizerIfNeeded()
+        {
+            if (textToSpeechOffSymbol.Visibility == Visibility.Visible)
+            {
+                cardView.ReinitSpeechSynthesis();
+            }
         }
 
         public void Hide()
         {
             popUp.IsOpen = false;
             //WARNING: Until memory-leak in webview is fixed, we have to clear and init it every time
-            cardView.ClearWebViewControl();
+            cardView.Dispose();
         }
 
         private async void ChangeCardViewContent()
@@ -167,7 +176,7 @@ namespace AnkiU.UserControls
 
         public void Close()
         {
-            cardView.ClearWebViewControl();
+            cardView.Dispose();
         }
 
         private void CloseButtonClick(object sender, RoutedEventArgs e)
@@ -202,6 +211,31 @@ namespace AnkiU.UserControls
         private void UserControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             CalculateSizeAndPosition();
+        }
+
+        private void OnTextToSpeechToggleClick(object sender, RoutedEventArgs e)
+        {
+            if (textToSpeechOffSymbol.Visibility == Visibility.Collapsed)
+            {
+                SwitchToDisableTextToSpeechSymbol();                
+            }
+            else
+            {
+                SwitchToEnableTextToSpeechSymbol();
+            }
+            cardView.ToggleSpeechSynthesisView();
+        }
+
+        private void SwitchToDisableTextToSpeechSymbol()
+        {
+            textToSpeechOffSymbol.Visibility = Visibility.Visible;
+            textToSpeechOnSymbol.Visibility = Visibility.Collapsed;            
+        }
+
+        public void SwitchToEnableTextToSpeechSymbol()
+        {
+            textToSpeechOffSymbol.Visibility = Visibility.Collapsed;
+            textToSpeechOnSymbol.Visibility = Visibility.Visible;            
         }
     }
 }

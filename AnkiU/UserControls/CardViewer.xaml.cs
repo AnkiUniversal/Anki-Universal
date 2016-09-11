@@ -40,11 +40,15 @@ using AnkiU.Interfaces;
 using AnkiU.UIUtilities;
 using Windows.Storage;
 using Windows.ApplicationModel;
+using AnkiU.ViewModels;
 
 namespace AnkiU.UserControls
 {
     public sealed partial class CardView : UserControl, IUserInputString, INightReadMode, IZoom
     {
+        private CoreDispatcher dispatcher;
+        private string cardContent;
+
         public const string HTML_PATH = "/html/card.html";
 
         public delegate void KeyDownEventHandler(Windows.System.VirtualKey key);
@@ -89,6 +93,7 @@ namespace AnkiU.UserControls
         {
             this.InitializeComponent();
             InitWebView();
+            dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
             keyNotify = new KeyPassingWebToWinRT();
             keyNotify.KeyDownEvent += KeyDownEventFire;
         }
@@ -109,7 +114,32 @@ namespace AnkiU.UserControls
             webViewControl.NavigationFailed += (a, s) => { NavigateToErrorPage(); };
             webViewControl.UnviewableContentIdentified += (a, s) => { NavigateToErrorPage(); };
             webViewControl.UnsupportedUriSchemeIdentified += (a, s) => { NavigateToErrorPage(); };
-            webViewControl.UnsafeContentWarningDisplaying += (a, s) => { NavigateToErrorPage(); };
+            webViewControl.UnsafeContentWarningDisplaying += (a, s) => { NavigateToErrorPage(); };           
+        }
+
+        public void ToggleSpeechSynthesisView()
+        {
+            if (speechSynth == null)
+            {
+                this.FindName("speechSynth");
+                speechSynth.PlayButtonClick += OnSpeechSyntControlPlayButtonClick;                
+            }
+            
+            if (speechSynth.Visibility == Visibility.Collapsed)
+                speechSynth.Visibility = Visibility.Visible;
+            else
+                speechSynth.Visibility = Visibility.Collapsed;
+            ChangeSpeechSyntViewColor();
+        }
+
+        /// <summary>
+        /// Re-init speech synthesizer
+        /// For the first initialization, toggleSpeechSynthesisView() must be called 
+        /// </summary>
+        public void ReinitSpeechSynthesis()
+        {
+            speechSynth.InitSynthesizer();
+            speechSynth.SetVoice();
         }
 
         private void NavigateToErrorPage()
@@ -123,17 +153,30 @@ namespace AnkiU.UserControls
             HtmlHelpter.LoadLocalHtml(webViewControl, HTML_PATH);
         }
 
+
+        public void Dispose()
+        {
+            ClearWebviewControl();
+            ClearSpeechSynthIfNeeded();
+        }
+
         /// <summary>
         /// Until Microsoft fix their caching problem,
         /// This function is very IMPORTANT to clear webview cache
         /// It will have to be used each time user stop viewing deck
         /// </summary>
-        public void ClearWebViewControl()
+        private void ClearWebviewControl()
         {
             isWebViewReady = false;
             webViewGrid.Children.Clear();
             webViewControl = null;
             GC.Collect();
+        }
+
+        private void ClearSpeechSynthIfNeeded()
+        {
+            if (speechSynth != null)
+                speechSynth.Dispose();
         }
 
         private async void WebViewControlNavigationCompletedHandler(WebView sender, WebViewNavigationCompletedEventArgs args)
@@ -205,10 +248,30 @@ namespace AnkiU.UserControls
             HtmlHelpter.LoadLocalHtml(webViewControl, HTML_PATH);
         }
 
-        public void KeyDownEventFire(int keyCode)
+        public async void KeyDownEventFire(int keyCode)
         {
             var key = (Windows.System.VirtualKey)keyCode;
-            KeyDownMappingEvent?.Invoke(key);
+            if (KeyDownMappingEvent != null)
+            {
+                KeyDownMappingEvent(key);
+            }
+            else
+            {
+                await HandleKeyPress(key);
+            }
+        }
+
+        private async Task HandleKeyPress(Windows.System.VirtualKey key)
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                if( key == Windows.System.VirtualKey.T
+                    && speechSynth != null
+                    && speechSynth.Visibility == Visibility.Visible)
+                {
+                    await ToggleTextToSpeech();
+                }
+            });
         }
 
         public async Task ChangeDeckMediaFolder(string path)
@@ -228,6 +291,7 @@ namespace AnkiU.UserControls
         {
             try
             {
+                cardContent = newContent;
                 await webViewControl.InvokeScriptAsync("ChangeCardContent", new string[] { newContent, cardClass });
             }
             catch (Exception ex)
@@ -265,6 +329,8 @@ namespace AnkiU.UserControls
         {
             try
             {
+                ChangeSpeechSyntViewColor();
+
                 string readMode;
                 if (isNightMode)
                     readMode = "night";
@@ -277,6 +343,17 @@ namespace AnkiU.UserControls
             {
                UIHelper.ThrowJavascriptError(ex.HResult);
             }
+        }
+
+        private void ChangeSpeechSyntViewColor()
+        {
+            if (speechSynth == null)
+                return;
+
+            if (speechSynth.Visibility == Visibility.Collapsed)
+                return;
+
+            speechSynth.ChangeSpeechSyntViewColor(isNightMode);            
         }
 
         public async Task<string> GetInput()
@@ -323,6 +400,47 @@ namespace AnkiU.UserControls
             catch (Exception ex)
             {
                 UIHelper.ThrowJavascriptError(ex.HResult);
+            }
+        }
+
+        private async void OnSpeechSyntControlPlayButtonClick(object sender, RoutedEventArgs e)
+        {
+            await ToggleTextToSpeech();
+        }
+
+        public async Task ToggleTextToSpeech()
+        {
+            if (speechSynth == null)
+                return;
+
+            if (speechSynth.IsPlaying)
+            {
+                speechSynth.StopPlaying();
+                return;
+            }
+
+            var text = await GetSelectionText();
+            if (String.IsNullOrWhiteSpace(text))
+            {
+                if (String.IsNullOrWhiteSpace(cardContent))
+                    return;
+                text = cardContent;
+            }
+
+            text = Utils.StripHTMLMedia(text);
+            await speechSynth.StartTextToSpeech(text);
+        }
+
+        private async Task<string> GetSelectionText()
+        {
+            try
+            {
+               return await webViewControl.InvokeScriptAsync("GetSelectionText", null);
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ThrowJavascriptError(ex.HResult);
+                return null;
             }
         }
     }

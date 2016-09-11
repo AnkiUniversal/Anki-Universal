@@ -6,12 +6,22 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:controls="using:AnkiU.UserControls"
     d:DesignHeight="300"
     d:DesignWidth="400" Loaded="UserControlLoadedHandler">
 
-        <Grid x:Name="webViewGrid" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <controls:SpeechSynthesis x:Name="speechSynth" Grid.Row="0" VerticalAlignment="Stretch"  Visibility="Collapsed"
+                                  HorizontalAlignment="Stretch" x:DeferLoadStrategy="Lazy" BorderThickness="0,0,0,0"/>
+        
+        <Grid x:Name="webViewGrid" Grid.Row="1">
 
         </Grid>
-        
+    </Grid>
 
 </UserControl>

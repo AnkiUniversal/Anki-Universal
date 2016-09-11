@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 document.addEventListener('keydown', KeyDownHandler);
+document.addEventListener('select', TextSelectHandler);
 
 var isTouchInput = false;
 
@@ -41,6 +42,8 @@ var textBox;
 function ChangeCardContent(htmlText, cardClass) {
     //Reset user answer whether it has value or not
     userAnswer = '';
+    //Reset selected text to avoid re-synth previous text
+    selectedText = '';
 
     //Blur textBox if has to avoid cursor remain in answer side
     if (textBox != null && textBox != undefined) {
@@ -165,4 +168,18 @@ function GetUserInputString() {
 
 function ChangeBodyZoom(value) {
     document.body.style.zoom = value;
+}
+
+var selectedText = '';
+function TextSelectHandler(event) {
+    try {
+        selectedText = window.getSelection().toString();
+    }
+    catch (err) {
+        selectedText = '';
+    }    
+}
+
+function GetSelectionText() {    
+    return selectedText;    
 }

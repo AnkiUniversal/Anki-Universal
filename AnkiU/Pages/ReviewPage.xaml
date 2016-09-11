@@ -163,7 +163,7 @@
                        x:Name="buttonPopupText" Foreground="{StaticResource ButtonBackGroundNormal}" FontSize="19" FontWeight="SemiBold">
              </TextBlock>
         </Popup>
-        
+
         <controls:NotificationPopup Grid.Row="0" x:Name="popup" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                                     Background="White"
                                     Foreground="{Binding Foreground, ElementName=userControl}" />

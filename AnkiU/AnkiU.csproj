@@ -377,6 +377,7 @@
     <Compile Include="UIUtilities\DataBindingConverters\BoolToVisibilityConverter.cs" />
     <Compile Include="UIUtilities\DataBindingConverters\ChildLevelToMarginConverter.cs" />
     <Compile Include="UIUtilities\DataBindingConverters\ChildLevelToVisibilityConverter.cs" />
+    <Compile Include="UIUtilities\DataBindingConverters\SliderPlaybackRateThumbToolTipValueConverter.cs" />
     <Compile Include="UIUtilities\DataBindingConverters\VisibilityInvertConverter.cs" />
     <Compile Include="UIUtilities\DataBindingConverters\BoolToNullableBoolConverter.cs" />
     <Compile Include="UIUtilities\DataBindingConverters\CardStateToSolidBrushConverter.cs" />
@@ -468,6 +469,9 @@
     </Compile>
     <Compile Include="UserControls\RichEditBoxContentDialog.xaml.cs">
       <DependentUpon>RichEditBoxContentDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\SpeechSynthesis.xaml.cs">
+      <DependentUpon>SpeechSynthesis.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\SyncDialog.xaml.cs">
       <DependentUpon>SyncDialog.xaml</DependentUpon>
@@ -802,6 +806,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\RichEditBoxContentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SpeechSynthesis.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

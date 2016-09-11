@@ -117,7 +117,7 @@ namespace AnkiU.Pages
                     inkToTextRecognizer = new InkToTextRecognizer(mainPage, Ink, showAnswerButton);
                 return inkToTextRecognizer;
             }
-        }        
+        }
 
         public ReviewPage()
         {
@@ -146,20 +146,22 @@ namespace AnkiU.Pages
             cardView.KeyDownMappingEvent += KeyDownHandler;            
             cardView.NavigateToWebsiteStartEvent += NavigateToWebsiteStartEventHandler;
 
-            mainPage.EditButton.Click += EditButtonClickHandler;
-
+            mainPage.EditButton.Click += EditButtonClickHandler;        
             mainPage.ReadModeButton.Click += ReadModeButtonClickHandler;
-
             mainPage.InkOnOffButton.Click += InkOnOffButtonClickHandler;
             mainPage.InkClearButton.Click += InkClearButtonClickHandler;
             mainPage.InkEraserToggleButtonClick += InkEraserButtonClickHandler;
             mainPage.InkHideToggleButtonClick += InkHideToggleButtonClickHandler;
-
             mainPage.InkToTextEnableToggled += InkToTextToggleHandler;
             mainPage.ChooseTextManually.Checked += ChooseTextManuallyCheckedHandler;
             mainPage.ChooseTextAutomatically.Checked += ChooseTextAutomaticallyCheckedHandler;
+            mainPage.UndoButton.Click += UndoButtonClickHandler;
+            mainPage.TextToSpeechToggleButtonClick += OnTextToSpeechToggleButtonClick;
+        }
 
-            mainPage.UndoButton.Click += UndoButtonClickHandler;            
+        private void OnTextToSpeechToggleButtonClick(object sender, RoutedEventArgs e)
+        {
+            cardView.ToggleSpeechSynthesisView();
         }
 
         private bool ScheduleNotifyLeechEventHandler(string message, Card card)
@@ -247,19 +249,16 @@ namespace AnkiU.Pages
             cardView.NavigateToWebsiteStartEvent -= NavigateToWebsiteStartEventHandler;
 
             mainPage.EditButton.Click -= EditButtonClickHandler;
-
             mainPage.ReadModeButton.Click -= ReadModeButtonClickHandler;
-
             mainPage.InkOnOffButton.Click -= InkOnOffButtonClickHandler;
             mainPage.InkClearButton.Click -= InkClearButtonClickHandler;
             mainPage.InkEraserToggleButtonClick -= InkEraserButtonClickHandler;
             mainPage.InkHideToggleButtonClick -= InkHideToggleButtonClickHandler;
-
             mainPage.InkToTextEnableToggled -= InkToTextToggleHandler;
             mainPage.ChooseTextManually.Checked -= ChooseTextManuallyCheckedHandler;
             mainPage.ChooseTextAutomatically.Checked -= ChooseTextAutomaticallyCheckedHandler;
-
-            mainPage.UndoButton.Click -= UndoButtonClickHandler;            
+            mainPage.UndoButton.Click -= UndoButtonClickHandler;
+            mainPage.TextToSpeechToggleButtonClick -= OnTextToSpeechToggleButtonClick;
         }
 
         private void InitButtonList()
@@ -320,6 +319,7 @@ namespace AnkiU.Pages
             mainPage.HookZooming(cardView);
             mainPage.EditButton.Visibility = Visibility.Visible;
             mainPage.UndoButton.Visibility = Visibility.Visible;
+            mainPage.TextToSpeechToggleButton.Visibility = Visibility.Visible;
             if (!collection.UndoAvailable())
                 mainPage.UndoButton.IsEnabled = false;
             await UpdateInkButton();
@@ -522,14 +522,14 @@ namespace AnkiU.Pages
 
             HideAllButtonOfThisPage();
             UnhookAllEvents();
-            cardView.ClearWebViewControl();
+            cardView.Dispose();
             if (inkToTextRecognizer != null)
                 inkToTextRecognizer.Close();
 
             base.OnNavigatingFrom(e);
         }
         private void HideAllButtonOfThisPage()
-        {
+        {            
             mainPage.DisableChangingReadMode();
             mainPage.UnhookZooming();
             mainPage.EditButton.Visibility = Visibility.Collapsed;
@@ -538,6 +538,8 @@ namespace AnkiU.Pages
             mainPage.HideAllInkButtonsExceptOnOffIfNeeded();
             mainPage.InkOnOffButton.Visibility = Visibility.Collapsed;
             mainPage.ZoomButtonsSeparator.Visibility = Visibility.Collapsed;
+            mainPage.TextToSpeechToggleButton.Visibility = Visibility.Collapsed;
+            mainPage.SwitchToEnableTextToSpeechSymbol();
         }    
 
         private async void CardViewLoadedHandler()
@@ -850,6 +852,10 @@ namespace AnkiU.Pages
                         default:
                             break;
                     }
+                }
+                else if (e == VirtualKey.T)
+                {
+                    await cardView.ToggleTextToSpeech();
                 }
                 else if (e == VirtualKey.R)
                 {
@@ -1167,7 +1173,7 @@ namespace AnkiU.Pages
             showAnswerButton.Click -= GoBackToCardViewFromWebsite;
             showAnswerButton.Click += DisplayAnswerEventHandler;
             cardView.CardHtmlLoadedEvent += GobackToCardViewHtmlLoadedEvent;
-            cardView.ClearWebViewControl();
+            cardView.Dispose();
             cardView.ReloadCardView();
         }
 

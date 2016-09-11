@@ -1,0 +1,106 @@
+﻿<UserControl
+    x:Class="AnkiU.UserControls.SpeechSynthesis"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:converters="using:AnkiU.UIUtilities.DataBindingConverters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Foreground="Black"
+    Background="White"    
+    SizeChanged="OnUserControlSizeChanged"
+    x:Name="userControl"
+    d:DesignHeight="100"
+    d:DesignWidth="320">
+
+    <UserControl.Resources>
+        <converters:SliderPlaybackRateThumbToolTipValueConverter x:Key="SliderPlaybackRateThumbToolTipValueConverter"/>
+    </UserControl.Resources>
+
+    <Grid Background="{Binding Background, ElementName=userControl}" Height="55" Padding="0"
+          BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="{Binding BorderThickness, ElementName=userControl}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" x:Name="playBackGridColumn"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <MediaElement x:Name="media" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed" 
+                          MediaEnded="OnMediaEnded" AreTransportControlsEnabled="True"/>
+
+        <Button Click="OnPlayButtonClick" Margin="0,5,5,5" x:Name="playButton" Height="35" Width="40" 
+                    Padding="0" VerticalAlignment="Center" 
+                    BorderThickness="0" Style="{StaticResource ButtonContentOcpacity}"
+                    BorderBrush="{Binding Foreground, ElementName=userControl}"
+                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Background="{Binding Background, ElementName=userControl}">
+            <Grid>
+                <Path x:Name="playButtonSymbol" Style="{StaticResource TriangleUpIcon}" Width="20" Height="18"
+                  Fill="{Binding Foreground, ElementName=playBackRateSlider}"
+                  RenderTransformOrigin="0.5,0.5" Visibility="Visible" >
+                    <Path.RenderTransform>
+                        <CompositeTransform Rotation="90"/>
+                    </Path.RenderTransform>
+                </Path>
+
+                <Path x:Name="pauseButtonSymbol" Style="{StaticResource PauseIcon}" Width="14" Height="16" Visibility="Collapsed"
+                  Fill="{Binding Foreground, ElementName=playBackRateSlider}" Stroke="Transparent" />
+            </Grid>
+        </Button>
+
+        <Slider x:Name="playBackRateSlider" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8.75,5,5"
+                SmallChange="0.25" Maximum="2" Minimum="0" LargeChange="0.5" StepFrequency="0.25" Value="1" Visibility="Collapsed"
+                ValueChanged="OnPlaybackRateSliderValueChanged" ThumbToolTipValueConverter="{StaticResource SliderPlaybackRateThumbToolTipValueConverter}" />
+
+        <TextBlock Foreground="{Binding Foreground, ElementName=playBackRateSlider}" x:Name="playBackSliderLabel" Width="35" FontWeight="SemiBold"
+                   Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Visibility="Collapsed"
+                   Text="1x" FontSize="15"  Margin="0,5,0,7"/>
+
+        <ComboBox x:Name="playBackRateChooser" Grid.Column="1" Height="35" Width="80" VerticalAlignment="Center" Visibility="Visible"
+                  HorizontalAlignment="Stretch" BorderThickness="1"  Margin="0,5,5,5"
+                  Foreground="{Binding Foreground, ElementName=userControl}" 
+                  BorderBrush="{Binding Foreground, ElementName=userControl}"
+                  Background="{Binding Background, ElementName=userControl}" SelectionChanged="OnPlayBackRateChanged"
+                  SelectedIndex="3" >
+            <ComboBoxItem Content="0.25x" Tag="0.25"/>
+            <ComboBoxItem Content="0.5x" Tag="0.5"/>
+            <ComboBoxItem Content="0.75x" Tag="0.75"/>
+            <ComboBoxItem Content="1x" Tag="1"/>
+            <ComboBoxItem Content="1.5x" Tag="1.5"/>
+            <ComboBoxItem Content="2x" Tag="2"/>
+        </ComboBox>
+
+        <ComboBox x:Name="listboxVoiceChooser" Grid.Column="3" Grid.ColumnSpan="2" Height="35" VerticalAlignment="Center" 
+                  HorizontalAlignment="Stretch" BorderThickness="1"  Margin="5,5,5,5"
+                  Foreground="{Binding Foreground, ElementName=userControl}" 
+                  BorderBrush="{Binding Foreground, ElementName=userControl}"
+                  Background="{Binding Background, ElementName=userControl}"
+                  SelectionChanged="OnListboxVoiceChooserSelectionChanged"/>
+
+        <Button Margin="0,5,5,5" Style="{StaticResource ButtonHelp}" Grid.Column="5" Width="22" Height="22" VerticalAlignment="Center">
+            <Button.Flyout>
+                <Flyout>
+                    <ContentPresenter FontSize="15" FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" >
+                        <RichTextBlock TextWrapping="Wrap" MaxWidth="300">
+                            <Paragraph >
+                                Please select the text that you want to synthesize, then press on the play button (keyboard shortcut: T.)
+                                <LineBreak/>
+                                If no text is selected, everything is synthesized.
+                                <LineBreak/>
+                            </Paragraph>
+
+                            <Paragraph >
+                                To add more languages, please go to "Region &amp; language" (or "Time  &amp; language" on mobiles) in Windows 10 settings.
+                            </Paragraph>
+                        </RichTextBlock>
+                    </ContentPresenter>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+    </Grid>
+
+</UserControl>

@@ -148,6 +148,8 @@ namespace AnkiU
 
         public enum SecondaryButtons
         {            
+            TextToSpeech,
+
             ZoomSeparator,
             ZoomIn,            
             ZoonReset,
@@ -192,6 +194,7 @@ namespace AnkiU
         public event RoutedEventHandler InkToTextSelectorLoaded;
         public event RoutedEventHandler InkHideToggleButtonClick;
         public event RoutedEventHandler InkEraserToggleButtonClick;
+        public event RoutedEventHandler TextToSpeechToggleButtonClick;
 
         public delegate void DeckImageChangeHandler(StorageFile fileToChange, long deckId, long modifiedTime);
         public event DeckImageChangeHandler DeckImageChangedEvent;
@@ -517,6 +520,18 @@ namespace AnkiU
                 if (chooseResultFinished == null)
                     FindName("chooseResultFinished");
                 return chooseResultFinished;
+            }
+        }
+
+        public AppBarButton TextToSpeechToggleButton
+        {
+            get
+            {
+                if (textToSpeechToggle == null)
+                {
+                    FindName("textToSpeechToggle");
+                }
+                return textToSpeechToggle;
             }
         }
 
@@ -1045,8 +1060,8 @@ namespace AnkiU
                     }
                     else
                     {
-                        MoveSeparatorFromPrimaryToSecondary(ReadModeButtonSeparator, 0);
-                        MoveButtonFromPrimaryToSecondary(ReadModeButton, 1);
+                        MoveSeparatorFromPrimaryToSecondary(ReadModeButtonSeparator, 1);
+                        MoveButtonFromPrimaryToSecondary(ReadModeButton, 2);
                     }
 
                     break;
@@ -1686,15 +1701,15 @@ namespace AnkiU
             if (UserPrefs.IsReadNightMode)
             {
                 ChangeTitleBarToNightMode();                
-                ChangeStatusBarToNightMode();                
-                commandBar.Background = Application.Current.Resources["DarkerGray"] as SolidColorBrush;
-                commandBar.Foreground = Application.Current.Resources["ForeGroundLight"] as SolidColorBrush;
+                ChangeStatusBarToNightMode();
+                commandBar.Background = UIHelper.DarkerBrush;
+                commandBar.Foreground = UIHelper.ForeGroundLight;
             }
             else
             {
                 ChangeTitleBarToDayMode();
                 ChangeStatusBarToDayMode();
-                commandBar.Background = Application.Current.Resources["BackgroundNormal"] as SolidColorBrush;
+                commandBar.Background = UIHelper.BackgroundWhiteNormal;
                 commandBar.Foreground = new SolidColorBrush(Colors.Black);
             }
         }
@@ -2107,6 +2122,34 @@ namespace AnkiU
             }
 
             DragAndDropButton.Click -= OnDragAndHoldButtonClick;
+        }
+
+        private void OnTextToSpeechToggleClick(object sender, RoutedEventArgs e)
+        {
+            if(textToSpeechOffSymbol.Visibility == Visibility.Collapsed)
+            {
+                SwitchToDisableTextToSpeechSymbol();
+            }
+            else
+            {
+                SwitchToEnableTextToSpeechSymbol();
+            }
+
+            TextToSpeechToggleButtonClick?.Invoke(sender, e);
+        }
+
+        private void SwitchToDisableTextToSpeechSymbol()
+        {
+            textToSpeechOffSymbol.Visibility = Visibility.Visible;
+            textToSpeechOnSymbol.Visibility = Visibility.Collapsed;
+            textToSpeechToggle.Label = "Disable Text to Speech";
+        }
+
+        public void SwitchToEnableTextToSpeechSymbol()
+        {
+            textToSpeechOffSymbol.Visibility = Visibility.Collapsed;
+            textToSpeechOnSymbol.Visibility = Visibility.Visible;
+            textToSpeechToggle.Label = "Enable Text to Speech";
         }
     }   
 

@@ -41,6 +41,15 @@
                         <SymbolIcon Symbol="ZoomOut" RenderTransformOrigin="0.5,0.5" >
                         </SymbolIcon>
                     </Button>
+                    
+                    <Rectangle Width="2" Fill="White" Margin="0,3,5,3"/>
+                    <Button x:Name="textToSpeechToggle" Style="{StaticResource ButtonBlue}" BorderThickness="0" Margin="0,0,5,0" Click="OnTextToSpeechToggleClick" ToolTipService.ToolTip="Toggle Text to Speech">
+                        <Grid>
+                            <Path x:Name="textToSpeechOnSymbol" Style="{StaticResource SpeakerIcon}"  Fill="White"  Stroke="White" Visibility="Visible"/>
+                            <Path x:Name="textToSpeechOffSymbol" Style="{StaticResource SpeakerOffIcon}"  Fill="White"  Stroke="White" Visibility="Collapsed"/>
+                        </Grid>
+                    </Button>
+                    
                 </StackPanel>
 
                 <Button Grid.Column="1" HorizontalAlignment="Right" 

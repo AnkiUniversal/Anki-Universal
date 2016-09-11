@@ -238,6 +238,13 @@
             </CommandBar.PrimaryCommands>
 
             <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="textToSpeechToggle" Visibility="Collapsed" Label="Enable Text to Speech" Style="{StaticResource SecondaryAppButton}"  Background="{Binding Background, ElementName=commandBar}" Foreground="{Binding Foreground, ElementName=commandBar}" Click="OnTextToSpeechToggleClick" ToolTipService.ToolTip="Toggle Text to Speech">
+                    <Grid>
+                        <Path x:Name="textToSpeechOnSymbol" Style="{StaticResource SpeakerIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Visible"/>
+                        <Path x:Name="textToSpeechOffSymbol" Style="{StaticResource SpeakerOffIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Collapsed"/>
+                    </Grid>
+                </AppBarButton>
+                
                 <AppBarSeparator  x:Name="zoomButtonsSeparator"  Visibility="{Binding Visibility, ElementName=zoomResetButton}" Foreground="{Binding Foreground, ElementName=commandBar}"/>
                 <AppBarButton x:Name="zoomInButton" Visibility="Collapsed" Icon="ZoomIn" Label="Zoom+" Style="{StaticResource SecondaryAppButton}"  Background="{Binding Background, ElementName=commandBar}" Foreground="{Binding Foreground, ElementName=commandBar}" Click="ZoomInButtonClickHandler" ToolTipService.ToolTip="Zoom In"/>
                 <AppBarButton x:Name="zoomResetButton" Visibility="Collapsed" Icon="Zoom" Label="Default"  Style="{StaticResource SecondaryAppButton}" Click="ZoomResetButtonClickHandler"  Background="{Binding Background, ElementName=commandBar}" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Zoom Reset"/>
@@ -245,9 +252,7 @@
 
                 <AppBarSeparator  x:Name="readModeButtonSeparator" Background="Transparent" Visibility="{Binding Visibility, ElementName=readModeButton}"  Foreground="{Binding Foreground, ElementName=commandBar}"/>
                 <AppBarButton x:Name="readModeButton" Visibility="Visible" Label="Night" Click="ReadModeButtonClickHandler" Style="{StaticResource SecondaryAppButton}"  Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Read Mode">
-                    <Grid>
-                        <Path x:Name="readModeButtonSymbol" Margin="0,-3,0,0" Style="{StaticResource MoonPathIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" />
-                    </Grid>
+                    <Path x:Name="readModeButtonSymbol" Margin="0,-3,0,0" Style="{StaticResource MoonPathIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" />
                 </AppBarButton>
             </CommandBar.SecondaryCommands>
         </CommandBar>
