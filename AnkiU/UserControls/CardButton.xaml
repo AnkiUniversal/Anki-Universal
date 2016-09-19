@@ -7,16 +7,18 @@
     xmlns:data="using:AnkiU.Models"
     xmlns:DataBindingConverters="using:AnkiU.UIUtilities.DataBindingConverters"
     x:Class="AnkiU.UserControls.CardButtonView"
-    mc:Ignorable="d"    
+    mc:Ignorable="d"   
+    Background="Transparent"
     x:Name="userControl"
     d:DesignHeight="100"
+    SizeChanged="OnSizeChanged"
     d:DesignWidth="100">
 
     <UserControl.Resources>
         <DataBindingConverters:VisibilityInvertConverter x:Key="VisibilityInvertConverter"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Background="{Binding Background, ElementName=userControl}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -36,7 +38,7 @@
 
         <TextBlock FontWeight="SemiBold" Text="Header" Grid.Row="0" x:Name="header" Foreground="{StaticResource ButtonBackGroundCompliment}" FontSize="14" TextAlignment="Center" Visibility="{Binding HeaderVisibility, ElementName=userControl, Mode=OneWay}"
 			VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False"/>
-        <TextBlock FontWeight="SemiBold" Grid.Row="1" x:Name="body" Text="Body" Foreground="{StaticResource ButtonBackGroundNormal}" 
+        <TextBlock FontWeight="SemiBold" Grid.Row="1" x:Name="body" Text="{Binding Body, ElementName=userControl}" Foreground="{StaticResource ButtonBackGroundNormal}" 
 			FontSize="18" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False"/>
 
     </Grid>

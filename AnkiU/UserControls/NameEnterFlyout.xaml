@@ -18,7 +18,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBox x:Name="renameFlyoutTextBox" Grid.Row="0" Margin="5" PlaceholderText="New name" VerticalAlignment="Center" 
-                             TextWrapping="Wrap" HorizontalAlignment="Stretch" KeyUp="NameFlyoutTextBoxKeyUpHandler" BorderBrush="Black" BorderThickness="1"
+                             TextWrapping="Wrap" HorizontalAlignment="Stretch" KeyUp="NameFlyoutTextBoxKeyUpHandler"
                              IsSpellCheckEnabled="False"/>
                     <Button Margin="5,0,0,0" Width="130" Grid.Row="1" HorizontalAlignment="Left" Content="OK" Style="{StaticResource ButtonBlue}" Click="OKButtonClick" BorderThickness="0"/>
                     <Button Margin="0,0,4,0" Width="130" Grid.Row="1" HorizontalAlignment="Right" Content="Cancel" Style="{StaticResource ButtonGray}" Click="CancelButtonClick" BorderBrush="Black" BorderThickness="1"/>

@@ -27,9 +27,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0"  Text="Steps (in minutes)" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBlock Margin="0,0,0,5" Grid.Row="0" Grid.Column="0"  Text="Steps (in minutes)" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         <TextBox x:Name="delaysTextBox" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"
-                            Foreground="{Binding Foreground, ElementName=userControl}" BorderThickness="1" BorderBrush="Black"
+                            Foreground="{Binding Foreground, ElementName=userControl}"
 							Text="0" TextChanging="DelaysTextBoxTextChangingHandler">
             <TextBox.InputScope>
                 <InputScope>
@@ -40,30 +40,28 @@
             </TextBox.InputScope>
         </TextBox>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="New interval" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-        <controls:NumbericTextBox Grid.Row="1" Grid.Column="2" MaxNumber="{x:Bind Options.MAX_NEWINTERVAL, Mode=OneTime}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderBrush="Black"
-                                 Number="{x:Bind Options.NewInterval, Mode=TwoWay}" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=userControl}" BorderThickness="1">
+        <TextBlock Margin="0,0,0,5" Grid.Row="1" Grid.Column="0" Text="New interval" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <controls:NumbericTextBox Grid.Row="1" Grid.Column="2" MaxNumber="{x:Bind Options.MAX_NEWINTERVAL, Mode=OneTime}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" 
+                                 Number="{x:Bind Options.NewInterval, Mode=TwoWay}" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=userControl}" >
         </controls:NumbericTextBox>
-        <TextBlock Margin="5,0,0,0" Grid.Row="1" Grid.Column="3" Text="%" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-        
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Min interval" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBlock Margin="5,0,0,5" Grid.Row="1" Grid.Column="3" Text="%" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+        <TextBlock Margin="0,0,0,5" Grid.Row="2" Grid.Column="0" Text="Min interval" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         <controls:NumbericTextBox  Grid.Row="2" Grid.Column="2" MaxNumber="{x:Bind Options.MAX_MinInt, Mode=OneTime}"                                   
-                                 VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="1" BorderBrush="Black"
+                                 VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" 
                                  Number="{x:Bind Options.MinInt, Mode=TwoWay}" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=userControl}">
         </controls:NumbericTextBox>
-        <TextBlock Margin="5,0,0,0" Grid.Row="2" Grid.Column="3" Text="day(s)" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        <TextBlock Margin="5,0,0,5" Grid.Row="2" Grid.Column="3" Text="day(s)" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Leech threshold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-        <controls:NumbericTextBox Grid.Row="3" Grid.Column="2" MaxNumber="{x:Bind Options.MAX_LEECHTHRESHOLD, Mode=OneTime}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="1" BorderBrush="Black"
+        <TextBlock Margin="0,0,0,5" Grid.Row="3" Grid.Column="0" Text="Leech threshold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <controls:NumbericTextBox Grid.Row="3" Grid.Column="2" MaxNumber="{x:Bind Options.MAX_LEECHTHRESHOLD, Mode=OneTime}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" 
                                  Number="{x:Bind Options.LeechFailsThreshold, Mode=TwoWay}" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=userControl}">
         </controls:NumbericTextBox>
-        <TextBlock Margin="5,0,0,0" Grid.Row="3" Grid.Column="3" Text="lapses" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        <TextBlock Margin="5,0,0,5" Grid.Row="3" Grid.Column="3" Text="lapses" VerticalAlignment="Center" HorizontalAlignment="Left"/>
         
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="Leech action" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-        <ComboBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"                  
-                                BorderThickness="1"
+        <TextBlock Grid.Row="4" Margin="0,0,0,1" Grid.Column="0" Text="Leech action" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <ComboBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="Transparent"                 
                                  Foreground="{Binding Foreground, ElementName=userControl}" 
-                               BorderBrush="Black"
                                   SelectedIndex="{x:Bind Options.LeechAction, Mode=TwoWay}" >
             <TextBlock Text="Suspend card" TextAlignment="Left"/>
             <TextBlock Text="Tag only" TextAlignment="Left"/>

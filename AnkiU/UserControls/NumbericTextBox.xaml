@@ -7,17 +7,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:DataBindingConverters="using:AnkiU.UIUtilities.DataBindingConverters"
     mc:Ignorable="d"
-    
+    BorderBrush="{StaticResource ButtonBackGroundNormal}"
+    Padding="5,3,6,2"
+    BorderThickness="0,0,0,2"             
     d:DesignHeight="300"
     d:DesignWidth="400">
 
     <Grid>
         <TextBox x:Name="textBox" 
                  BorderThickness="{Binding BorderThickness, ElementName=userControl}"
-                 Padding="10,5,5,5"
                  BorderBrush="{Binding BorderBrush, ElementName=userControl}"                 
                  VerticalAlignment="Stretch"
-                 HorizontalAlignment="Stretch"                 
+                 HorizontalAlignment="Stretch"
+                 Padding="{Binding Padding, ElementName=userControl}"
                  TextChanging="TextBoxTextChangingHandler" 
                  Foreground="{Binding Foreground, ElementName=userControl}"
                  Text="0"

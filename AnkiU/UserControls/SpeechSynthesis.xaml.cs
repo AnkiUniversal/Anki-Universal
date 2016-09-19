@@ -50,8 +50,8 @@ namespace AnkiU.UserControls
         public bool IsPlaying { get; private set; }
 
         public SpeechSynthesis()
-        {
-            this.InitializeComponent();
+        {                        
+            this.InitializeComponent();     
             InitSynthesizer();
             InitializeListboxVoiceChooser();                        
         }
@@ -172,7 +172,7 @@ namespace AnkiU.UserControls
             {
                 ComboBoxItem item = new ComboBoxItem();
                 item.Name = voice.DisplayName;
-                item.Tag = voice;
+                item.Tag = voice;                
                 item.Content = voice.DisplayName + " (Language: " + voice.Language + ")";
                 listboxVoiceChooser.Items.Add(item);
 
@@ -271,17 +271,14 @@ namespace AnkiU.UserControls
         
         private void OnUserControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(userControl.ActualWidth > 300)
-            {
-                if (userControl.ActualWidth > 400)
-                    playBackSliderLabel.Visibility = Visibility.Visible;
-                else
-                    playBackSliderLabel.Visibility = Visibility.Collapsed;
+            if(userControl.ActualWidth >= 400)
+            {                
                 if (!isNarrowState)
                     return;
 
                 isNarrowState = false;
                 playBackRateSlider.Visibility = Visibility.Visible;
+                playBackSliderLabel.Visibility = Visibility.Visible;
                 playBackRateChooser.Visibility = Visibility.Collapsed;
                 playBackGridColumn.Width = new GridLength(1, GridUnitType.Star);                
             }

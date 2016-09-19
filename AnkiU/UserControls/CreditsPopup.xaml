@@ -25,13 +25,9 @@
                            Text="ABOUT" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="7" />
 
             <Button Style="{StaticResource ButtonBlue}" Click="CreditClose" 
-                                Width="30" Height="30" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                                VerticalAlignment="Top" HorizontalAlignment="Right">
-                <SymbolIcon Symbol="Clear" RenderTransformOrigin="0.5,0.5" >
-                    <SymbolIcon.RenderTransform>
-                        <CompositeTransform ScaleX="0.6" ScaleY="0.6"/>
-                    </SymbolIcon.RenderTransform>
-                </SymbolIcon>
+                                Width="35" Height="35" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                VerticalAlignment="Center" HorizontalAlignment="Right">
+                <FontIcon FontWeight="SemiBold" FontSize="17" Glyph="&#xE8BB;" />
             </Button>
 
             <ScrollViewer 

@@ -13,7 +13,7 @@ ReviewPage:
 	3) Make sure Ink does not turn on/off automatically when user go to a new reviewPage
 
 	4) Make sure enter when showing answer does nothing and pressing number while displaying
-	   question all so does nothing
+	   question also does nothing
 
     5) Make sure enter wrong answer number (Ex: 1->3 but enter 4) does notthing
 

@@ -25,13 +25,12 @@
                        Style="{StaticResource TabsStylePivotStyle}" Grid.Row="0">
                     <PivotItem x:Name="learningTab"  Background="White" Padding="0" Margin="0" >
                         <PivotItem.Header >
-                            <TextBlock Text="Learning"
-                            FontFamily="Segoe UI" 
-                            FontSize="18"                            
+                            <TextBlock Text="LEARNING"                            
+                            FontSize="15"                            
                             FontWeight="SemiBold"
-                            Foreground="{Binding Foreground, ElementName=userControl}"                                   
-                            Style="{StaticResource CaptionTextBlockStyle}"                            
-                            IsTextScaleFactorEnabled="False"
+                            Style="{StaticResource CaptionTextBlockStyle}"    
+                            IsTextScaleFactorEnabled="False"                                       
+                            Foreground="{Binding Foreground, ElementName=userControl}" 
                             TextAlignment="Center" 
                             HorizontalAlignment="Center" Width="75"/>
                         </PivotItem.Header>
@@ -43,13 +42,12 @@
 
                     <PivotItem x:Name="backUp"  Background="{Binding Background, ElementName=learningTab}" Padding="0" Margin="0" >
                         <PivotItem.Header >
-                            <TextBlock Text="Backup"
-                            FontFamily="Segoe UI" 
-                            FontSize="18"                            
+                            <TextBlock Text="BACKUP"                            
+                            FontSize="15"                            
                             FontWeight="SemiBold"
-                            Foreground="{Binding Foreground, ElementName=userControl}"                                   
-                            Style="{StaticResource CaptionTextBlockStyle}"                            
+                            Style="{StaticResource CaptionTextBlockStyle}"    
                             IsTextScaleFactorEnabled="False"
+                            Foreground="{Binding Foreground, ElementName=userControl}"
                             TextAlignment="Center"
                             HorizontalAlignment="Center" Width="75"/>
                         </PivotItem.Header>
@@ -73,26 +71,26 @@
                                        TextWrapping="Wrap" FontSize="18"
                                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,5,10" />
 
-                            <TextBlock Margin="0,0,0,10" Grid.Row="1" Text="Number of backups: " Foreground="{Binding Foreground, ElementName=userControl}" 
+                            <TextBlock Margin="0,0,0,12" Grid.Row="1" Text="Number of backups " Foreground="{Binding Foreground, ElementName=userControl}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                            <controls:NumbericTextBox Grid.Column="2" MinNumber="1" MaxNumber="1000" Height="35" x:Name="numberOfBackup" Margin="0,0,0,5"
+                            <controls:NumbericTextBox Grid.Column="2" MinNumber="1" MaxNumber="1000" x:Name="numberOfBackup" Margin="0,0,0,5"
                                              Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" 
-                                 BorderThickness="1" Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="Black">
+                                 Foreground="{Binding Foreground, ElementName=userControl}">
                             </controls:NumbericTextBox>
-                            <Button Grid.Column="3" Style="{StaticResource ButtonGray}" 
-                                Background="Transparent" Padding="0" BorderThickness="1" BorderBrush="{Binding Foreground, ElementName=userControl}"
+                            <Button Grid.Column="3" Style="{StaticResource ButtonContentOcpacity}" 
+                                Background="Transparent" Padding="0,0,0,5" BorderThickness="0" BorderBrush="{Binding Foreground, ElementName=userControl}"
                                 x:Name="openBackUpFolderButton" HorizontalAlignment="Left" Width="40"  VerticalAlignment="Stretch"
-                                     Grid.Row="1" Margin="-1,-1,5,4"
+                                     Grid.Row="1" Margin="0, 0, 0, 0" VerticalContentAlignment="Bottom"
                                     Click="OpenBackUpFolderClick">
                                 <Path Style="{StaticResource OpenFolderIcon}" Fill="Transparent" Stroke="{Binding Foreground, ElementName=userControl}" Width="27" Height="20" />
                             </Button>
 
-                            <TextBlock Grid.Row="2" Text="Back up after every: " Margin="0,0,0,5" Foreground="{Binding Foreground, ElementName=userControl}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                            <controls:NumbericTextBox Grid.Column="2" MinNumber="1" MaxNumber="1000" Height="35" x:Name="backupTime"
+                            <TextBlock Grid.Row="2" Text="Back up after every " Margin="0,0,0,7" Foreground="{Binding Foreground, ElementName=userControl}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <controls:NumbericTextBox Grid.Column="2" MinNumber="1" MaxNumber="1000" x:Name="backupTime"
                                              Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"
-                                 BorderThickness="1" Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="Black">
+                                              Foreground="{Binding Foreground, ElementName=userControl}" >
                             </controls:NumbericTextBox>
-                            <TextBlock Margin="2,0,5,5" Grid.Row="2" Grid.Column="3" Text="hour(s)" Foreground="{Binding Foreground, ElementName=userControl}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Margin="2,0,5,7" Grid.Row="2" Grid.Column="3" Text="hour(s)" Foreground="{Binding Foreground, ElementName=userControl}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
                             <TextBlock Grid.Row="3" Grid.ColumnSpan="4" Foreground="{StaticResource ButtonBackGroundAnalogousLeft}" TextAlignment="Center"
                                        Text="Backups are also automatically created when deleting or importing decks." FontSize="14"
@@ -133,13 +131,12 @@
 
                     <PivotItem x:Name="sync"  Background="{Binding Background, ElementName=learningTab}" Padding="0" Margin="0" >
                         <PivotItem.Header >
-                            <TextBlock Text="Sync"
-                            FontFamily="Segoe UI" 
-                            FontSize="18"                            
+                            <TextBlock Text="SYNC"                            
+                            FontSize="15"                            
                             FontWeight="SemiBold"
-                            Foreground="{Binding Foreground, ElementName=userControl}"                                   
-                            Style="{StaticResource CaptionTextBlockStyle}"                            
+                            Style="{StaticResource CaptionTextBlockStyle}"    
                             IsTextScaleFactorEnabled="False"
+                            Foreground="{Binding Foreground, ElementName=userControl}"
                             TextAlignment="Center"
                             HorizontalAlignment="Center" Width="75"/>
                         </PivotItem.Header>
@@ -154,7 +151,7 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Text="Automatically sync on startup:"   Grid.Row="0" Margin="0,0,0,3"
+                            <TextBlock Text="Automatically sync on startup"   Grid.Row="0" Margin="0,0,0,3"
                                        VerticalAlignment="Center" HorizontalAlignment="Right"/>
                             <CheckBox Grid.Row="0" Grid.Column="2" Height="20" x:Name="syncOnOpenCheckBox"
                                       VerticalAlignment="Center" HorizontalAlignment="Left"
@@ -162,7 +159,7 @@
                                       BorderBrush="{Binding Foreground, ElementName=userControl}"
                                       IsThreeState="False"/>
                             
-                            <TextBlock Grid.Row="1" Text="Also sync media files:" Margin="0,0,0,3"
+                            <TextBlock Grid.Row="1" Text="Also sync media files" Margin="0,0,0,3"
                                        VerticalAlignment="Center" HorizontalAlignment="Right"/>
                             <CheckBox Grid.Row="1" Grid.Column="2" Height="20" x:Name="syncMediaCheckBox"
                                       VerticalAlignment="Center" HorizontalAlignment="Left"

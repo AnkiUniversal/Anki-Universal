@@ -97,7 +97,6 @@
     <Content Include="html\tinymce\img\backcolor.png" />
     <Content Include="html\tinymce\img\forecolor.png" />
     <Content Include="html\tinymce\img\selectall.png" />
-    <Content Include="Todo.txt" />
     <None Include="AnkiCore\Log.txt" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

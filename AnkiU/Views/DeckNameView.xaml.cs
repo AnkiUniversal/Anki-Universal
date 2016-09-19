@@ -37,12 +37,6 @@ namespace AnkiU.Views
     {
         public event SelectionChangedEventHandler SelectionChangedEvent;
 
-        public string Label
-        {
-            get { return label.Text; }
-            set { label.Text = value; }
-        }
-
         public DeckNameView()
         {
             this.InitializeComponent();

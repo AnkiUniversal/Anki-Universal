@@ -85,9 +85,9 @@
 
             <Button HorizontalAlignment="Left" Width="40" Height="40"   
                     Padding="0" x:Name="editModelButton"
-                    Grid.Column="1" Foreground="{Binding Foreground, ElementName=userControl}"
+                    Grid.Column="1" Foreground="{StaticResource ButtonBackGroundNormal}"
                     VerticalAlignment="Center"
-                    Style="{StaticResource ButtonGray}" Background="Transparent" >
+                    Style="{StaticResource ButtonContentOcpacity}" Background="Transparent" >
                 <SymbolIcon Symbol="Edit" />
                 <Button.Flyout>
                     <MenuFlyout >
@@ -114,9 +114,9 @@
 
         <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" Grid.Row="4"/>
         <views:TagInformationView   Foreground="{Binding Foreground, ElementName=userControl}"         
-            Background="Transparent" Margin="0,2,0,0" 
+            Background="Transparent" Margin="0,2,0,0" Padding="0,0,0,3"
             x:Name="tagsView" Grid.Row="4" 
-            HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="30" />
+            HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="33" />
 
 
         <my:NotificationPopup x:Name="numberOfCardsAddedPopup" 

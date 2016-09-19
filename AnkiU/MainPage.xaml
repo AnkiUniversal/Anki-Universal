@@ -40,8 +40,8 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Export to:"/>
-                        <TextBox Margin="5,0,0,0" Grid.Column="1" x:Name="exportFlyoutTextBox"  TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True"  />
-                        <Button x:Name="exportFolderPickerButton" Style="{StaticResource ButtonGray}" BorderBrush="Black" BorderThickness="1" 
+                        <TextBox Margin="5,0,0,0" Grid.Column="1" Style="{StaticResource OldTextBoxStyle}" x:Name="exportFlyoutTextBox"  TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True"  />
+                        <Button x:Name="exportFolderPickerButton" Style="{StaticResource ButtonGray}" BorderThickness="1" BorderBrush="Black" Background="Transparent"
                                 Grid.Column="2" Padding="0" Margin="-2,0,0,0" Height="32" Width="40" Click="ExportFolderPickerButtonClickHandler" >
                             <Path Style="{StaticResource OpenFolderIcon}" Margin="0" Width="30" Fill="Transparent" Stroke="Black" RenderTransformOrigin="0.5,0.5">
                                 <Path.RenderTransform>
@@ -68,7 +68,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <SymbolIcon  x:Name="languageSelectSymbol" Symbol="Globe" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <ComboBox x:Name="languageSelectComboBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding}" Loaded="languageSelectComboBoxLoadedHandler" SelectionChanged="InkToTextLanguageSelectionChangedHandler">
+                        <ComboBox Background="Transparent" x:Name="languageSelectComboBox" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding}" Loaded="languageSelectComboBoxLoadedHandler" SelectionChanged="InkToTextLanguageSelectionChangedHandler">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="data:AvailableRecoginitionLanguage">
                                     <TextBlock Text="{x:Bind Name}" />
@@ -107,6 +107,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="data:InkToWordList">
                                     <ComboBox x:Name="inkToWordComboBox" ItemsSource="{x:Bind WordList}" 
+                                              Background="Transparent"
                                               Width ="110" Margin="5,5,0,0" 
                                               VerticalAlignment="Center"                                              
                                               SelectionChanged="InkToTextResultComboBoxSelectionChangedHandler"
@@ -243,6 +244,9 @@
                         <Path x:Name="textToSpeechOnSymbol" Style="{StaticResource SpeakerIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Visible"/>
                         <Path x:Name="textToSpeechOffSymbol" Style="{StaticResource SpeakerOffIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Collapsed"/>
                     </Grid>
+                </AppBarButton>
+                <AppBarButton x:Name="oneHandButton" Visibility="Collapsed" Label="One Hand Mode" Style="{StaticResource SecondaryAppButton}"  Background="{Binding Background, ElementName=commandBar}" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="One Hand Mode">
+                    <FontIcon  FontSize="19" Glyph="&#xEBFC;" />
                 </AppBarButton>
                 
                 <AppBarSeparator  x:Name="zoomButtonsSeparator"  Visibility="{Binding Visibility, ElementName=zoomResetButton}" Foreground="{Binding Foreground, ElementName=commandBar}"/>

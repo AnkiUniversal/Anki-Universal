@@ -257,6 +257,16 @@
     </Style>
     <x:String x:Key="TriangleUpIconData">M40,315 L55,300 L70,315 z</x:String>
 
+    <Style x:Key="TriangleDownIcon" TargetType="Path">
+        <Setter Property="Stretch" Value="Fill"/>
+        <Setter Property="Fill" Value="Black"/>
+        <Setter Property="Stroke" Value="Transparent"/>
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Data" Value="{StaticResource TriangleDownIconData}"/>
+    </Style>
+    <x:String x:Key="TriangleDownIconData">M0,15 L15,30 30,15 0,15z</x:String>
+
     <Style x:Key="ChartIcon" TargetType="Path">
         <Setter Property="Stretch" Value="Fill"/>
         <Setter Property="Fill" Value="Black"/>
@@ -318,5 +328,15 @@
         <Setter Property="Data" Value="{StaticResource PauseIconData}"/>
     </Style>
     <x:String x:Key="PauseIconData">M 12,10C 10.896,10, 10,10.896, 10,12l0,8 c0,1.104, 0.896,2, 2,2s 2-0.896, 2-2L 14,12 C 14,10.896, 13.104,10, 12,10zM 18,20c0,1.104, 0.896,2, 2,2s 2-0.896, 2-2L 22,12 c0-1.104-0.896-2-2-2S 18,10.896, 18,12L 18,20 z</x:String>
-    
+
+    <Style x:Key="Hexagon" TargetType="Path">
+        <Setter Property="Stretch" Value="Fill"/>
+        <Setter Property="Fill" Value="Black"/>
+        <Setter Property="Stroke" Value="Transparent"/>
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Data" Value="{StaticResource HexagonData}"/>
+    </Style>
+    <x:String x:Key="HexagonData">m 16.167666 958.14111 -9.396901 8.78084 C 1.59187 971.76132 1 972.50406 1 981.67276 l 0 40.44454 c 0 8.5145 0.101027 8.5485 6.432573 14.9392 l 8.647359 8.7282 c 6.119966 6.1772 4.364774 5.5347 14.681157 5.5434 l 39.601699 0.034 c 8.838982 0.01 8.828962 -0.9001 14.148912 -5.7227 l 9.40939 -8.5298 c 5.99944 -5.4386 5.55521 -6.4899 5.54571 -15.0977 l -0.0446 -40.42395 c -0.009 -8.39487 0.85838 -8.58908 -5.52235 -14.67758 l -9.19027 -8.76938 c -4.08669 -3.89953 -5.73925 -5.35582 -14.420806 -5.3581 l -39.521297 -0.0104 c -8.661439 -0.002 -8.778397 -0.0706 -14.599771 5.3691 z</x:String>
+
 </ResourceDictionary>

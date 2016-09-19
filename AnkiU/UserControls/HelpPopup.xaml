@@ -44,13 +44,9 @@
                        Foreground="White" Text="Help" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
             </StackPanel>
 
-            <Button Style="{StaticResource ButtonBlue}" BorderBrush="Transparent" x:Name="closeButtonTop" Padding="2" Visibility="Collapsed"
+            <Button Style="{StaticResource ButtonBlue}" Background="Transparent" BorderBrush="Transparent" x:Name="closeButtonTop" Padding="2" Visibility="Collapsed"
                     BorderThickness="0" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Click="CloseButtonClick" >
-                <SymbolIcon Symbol="Clear" RenderTransformOrigin="0.5,0.5" >
-                    <SymbolIcon.RenderTransform>
-                        <CompositeTransform ScaleX="0.7" ScaleY="0.7"/>
-                    </SymbolIcon.RenderTransform>
-                </SymbolIcon>
+                <FontIcon FontWeight="SemiBold" FontSize="15" Glyph="&#xE8BB;" />
             </Button>
 
             <StackPanel Padding="5,5,5,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">

@@ -35,6 +35,7 @@ namespace AnkiU.Anki.Syncer
   
         public void InitInstance()
         {
+            
             oneDriveClient = OneDriveClientExtensions
                             .GetClientUsingOnlineIdAuthenticator(new string[] { "onedrive.appfolder", "offline_access" });
         }

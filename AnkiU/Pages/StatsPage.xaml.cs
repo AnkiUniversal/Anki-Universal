@@ -143,7 +143,7 @@ namespace AnkiU.Pages
 
         private void UpdateCardStatesChart()
         {            
-            cardTypePlotViewModel = new CardStatesViewModel("Card Types", "The division of cards in your deck(s)", cardStates);
+            cardTypePlotViewModel = new CardStatesViewModel("CARD TYPES", "The division of cards in your deck(s)", cardStates);
             if(cardTypePlotViewModel.ChartModel == null)
             {
                 HideView(cardTypePlotView);
@@ -156,7 +156,7 @@ namespace AnkiU.Pages
 
         private void UpdateReviewChart()
         {                        
-            reviewPlotViewModel = new ReviewChartViewModel("Answer Count", "The number of questions you have answered.", reviewData);            
+            reviewPlotViewModel = new ReviewChartViewModel("ANSWER COUNT", "The number of questions you have answered.", reviewData);            
             if (reviewPlotViewModel.ChartModel == null)
             {
                 HideView(reviewPlotRoot);
@@ -172,7 +172,7 @@ namespace AnkiU.Pages
 
         private void UpdatForeCastDueChart()
         {            
-            foreCastPlotViewModel = new ForeCastChartViewModel("Forecast", "The number of reviews due in the future.", dueForeCast);
+            foreCastPlotViewModel = new ForeCastChartViewModel("FORECAST", "The number of reviews due in the future.", dueForeCast);
             if (foreCastPlotViewModel.ChartModel == null)
             {
                 HideView(foreCastPlotView);

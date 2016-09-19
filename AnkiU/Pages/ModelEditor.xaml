@@ -55,9 +55,9 @@
 
                 <Button HorizontalAlignment="Left" Width="40" Height="40"   
                     Padding="0" x:Name="editModelButton"
-                    Grid.Column="1" Foreground="{Binding Foreground, ElementName=userControl}"
+                    Grid.Column="1" Foreground="{StaticResource ButtonBackGroundNormal}"
                     VerticalAlignment="Center"
-                    Style="{StaticResource ButtonGray}" Background="Transparent" >
+                    Style="{StaticResource ButtonContentOcpacity}" Background="Transparent" >
                     <SymbolIcon Symbol="Edit" />
                     <Button.Flyout>
                         <MenuFlyout >
@@ -71,9 +71,9 @@
 
                 <Button HorizontalAlignment="Left" Width="40" Height="40"   
                     Padding="0" x:Name="deleteModelButton"
-                    Grid.Column="2" Foreground="{Binding Foreground, ElementName=userControl}"
+                    Grid.Column="2" Foreground="{StaticResource ButtonBackGroundNormal}"
                     VerticalAlignment="Center" Click="DeleteModelButtonClickHandler"
-                    Style="{StaticResource ButtonGray}" Background="Transparent" >
+                    Style="{StaticResource ButtonContentOcpacity}" Background="Transparent" >
                     <SymbolIcon Symbol="Delete" />
                 </Button>
             </Grid>

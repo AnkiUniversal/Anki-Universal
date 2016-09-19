@@ -10,6 +10,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:converters="using:AnkiU.UIUtilities.DataBindingConverters"
     x:Name="userControl"
     d:DesignHeight="600"
     Background="{StaticResource BackgroundNormal}"
@@ -17,6 +18,7 @@
     d:DesignWidth="320" SizeChanged="PageSizeChanged" >
 
     <Page.Resources>
+        <converters:SizeConverter x:Key="SizeConverter"/>
 
         <Flyout x:Name="editFlyout" x:Key="editFlyoutTemplate">
             <ContentPresenter Padding="0">
@@ -113,6 +115,21 @@
             </ContentPresenter>
         </Flyout>
 
+        <Flyout x:Name="oneHandFlyout" x:Key="oneHandFlyoutTemplate" Placement="Bottom">
+            <ContentPresenter Padding="0">
+                <StackPanel MaxWidth="300">
+
+                    <ToggleSwitch Style="{StaticResource InkEnableToggleSwitchStyle}"  x:Name="oneHandToggle" Padding="0" VerticalAlignment="Center" Height="35" HorizontalAlignment="Center"
+                            Background="Transparent" Header="One Hand Mode" Toggled="OnOneHandModeToggled"/>
+
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" >
+                        <RadioButton Style="{StaticResource RadioBoxButton}" Background="White" Tag="6,0,0,6" x:Name="leftHandRadio" Width="120" BorderThickness="1" BorderBrush="Black" Content="Left-handed"  Height="35" HorizontalAlignment="Left" IsChecked="True" Click="OnLeftHandRadioClick" />
+                        <RadioButton Style="{StaticResource RadioBoxButton}" Background="White" Tag="0,6,6,0" x:Name="rightHandRadio" Width="120" BorderThickness="1" BorderBrush="Black" Content="Right-handed"  Height="35" HorizontalAlignment="Left" Click="OnRightHandRadioClick"/>
+                    </StackPanel>
+                </StackPanel>
+            </ContentPresenter>
+        </Flyout>
+
         <Storyboard x:Name="fadeOutBoard" Duration="00:00:0.2" Completed="StoryboardOutBoardCompletedHandler">
             <DoubleAnimation x:Name="fadeOutAnimate" AutoReverse="True" RepeatBehavior="1x"
                     From="1" To="0" Duration="00:00:0.1" 
@@ -120,12 +137,19 @@
                     Storyboard.TargetProperty="Opacity">
             </DoubleAnimation>
         </Storyboard>
+
+        <Storyboard x:Name="FadeIn">
+            <DoubleAnimation Storyboard.TargetName="fanButtonsGrid" 
+                             Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.15"/>
+            <DoubleAnimation Storyboard.TargetName="fanButtonsGrid" 
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)" From="15" To="0" Duration="0:0:0.15"/>
+        </Storyboard>
     </Page.Resources>
 
     <Grid x:Name="mainGrid" Background="{Binding Background, ElementName=userControl}" >
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="cardViewGrid" Height="*"/>
-            <RowDefinition x:Name="buttonGrid" Height="50"/>
+            <RowDefinition x:Name="cardViewGrid" Height="90*"/>
+            <RowDefinition x:Name="buttonGrid" Height="10*" MinHeight="60" MaxHeight="100"/>
         </Grid.RowDefinitions>
 
         <Ellipse x:Name="customDueTimeShowPoint" Width="1" Height="1" Fill="Transparent" 
@@ -134,7 +158,7 @@
         <InkCanvas Canvas.ZIndex="0" x:Name="inkCanvas" 
                    Visibility="Collapsed" x:DeferLoadStrategy="Lazy" Grid.Row="0"></InkCanvas>
 
-        <controls:CardView Canvas.ZIndex="1"  Grid.Row="0" x:Name="cardView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Hidden" />
+        <controls:CardView Canvas.ZIndex="1"  Grid.Row="0" x:Name="cardView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
 
         <controls:CardButtonView x:Name="showAnswerButton" Grid.Row="1" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                  Visibility="Collapsed" AutomationProperties.AccessibilityView="Content"/>
@@ -149,6 +173,86 @@
             <controls:CardButtonView x:Name="easyButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
         </StackPanel>
 
+        <Button x:Name="oneHandModeAnswerButton" Style="{StaticResource ButtonGray}" BorderThickness="0" Opacity="0.5" Background="Transparent"
+                Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Collapsed" Tapped="OnOneHandAnswerButtonTapped"/>
+
+        <StackPanel x:Name="fanButtonsGrid" x:DeferLoadStrategy="Lazy" Visibility="Collapsed" 
+                    Grid.RowSpan="2" Canvas.ZIndex="2"           
+                    VerticalAlignment="Bottom" HorizontalAlignment="Left" Orientation="Vertical" 
+                    RenderTransformOrigin="0.5,0.5">
+            <StackPanel.RenderTransform>
+                <CompositeTransform x:Name="fanButtonGridTrans" TranslateY="0" />
+            </StackPanel.RenderTransform>
+            <Button x:Name="againFanButton" Style="{StaticResource HexaButtonGray}"
+                    Visibility="{Binding Visibility, ElementName=againButton}" 
+                    Background="{Binding Background, ElementName=userControl}"
+                    Foreground="{StaticResource ButtonBackGroundNormal}"
+                    BorderBrush="{StaticResource ButtonBackGroundCompliment}"
+                    BorderThickness="2"       
+                    MaxHeight="100"                    
+                    Height="{Binding ActualHeight, ConverterParameter=8, Converter={StaticResource SizeConverter}, ElementName=mainGrid, Mode=OneWay}"
+                    Width="{Binding Height, ConverterParameter=0.75, Converter={StaticResource SizeConverter}, ElementName=againFanButton, Mode=OneWay}"                    
+                    Click="OnAgainFanButtonClick"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    Margin="0" >
+                <TextBlock x:Name="againFanText" Text="{Binding Body, ElementName=againButton}" FontWeight="SemiBold" FontSize="18">
+                </TextBlock>
+            </Button>
+
+            <Button x:Name="hardFanButton" Visibility="{Binding Visibility, ElementName=hardButton}" 
+                    Style="{StaticResource HexaButtonGray}"
+                    Background="{Binding Background, ElementName=againFanButton}"
+                    Foreground="{Binding Foreground, ElementName=againFanButton, Mode=OneTime}"     
+                    BorderBrush="{StaticResource ButtonBackGroundCompliment}"
+                    BorderThickness="2"
+                    MaxHeight="100"
+                    Height="{Binding Height, ElementName=againFanButton}"
+                    Width="{Binding Width, ElementName=againFanButton}"                    
+                    Click="OnHardFanButtonClick"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    Margin="0"  >
+                <TextBlock Text="{Binding Body, ElementName=hardButton}" FontWeight="SemiBold" FontSize="18">
+                </TextBlock>
+            </Button>
+
+            <Button x:Name="goodFanButton" Visibility="{Binding Visibility, ElementName=goodButton}" 
+                    Style="{StaticResource HexaButtonGray}"
+                    Background="{Binding Background, ElementName=againFanButton}"
+                    Foreground="{Binding Foreground, ElementName=againFanButton, Mode=OneTime}"
+                    BorderBrush="{StaticResource ButtonBackGroundCompliment}"
+                    BorderThickness="2"
+                    MaxHeight="100"
+                    Height="{Binding Height, ElementName=againFanButton}"
+                    Width="{Binding Width, ElementName=againFanButton}"                    
+                    Click="OnGoodFanButtonClick"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    Margin="0" >
+                <TextBlock Text="{Binding Body, ElementName=goodButton}" FontWeight="SemiBold" FontSize="18" >
+                </TextBlock>
+            </Button>
+
+            <Button Visibility="{Binding Visibility, ElementName=easyButton}" 
+                    Style="{StaticResource HexaButtonGray}"
+                    Background="{Binding Background, ElementName=againFanButton}"    
+                    Foreground="{Binding Foreground, ElementName=againFanButton, Mode=OneTime}"
+                    BorderBrush="{StaticResource ButtonBackGroundCompliment}"
+                    BorderThickness="2"
+                    MaxHeight="100"
+                    Height="{Binding Height, ElementName=againFanButton}"
+                    Width="{Binding Width, ElementName=againFanButton}"
+                    x:Name="easyFanButton"                    
+                    Click="OnEasyFanButtonClick"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left"
+                    Margin="0" >
+                <TextBlock Text="{Binding Body, ElementName=easyButton}" FontWeight="SemiBold" FontSize="18" >
+                </TextBlock>
+            </Button>
+        </StackPanel>
+
         <Popup x:Name="buttonPopup"  Margin="0,0,0,30" Width="50" 
                VerticalAlignment="Bottom" HorizontalAlignment="Left">
             <Popup.Resources>
@@ -161,7 +265,7 @@
             </Popup.Resources>
             <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left" Opacity="0" 
                        x:Name="buttonPopupText" Foreground="{StaticResource ButtonBackGroundNormal}" FontSize="19" FontWeight="SemiBold">
-             </TextBlock>
+            </TextBlock>
         </Popup>
 
         <controls:NotificationPopup Grid.Row="0" x:Name="popup" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"

@@ -28,8 +28,8 @@
         </StackPanel>
         
         <Button x:Name="recordButton" Grid.Column="0" Grid.Row="1" 
-                Click="RecordButtonClickHandler" HorizontalAlignment="Center"
-                Style="{StaticResource ButtonGray}" Background="Transparent">
+                Click="RecordButtonClickHandler" HorizontalAlignment="Center" Foreground="{StaticResource ButtonBackGroundNormal}"
+                Style="{StaticResource ButtonContentOcpacity}" Background="Transparent">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -40,8 +40,8 @@
             </Grid>
         </Button>
         <Button x:Name="stopRecordButton" Grid.Column="0"  Grid.Row="1"  Click="StopRecordButtonClickHandler" 
-                HorizontalAlignment="Center" Visibility="Collapsed"
-                Style="{StaticResource ButtonGray}" Background="Transparent">
+                HorizontalAlignment="Center" Visibility="Collapsed"  Foreground="{StaticResource ButtonBackGroundNormal}"
+                Style="{StaticResource ButtonContentOcpacity}" Background="Transparent">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -51,9 +51,9 @@
                 <SymbolIcon Symbol="Stop" Grid.Column="0" />
             </Grid>
         </Button>
-        <Button x:Name="playButton" Grid.Column="1" Grid.Row="1" IsEnabled="False" 
+        <Button x:Name="playButton" Grid.Column="1" Grid.Row="1" IsEnabled="False" Foreground="{StaticResource ButtonBackGroundNormal}"
                 Click="PlayButtonClickHandler"  HorizontalAlignment="Center"
-                Style="{StaticResource ButtonGray}" Background="Transparent">
+                Style="{StaticResource ButtonContentOcpacity}" Background="Transparent">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -65,8 +65,8 @@
         </Button>
 
         <Button x:Name="stopPlayButton" Grid.Column="1" Grid.Row="1"   Visibility="Collapsed"
-                Click="StopPlayButtonClickHandler"  HorizontalAlignment="Center"
-                Style="{StaticResource ButtonGray}" Background="Transparent">
+                Click="StopPlayButtonClickHandler" Foreground="{StaticResource ButtonBackGroundNormal}"  HorizontalAlignment="Center"
+                Style="{StaticResource ButtonContentOcpacity}" Background="Transparent">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

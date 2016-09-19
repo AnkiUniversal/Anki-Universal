@@ -21,8 +21,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Review after" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <local:NumbericTextBox x:Name="numberBox" Margin="5,0,5,0" Grid.Column="1" VerticalAlignment="Center" 
-                                               BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" MaxNumber="1000"
+                        <local:NumbericTextBox x:Name="numberBox" Margin="5,0,5,0" Padding="5,5,5,0" Grid.Column="1" VerticalAlignment="Center" 
+                                               HorizontalAlignment="Stretch" MaxNumber="1000"
                                                KeyUp="NumberTextBoxEnterKeyUpHandler" Number="1" MinNumber="1" />
                         <TextBlock Text="day(s)" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2"/>
                     </Grid>

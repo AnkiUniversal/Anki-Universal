@@ -42,6 +42,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Input.Inking.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Data;
 
 namespace AnkiU.Pages
 {
@@ -60,8 +61,7 @@ namespace AnkiU.Pages
         public const string TypeAnswerContentPattern = @"\{{\{{c{0}::(.+?)\}}\}}";
 
         private const int CANVAS_INDEX_LOWEST = -1;
-        private const int CANVAS_INDEX_HIGHEST = 0;
-
+        private const int CANVAS_INDEX_HIGHEST = 0;        
         private TypeField type = new TypeField() { CorrectAnswer = null, Font = null, Size = 0 };
 
         private static long? editCardId;
@@ -85,6 +85,20 @@ namespace AnkiU.Pages
 
         private HelpPopup helpPopup = null;
         private int numerOfAnswerPress = 0;
+
+        private StackPanel FanButtonsRoot
+        {
+            get
+            {
+                if (fanButtonsGrid == null)
+                {
+                    this.FindName("fanButtonsGrid");
+                }
+
+                return fanButtonsGrid;
+            }
+        }
+
         public event NoticeRoutedHandler AnswerButtonsPressEvent;
         public event NoticeRoutedHandler DisplayAnswerEvent;
 
@@ -157,11 +171,33 @@ namespace AnkiU.Pages
             mainPage.ChooseTextAutomatically.Checked += ChooseTextAutomaticallyCheckedHandler;
             mainPage.UndoButton.Click += UndoButtonClickHandler;
             mainPage.TextToSpeechToggleButtonClick += OnTextToSpeechToggleButtonClick;
+            mainPage.OneHandButton.Click += OnOneHandButtonClick;
         }
 
         private void OnTextToSpeechToggleButtonClick(object sender, RoutedEventArgs e)
         {
             cardView.ToggleSpeechSynthesisView();
+        }
+
+        private void OnOneHandButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (MainPage.UserPrefs.IsOneHandMode)
+                oneHandToggle.IsOn = true;
+            else
+                oneHandToggle.IsOn = false;
+
+            if (MainPage.UserPrefs.IsLeftHand)
+            {
+                leftHandRadio.IsChecked = true;
+                rightHandRadio.IsChecked = false;
+            }
+            else
+            {
+                leftHandRadio.IsChecked = false;
+                rightHandRadio.IsChecked = true;
+            }
+
+            oneHandFlyout.ShowAt(mainPage.CommanBar);
         }
 
         private bool ScheduleNotifyLeechEventHandler(string message, Card card)
@@ -259,6 +295,7 @@ namespace AnkiU.Pages
             mainPage.ChooseTextAutomatically.Checked -= ChooseTextAutomaticallyCheckedHandler;
             mainPage.UndoButton.Click -= UndoButtonClickHandler;
             mainPage.TextToSpeechToggleButtonClick -= OnTextToSpeechToggleButtonClick;
+            mainPage.OneHandButton.Click -= OnOneHandButtonClick;
         }
 
         private void InitButtonList()
@@ -283,7 +320,7 @@ namespace AnkiU.Pages
             {
                 button.Width = width;
             }
-        }        
+        }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -299,15 +336,167 @@ namespace AnkiU.Pages
             currentDeckId = selectedDeckId;
 
             //WANRING: Run in transaction to ensure performance
-            //remember to call commit ro rollback to database
+            //remember to call commit or rollback to database after each answer
             collection.Database.SaveTransactionPoint();
 
             EnterTutorialModeIfNeeded();
-            await ShowAllButtonOfThisPage();            
+            await ShowAllButtonOfThisPage();
             HookAllEventsExceptCardViewLoaded();
 
             if (mainPage.IsInkOn(selectedDeckId))
                 SwitchToInkCanvasAndInkInput();
+
+            if (MainPage.UserPrefs.IsOneHandMode)
+            {
+                TurnOnOneHandMode();
+            }
+        }
+
+        private void TurnOnOneHandMode()
+        {
+            BindOneHandButtonVisibilityToAnswer();
+            if (MainPage.UserPrefs.IsLeftHand)
+                SetLeftHandUse();
+            else
+                SetRightHandUse();
+        }
+
+        private void TurnOffOneHandMode()
+        {
+            oneHandModeAnswerButton.Visibility = Visibility.Collapsed;
+            FanButtonsRoot.Visibility = Visibility.Collapsed;
+        }
+
+        private void OnOneHandModeToggled(object sender, RoutedEventArgs e)
+        {
+            MainPage.UserPrefs.IsOneHandMode = oneHandToggle.IsOn;
+            if (oneHandToggle.IsOn)
+                TurnOnOneHandMode();
+            else
+                TurnOffOneHandMode();
+        }
+
+        private void BindOneHandButtonVisibilityToAnswer()
+        {            
+            Binding b = new Binding();
+            b.Source = againButton;
+            b.Path = new PropertyPath("Visibility");
+            b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            b.Mode = BindingMode.OneWay;
+
+            oneHandModeAnswerButton.SetBinding(VisibilityProperty, b);
+        }
+
+        private void OnLeftHandRadioClick(object sender, RoutedEventArgs e)
+        {
+            SetLeftHandUse();
+            MainPage.UserPrefs.IsLeftHand = true;
+        }
+
+        private void SetLeftHandUse()
+        {
+            if (FanButtonsRoot == null)
+                return;
+
+            FanButtonsRoot.Children.Clear();                                   
+            FanButtonsRoot.Children.Add(againFanButton);
+            FanButtonsRoot.Children.Add(hardFanButton);
+            FanButtonsRoot.Children.Add(goodFanButton);
+            FanButtonsRoot.Children.Add(easyFanButton);
+
+            var bottomMargin = -againFanButton.BorderThickness.Top;
+            againFanButton.Margin = new Thickness(-105, 0, 0, bottomMargin);
+            hardFanButton.Margin = new Thickness(-55, 0, 0, bottomMargin);
+            goodFanButton.Margin = new Thickness(-15, 0, 0, bottomMargin);
+            easyFanButton.Margin = new Thickness(15, 0, 0, 0);
+
+        }
+
+        private void OnRightHandRadioClick(object sender, RoutedEventArgs e)
+        {
+            SetRightHandUse();
+            MainPage.UserPrefs.IsLeftHand = false;
+        }
+
+        private void SetRightHandUse()
+        {
+            if (FanButtonsRoot == null)
+                return;
+            
+            FanButtonsRoot.Children.Clear();
+            FanButtonsRoot.Children.Add(easyFanButton);
+            FanButtonsRoot.Children.Add(goodFanButton);
+            FanButtonsRoot.Children.Add(hardFanButton);
+            FanButtonsRoot.Children.Add(againFanButton);
+
+            var bottomMargin = -againFanButton.BorderThickness.Top;
+            easyFanButton.Margin = new Thickness(15, 0, 0, bottomMargin);
+            goodFanButton.Margin = new Thickness(-35, 0, 0, bottomMargin);            
+            hardFanButton.Margin = new Thickness(-75, 0, 0, bottomMargin);
+            againFanButton.Margin = new Thickness(-105, 0, 0, 0);
+        }
+
+        private void OnOneHandAnswerButtonTapped(object sender, TappedRoutedEventArgs e)
+        {
+            var position = e.GetPosition(mainGrid);
+            if (FanButtonsRoot == null)
+                return;
+
+            Button lastButton;
+            if (easyButton.Visibility == Visibility.Visible)
+                lastButton = easyFanButton;
+            else if (goodButton.Visibility == Visibility.Visible)
+                lastButton = goodFanButton;
+            else
+                lastButton = hardFanButton;
+
+            var xPosition = position.X;
+            var leftOffset = xPosition - Math.Abs(againFanButton.Margin.Left);            
+            var rightoffset = (mainGrid.ActualWidth - xPosition) - lastButton.Margin.Left - againFanButton.Width;
+            if (leftOffset < 0)
+            {
+                xPosition = Math.Abs(againFanButton.Margin.Left);
+            }
+            else if(rightoffset < 0)
+            {
+                xPosition += rightoffset; 
+            }
+
+            var yPosition = mainGrid.ActualHeight - position.Y;
+            FanButtonsRoot.Margin = new Thickness(xPosition, 0, 0, yPosition);
+            FanButtonsRoot.Visibility = Visibility.Visible;
+            FadeIn.Begin();
+        }
+
+        private void OnAgainFanButtonClick(object sender, RoutedEventArgs e)
+        {
+            HideFanButtonGrid();
+            AgainButtonClickHandler(null, null);
+        }
+
+        private void OnHardFanButtonClick(object sender, RoutedEventArgs e)
+        {
+            HideFanButtonGrid();
+            HardButtonClickHandler(null, null);
+        }
+
+        private void OnGoodFanButtonClick(object sender, RoutedEventArgs e)
+        {
+            HideFanButtonGrid();
+            GoodButtonClickHandler(null, null);
+        }
+
+        private void OnEasyFanButtonClick(object sender, RoutedEventArgs e)
+        {
+            HideFanButtonGrid();
+            EasyButtonClickHandler(null, null);
+        }
+
+        private void HideFanButtonGrid()
+        {
+            FadeIn.Stop();
+            //Do this in HideAnswerButtons(); as it covers more cases
+            //fanButtonsGrid.Visibility = Visibility.Collapsed;
         }
 
         private async Task ShowAllButtonOfThisPage()
@@ -320,6 +509,7 @@ namespace AnkiU.Pages
             mainPage.EditButton.Visibility = Visibility.Visible;
             mainPage.UndoButton.Visibility = Visibility.Visible;
             mainPage.TextToSpeechToggleButton.Visibility = Visibility.Visible;
+            mainPage.OneHandButton.Visibility = Visibility.Visible;
             if (!collection.UndoAvailable())
                 mainPage.UndoButton.IsEnabled = false;
             await UpdateInkButton();
@@ -534,11 +724,12 @@ namespace AnkiU.Pages
             mainPage.UnhookZooming();
             mainPage.EditButton.Visibility = Visibility.Collapsed;
             mainPage.UndoButton.Visibility = Visibility.Collapsed;
-            mainPage.UndoButton.IsEnabled = true;          
-            mainPage.HideAllInkButtonsExceptOnOffIfNeeded();
+            mainPage.UndoButton.IsEnabled = true;
+            mainPage.RevertToInkOffStateIfNeeded();
             mainPage.InkOnOffButton.Visibility = Visibility.Collapsed;
             mainPage.ZoomButtonsSeparator.Visibility = Visibility.Collapsed;
             mainPage.TextToSpeechToggleButton.Visibility = Visibility.Collapsed;
+            mainPage.OneHandButton.Visibility = Visibility.Collapsed;
             mainPage.SwitchToEnableTextToSpeechSymbol();
         }    
 
@@ -796,6 +987,10 @@ namespace AnkiU.Pages
             foreach (var button in activeAnswerButtons)
             {
                 button.Visibility = Visibility.Collapsed;
+            }
+            if(fanButtonsGrid != null && fanButtonsGrid.Visibility == Visibility.Visible)
+            {
+                fanButtonsGrid.Visibility = Visibility.Collapsed;
             }
         }
         private void PlayMediaIfNeeded()
@@ -1467,6 +1662,5 @@ namespace AnkiU.Pages
             var storyBoard = sender as Storyboard;
             storyBoard.Stop();
         }
-        
     }
 }

@@ -38,7 +38,7 @@
                     HorizontalContentAlignment="Left"
                     Click="AddDeckAndNoteClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0" x:Name="DecksAndNotesFlag"/>
+                        <SymbolIcon Foreground="{StaticResource ButtonBackGroundNormal}" Symbol="Flag" Margin="0,0,5,0" x:Name="DecksAndNotesFlag"/>
                         <TextBlock Text="Decks &amp; Notes" />
                     </StackPanel>
                 </Button>
@@ -53,7 +53,7 @@
                     HorizontalContentAlignment="Left"
                     Click="NoteTypeAndTemplateClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="NoteTypeAndTemplateFlag"/>
+                        <SymbolIcon Foreground="{StaticResource ButtonBackGroundNormal}" Symbol="Flag" Margin="0,0,5,0"  x:Name="NoteTypeAndTemplateFlag"/>
                         <TextBlock Text="Note Types &amp; Templates" />
                     </StackPanel>
                 </Button>
@@ -102,7 +102,7 @@
                     HorizontalContentAlignment="Left"
                     Click="CustomStudy">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="CustomStudyFlag"/>
+                        <SymbolIcon Foreground="{StaticResource ButtonBackGroundNormal}" Symbol="Flag" Margin="0,0,5,0"  x:Name="CustomStudyFlag"/>
                         <TextBlock Text="Custom Study" />
                     </StackPanel>
                 </Button>
@@ -119,7 +119,7 @@
                     HorizontalContentAlignment="Left"                                   
                     Click="DataSyncingClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="DataSyncingFlag"/>
+                        <SymbolIcon Foreground="{StaticResource ButtonBackGroundNormal}" Symbol="Flag" Margin="0,0,5,0"  x:Name="DataSyncingFlag"/>
                         <TextBlock Text="Data Syncing" />
                     </StackPanel>
                 </Button>

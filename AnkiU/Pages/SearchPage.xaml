@@ -52,11 +52,11 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Button Style="{StaticResource ButtonGray}" BorderThickness="0" x:Name="searchButton"
+            <Button Style="{StaticResource ButtonContentOcpacity}" BorderThickness="0" x:Name="searchButton"
                     Background="Transparent" Width="35" Height="35"
-                    Foreground="{Binding Foreground, ElementName=userControl}" 
+                    Foreground="{StaticResource ButtonBackGroundNormal}" 
                     Padding="0" VerticalAlignment="Stretch" Click="SearchButtonClickHandler">
-                <SymbolIcon Symbol="Find"  />
+                <FontIcon FontWeight="Bold" FontSize="20" Glyph="&#xE721;" />
             </Button>
             <TextBox Grid.Column="1"  PlaceholderText="Search..." x:Name="searchTextBox"
                      GotFocus="SearchTextBoxGotFocus" LostFocus="SearchTextBoxLostFocus"
@@ -75,7 +75,7 @@
                 </TextBox.InputScope>
             </TextBox>
 
-            <Button Style="{StaticResource ButtonGray}"                     
+            <Button Style="{StaticResource ButtonContentOcpacity}"                     
                     Background="Transparent"
                 BorderThickness="0"
                 Grid.Column="2"

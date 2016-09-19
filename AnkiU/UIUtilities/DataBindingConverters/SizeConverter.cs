@@ -22,7 +22,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
-namespace AnkiU.DataBindingConverters
+namespace AnkiU.UIUtilities.DataBindingConverters
 {
     class SizeConverter : IValueConverter
     {

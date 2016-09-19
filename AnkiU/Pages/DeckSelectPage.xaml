@@ -59,7 +59,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Export to:"/>
-                        <TextBox Margin="5,0,0,0" Grid.Column="1" x:Name="exportFlyoutTextBox"  TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True"  />
+                        <TextBox Margin="5,0,0,0" Grid.Column="1" x:Name="exportFlyoutTextBox" Style="{StaticResource OldTextBoxStyle}" BorderBrush="Black" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsReadOnly="True"  />
                         <Button x:Name="exportFolderPickerButton" Style="{StaticResource ButtonGray}" BorderBrush="Black" BorderThickness="1" 
                                 Grid.Column="2" Padding="0" Margin="-2,0,0,0" Height="32" Width="40" Click="ExportFolderPickerButtonClickHandler" >
                             <Path Style="{StaticResource OpenFolderIcon}" Margin="0" Width="30" Fill="Transparent" Stroke="Black" RenderTransformOrigin="0.5,0.5">
@@ -131,8 +131,8 @@
                                              Width="20" Height="20" 
                                              HelpText="{x:Bind HelpText}" Visibility="{x:Bind HelpTextVisibility}" />
 
-                                    <Button  Style="{StaticResource ButtonGray}" 
-                                             Background="Transparent"
+                                    <Button  Style="{StaticResource ButtonContentOcpacity}" Foreground="{StaticResource ButtonBackGroundNormal}"
+                                             Background="Transparent" 
                                              Grid.Column="4" BorderThickness="0"
                                              Width="35" Height="35" Padding="0"
                                              HorizontalContentAlignment="Center" Click="ConfigureFlyoutNewClickHandler">
@@ -144,7 +144,8 @@
                                     </Button>
 
                                     <Button VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="6" Width="35" Height="35" Padding="0"  Visibility="{x:Bind EditVisibility}" 
-                                        Style="{StaticResource ButtonGray}" Background="Transparent" BorderThickness="0"  Click="ConfigureFlyoutEditButtonClick">
+                                        Style="{StaticResource ButtonContentOcpacity}" Foreground="{StaticResource ButtonBackGroundNormal}" 
+                                            Background="Transparent" BorderThickness="0"  Click="ConfigureFlyoutEditButtonClick">
                                         <SymbolIcon Symbol="Edit" RenderTransformOrigin="0.5,0.5">
                                             <SymbolIcon.RenderTransform>
                                                 <CompositeTransform ScaleX="0.9" ScaleY="0.9" TranslateX="0" TranslateY="0"/>
@@ -154,7 +155,8 @@
 
                                     <Button VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="8" Width="35" Height="35" Padding="0"  Visibility="{x:Bind EditVisibility}"
                                             Click="ConfigureFlyoutDeleteButtonClick" Background="Transparent"
-                                             Style="{StaticResource ButtonGray}" BorderThickness="0" >
+                                             Style="{StaticResource ButtonContentOcpacity}" Foreground="{StaticResource ButtonBackGroundNormal}" 
+                                            BorderThickness="0" >
                                         <SymbolIcon Symbol="Delete" RenderTransformOrigin="0.5,0.5" >
                                             <SymbolIcon.RenderTransform>
                                                 <CompositeTransform ScaleX="0.9" ScaleY="0.9" TranslateX="0" TranslateY="0"/>
@@ -248,26 +250,23 @@
                       HorizontalAlignment="Left" Margin="1,-10,0,0" Width="25" Height="25" >
                 </Path>
 
-                <TextBlock x:Name="totalCardsText" Text="Today's card: 2000" Margin="35,0,0,0"
+                <TextBlock x:Name="totalCardsText" Text="TODAY'S CARD: 2000" Margin="35,-5,0,0"
                            TextAlignment="Center" 
                            FontWeight="SemiBold" 
-                           FontSize="20" 
-                           FontFamily="Fira Sans"/>
+                           FontSize="20" />
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="35,25,0,0">
                     <TextBlock x:Name="newCardsText" 
                            Text="New: 1000." 
                            TextAlignment="Left" 
-                           FontWeight="Normal" 
-                           FontSize="15" 
-                           FontFamily="Fira Sans"/>
+                           FontWeight="SemiBold" 
+                           FontSize="15" />
 
                     <TextBlock x:Name="dueCardsText"
-                           Text="Due: 1000." Margin="10,0,0,0"
+                           Text="Due: 1000." Margin="20,0,0,0"
                            TextAlignment="Left" 
-                           FontWeight="Normal" 
-                           FontSize="15" 
-                           FontFamily="Fira Sans"/>
+                           FontWeight="SemiBold" 
+                           FontSize="15" />
                 </StackPanel>
             </Grid>
                         

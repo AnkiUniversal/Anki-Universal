@@ -31,34 +31,34 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Review cards/day" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBlock Margin="0,0,0,5" Grid.Row="0" Grid.Column="0" Text="Review cards/day" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         <controls:NumbericTextBox Grid.Row="0" Grid.Column="2" MaxNumber="{x:Bind Options.MAX_PERDAY, Mode=OneTime}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"
-                                  BorderThickness="1"  Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="Black"
+                                  Foreground="{Binding Foreground, ElementName=userControl}"
                                  Number="{x:Bind Options.PerDay, Mode=TwoWay}">
         </controls:NumbericTextBox>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Easy bonus" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBlock Margin="0,0,0,5" Grid.Row="1" Grid.Column="0" Text="Easy bonus" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         <controls:NumbericTextBox  Grid.Row="1" Grid.Column="2" MaxNumber="{x:Bind Options.MAX_EASYBONUS, Mode=OneTime}"  
-                                   BorderThickness="1"  Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="Black"
+                                    Foreground="{Binding Foreground, ElementName=userControl}"
                                  MinNumber="{x:Bind Options.MIN_EASYBONUS, Mode=OneTime}"
                                  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"
                                  Number="{x:Bind Options.EasyBonus, Mode=TwoWay}">
         </controls:NumbericTextBox>
-        <TextBlock Margin="5,0,0,0" Grid.Row="1" Grid.Column="3" Text="%" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-        
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Interval modifier" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBlock Margin="5,0,0,5" Grid.Row="1" Grid.Column="3" Text="%" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+        <TextBlock Margin="0,0,0,5" Grid.Row="2" Grid.Column="0" Text="Interval modifier" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         <controls:NumbericTextBox Grid.Row="2" Grid.Column="2" MaxNumber="{x:Bind Options.MAX_IVKFCT, Mode=OneTime}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"
-                                   BorderThickness="1" Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="Black"
+                                   Foreground="{Binding Foreground, ElementName=userControl}"
                                  Number="{x:Bind Options.IvlFct, Mode=TwoWay}">
         </controls:NumbericTextBox>
-        <TextBlock Margin="5,0,0,0" Grid.Row="2" Grid.Column="3" Text="%" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-        
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Maximum interval" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBlock Margin="5,0,0,5" Grid.Row="2" Grid.Column="3" Text="%" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+        <TextBlock Margin="0,0,0,5" Grid.Row="3" Grid.Column="0" Text="Maximum interval" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         <controls:NumbericTextBox Grid.Row="3" Grid.Column="2" MaxNumber="{x:Bind Options.MAX_MAXIVL, Mode=OneTime}" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"
-                                  BorderThickness="1"  Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="Black"
+                                  Foreground="{Binding Foreground, ElementName=userControl}" 
                                  Number="{x:Bind Options.MaxIvl, Mode=TwoWay}">
         </controls:NumbericTextBox>
-        <TextBlock Margin="5,0,0,0" Grid.Row="3" Grid.Column="3" Text="day(s)" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        <TextBlock Margin="5,0,0,5" Grid.Row="3" Grid.Column="3" Text="day(s)" VerticalAlignment="Center" HorizontalAlignment="Left"/>
         
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Bury related card" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         <CheckBox Grid.Row="4" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left"

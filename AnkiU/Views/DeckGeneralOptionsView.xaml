@@ -31,13 +31,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Skip answers longer than" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-        <controls:NumbericTextBox Grid.Row="0" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"
-                                  BorderThickness="1" BorderBrush="Black"
+        <TextBlock Margin="0,0,0,5" Grid.Row="0" Grid.Column="0" Text="Skip answers longer than" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <controls:NumbericTextBox Grid.Row="0" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"                                  
                                   MaxNumber="{x:Bind Options.MAX_MAXTAKEN, Mode=OneTime}"
                                   Number="{x:Bind Options.MaxTaken, Mode=TwoWay}">
         </controls:NumbericTextBox>
-        <TextBlock Margin="5,0,0,0" Grid.Row="0" Grid.Column="3" Text="Second(s)" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        <TextBlock Margin="5,0,0,5" Grid.Row="0" Grid.Column="3" Text="Second(s)" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Show answer timer" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="Collapsed"/>
         <CheckBox Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="Collapsed"

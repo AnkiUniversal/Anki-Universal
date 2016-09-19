@@ -43,28 +43,29 @@
         <CheckBox Grid.Row="0" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
                                   IsChecked="{x:Bind Options.AutoPlay, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False" />
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="New cards/day" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
-        <controls:NumbericTextBox Grid.Row="1" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="1" BorderBrush="Black"
+        <TextBlock  Margin="0,0,0,5" Grid.Row="1" Grid.Column="0" Text="New cards/day" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <controls:NumbericTextBox Grid.Row="1" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" 
                                   MaxNumber="{x:Bind Options.MAX_PERDAY, Mode=OneTime}" Foreground="{Binding Foreground, ElementName=userControl}"
                                   Number="{x:Bind Options.NewCardPerDay, Mode=TwoWay}">
         </controls:NumbericTextBox>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Review cards/day" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <TextBlock Margin="0,0,0,5" Grid.Row="2" Grid.Column="0" Text="Review cards/day" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
         <controls:NumbericTextBox Grid.Row="2" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"
-                                  MaxNumber="{x:Bind Options.MAX_PERDAY, Mode=OneTime}" BorderThickness="1"  BorderBrush="Black"
+                                  MaxNumber="{x:Bind Options.MAX_PERDAY, Mode=OneTime}" 
                                   Number="{x:Bind Options.ReviewCardPerDay, Mode=TwoWay}">
         </controls:NumbericTextBox>
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Order" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
-        <ComboBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=userControl}"
-                                  SelectedIndex="{x:Bind Options.NewcardOrder, Mode=TwoWay}" BorderThickness="1"  BorderBrush="Black">
+        <TextBlock Grid.Row="3" Margin="0,0,0,1" Grid.Column="0" Text="Order" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <ComboBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Stretch" Background="Transparent"
+                                  VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  SelectedIndex="{x:Bind Options.NewcardOrder, Mode=TwoWay}">
             <TextBlock Text="Show new cards in random order" TextAlignment="Left"/>
             <TextBlock Text="Show new cards in order added" TextAlignment="Left"/>
         </ComboBox>
 
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="Interval modifier" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <TextBlock Margin="0,0,0,5" Grid.Row="4" Grid.Column="0" Text="Interval modifier" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
         <controls:NumbericTextBox Grid.Row="4" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"
-                                  MaxNumber="{x:Bind Options.MAX_IVKFCT, Mode=OneTime}" BorderThickness="1"  BorderBrush="Black"
+                                  MaxNumber="{x:Bind Options.MAX_IVKFCT, Mode=OneTime}" 
                                   Number="{x:Bind Options.IvlFct, Mode=TwoWay}">
         </controls:NumbericTextBox>
         <controls:HelpButton Grid.Row="4" Grid.Column="3" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Width="20" Height="20"  
@@ -83,17 +84,17 @@
                              HelpText="{x:Bind BuryReviewHelp}" />
 
 
-        <TextBlock Grid.Row="7" Grid.Column="0" Text="Leech threshold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
-        <controls:NumbericTextBox Grid.Row="7" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" BorderThickness="1"  BorderBrush="Black"
+        <TextBlock Margin="0,0,0,5" Grid.Row="7" Grid.Column="0" Text="Leech threshold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <controls:NumbericTextBox Grid.Row="7" Grid.Column="2"  VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" 
                                   MaxNumber="{x:Bind Options.MAX_LEECHTHRESHOLD, Mode=OneTime}" Foreground="{Binding Foreground, ElementName=userControl}"
                                   Number="{x:Bind Options.LeechFailsThreshold, Mode=TwoWay}">
         </controls:NumbericTextBox>
         <controls:HelpButton Grid.Row="7" Grid.Column="3" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Width="20" Height="20" 
                              HelpText="{x:Bind LeechThresholdHelp}" />
 
-        <TextBlock Grid.Row="8" Grid.Column="0" Text="Leech action" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
-        <ComboBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=userControl}"
-                                  SelectedIndex="{x:Bind Options.LeechAction, Mode=TwoWay}" BorderThickness="1"  BorderBrush="Black">
+        <TextBlock Grid.Row="8" Margin="0,0,0,1" Grid.Column="0" Text="Leech action" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{Binding Foreground, ElementName=userControl}"/>
+        <ComboBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="Transparent" Foreground="{Binding Foreground, ElementName=userControl}"
+                                  SelectedIndex="{x:Bind Options.LeechAction, Mode=TwoWay}">
             <TextBlock Text="Suspend card" TextAlignment="Left"/>
             <TextBlock Text="Tag only" TextAlignment="Left"/>
         </ComboBox>

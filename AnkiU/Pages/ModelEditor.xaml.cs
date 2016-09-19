@@ -110,8 +110,7 @@ namespace AnkiU.Pages
         {
             modelInformationView.ComboBoxSelectionChangedEvent -= ModelInformationViewComboBoxSelectionChangedEventHandler;
             modelViewModel = new AnkiModelInfomartionViewModel(collection.Models.All());
-            modelInformationView.DataContext = modelViewModel.Models;
-            modelInformationView.Label = "Note type:";
+            modelInformationView.DataContext = modelViewModel.Models;            
 
             var model = collection.Models.GetCurrent(false);
             if (model != null)

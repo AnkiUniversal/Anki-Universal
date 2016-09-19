@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"    
+    Padding="0"
     d:DesignHeight="35"
     d:DesignWidth="400">
 
@@ -19,7 +20,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBox x:Name="newTagFlyoutTextBox" Grid.Row="0" Margin="0,0,0,5" PlaceholderText="Example: tag1 tag2 tag3" VerticalAlignment="Center" 
+                    <TextBox Header="Create new tags:" x:Name="newTagFlyoutTextBox" Grid.Row="0" Margin="0,0,0,5"  PlaceholderText="Example: tag1 tag2 tag3" VerticalAlignment="Center" 
                              TextWrapping="Wrap" HorizontalAlignment="Stretch" KeyUp="NewTagFlyoutTextBoxEnterKeyDownHandler"
                              IsSpellCheckEnabled="False"/>
                     <Button x:Name="newTagFlyoutOKButton" Margin="0,0,0,0" Width="140" Grid.Row="1" HorizontalAlignment="Left" Content="OK" Style="{StaticResource ButtonBlue}" Click="NewTagFlyoutOKButtonClickHandler" BorderThickness="1" BorderBrush="{StaticResource ButtonBackGroundNormal}"/>
@@ -64,7 +65,8 @@
                     </ScrollViewer>
 
                     <TextBox Grid.Row="1" PlaceholderText="Search..." x:Name="searchTextBox"
-                                 VerticalAlignment="Center"                 
+                                 VerticalAlignment="Center"         
+                                 Style="{StaticResource OldTextBoxStyle}"
                                  HorizontalAlignment="Stretch" TextWrapping="Wrap"
                                  TextAlignment="Left" IsSpellCheckEnabled="False"
                                  TextChanged="SearchTextBoxTextChangedHandler" >
@@ -82,22 +84,22 @@
         </Flyout>
     </UserControl.Resources>
 
-    <Grid Background="Transparent" Opacity="1">
+    <Grid Background="Transparent" Opacity="1" Padding="{Binding Padding, ElementName=userControl}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock HorizontalAlignment="Left" x:Name="label"
-                   TextAlignment="Center" Text="Tags:" 
+        <TextBlock HorizontalAlignment="Left" x:Name="label" FontWeight="SemiBold"
+                   TextAlignment="Center" Text="TAG" IsTextScaleFactorEnabled="False"
                    Foreground="{Binding Foreground, ElementName=userControl}"
                    VerticalAlignment="Center" Margin="5"/>
 
         <Button x:Name="expandTagButton" Style="{StaticResource ButtonGray}"                 
                 Background="Transparent"
-                BorderBrush="{Binding Foreground, ElementName=userControl}"
-                BorderThickness ="1"               
-                Foreground="{Binding Foreground, ElementName=userControl}"
+                BorderBrush="{StaticResource ButtonBackGroundNormal}"
+                BorderThickness ="0,0,0,2"               
+                Foreground="{StaticResource ButtonBackGroundNormal}"
                 Click="ExpandTagButtonClickHandler"
                 Grid.Column="1" VerticalAlignment="Stretch" 
                 HorizontalAlignment="Stretch" MinHeight="30"
@@ -115,13 +117,13 @@
                    IsDoubleTapEnabled="False"  
                    IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" IsHitTestVisible="False" />
 
-        <Button x:Name="newTagButton" Grid.Column="2"                            
+        <Button x:Name="newTagButton" Grid.Column="2" ToolTipService.ToolTip="Add new tags"                            
                             Width="40"                            
                             VerticalAlignment="Stretch"
-                            Style="{StaticResource ButtonGray}"
+                            Style="{StaticResource ButtonContentOcpacity}"
                             Background="Transparent"
                             BorderThickness="0" Visibility="{Binding AddVisibility, ElementName=userControl, Mode=OneWay}"                 
-                            Foreground="{Binding Foreground, ElementName=userControl}"
+                            Foreground="{StaticResource ButtonBackGroundNormal}"
                             Click="NewTagButtonClickHandler" >
             <SymbolIcon Symbol="Add" />
         </Button>

@@ -7,25 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    Foreground="Black"
     d:DesignHeight="300"
     x:Name="userControl"
     d:DesignWidth="400">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <TextBlock Text="Deck:" x:Name="label"
-                   VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Center" 
-                   Foreground="{Binding Foreground, ElementName=userControl}"/>
-
-        <ComboBox x:Name="comboBox" ItemsSource="{Binding}"  Grid.Column="2"
+        <ComboBox x:Name="comboBox" ItemsSource="{Binding}"
                   VerticalAlignment="Stretch"                  
-                  Background="Transparent"
-                  BorderThickness="1"
-                  BorderBrush="{Binding Foreground, ElementName=userControl}"
+                  Background="Transparent" PlaceholderText="Please choose a deck"                   
                   Foreground="{Binding Foreground, ElementName=userControl}"
                   HorizontalAlignment="Stretch" SelectionChanged="ComboBoxSelectionChangedHandler">
             <ComboBox.ItemTemplate>

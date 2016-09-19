@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:AnkiU.Resource">
+    xmlns:local="using:AnkiU">
 
     <x:Double x:Key="PrimarybuttonWidth">43</x:Double>
     
@@ -254,7 +254,7 @@
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
 
-            <Grid x:Name="ContentRoot" Visibility="Collapsed" MinHeight="{ThemeResource AppBarThemeCompactHeight}">
+            <Grid x:Name="ContentRoot" Visibility="Collapsed" MinHeight="45">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="*"/>

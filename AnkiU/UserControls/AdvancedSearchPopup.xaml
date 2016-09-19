@@ -55,12 +55,12 @@
                         <TextBlock Text="Decks:" VerticalAlignment="Center"/>
 
                         <Button x:Name="deckSelectButton" VerticalAlignment="Stretch" Style="{StaticResource ButtonGray}"
-                    Background="{Binding Background, ElementName=userControl}" 
-                    Foreground="{Binding Foreground, ElementName=userControl}" 
-                    BorderBrush="{Binding Foreground, ElementName=userControl}"
-                    BorderThickness="1" Click="DeckSelectButtonClick" Height="30"
-                    HorizontalContentAlignment="Left"
-                    HorizontalAlignment="Stretch" Grid.Column="1" Margin="3,3,0,3">
+                                    Background="{Binding Background, ElementName=userControl}" 
+                                    Foreground="{Binding Foreground, ElementName=userControl}" 
+                                    BorderBrush="{StaticResource ButtonBackGroundNormal}"
+                                    BorderThickness="0,0,0,2" Click="DeckSelectButtonClick" Height="30"
+                                    HorizontalContentAlignment="Left"
+                                    HorizontalAlignment="Stretch" Grid.Column="1" Margin="3,3,0,3">
                             <TextBlock x:Name="deckSelectTextBox" VerticalAlignment="Stretch" HorizontalAlignment="Left" TextWrapping="NoWrap" />
                         </Button>
                     </Grid>
@@ -78,8 +78,8 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Fields:" VerticalAlignment="Center"/>
-                        <Button Style="{StaticResource ButtonGray}" BorderThickness="1" Grid.Column="1"
-                        BorderBrush="{Binding Foreground, ElementName=userControl}"
+                        <Button Style="{StaticResource ButtonGray}" BorderThickness="0,0,0,2" Grid.Column="1"
+                        BorderBrush="{StaticResource ButtonBackGroundNormal}"
                         Background="{Binding Background, ElementName=userControl}"
                         Foreground="{Binding Foreground, ElementName=userControl}"
                         VerticalAlignment="Stretch"
@@ -90,6 +90,7 @@
                             <TextBlock x:Name="fieldListTextBox" HorizontalAlignment="Left" VerticalAlignment="Center" />
                         </Button>
                         <TextBox x:Name="fieldContentTextBox" Grid.Column="2" TextWrapping="NoWrap" 
+                                 Padding="5,4,6,0" Margin="0,0,0,2"
                          PlaceholderText="Content of your fields..." IsSpellCheckEnabled="False"
                          Foreground="{Binding Foreground, ElementName=userControl}"/>
                     </Grid>
@@ -104,9 +105,8 @@
 
                     <StackPanel  Orientation="Horizontal" Padding="0" Height="32" Grid.Row="4" >
                         <CheckBox x:Name="addedCheckBox" Margin="0,2,0,0" Content="Created from the past" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=userControl}" />
-                        <local:NumbericTextBox BorderThickness="1"  MinNumber="1" x:Name="addedNumberBox" Number="1"  MaxNumber="31"
-                                       Foreground="{Binding Foreground, ElementName=userControl}"
-                                       BorderBrush="Black" Margin="5,0,0,0"/>
+                        <local:NumbericTextBox  MinNumber="1" x:Name="addedNumberBox" Number="1"  MaxNumber="31" Height="30" Width="50"
+                                       Foreground="{Binding Foreground, ElementName=userControl}" Margin="5,0,0,0" Padding="0,6,5,6"/>
                         <TextBlock Text="day(s)" VerticalAlignment="Center" Margin="5,0,0,0" 
                                    Foreground="{Binding Foreground, ElementName=userControl}" />
                         <Button Margin="8,0,3,0" Style="{StaticResource ButtonHelp}" Width="22" Height="23" >

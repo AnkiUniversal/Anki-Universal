@@ -39,15 +39,13 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Template:" 
+        <TextBlock Text="TEMPLATE" FontWeight="SemiBold" IsTextScaleFactorEnabled="False"
                    VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Center" 
                    Foreground="{Binding Foreground, ElementName=userControl}"/>
 
         <ComboBox x:Name="comboBox" ItemsSource="{Binding}"  Grid.Column="2"
                   VerticalAlignment="Stretch"                  
-                  Background="Transparent" Height="30"
-                  BorderThickness="1"
-                  BorderBrush="{Binding Foreground, ElementName=userControl}"
+                  Background="Transparent" Height="30"                  
                   Foreground="{Binding Foreground, ElementName=userControl}"
                   HorizontalAlignment="Stretch" SelectionChanged="ComboBoxSelectionChangedHandler">
             <ComboBox.ItemTemplate>
@@ -59,25 +57,25 @@
 
         <StackPanel Grid.Column="3" Orientation="Horizontal">
             <Button x:Name="addTemplateButton" Width="40" Height="40" Padding="0"
-                Style="{StaticResource ButtonGray}" 
+                Style="{StaticResource ButtonContentOcpacity}" 
                 Background="Transparent"                   
-                Foreground="{Binding Foreground, ElementName=userControl}"
+                Foreground="{StaticResource ButtonBackGroundNormal}"
                 Click="AddButtonClickHandler" >
                 <SymbolIcon Symbol="Add" />
             </Button>
 
             <Button x:Name="editButton" Width="40" Height="40" Padding="0"
-                Style="{StaticResource ButtonGray}" 
+                Style="{StaticResource ButtonContentOcpacity}" 
                 Background="Transparent"                 
-                Foreground="{Binding Foreground, ElementName=userControl}"
+                Foreground="{StaticResource ButtonBackGroundNormal}"
                 Click="EditButtonClickHandler" >
                 <SymbolIcon Symbol="Edit" />
             </Button>
 
             <Button x:Name="deleteButton" Width="40" Height="40" Padding="0"
-                Style="{StaticResource ButtonGray}" 
+                Style="{StaticResource ButtonContentOcpacity}" 
                 Background="Transparent"                 
-                Foreground="{Binding Foreground, ElementName=userControl}"
+                Foreground="{StaticResource ButtonBackGroundNormal}"
                 Click="DeleteButtonClickHandler" >
                 <SymbolIcon Symbol="Delete" />
             </Button>

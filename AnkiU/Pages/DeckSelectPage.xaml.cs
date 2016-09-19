@@ -331,9 +331,9 @@ namespace AnkiU.Pages
 
         private void UpdateNoticeText()
         {
-            totalCardsText.Text = "Today's cards: " + (deckListViewModel.TotalNewCards + deckListViewModel.TotalDueCards);
-            newCardsText.Text = "New: " + deckListViewModel.TotalNewCards;
-            dueCardsText.Text = "Due: " + deckListViewModel.TotalDueCards;
+            totalCardsText.Text = "TODAY'S CARDS: " + (deckListViewModel.TotalNewCards + deckListViewModel.TotalDueCards);
+            newCardsText.Text = "NEW: " + deckListViewModel.TotalNewCards;
+            dueCardsText.Text = "DUE: " + deckListViewModel.TotalDueCards;
         }
 
         private void SwitchToGridView()

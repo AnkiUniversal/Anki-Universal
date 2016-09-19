@@ -227,6 +227,7 @@ namespace AnkiU.Pages
             modelInformationView.ChangeSelectedItem(currentNote.ModelId);
             modelInformationView.ComboBoxSelectionChangedEvent += ModelComboBoxSelectionChangedEventHandler;
             //Different with python and java ver, we do not allow user to change deck model
+            //To enable note switching, comment out this code.
             modelInformationView.DisableModelSelection();
         }
         private async Task SetupNoteFieldViewAsync()
@@ -879,8 +880,8 @@ namespace AnkiU.Pages
             }
 
             SetupDeckModel(selected.Id);
-            await UpdateCurrentNote();
             noteFieldView.HtmlEditor.ReloadWebView();
+            await UpdateCurrentNote();            
             fieldListView = null;
         }
 

@@ -149,6 +149,8 @@ namespace AnkiU
         public enum SecondaryButtons
         {            
             TextToSpeech,
+            OneHand,
+            InkOnOff,
 
             ZoomSeparator,
             ZoomIn,            
@@ -156,9 +158,7 @@ namespace AnkiU
             ZoomOut,
 
             ReadModeSeparator,
-            ReadMode,
-
-            InkOnOff,
+            ReadMode, 
         }        
 
         public Frame ContentFrame { get { return contentFrame; } }
@@ -532,6 +532,18 @@ namespace AnkiU
                     FindName("textToSpeechToggle");
                 }
                 return textToSpeechToggle;
+            }
+        }
+
+        public AppBarButton OneHandButton
+        {
+            get
+            {
+                if (oneHandButton == null)
+                {
+                    FindName("oneHandButton");
+                }
+                return oneHandButton;
             }
         }
 
@@ -1033,6 +1045,7 @@ namespace AnkiU
         private void RepositionCommanBar(string oldStateName)
         {
             int lastPrimary;
+
             switch (WindowSizeStates.CurrentState.Name)
             {
                 case (WINSIZE_NARROW):
@@ -1040,16 +1053,8 @@ namespace AnkiU
                         MoveZoomButtonToSecondary();
                     if (oldStateName != WINSIZE_MEDIUM)
                     {
-                        if (IsAutoSwitchZoomButtonToSecondary)
-                        {
-                            MoveSeparatorFromPrimaryToSecondary(ReadModeButtonSeparator, (int)SecondaryButtons.ReadModeSeparator);
-                            MoveButtonFromPrimaryToSecondary(ReadModeButton, (int)SecondaryButtons.ReadMode);
-                        }
-                        else
-                        {
-                            MoveSeparatorFromPrimaryToSecondary(ReadModeButtonSeparator);
-                            MoveButtonFromPrimaryToSecondary(ReadModeButton);
-                        }
+                        MoveSeparatorFromPrimaryToSecondary(ReadModeButtonSeparator);
+                        MoveButtonFromPrimaryToSecondary(ReadModeButton);
                     }
                     break;
 
@@ -1060,8 +1065,8 @@ namespace AnkiU
                     }
                     else
                     {
-                        MoveSeparatorFromPrimaryToSecondary(ReadModeButtonSeparator, 1);
-                        MoveButtonFromPrimaryToSecondary(ReadModeButton, 2);
+                        MoveSeparatorFromPrimaryToSecondary(ReadModeButtonSeparator);
+                        MoveButtonFromPrimaryToSecondary(ReadModeButton);
                     }
 
                     break;
@@ -1078,11 +1083,16 @@ namespace AnkiU
         }
 
         public void MoveZoomButtonToSecondary()
-        { 
-            MoveSeparatorFromPrimaryToSecondary(ZoomButtonsSeparator, (int)SecondaryButtons.ZoomSeparator);
-            MoveButtonFromPrimaryToSecondary(ZoomInButton, (int)SecondaryButtons.ZoomIn);
-            MoveButtonFromPrimaryToSecondary(ZoomResetButton, (int)SecondaryButtons.ZoonReset);
-            MoveButtonFromPrimaryToSecondary(ZoomOutButton, (int)SecondaryButtons.ZoomOut);            
+        {
+            //If Ink in Off State every zoom button shift up by 1
+            int shift = -1;
+            if (commandBar.SecondaryCommands.Contains(InkOnOffButton))
+                shift = 0;
+            
+            MoveSeparatorFromPrimaryToSecondary(ZoomButtonsSeparator, (int)SecondaryButtons.ZoomSeparator + shift);
+            MoveButtonFromPrimaryToSecondary(ZoomInButton, (int)SecondaryButtons.ZoomIn + shift);
+            MoveButtonFromPrimaryToSecondary(ZoomResetButton, (int)SecondaryButtons.ZoonReset + shift);
+            MoveButtonFromPrimaryToSecondary(ZoomOutButton, (int)SecondaryButtons.ZoomOut + shift);            
         }
 
         public void MoveZoomButtonToPrimary()
@@ -1390,7 +1400,7 @@ namespace AnkiU
             ChangeCusorToArrow();
         }
 
-        public void HideAllInkButtonsExceptOnOffIfNeeded()
+        private void HideAllInkButtonsExceptOnOffIfNeeded()
         {
             if (InkOnOffButton.Visibility == Visibility.Visible)
             {
@@ -1403,6 +1413,12 @@ namespace AnkiU
             }
         }
 
+        public void RevertToInkOffStateIfNeeded()
+        {
+            if (InkOffSymbol.Visibility == Visibility.Visible)
+                ShowOnlyInkOnOffButton();            
+        }
+
         public void ShowAllInkButtons()
         {
             InkOnOffButton.Visibility = Visibility.Visible;
@@ -1411,7 +1427,7 @@ namespace AnkiU
             InkOnOffButton.Label = "Ink Off";
 
             //Use return value to suppress warning since we don't need to wait for this to finish
-            var tsk = MoveButtonFromPrimaryToSecondaryAsync(InkOnOffButton);
+            var tsk = MoveButtonFromPrimaryToSecondaryAsync(InkOnOffButton, (int)SecondaryButtons.InkOnOff);
 
             InkRecognizeButton.Visibility = Visibility.Visible;
             if (inkToTextContentPresenter == null)

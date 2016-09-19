@@ -774,6 +774,7 @@ namespace AnkiU.AnkiCore
                     Save(g);
                 }
             }
+            Save();
         }
 
         public void SetConf(JsonObject grp, long id)

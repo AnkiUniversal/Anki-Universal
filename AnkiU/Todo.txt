@@ -1,3 +1,0 @@
-﻿Note Editor: Support font color on touch keyboard
-Search Page: Add double-tap to view card
-Make iframe auto show 100% width

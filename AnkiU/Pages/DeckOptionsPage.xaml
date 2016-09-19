@@ -36,7 +36,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Margin="1,0,0,7" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Name:" FontSize="18" />
+                        <TextBlock Margin="1,0,0,3" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="NAME" FontSize="18" />
                         <TextBox Margin="10,0,15,2" Grid.Column="1" VerticalAlignment="Center" 
                                  x:Name="currentNameSimpleView"
                                  Foreground="{Binding Foreground, ElementName=userControl}"
@@ -59,20 +59,20 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="tabTitle" Foreground="{Binding Foreground, ElementName=userControl}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Name:" FontSize="18" />
+                            <TextBlock x:Name="tabTitle" Foreground="{Binding Foreground, ElementName=userControl}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="NAME" FontSize="18" />
                             <TextBox x:Name="currentNameExpertView" Margin="10,0,15,0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="18"  Foreground="{Binding Foreground, ElementName=userControl}"  
                                 Text="{x:Bind CurrentName, Mode=TwoWay}"/>
                         </Grid>
                     </Pivot.Title>
                     <PivotItem x:Name="generalTab"  Background="{Binding Background, ElementName=simpleConfigView}" Padding="0" Margin="0" >
                         <PivotItem.Header >
-                            <TextBlock Text="General"
+                            <TextBlock Text="GENERAL"
                             FontFamily="Segoe UI" 
-                            FontSize="18"                            
+                            FontSize="16"                            
                             FontWeight="SemiBold"
                             Foreground="{Binding Foreground, ElementName=userControl}"
-                            Margin="5"                                   
-                            Style="{StaticResource CaptionTextBlockStyle}"                            
+                            Margin="5"                                                
+                            Style="{StaticResource CaptionTextBlockStyle}"    
                             IsTextScaleFactorEnabled="False"
                             TextAlignment="Center"
                             HorizontalAlignment="Center"/>
@@ -82,9 +82,9 @@
 
                     <PivotItem x:Name="newTab" Padding="0" Margin="0" Background="{Binding Background, ElementName=generalTab}">
                         <PivotItem.Header>
-                            <TextBlock Text="New"
+                            <TextBlock Text="NEW"
                             FontFamily="Segoe UI" 
-                            FontSize="18"
+                            FontSize="16"
                             FontWeight="SemiBold"                            
                             Margin="5"
                             Foreground="{Binding Foreground, ElementName=userControl}" 
@@ -98,9 +98,9 @@
 
                     <PivotItem x:Name="reviewTab" Background="{Binding Background, ElementName=generalTab}"  Padding="0" Margin="0">
                         <PivotItem.Header>
-                            <TextBlock Text="Review"
+                            <TextBlock Text="REVIEW"
                             FontFamily="Segoe UI" 
-                            FontSize="18"
+                            FontSize="16"
                             FontWeight="SemiBold"                            
                             Margin="5"
                             Foreground="{Binding Foreground, ElementName=userControl}"
@@ -114,10 +114,10 @@
 
                     <PivotItem x:Name="lapseTab" Background="{Binding Background, ElementName=generalTab}" Padding="0" Margin="0">
                         <PivotItem.Header>
-                            <TextBlock Text="Lapse"
+                            <TextBlock Text="LAPSE"
                             FontFamily="Segoe UI" 
                             FontWeight="SemiBold"
-                            FontSize="18"
+                            FontSize="16"
                             Margin="5"                    
                             Foreground="{Binding Foreground, ElementName=userControl}" 
                             Style="{StaticResource CaptionTextBlockStyle}"                            

@@ -94,6 +94,36 @@ namespace AnkiU.Anki
             }
         }
 
+        private bool isOneHandMode;
+        [SQLite.Net.Attributes.Column("IsOneHandMode")]
+        public bool IsOneHandMode
+        {
+            get { return isOneHandMode; }
+            set
+            {
+                if (isOneHandMode == value)
+                    return;
+
+                isOneHandMode = value;
+                IsModified = true;
+            }
+        }
+
+        private bool isLeftHand;
+        [SQLite.Net.Attributes.Column("IsLeftHand")]
+        public bool IsLeftHand
+        {
+            get { return isLeftHand; }
+            set
+            {
+                if (isLeftHand == value)
+                    return;
+
+                isLeftHand = value;
+                IsModified = true;
+            }
+        }
+
         private bool isDeckListView;
         [SQLite.Net.Attributes.Column("IsDeckListView")]
         public bool IsDeckListView
@@ -199,7 +229,6 @@ namespace AnkiU.Anki
                 IsModified = true;
             }
         }
-
 
         private bool isShowLeechActionOnce;
         [SQLite.Net.Attributes.Column("IsShowLeechActionOnce")]
@@ -313,9 +342,11 @@ namespace AnkiU.Anki
             userPrefs.LastSyncTime = 0;
             userPrefs.IsSyncMedia = false;
             userPrefs.isSyncOnOpen = false;
+
+            userPrefs.isOneHandMode = false;
+            userPrefs.isLeftHand = false;
             return userPrefs;
         }
-
 
         public bool IsHelpAlreadyShown(string name)
         {

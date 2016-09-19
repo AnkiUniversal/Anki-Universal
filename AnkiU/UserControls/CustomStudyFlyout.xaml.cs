@@ -225,7 +225,7 @@ namespace AnkiU.UserControls
         {
             chosenLabel.Text = "New cards:";
             chosenLabelValue.Text = totalNewCards.ToString();
-            numberBoxFirstLabel.Text = "Increase by:";
+            numberBoxFirstLabel.Text = "Increase by";
             numberBox.MinNumber = 1;
             SetMaxNumberBoxValue(totalNewCards);
             numberBoxSecondLabel.Text = "card(s)";
@@ -245,7 +245,7 @@ namespace AnkiU.UserControls
         {
             chosenLabel.Text = "Remain today's review cards:";
             chosenLabelValue.Text = totalDueCards.ToString();
-            numberBoxFirstLabel.Text = "Increase by:";
+            numberBoxFirstLabel.Text = "Increase by";
             numberBox.MinNumber = 1;
             SetMaxNumberBoxValue(totalDueCards);
             numberBoxSecondLabel.Text = "card(s)";
@@ -257,7 +257,7 @@ namespace AnkiU.UserControls
         {
             chosenLabel.Text = "Forgotten cards:";
             chosenLabelValue.Text = GetTotalForgottenCards(1).ToString();
-            numberBoxFirstLabel.Text = "During the last:";
+            numberBoxFirstLabel.Text = "During the last";
             numberBox.MinNumber = 1;
             SetMaxNumberBoxValue(MAX_NUMBER);
             numberBoxSecondLabel.Text = "day(s)";
@@ -275,7 +275,7 @@ namespace AnkiU.UserControls
         {
             chosenLabel.Text = "Review cards:";
             chosenLabelValue.Text = GetReviewCardsForecast(1).ToString();
-            numberBoxFirstLabel.Text = "During the next:";
+            numberBoxFirstLabel.Text = "During the next";
             numberBox.MinNumber = 1;
             SetMaxNumberBoxValue(MAX_NUMBER);
             numberBoxSecondLabel.Text = "day(s)";
@@ -306,7 +306,7 @@ namespace AnkiU.UserControls
         {
             chosenLabel.Text = "New cards:";
             chosenLabelValue.Text = GetNewCardsAdded(1).ToString();
-            numberBoxFirstLabel.Text = "Added in the last:";
+            numberBoxFirstLabel.Text = "Added in the last";
             numberBox.MinNumber = 1;
             SetMaxNumberBoxValue(MAX_NUMBER);
             numberBoxSecondLabel.Text = "day(s)";

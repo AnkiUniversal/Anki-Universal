@@ -611,4 +611,68 @@
         </Setter>
     </Style>
 
+    <Style x:Key="HexaButtonGray" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource ButtonBackGroundGrayNormal}"/>
+        <Setter Property="Opacity" Value="1" />
+        <Setter Property="MinWidth" Value="0"/>
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="Template" >
+            <Setter.Value>
+                <ControlTemplate  TargetType="Button">
+                    <Grid x:Name="RootGrid" BorderBrush="Transparent" 
+                          Opacity="{TemplateBinding Opacity}"                           
+                          BorderThickness="0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="shape.Fill" Value="#FFBDBDBD" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="shape.Fill" Value="Gray" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="shape.Fill" Value="LightGray" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Path x:Name="shape"
+                              MaxHeight="{TemplateBinding MaxHeight}"
+                              MaxWidth="{TemplateBinding MaxWidth}"
+                              Fill="{TemplateBinding Background}"
+                              Style="{StaticResource Hexagon}"
+                              Width="{TemplateBinding Width}"
+                              Height="{TemplateBinding Height}"
+                              VerticalAlignment="Stretch"
+                              HorizontalAlignment="Stretch"
+                              Opacity="1"
+                              StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                              Stroke="{TemplateBinding BorderBrush}"
+                              StrokeThickness="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Top}"                              
+                              />
+                        
+                        <ContentPresenter
+                        x:Name="ContentPresenter"                
+                        Padding="{TemplateBinding Padding}"
+                        Opacity="{TemplateBinding Opacity}"                        
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        AutomationProperties.AccessibilityView="Raw"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}" />
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

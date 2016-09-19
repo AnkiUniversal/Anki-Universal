@@ -63,7 +63,6 @@ namespace AnkiU.UserControls
             this.collection = collection;
             deckNameViewModel = new DeckNameViewModel(collection, false, false);            
             deckNameView.DataContext = deckNameViewModel.Decks;
-            deckNameView.Label = "";
         }
 
         public void ShowFlyout(FrameworkElement element, FlyoutPlacementMode place)

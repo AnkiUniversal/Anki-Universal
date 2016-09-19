@@ -14,14 +14,12 @@
         <Flyout x:Name="addDeckFlyout" x:Key="NewDeckFlyoutTemplate">
             <ContentPresenter>
                 <StackPanel Width="300">
+                    
+                    <TextBox x:Name="deckNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2" Margin="5,5,0,5" PlaceholderText="Deck name" IsSpellCheckEnabled="False"/>
 
-                    <TextBlock Text="Deck name: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
-                    <TextBox x:Name="deckNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2" BorderBrush="Black"  BorderThickness="1" Margin="5,5,0,5"/>
+                    <TextBox x:Name="noteTypeNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2"  Margin="5,5,0,5" PlaceholderText="Note type name" IsSpellCheckEnabled="False"/>
 
-                    <TextBlock Text="Note type name: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
-                    <TextBox x:Name="noteTypeNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2" BorderBrush="Black"  BorderThickness="1" Margin="5,5,0,5"/>
-
-                    <TextBlock Grid.Row="1" Text="Based on note type: " VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
+                    <TextBlock Grid.Row="1" Text="Based on note type: " FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
                     <views:AnkiModeInformationView x:Name="modelView" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,5,0,5"/>
 
                     <Grid Height="35" Margin="4,5,-1,5">
