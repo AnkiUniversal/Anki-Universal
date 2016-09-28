@@ -15,6 +15,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using AnkiU.UIUtilities;
 using AnkiU.Views;
 using System;
 using System.Collections.Generic;
@@ -58,14 +59,21 @@ namespace AnkiU.Pages
             quoteRoot.Visibility = Visibility.Collapsed;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
-            mainPage = e.Parameter as MainPage;
-            mainPage.InitCollectionFinished += InitCollectionFinishedHandler;
-            this.NavigationCacheMode = NavigationCacheMode.Disabled;
-            QuoteFadeIn.Begin();
-            timeStartShowing = DateTimeOffset.Now.TimeOfDay;
+            try
+            {
+                base.OnNavigatedTo(e);
+                mainPage = e.Parameter as MainPage;                
+                mainPage.InitCollectionFinished += InitCollectionFinishedHandler;
+                this.NavigationCacheMode = NavigationCacheMode.Disabled;
+                QuoteFadeIn.Begin();
+                timeStartShowing = DateTimeOffset.Now.TimeOfDay;
+            }
+            catch(Exception ex)
+            {
+                await UIHelper.ShowMessageDialog(ex.Message, "Failed to navigate to FirstPage");
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

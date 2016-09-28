@@ -579,16 +579,25 @@ namespace AnkiU
             currentDispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
             primaryAppButtonStyle = Application.Current.Resources["PrimaryAppButton"] as Style;
             secondaryAppButtonStyle = Application.Current.Resources["SecondaryAppButton"] as Style;
+            try
+            {
+                NavigationSetup();
+                SetupVisualEffects();
 
-            NavigationSetup();
-            SetupVisualEffects();
+                Window.Current.VisibilityChanged += VisibilityChangedHandler;
+                InitCollectionFinished += InitCollectionFinishedHandler;
+                SyncButton.Click += SyncButtonClickHandler;
 
-            Window.Current.VisibilityChanged += VisibilityChangedHandler;
-            InitCollectionFinished += InitCollectionFinishedHandler;
-            SyncButton.Click += SyncButtonClickHandler;
-
-            //Default startup position is always narrow, but user may change win size in last used time
-            RepositionCommanBar(WINSIZE_NARROW);
+                //Default startup position is always narrow, but user may change win size in last used time
+                RepositionCommanBar(WINSIZE_NARROW);
+            }
+            catch (Exception ex)
+            {
+                var task = currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    await UIHelper.ShowMessageDialog(ex.Message, "Failed to init MainPage");
+                });
+            }
         }
         
         private static void SetPreferLauchSize()
@@ -621,22 +630,28 @@ namespace AnkiU
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
-
-            await RetrieveUserPreference();
-            if (UserPrefs.IsFirstTimeOpenApp)
+            try
             {
-                ChangeStatusAndTitleToBlue();
-                commandBar.ClosedDisplayMode = AppBarClosedDisplayMode.Hidden;
-                contentFrame.Navigate(typeof(FirstSetupPage), this);                
-            }
-            else
-                ChangeStatusAndCommanBarColorMode();
+                base.OnNavigatedTo(e);
+                await RetrieveUserPreference();
+                if (UserPrefs.IsFirstTimeOpenApp)
+                {
+                    ChangeStatusAndTitleToBlue();
+                    commandBar.ClosedDisplayMode = AppBarClosedDisplayMode.Hidden;
+                    contentFrame.Navigate(typeof(FirstSetupPage), this);
+                }
+                else
+                    ChangeStatusAndCommanBarColorMode();
 
-            await InitDefaultImagesFolderIfneeded();
-            await BackupIfNeeded();            
-            ChangeReadModeButtonTextAndSymbol();
-            InitCollection();
+                await InitDefaultImagesFolderIfneeded();
+                await BackupIfNeeded();
+                ChangeReadModeButtonTextAndSymbol();
+                InitCollection();
+            }
+            catch (Exception ex)
+            {
+                await UIHelper.ShowMessageDialog(ex.Message, "Failed to init MainPage navigation");
+            }
         }
 
         private void InitCollection()

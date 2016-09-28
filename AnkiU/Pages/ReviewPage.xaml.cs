@@ -1135,8 +1135,11 @@ namespace AnkiU.Pages
         }
         private async Task<string> TypeAnsAnswerFilter(string answer)
         {
-            if (String.IsNullOrWhiteSpace(type.CorrectAnswer))
+            if (answer == null)
+                return "";
+            if (String.IsNullOrWhiteSpace(type.CorrectAnswer))            
                 return TypeAnswerRegex.Replace(answer, "");
+            
             string userAnswer = await userInputGetter.GetInput();
             int origSize = answer.Length;
             answer =  CardInformationViewModel.AnswerRegex.Replace(answer, "");
