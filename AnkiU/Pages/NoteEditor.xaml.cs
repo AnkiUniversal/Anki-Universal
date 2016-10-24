@@ -225,10 +225,9 @@ namespace AnkiU.Pages
             modelInformationViewModel = new AnkiModelInfomartionViewModel(collection.Models.All());
             modelInformationView.DataContext = modelInformationViewModel.Models;
             modelInformationView.ChangeSelectedItem(currentNote.ModelId);
-            modelInformationView.ComboBoxSelectionChangedEvent += ModelComboBoxSelectionChangedEventHandler;
-            //Different with python and java ver, we do not allow user to change deck model
-            //To enable note switching, comment out this code.
-            modelInformationView.DisableModelSelection();
+            modelInformationView.ComboBoxSelectionChangedEvent += ModelComboBoxSelectionChangedEventHandler;            
+            //Use this if need to disable multiple note types for a deck
+            //modelInformationView.DisableModelSelection();
         }
         private async Task SetupNoteFieldViewAsync()
         {            

@@ -140,8 +140,8 @@ namespace AnkiU.Anki.Syncer
 
         private async Task PreparingFilesAsync()
         {
-            syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
             syncStateDialog.Label = "Authenticating...";
+            syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);            
             syncInstance.InitInstance();
             await syncInstance.AuthenciateAccount();
 
