@@ -77,7 +77,7 @@ namespace AnkiU.Pages
         private bool isAutoPlayEnable;
         private long selectedDeckId;
         private long currentDeckId;
-        private long currentNoteId;
+        private long currentModelId;
         private bool isCanNavigateFrom;
         private bool isCustomDueTimeFlyoutOpen = false;
         private bool isCanGoBack = true;
@@ -741,7 +741,7 @@ namespace AnkiU.Pages
 
             PopNextCard();
             currentDeckId = currentCard.DeckId;
-            currentNoteId = currentCard.NoteId;
+            currentModelId = currentCard.LoadNote().ModelId;
             await ChangeHtmlheader();
             IsAutoPlay();
             await GetContentAndDisplayQuestion();
@@ -1328,12 +1328,13 @@ namespace AnkiU.Pages
         }
         private async Task ChangeHtmlHeaderIfNeeded()
         {            
-            if(currentCard != null && 
+            long newCardModelId = currentCard.LoadNote().ModelId;
+            if (currentCard != null && 
                 (currentDeckId != currentCard.DeckId 
-                 || currentNoteId != currentCard.NoteId ))
+                 || currentModelId != newCardModelId))
             {
                 currentDeckId = currentCard.DeckId;
-                currentNoteId = currentCard.NoteId;
+                currentModelId = newCardModelId;
                 await ChangeHtmlheader();
             }
         }
