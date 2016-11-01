@@ -69,7 +69,9 @@
             <ComboBoxItem Content="0.5x" Tag="0.5"/>
             <ComboBoxItem Content="0.75x" Tag="0.75"/>
             <ComboBoxItem Content="1x" Tag="1"/>
+            <ComboBoxItem Content="1.25x" Tag="1.25"/>
             <ComboBoxItem Content="1.5x" Tag="1.5"/>
+            <ComboBoxItem Content="1.75x" Tag="1.75"/>
             <ComboBoxItem Content="2x" Tag="2"/>
         </ComboBox>
 

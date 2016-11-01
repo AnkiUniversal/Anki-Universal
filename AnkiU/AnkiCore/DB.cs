@@ -101,10 +101,19 @@ namespace AnkiU.AnkiCore
         }
 
         public void RunInTransaction(Action action)
-        {
+        {            
             dbConnection.RunInTransaction(action);
         }
 
+        public bool HasTable<T>() where T : class
+        {            
+            var name = typeof(T).Name;
+            var count = dbConnection.ExecuteScalar<int>("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", name);
+            if (count > 0)
+                return true;
+            else
+                return false;
+        }
 
         public string SaveTransactionPoint()
         {

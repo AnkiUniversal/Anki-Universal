@@ -21,6 +21,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -46,5 +47,10 @@
             <TextBlock Text="Show new cards before review cards" TextAlignment="Left"/>
             <TextBlock Text="Show new cards after review cards" TextAlignment="Left"/>
         </ComboBox>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Play TTS automatically" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <CheckBox Grid.Row="3" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" x:Name="ttsAutoplayCheckBox" 
+                    Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
+                                  IsChecked="{x:Bind Options.IsTTSAutoplay, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
     </Grid>
 </UserControl>

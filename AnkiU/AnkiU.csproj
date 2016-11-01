@@ -301,6 +301,7 @@
     <Compile Include="AnkiCore\Templates\Template.cs" />
     <Compile Include="AnkiCore\Utils.cs" />
     <Compile Include="Anki\DeckInkPreferences.cs" />
+    <Compile Include="Anki\DeckTextSynthPreferences.cs" />
     <Compile Include="Anki\Delegates.cs" />
     <Compile Include="Anki\HtmlEditor.cs" />
     <Compile Include="Anki\HtmlHelpter.cs" />
@@ -317,6 +318,7 @@
     <Compile Include="Anki\Syncer\RemoteItem.cs" />
     <Compile Include="Anki\Syncer\SyncInstanceMock.cs" />
     <Compile Include="Anki\TextRecognizeResultBuilder.cs" />
+    <Compile Include="Anki\TextSynthPreference.cs" />
     <Compile Include="Anki\TinymceStreamUriWinRTResolver.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

@@ -55,6 +55,9 @@ namespace AnkiU.UserControls
         public delegate void CardViewLoadHandler();
 
         public event KeyDownEventHandler KeyDownMappingEvent;
+        public event RoutedEventHandler SpeechVoiceChanged;
+        public event SpeechSynthesis.PlayBackRateChangedHandler SpeechRateChanged;
+
         /// <summary>
         /// WARINING: Use this event to know that all webview related stuffs (function, etc.) have been
         /// properly loaded before accessing them.
@@ -122,7 +125,9 @@ namespace AnkiU.UserControls
             if (speechSynth == null)
             {
                 this.FindName("speechSynth");
-                speechSynth.PlayButtonClick += OnSpeechSyntControlPlayButtonClick;                
+                speechSynth.PlayButtonClick += OnSpeechSyntControlPlayButtonClick;
+                speechSynth.PlayBackRateChanged += OnSpeechSynthPlayBackRateChanged;
+                speechSynth.VoiceChanged += OnSpeechSynthVoiceChanged;        
             }
             
             if (speechSynth.Visibility == Visibility.Collapsed)
@@ -269,7 +274,7 @@ namespace AnkiU.UserControls
                     && speechSynth != null
                     && speechSynth.Visibility == Visibility.Visible)
                 {
-                    await ToggleTextToSpeech();
+                    await TogglePlayTextToSpeech();
                 }
             });
         }
@@ -405,10 +410,30 @@ namespace AnkiU.UserControls
 
         private async void OnSpeechSyntControlPlayButtonClick(object sender, RoutedEventArgs e)
         {
-            await ToggleTextToSpeech();
+            await TogglePlayTextToSpeech();
         }
 
-        public async Task ToggleTextToSpeech()
+        private void OnSpeechSynthVoiceChanged(object sender, RoutedEventArgs e)
+        {
+            SpeechVoiceChanged?.Invoke(sender, e);
+        }
+
+        private void OnSpeechSynthPlayBackRateChanged(double rate)
+        {
+            SpeechRateChanged?.Invoke(rate);
+        }
+
+        public void ChangeTextToSpeechVoice(string voiceId)
+        {
+            speechSynth.ChangeVoice(voiceId);
+        }
+
+        public void ChangeTextToSpeechSpeed(double speed)
+        {
+            speechSynth.ChangePlayBackRate(speed);
+        }
+
+        public async Task TogglePlayTextToSpeech()
         {
             if (speechSynth == null)
                 return;
@@ -427,6 +452,20 @@ namespace AnkiU.UserControls
                 text = cardContent;
             }
 
+            await StartPlayTextToSpeech(text);
+        }
+
+        public async Task PlayTextToSpeech(string text)
+        {
+            if (speechSynth == null)
+                return;
+
+            speechSynth.StopPlaying();
+            await StartPlayTextToSpeech(text);
+        }
+
+        private async Task StartPlayTextToSpeech(string text)
+        {
             text = Utils.StripHTMLMedia(text);
             await speechSynth.StartTextToSpeech(text);
         }

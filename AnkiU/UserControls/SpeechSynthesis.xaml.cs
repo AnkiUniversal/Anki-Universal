@@ -41,12 +41,19 @@ namespace AnkiU.UserControls
     {
         private bool isNarrowState = true;
         private const double MIN_PLAYBACK_RATE = 0.25;
+        private const double MAX_PLAYBACK_RATE = 2;
         private SpeechSynthesizer synthesizer;
         private SpeechSynthesisStream synthesisStream;
         private string textToSynth;
 
+        private bool isSuppressVoiceChangedEvent = false;
+
+        public delegate void PlayBackRateChangedHandler(double rate);
+
         public event RoutedEventHandler PlayButtonClick;
-        
+        public event PlayBackRateChangedHandler PlayBackRateChanged;
+        public event RoutedEventHandler VoiceChanged;
+
         public bool IsPlaying { get; private set; }
 
         public SpeechSynthesis()
@@ -185,11 +192,37 @@ namespace AnkiU.UserControls
             }
         }
 
+        public void ChangeVoice(string voiceId)
+        {
+            foreach(var item in listboxVoiceChooser.Items)
+            {
+                ComboBoxItem comItem = item as ComboBoxItem;
+                if (comItem == null)
+                    continue;
+
+                VoiceInformation voice = comItem.Tag as VoiceInformation;
+                if (voice == null)
+                    continue;
+
+                if (voice.Id.Equals(voiceId, StringComparison.OrdinalIgnoreCase))
+                {
+                    isSuppressVoiceChangedEvent = true;
+                    listboxVoiceChooser.SelectedItem = item;
+                    return;
+                }
+            }
+        }
+
         private void OnListboxVoiceChooserSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //Set this to null so the same text can be re-synthesized
             textToSynth = null;
             SetVoice();
+
+            if (isSuppressVoiceChangedEvent)
+                isSuppressVoiceChangedEvent = false;
+            else
+                VoiceChanged?.Invoke(synthesizer.Voice.Id, e);
         }
 
         public void SetVoice()
@@ -240,6 +273,52 @@ namespace AnkiU.UserControls
             }
         }
 
+        public void ChangePlayBackRate(double rate)
+        {
+            try
+            {
+                if (rate < MIN_PLAYBACK_RATE)
+                    rate = 0.25;
+                else if (rate > MAX_PLAYBACK_RATE)
+                    rate = 2;
+
+                media.DefaultPlaybackRate = rate;
+                media.PlaybackRate = media.DefaultPlaybackRate;
+                
+                ChangePlayBackRateSlider(rate);                
+                ChangePlayBackChooser(rate);
+            }
+            catch
+            { }
+        }
+
+        private void ChangePlayBackRateSlider(double rate)
+        {
+            playBackRateSlider.Value = rate;            
+        }
+
+        private void ChangePlayBackChooser(double rate)
+        {
+            try
+            {
+                foreach (var item in playBackRateChooser.Items)
+                {
+                    var combItem = item as ComboBoxItem;
+                    if (combItem == null)
+                        continue;
+
+                    var value = Convert.ToDouble(combItem.Tag);
+                    if (value == rate)
+                    {                        
+                        playBackRateChooser.SelectedItem = item;
+                        return;
+                    }
+                }
+            }
+            catch
+            { }
+        }
+
         private void OnPlayBackRateChanged(object sender, SelectionChangedEventArgs e)
         {
             var item = playBackRateChooser.SelectedItem as ComboBoxItem;
@@ -247,8 +326,11 @@ namespace AnkiU.UserControls
                 return;
             try
             {
-                media.DefaultPlaybackRate = Convert.ToDouble(item.Tag);
+                var rate = Convert.ToDouble(item.Tag);
+                media.DefaultPlaybackRate = rate;
                 media.PlaybackRate = media.DefaultPlaybackRate;
+
+                FireRateChangeEventIfNeeded(rate);
             }
             catch
             {  }
@@ -261,14 +343,22 @@ namespace AnkiU.UserControls
                 if (playBackRateSlider.Value < MIN_PLAYBACK_RATE)
                     playBackRateSlider.Value = MIN_PLAYBACK_RATE;
 
-                playBackSliderLabel.Text = playBackRateSlider.Value + "x";
+                if(playBackSliderLabel != null)
+                    playBackSliderLabel.Text = playBackRateSlider.Value + "x";
                 media.DefaultPlaybackRate = playBackRateSlider.Value;
                 media.PlaybackRate = media.DefaultPlaybackRate;
+
+                FireRateChangeEventIfNeeded(playBackRateSlider.Value);
             }
             catch
             { }            
         }
-        
+
+        private void FireRateChangeEventIfNeeded(double rate)
+        {
+            PlayBackRateChanged?.Invoke(rate);
+        }
+
         private void OnUserControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             if(userControl.ActualWidth >= 400)
@@ -280,7 +370,8 @@ namespace AnkiU.UserControls
                 playBackRateSlider.Visibility = Visibility.Visible;
                 playBackSliderLabel.Visibility = Visibility.Visible;
                 playBackRateChooser.Visibility = Visibility.Collapsed;
-                playBackGridColumn.Width = new GridLength(1, GridUnitType.Star);                
+                playBackGridColumn.Width = new GridLength(1, GridUnitType.Star);
+                ChangePlayBackRateSlider(media.DefaultPlaybackRate);
             }
             else
             {
@@ -292,6 +383,7 @@ namespace AnkiU.UserControls
                 playBackSliderLabel.Visibility = Visibility.Collapsed;
                 playBackRateChooser.Visibility = Visibility.Visible;
                 playBackGridColumn.Width = new GridLength(0, GridUnitType.Auto);
+                ChangePlayBackChooser(media.DefaultPlaybackRate);
             }
         }
     }

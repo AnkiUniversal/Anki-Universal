@@ -47,6 +47,7 @@ namespace AnkiU.ViewModels
                 Options.IsShowDueCount = Config.GetNamedBoolean("dueCounts");
                 Options.IsShowEstTime = Config.GetNamedBoolean("estTimes");
                 Options.ReviewType = (int)Config.GetNamedNumber("newSpread");
+                Options.IsTTSAutoplay = MainPage.UserPrefs.IsAutoPlayTextSynth;
 
                 CopyOptions(Options, oldOptions);
             }
@@ -61,13 +62,15 @@ namespace AnkiU.ViewModels
             dest.IsShowDueCount = source.IsShowDueCount;
             dest.IsShowEstTime = source.IsShowEstTime;
             dest.ReviewType = source.ReviewType;
+            dest.IsTTSAutoplay = source.IsTTSAutoplay;
         }        
 
-        public void SaveOptionsToJsonConfig()
+        public void SaveOptions()
         {
             Config["dueCounts"] = JsonValue.CreateBooleanValue(Options.IsShowDueCount);
             Config["estTimes"] = JsonValue.CreateBooleanValue(Options.IsShowEstTime);
             Config["newSpread"] = JsonValue.CreateNumberValue(Options.ReviewType);
+            MainPage.UserPrefs.IsAutoPlayTextSynth = Options.IsTTSAutoplay;
 
             CopyOptions(Options, oldOptions);
         }

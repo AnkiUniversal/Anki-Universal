@@ -51,6 +51,7 @@ namespace AnkiU.Views
             ViewModel.Options.IsShowEstTime = temp.IsShowEstTime;
             ViewModel.Options.IsShowDueCount = temp.IsShowDueCount;
             ViewModel.Options.ReviewType = temp.ReviewType;
+            ViewModel.Options.IsTTSAutoplay = temp.IsTTSAutoplay;
         }
     }
 }

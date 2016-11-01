@@ -74,10 +74,10 @@ namespace AnkiU.Pages
         private string question;
         private string answer;
         private string cardClass;
-        private bool isAutoPlayEnable;
-        private long selectedDeckId;
-        private long currentDeckId;
-        private long currentModelId;
+        private bool isAutoPlayEnable;        
+        private long selectedDeckId; // The deck selected from the deck select page
+        private long currentCardDeckId; 
+        private long currentCardModelId;
         private bool isCanNavigateFrom;
         private bool isCustomDueTimeFlyoutOpen = false;
         private bool isCanGoBack = true;
@@ -160,6 +160,8 @@ namespace AnkiU.Pages
             collection.Sched.NotifyLeechEvent += ScheduleNotifyLeechEventHandler;                     
             cardView.KeyDownMappingEvent += KeyDownHandler;            
             cardView.NavigateToWebsiteStartEvent += NavigateToWebsiteStartEventHandler;
+            cardView.SpeechRateChanged += OnCardViewSpeechRateChanged;
+            cardView.SpeechVoiceChanged += OnCardViewSpeechVoiceChanged;
 
             mainPage.EditButton.Click += EditButtonClickHandler;        
             mainPage.ReadModeButton.Click += ReadModeButtonClickHandler;
@@ -170,14 +172,34 @@ namespace AnkiU.Pages
             mainPage.InkToTextEnableToggled += InkToTextToggleHandler;
             mainPage.ChooseTextManually.Checked += ChooseTextManuallyCheckedHandler;
             mainPage.ChooseTextAutomatically.Checked += ChooseTextAutomaticallyCheckedHandler;
-            mainPage.UndoButton.Click += UndoButtonClickHandler;
-            mainPage.TextToSpeechToggleButtonClick += OnTextToSpeechToggleButtonClick;
+            mainPage.UndoButton.Click += UndoButtonClickHandler;            
             mainPage.OneHandButton.Click += OnOneHandButtonClick;
+
+            mainPage.TextToSpeechToggleButtonClick += OnTextToSpeechToggleButtonClick;
         }
 
         private void OnTextToSpeechToggleButtonClick(object sender, RoutedEventArgs e)
         {
+            if (!MainPage.DeckTextSynthPrefs.IsEmpty() && MainPage.DeckTextSynthPrefs.HasId(selectedDeckId))
+                MainPage.DeckTextSynthPrefs.RemoveDeckSynthPref(selectedDeckId);
+            else
+            {
+                MainPage.DeckTextSynthPrefs.AddNewDeckPref(selectedDeckId);
+            }
+
             cardView.ToggleSpeechSynthesisView();
+        }
+
+        private void OnCardViewSpeechVoiceChanged(object sender, RoutedEventArgs e)
+        {
+            string voiceId = sender as string;
+            if(voiceId != null)
+                MainPage.DeckTextSynthPrefs.SetVoiceId(selectedDeckId, voiceId);
+        }
+
+        private void OnCardViewSpeechRateChanged(double rate)
+        {                                                
+            MainPage.DeckTextSynthPrefs.SetVoiceSpeed(selectedDeckId, rate);
         }
 
         private void OnOneHandButtonClick(object sender, RoutedEventArgs e)
@@ -204,7 +226,7 @@ namespace AnkiU.Pages
         private bool ScheduleNotifyLeechEventHandler(string message, Card card)
         {
             bool isNotDyn = IsCardNotDynamicDeck(card);
-            var deck = collection.Deck.Get(currentDeckId);
+            var deck = collection.Deck.Get(currentCardDeckId);
             var isDefault = deck.GetNamedNumber("conf") == (int)ConfigPresets.Default;
 
             if (!MainPage.UserPrefs.IsShowLeechActionOnce && isNotDyn && isDefault)
@@ -334,7 +356,7 @@ namespace AnkiU.Pages
 
             collection = mainPage.Collection;
             selectedDeckId = collection.Deck.Selected();
-            currentDeckId = selectedDeckId;
+            currentCardDeckId = selectedDeckId;
 
             //WANRING: Run in transaction to ensure performance
             //remember to call commit or rollback to database after each answer
@@ -347,10 +369,15 @@ namespace AnkiU.Pages
             if (mainPage.IsInkOn(selectedDeckId))
                 SwitchToInkCanvasAndInkInput();
 
-            if (MainPage.UserPrefs.IsOneHandMode)
+            if(!MainPage.DeckTextSynthPrefs.IsEmpty() && MainPage.DeckTextSynthPrefs.HasId(selectedDeckId))
             {
-                TurnOnOneHandMode();
+                cardView.ToggleSpeechSynthesisView();
+                cardView.ChangeTextToSpeechVoice(MainPage.DeckTextSynthPrefs.GetVoiceId(selectedDeckId));
+                cardView.ChangeTextToSpeechSpeed(MainPage.DeckTextSynthPrefs.GetVoiceSpeed(selectedDeckId));
             }
+
+            if (MainPage.UserPrefs.IsOneHandMode)            
+                TurnOnOneHandMode();            
         }
 
         private void TurnOnOneHandMode()
@@ -546,18 +573,18 @@ namespace AnkiU.Pages
                     }
                     else
                     {
-                        TurnOffInkToTestFlyout();
+                        TurnOffInkToTextFlyout();
                     }
                 }
                 catch (Exception ex)
                 {
-                    TurnOffInkToTestFlyout();
+                    TurnOffInkToTextFlyout();
                     UIHelper.ShowDebugException(ex);
                 }
             }
         }
 
-        private void TurnOffInkToTestFlyout()
+        private void TurnOffInkToTextFlyout()
         {
             mainPage.InkToTextEnable.IsOn = false;
             UpdateInkToTextFlyoutAndDatabase(false);
@@ -591,7 +618,7 @@ namespace AnkiU.Pages
         {
             if (mainPage.IsInkOnState())
             {
-                MainPage.DeckInkPrefs.RemoveDeckInkPref(selectedDeckId);
+                MainPage.DeckInkPrefs.RemoveDeckSynthPref(selectedDeckId);
                 SwitchBackToCardView();
             }
             else
@@ -740,8 +767,8 @@ namespace AnkiU.Pages
             await cardView.ChangeZoomLevel(MainPage.UserPrefs.ZoomLevel);
 
             PopNextCard();
-            currentDeckId = currentCard.DeckId;
-            currentModelId = currentCard.LoadNote().ModelId;
+            currentCardDeckId = currentCard.DeckId;
+            currentCardModelId = currentCard.LoadNote().ModelId;
             await ChangeHtmlheader();
             IsAutoPlay();
             await GetContentAndDisplayQuestion();
@@ -760,10 +787,10 @@ namespace AnkiU.Pages
         private async Task ChangeDeckMediaFolder()
         {
             long deckMediaId;
-            if (collection.Deck.IsDyn(currentDeckId))
+            if (collection.Deck.IsDyn(currentCardDeckId))
                 deckMediaId = currentCard.OriginalDeckId;
             else
-                deckMediaId = currentDeckId;
+                deckMediaId = currentCardDeckId;
             string deckMediaFolder = "/" + collection.Media.MediaFolder.Name + "/" + deckMediaId + "/";
             await cardView.ChangeDeckMediaFolder(deckMediaFolder);
         }
@@ -845,6 +872,7 @@ namespace AnkiU.Pages
             mainPage.SaveAndStartNewDatabaseSessionAsync();
 
             PlayMediaIfNeeded();
+            await PlayTTSIfneeded(question);
         }
 
         private string MungeQuestion(string questionFromCard)
@@ -1008,6 +1036,16 @@ namespace AnkiU.Pages
                 }
             });
         }
+        private async Task PlayTTSIfneeded(string text)
+        {
+            if(MainPage.UserPrefs.IsAutoPlayTextSynth && MainPage.UserPrefs.IsHasTextSynthDeckPreference)
+            {
+                if(!MainPage.DeckTextSynthPrefs.IsEmpty() && MainPage.DeckTextSynthPrefs.HasId(selectedDeckId))
+                {
+                    await cardView.PlayTextToSpeech(text);
+                }
+            }
+        }
 
         private bool isInProcessing = false;
         private void CoreWindowKeyDownHandler(CoreWindow sender, KeyEventArgs e)
@@ -1052,7 +1090,7 @@ namespace AnkiU.Pages
                 }
                 else if (e == VirtualKey.T)
                 {
-                    await cardView.ToggleTextToSpeech();
+                    await cardView.TogglePlayTextToSpeech();
                 }
                 else if (e == VirtualKey.R)
                 {
@@ -1119,6 +1157,7 @@ namespace AnkiU.Pages
             await cardView.ChangeCardContent(answer, cardClass);
             ChangeToAnswerButtons();
             PlayMediaIfNeeded();
+            await PlayTTSIfneeded(answer);
 
             DisplayAnswerEvent?.Invoke();
         }
@@ -1330,11 +1369,11 @@ namespace AnkiU.Pages
         {            
             long newCardModelId = currentCard.LoadNote().ModelId;
             if (currentCard != null && 
-                (currentDeckId != currentCard.DeckId 
-                 || currentModelId != newCardModelId))
+                (currentCardDeckId != currentCard.DeckId 
+                 || currentCardModelId != newCardModelId))
             {
-                currentDeckId = currentCard.DeckId;
-                currentModelId = newCardModelId;
+                currentCardDeckId = currentCard.DeckId;
+                currentCardModelId = newCardModelId;
                 await ChangeHtmlheader();
             }
         }
@@ -1343,10 +1382,10 @@ namespace AnkiU.Pages
             PopNextCard();
             if (currentCard == null)
             {
-                if (collection.Deck.IsDyn(currentDeckId))
+                if (collection.Deck.IsDyn(currentCardDeckId))
                 {
-                    collection.Deck.Remove(currentDeckId);
-                    MainPage.RemoveDeckInKPrefsIfNeeded(currentDeckId);
+                    collection.Deck.Remove(currentCardDeckId);
+                    MainPage.RemoveDeckPrefsIfNeeded(currentCardDeckId);
                 }
                 return false;                
             }

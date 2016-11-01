@@ -169,6 +169,36 @@ namespace AnkiU.Anki
             }
         }
 
+        private bool isHasTextSynthDeckPreference;
+        [SQLite.Net.Attributes.Column("IsHasTextSynthDeck")]
+        public bool IsHasTextSynthDeckPreference
+        {
+            get { return isHasTextSynthDeckPreference; }
+            set
+            {
+                if (isHasTextSynthDeckPreference == value)
+                    return;
+
+                isHasTextSynthDeckPreference = value;
+                IsModified = true;
+            }
+        }
+
+        private bool isAutoPlayTextSynth;
+        [SQLite.Net.Attributes.Column("IsAutoPlayTextSynth")]
+        public bool IsAutoPlayTextSynth
+        {
+            get { return isAutoPlayTextSynth; }
+            set
+            {
+                if (isAutoPlayTextSynth == value)
+                    return;
+
+                isAutoPlayTextSynth = value;
+                IsModified = true;
+            }
+        }
+
         //Currently we always do a full sync
         private bool isFullSyncRequire;
         [SQLite.Net.Attributes.Column("IsFullSyncRequire")]
@@ -332,6 +362,8 @@ namespace AnkiU.Anki
             userPrefs.IsReadNightMode = false;
             userPrefs.ZoomLevel = MainPage.GetDefaultZoomLevel();
             userPrefs.IsHasInkDeckPreference = false;
+            userPrefs.IsHasTextSynthDeckPreference = false;
+            userPrefs.isAutoPlayTextSynth = false;
             userPrefs.IsFullSyncRequire = true;
             userPrefs.IsShowLeechActionOnce = false;
             userPrefs.IsCompressBackup = true;

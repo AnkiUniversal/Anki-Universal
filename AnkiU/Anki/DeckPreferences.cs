@@ -26,7 +26,7 @@ using Windows.Data.Json;
 
 namespace AnkiU.Anki
 {
-    public class DeckPreferences<T> where T : IDeckPreference, new()
+    public class DeckPreferences<T> where T : class, IDeckPreference, new()
     {
         protected List<long> ToRemoveFromDatabaseList;
         protected List<long> ToAddToDatabaseDeckList;
@@ -82,7 +82,7 @@ namespace AnkiU.Anki
             ToRemoveFromDatabaseList.Remove(deckId);
         }
 
-        public virtual void RemoveDeckInkPref(long deckId)
+        public virtual void RemoveDeckSynthPref(long deckId)
         {
             deckPrefDict.Remove(deckId);
             ToRemoveFromDatabaseList.Add(deckId);
@@ -91,11 +91,14 @@ namespace AnkiU.Anki
         }
 
         public virtual void SaveToDatabase(DB database)
-        {
+        {            
             database.RunInTransaction(() =>
             {
-                foreach (var deckId in ToRemoveFromDatabaseList)
-                    database.Delete<InkPreference>(deckId);
+                if (!database.HasTable<T>())
+                    database.CreateTable<T>();
+
+                foreach (var deckId in ToRemoveFromDatabaseList)                                    
+                    database.Delete<T>(deckId);                
 
                 foreach (var deckId in ToAddToDatabaseDeckList)
                     database.InsertOrReplace(deckPrefDict[deckId]);

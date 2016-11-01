@@ -80,11 +80,25 @@ namespace AnkiU.Models
             }
         }
 
+        private bool isTTSAutoplay;
+        public bool IsTTSAutoplay
+        {
+            get
+            {
+                return isTTSAutoplay;
+            }
+            set
+            {
+                isTTSAutoplay = value;
+            }
+        }
+
         public CollectionOptions()
         {
             IsShowDueCount = true;
             IsShowEstTime = true;
             ReviewType = (int)AnkiCore.ReviewType.DISTRIBUTE;
+            IsTTSAutoplay = false;
         }
 
         public override string ToString()
@@ -94,11 +108,13 @@ namespace AnkiU.Models
 
         public bool IsTheSame(CollectionOptions compared)
         {
-            if (compared.isShowDueCount != isShowDueCount)
+            if (compared.IsShowDueCount != IsShowDueCount)
                 return false;
-            if (compared.IsShowEstTime != isShowEstTime)
+            if (compared.IsShowEstTime != IsShowEstTime)
                 return false;
-            if (compared.reviewType != reviewType)
+            if (compared.ReviewType != ReviewType)
+                return false;
+            if (compared.IsTTSAutoplay != IsTTSAutoplay)
                 return false;
 
             return true;

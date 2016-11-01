@@ -180,6 +180,7 @@ namespace AnkiU
         public static DB UserPrefDatabase { get; set; }        
         public static GeneralPreference UserPrefs { get; set; }
         public static DeckInkPreferences DeckInkPrefs { get; set; }        
+        public static DeckTextSynthPreferences DeckTextSynthPrefs { get; set; }
 
         public InkRecognizerContainer InkRecognizerContainer { get; set; } = null;
         private CoreTextServicesManager textServiceManager = null;
@@ -829,6 +830,12 @@ namespace AnkiU
                 UserPrefs.IsHasInkDeckPreference = false;
             else
                 UserPrefs.IsHasInkDeckPreference = true;
+
+            if (DeckTextSynthPrefs.IsEmpty())
+                UserPrefs.IsHasTextSynthDeckPreference = false;
+            else
+                UserPrefs.IsHasTextSynthDeckPreference = true;
+
             try
             {
                 if (UserPrefs.IsModified)
@@ -847,6 +854,7 @@ namespace AnkiU
         private void UpdateDeckPrefs()
         {
             DeckInkPrefs.SaveToDatabase(UserPrefDatabase);
+            DeckTextSynthPrefs.SaveToDatabase(UserPrefDatabase);
         }
         private async Task RetrieveUserPreference()
         {
@@ -857,7 +865,7 @@ namespace AnkiU
                 {
                     UserPrefDatabase = new DB(USER_PREF_FILE_PATH);
                     UserPrefs = UserPrefDatabase.GetTable<GeneralPreference>().First();
-                    RetrieveInkDeckPrefIfNeeded();
+                    RetrieveDeckPrefs();
                 }
                 catch
                 { //Any exception mean file is corrupted -> create default
@@ -872,15 +880,44 @@ namespace AnkiU
                 CreateDefaultPreference();
             }
         }
+        private void RetrieveDeckPrefs()
+        {
+            RetrieveInkDeckPrefIfNeeded();
+            RetrieveTextSynthDeckPrefIfNeeded();
+        }
         private void RetrieveInkDeckPrefIfNeeded()
         {
-            if (UserPrefs.IsHasInkDeckPreference == true)
+            try
             {
-                var deckInkList = UserPrefDatabase.GetTable<InkPreference>().ToList();
-                DeckInkPrefs = new DeckInkPreferences(deckInkList);
+                if (UserPrefs.IsHasInkDeckPreference)
+                {
+                    var deckInkList = UserPrefDatabase.GetTable<InkPreference>().ToList();
+                    DeckInkPrefs = new DeckInkPreferences(deckInkList);
+                }
+                else
+                    DeckInkPrefs = new DeckInkPreferences(new List<InkPreference>());
             }
-            else
+            catch
+            {
                 DeckInkPrefs = new DeckInkPreferences(new List<InkPreference>());
+            }
+        }
+        private void RetrieveTextSynthDeckPrefIfNeeded()
+        {
+            try
+            {
+                if (UserPrefs.IsHasTextSynthDeckPreference)
+                {
+                    var deckTextSynthList = UserPrefDatabase.GetTable<TextSynthPreference>().ToList();
+                    DeckTextSynthPrefs = new DeckTextSynthPreferences(deckTextSynthList);
+                }
+                else
+                    DeckTextSynthPrefs = new DeckTextSynthPreferences(new List<TextSynthPreference>());
+            }
+            catch
+            {
+                DeckTextSynthPrefs = new DeckTextSynthPreferences(new List<TextSynthPreference>());
+            }
         }
         private void CreateDefaultPreference()
         {
@@ -889,7 +926,9 @@ namespace AnkiU
             UserPrefDatabase.CreateTable<GeneralPreference>();
             UserPrefDatabase.Insert(UserPrefs);
             UserPrefDatabase.CreateTable<InkPreference>();
+            UserPrefDatabase.CreateTable<TextSynthPreference>();
             DeckInkPrefs = new DeckInkPreferences(new List<InkPreference>());
+            DeckTextSynthPrefs = new DeckTextSynthPreferences(new List<TextSynthPreference>());
         }     
         public static double GetDefaultZoomLevel()
         {
@@ -1331,10 +1370,13 @@ namespace AnkiU
                 InkRecognizerContainer.SetDefaultRecognizer(installedLanguagesList[comboBox.SelectedIndex]);
         }
 
-        public static void RemoveDeckInKPrefsIfNeeded(long deckId)
+        public static void RemoveDeckPrefsIfNeeded(long deckId)
         {
             if (DeckInkPrefs.HasId(deckId))
-                DeckInkPrefs.RemoveDeckInkPref(deckId);
+                DeckInkPrefs.RemoveDeckSynthPref(deckId);
+
+            if (DeckTextSynthPrefs.HasId(deckId))
+                DeckTextSynthPrefs.RemoveDeckSynthPref(deckId);
         }
 
         public void HideInkToTextFlyoutToggleOnContent()

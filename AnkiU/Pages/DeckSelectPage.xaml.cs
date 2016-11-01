@@ -867,7 +867,7 @@ namespace AnkiU.Pages
                     collection.Save();
                     collection.Database.Commit();
 
-                    MainPage.RemoveDeckInKPrefsIfNeeded(deckId);
+                    MainPage.RemoveDeckPrefsIfNeeded(deckId);
                 });
             });
         }
@@ -902,7 +902,7 @@ namespace AnkiU.Pages
                 foreach (var deck in childs)
                 {
                     await RemoveMediaAndView(deck.Value);
-                    MainPage.RemoveDeckInKPrefsIfNeeded(deck.Value);
+                    MainPage.RemoveDeckPrefsIfNeeded(deck.Value);
                 }
         }
 

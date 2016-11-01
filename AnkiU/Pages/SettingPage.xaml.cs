@@ -128,7 +128,7 @@ namespace AnkiU.Pages
         {
             if (collectionOptionViewModel.IsModified())
             {
-                collectionOptionViewModel.SaveOptionsToJsonConfig();
+                collectionOptionViewModel.SaveOptions();
                 mainPage.Collection.SetIsModified();
                 mainPage.Collection.SaveAndCommitAsync();                
             }
