@@ -1930,7 +1930,8 @@ namespace AnkiU
             progressDialog.ShowInDeterminateStateNoStopAsync("Optimizing collection");
 
             var task = Task.Run( async () =>
-            {
+            {                
+                Collection.DeleteGraveLog();
                 Collection.Optimize();
                 await CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
@@ -2211,7 +2212,7 @@ namespace AnkiU
             TextToSpeechToggleButtonClick?.Invoke(sender, e);
         }
 
-        private void SwitchToDisableTextToSpeechSymbol()
+        public void SwitchToDisableTextToSpeechSymbol()
         {
             textToSpeechOffSymbol.Visibility = Visibility.Visible;
             textToSpeechOnSymbol.Visibility = Visibility.Collapsed;

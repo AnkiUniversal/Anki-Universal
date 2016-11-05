@@ -1565,6 +1565,11 @@ namespace AnkiU.AnkiCore
             return (long)(oldSize - newSize) / 1024;
         }
 
+        public void DeleteGraveLog()
+        {            
+            database.Execute("delete from graves");
+        }
+
         public void Optimize()
         {
             database.Execute("VACUUM");

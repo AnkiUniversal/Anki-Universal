@@ -366,18 +366,32 @@ namespace AnkiU.Pages
             await ShowAllButtonOfThisPage();
             HookAllEventsExceptCardViewLoaded();
 
+            EnableInkIfNeeded();
+            EnableTextToSpeechIfNeeded();
+            EnableOneHandModeIfNeeded();
+        }
+
+        private void EnableInkIfNeeded()
+        {
             if (mainPage.IsInkOn(selectedDeckId))
                 SwitchToInkCanvasAndInkInput();
+        }
 
-            if(!MainPage.DeckTextSynthPrefs.IsEmpty() && MainPage.DeckTextSynthPrefs.HasId(selectedDeckId))
+        private void EnableTextToSpeechIfNeeded()
+        {
+            if (!MainPage.DeckTextSynthPrefs.IsEmpty() && MainPage.DeckTextSynthPrefs.HasId(selectedDeckId))
             {
                 cardView.ToggleSpeechSynthesisView();
                 cardView.ChangeTextToSpeechVoice(MainPage.DeckTextSynthPrefs.GetVoiceId(selectedDeckId));
                 cardView.ChangeTextToSpeechSpeed(MainPage.DeckTextSynthPrefs.GetVoiceSpeed(selectedDeckId));
+                mainPage.SwitchToDisableTextToSpeechSymbol();
             }
+        }
 
-            if (MainPage.UserPrefs.IsOneHandMode)            
-                TurnOnOneHandMode();            
+        private void EnableOneHandModeIfNeeded()
+        {
+            if (MainPage.UserPrefs.IsOneHandMode)
+                TurnOnOneHandMode();
         }
 
         private void TurnOnOneHandMode()
