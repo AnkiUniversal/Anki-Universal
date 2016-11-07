@@ -610,8 +610,8 @@ namespace AnkiU
         private async void InitCollectionFinishedHandler()
         {
             if (!UserPrefs.IsFirstTimeOpenApp)
-            {
-                await NavigateToDeckSelectPage();
+            {                
+                await NavigateToDeckSelectPage();               
                 SyncOnStarupIfNeeded();
             }
         }
@@ -622,8 +622,6 @@ namespace AnkiU
             {
                 if (UserPrefs.IsSyncOnOpen)
                 {
-                    //User just open the app so the collection should not be modified yet
-                    Collection.ClearIsModified();
                     SyncButtonClickHandler(null, null);
                 }
             });
@@ -668,9 +666,14 @@ namespace AnkiU
         public async Task NavigateToDeckSelectPage()
         {
             await CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {                
+            {
+                var isModified = Collection.IsModified();                
                 commandBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;                
-                contentFrame.Navigate(typeof(DeckSelectPage), this);                
+                contentFrame.Navigate(typeof(DeckSelectPage), this);
+
+                //Make sure we don't accidentially bump this up
+                if (!isModified)
+                    Collection.ClearIsModified();
             });
         }        
 

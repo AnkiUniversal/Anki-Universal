@@ -222,7 +222,12 @@ namespace AnkiU.AnkiCore
 
         public void DropTable<T>()
         {
-            dbConnection.DropTable<T>();
+            try
+            {
+                dbConnection.DropTable<T>();
+            }
+            catch //If we cannot drop table -> do nothing
+            { }
         }
 
         public void InsertAll(IEnumerable obj, bool runInTransaction = true)
