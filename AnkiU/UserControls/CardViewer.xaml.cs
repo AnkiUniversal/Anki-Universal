@@ -122,19 +122,26 @@ namespace AnkiU.UserControls
 
         public void ToggleSpeechSynthesisView()
         {
-            if (speechSynth == null)
+            try
             {
-                this.FindName("speechSynth");
-                speechSynth.PlayButtonClick += OnSpeechSyntControlPlayButtonClick;
-                speechSynth.PlayBackRateChanged += OnSpeechSynthPlayBackRateChanged;
-                speechSynth.VoiceChanged += OnSpeechSynthVoiceChanged;        
+                if (speechSynth == null)
+                {
+                    this.FindName("speechSynth");
+                    speechSynth.PlayButtonClick += OnSpeechSyntControlPlayButtonClick;
+                    speechSynth.PlayBackRateChanged += OnSpeechSynthPlayBackRateChanged;
+                    speechSynth.VoiceChanged += OnSpeechSynthVoiceChanged;
+                }
+
+                if (speechSynth.Visibility == Visibility.Collapsed)
+                    speechSynth.Visibility = Visibility.Visible;
+                else
+                    speechSynth.Visibility = Visibility.Collapsed;
+                ChangeSpeechSyntViewColor();
             }
-            
-            if (speechSynth.Visibility == Visibility.Collapsed)
-                speechSynth.Visibility = Visibility.Visible;
-            else
-                speechSynth.Visibility = Visibility.Collapsed;
-            ChangeSpeechSyntViewColor();
+            catch
+            {
+                var task = UIHelper.ShowMessageDialog("Unable to open Text-to-Speech flyout.");
+            }
         }
 
         /// <summary>
