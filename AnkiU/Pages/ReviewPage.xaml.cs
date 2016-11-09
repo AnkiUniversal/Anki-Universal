@@ -379,12 +379,19 @@ namespace AnkiU.Pages
 
         private void EnableTextToSpeechIfNeeded()
         {
-            if (!MainPage.DeckTextSynthPrefs.IsEmpty() && MainPage.DeckTextSynthPrefs.HasId(selectedDeckId))
+            try
             {
-                cardView.ToggleSpeechSynthesisView();
-                cardView.ChangeTextToSpeechVoice(MainPage.DeckTextSynthPrefs.GetVoiceId(selectedDeckId));
-                cardView.ChangeTextToSpeechSpeed(MainPage.DeckTextSynthPrefs.GetVoiceSpeed(selectedDeckId));
-                mainPage.SwitchToDisableTextToSpeechSymbol();
+                if (!MainPage.DeckTextSynthPrefs.IsEmpty() && MainPage.DeckTextSynthPrefs.HasId(selectedDeckId))
+                {
+                    cardView.ToggleSpeechSynthesisView();
+                    cardView.ChangeTextToSpeechVoice(MainPage.DeckTextSynthPrefs.GetVoiceId(selectedDeckId));
+                    cardView.ChangeTextToSpeechSpeed(MainPage.DeckTextSynthPrefs.GetVoiceSpeed(selectedDeckId));
+                    mainPage.SwitchToDisableTextToSpeechSymbol();
+                }
+            }
+            catch
+            {
+                var task = UIHelper.ShowMessageDialog("Unable to enable Text-to-Speech.");
             }
         }
 
