@@ -655,12 +655,92 @@ namespace AnkiU
 
         private void InitCollection()
         {
-            var task = Task.Run(async () =>
+            var task = CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
+                if(Collection == null)
+                {
+                    await UIHelper.ShowMessageDialog("Unable to open or create collection!");
+                    bool isRestoreSuccess = await TryRestoreCollectionFromBackup();
+                    if (!isRestoreSuccess)
+                        await ForceCreateNewDBFiles();
+
+                    //Reset sync time so user can choose to download or upload to OneDrive
+                    ResetSyncTime();
+                }
+
                 isFinishInitation = true;
                 InitCollectionFinished?.Invoke();                
             });
+        }       
+
+        private async Task<bool> TryRestoreCollectionFromBackup()
+        {
+            try
+            {
+                StorageFolder backupFolder = await TryGetBackupFolder();
+                if (backupFolder == null)
+                    return false;
+
+                var files = await backupFolder.GetFilesAsync();
+                if (files.Count == 0)
+                    return false;
+
+                await UIHelper.ShowMessageDialog("Please choose a backup file to restore your data.");
+                BackupFlyout backupFlyout = new BackupFlyout(null, false);
+                while (!backupFlyout.IsRestoreFinished)
+                {
+                    if (backupFlyout.IsUserCancel)
+                        return false;
+
+                    if (backupFlyout.IsFlyoutClosed)
+                        backupFlyout.ShowFlyout(commandBar, FlyoutPlacementMode.Full);
+
+                    await Task.Delay(500);
+                }
+                backupFlyout.HideFlyout();
+                backupFlyout = null;
+                Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private async Task ForceCreateNewDBFiles()
+        {
+            ProgressRing progress = new ProgressRing();
+            progress.Width = 80;
+            progress.Height = 80;
+            UIHelper.AddToGridInFull(mainGrid, progress);
+            progress.IsActive = true;
+
+            await DeleteCorruptedDBIfNeeded();
+            await CreateNewCollectionFiles();
+
+            progress.IsActive = false;
+            mainGrid.Children.Remove(progress);
+            progress = null;
+        }
+
+        private static async Task DeleteCorruptedDBIfNeeded()
+        {
+            var file = await Storage.AppLocalFolder.TryGetItemAsync(Constant.COLLECTION_NAME);
+            if (file != null)
+                await file.DeleteAsync();
+        }
+
+        private async Task CreateNewCollectionFiles()
+        {
+            Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
+        }
+
+        private void ResetSyncTime()
+        {
+            UserPrefs.LastSyncTime = 0;
+            UpdateUserPreference();
         }
 
         public async Task NavigateToDeckSelectPage()
@@ -735,7 +815,7 @@ namespace AnkiU
                 StorageFile collectionFile = await Storage.AppLocalFolder.TryGetItemAsync(Constant.COLLECTION_NAME) as StorageFile;
                 if (collectionFile != null)
                 {
-                    StorageFolder backup = await Storage.AppLocalFolder.TryGetItemAsync(Constant.BACKUP_FOLDER_NAME) as StorageFolder;
+                    StorageFolder backup = await TryGetBackupFolder();
                     if (backup == null)
                         backup = await Storage.AppLocalFolder.CreateFolderAsync(Constant.BACKUP_FOLDER_NAME, CreationCollisionOption.OpenIfExists);
                     var copyCollectionFile = await collectionFile.CopyAsync(backup, collectionFile.Name, NameCollisionOption.ReplaceExisting);
@@ -758,6 +838,11 @@ namespace AnkiU
             {//No database yet or something prevent us to access database -> backup at another time
 
             }
+        }
+
+        private static async Task<StorageFolder> TryGetBackupFolder()
+        {
+            return await Storage.AppLocalFolder.TryGetItemAsync(Constant.BACKUP_FOLDER_NAME) as StorageFolder;
         }
 
         private static async Task<StorageFile> CopyMediaDBFileToBackup(StorageFolder backup)

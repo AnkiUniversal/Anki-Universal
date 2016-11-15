@@ -198,7 +198,12 @@ namespace AnkiU.AnkiCore
             }
             startReps = 0;
             startTime = 0;
+
+            bool isModified = database.IsModified;
             sched = new Sched(this);
+            if (!isModified) //Make sure we don't accidentially bump this up
+                ClearIsModified();
+
             if (!conf.GetNamedBoolean("newBury", false))
             {
                 conf["newBury"] = JsonValue.CreateBooleanValue(true);

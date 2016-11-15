@@ -42,28 +42,30 @@ namespace AnkiU.AnkiCore
         /// <returns></returns>
         public async static Task<Collection> OpenOrCreateCollection(StorageFolder folder, string relativePath, bool server = false, bool log = false)
         {
-            Debug.Assert(relativePath.EndsWith(".anki2"));
-            Debug.WriteLine("Folder path: {0}", folder.Path);
-            Debug.WriteLine("File relative path: {0}", relativePath);
-            Hooks.Hooks.GetInstance();
-            StorageFile file = await folder.TryGetItemAsync(relativePath) as StorageFile;
-            bool create = file == null;
-            DB db = new DB(folder.Path + "\\" + relativePath);
+            DB collectionDatabase = null;
             try
             {
+                Debug.Assert(relativePath.EndsWith(".anki2"));
+                Debug.WriteLine("Folder path: {0}", folder.Path);
+                Debug.WriteLine("File relative path: {0}", relativePath);
+
+                Hooks.Hooks.GetInstance();
+                StorageFile file = await folder.TryGetItemAsync(relativePath) as StorageFile;
+                bool create = file == null;
+                collectionDatabase = new DB(folder.Path + "\\" + relativePath);
                 // initialize
                 int ver;
                 if (create)
                 {
-                    ver = CreateDB(db);                    
+                    ver = CreateDB(collectionDatabase);                    
                 }
                 else
                 {
-                    ver = UpgradeSchema(db);
+                    ver = UpgradeSchema(collectionDatabase);
                 }
-                db.Execute("PRAGMA temp_store = memory");
+                collectionDatabase.Execute("PRAGMA temp_store = memory");
                 // add db to col and do any remaining upgrades
-                Collection col = new Collection(db, relativePath, server, log, folder);
+                Collection col = new Collection(collectionDatabase, relativePath, server, log, folder);
                 if (ver < Constant.SCHEMA_VERSION)
                 {
                     Upgrade(col, ver);
@@ -90,10 +92,10 @@ namespace AnkiU.AnkiCore
                 }
                 return col;
             }
-            catch(Exception e)
+            catch(Exception)
             {
-                db.Close();
-                await UIHelper.ShowMessageDialog("Unable to open or create collection!");
+                if(collectionDatabase != null)
+                    collectionDatabase.Close();                
                 return null;                
             }
         }
