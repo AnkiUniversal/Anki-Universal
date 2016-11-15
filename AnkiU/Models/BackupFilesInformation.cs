@@ -38,29 +38,29 @@ namespace AnkiU.Models
             }
         }
 
-        private string dateCreate;
-        public string DateCreate
+        private string dateModified;
+        public string DateModified
         {
             get
             {
-                return dateCreate;
+                return dateModified;
             }
             set
             {
-                dateCreate = value;
+                dateModified = value;
             }
         }
 
-        private long dateCreatInLong;
-        public long DateCreatInLong
+        private long dateModifiedInLong;
+        public long DateModifiedInLong
         {
             get
             {
-                return dateCreatInLong;
+                return dateModifiedInLong;
             }
             set
             {
-                dateCreatInLong = value;
+                dateModifiedInLong = value;
             }
         }
     }

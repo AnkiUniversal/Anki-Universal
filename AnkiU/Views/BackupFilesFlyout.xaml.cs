@@ -40,17 +40,27 @@ using Windows.UI.Xaml.Navigation;
 namespace AnkiU.Views
 {
     public sealed partial class BackupFlyout : UserControl
-    {
-        private Collection collection;
-        private List<BackupFilesInformation> backUpFiles = new List<BackupFilesInformation>();
-        private StorageFolder backupFolder;
-
+    {        
+        public bool IsRestoreFinished { get; private set; }
+        public bool IsFlyoutClosed { get; private set; }
+        public bool IsBackupBeforeRestore { get; set; }
+        public bool IsUserCancel { get; private set; }
         public event RoutedEventHandler BackupRestoreFinish;
 
-        public BackupFlyout(Collection collection)
+        private Collection collection;
+        private List<BackupFilesInformation> backUpFiles = new List<BackupFilesInformation>();
+        private StorageFolder backupFolder;        
+
+        public BackupFlyout(Collection collection, bool isBackupBeforeRestore = true)
         {
             this.InitializeComponent();
-            this.collection = collection;            
+            this.collection = collection;
+            this.IsBackupBeforeRestore = isBackupBeforeRestore;
+
+            IsRestoreFinished = false;
+            IsFlyoutClosed = true;
+            databaseBackupFlyout.Closed += OnFlyoutClosed;
+            databaseBackupFlyout.Opened += OnFlyoutOpened;     
         }
 
         public async void ShowFlyout(FrameworkElement showAt, FlyoutPlacementMode placeAt)
@@ -59,14 +69,18 @@ namespace AnkiU.Views
            if (files == null)
                 return;
 
-           foreach(var file in files)            
+            foreach (var file in files)
+            {
+                var fileProperties = await file.GetBasicPropertiesAsync();
                 backUpFiles.Add(new BackupFilesInformation()
-                { DateCreate = file.DateCreated.LocalDateTime.ToString(),
-                  DateCreatInLong = file.DateCreated.ToUnixTimeSeconds(),
-                  Name = file.Name
+                {
+                    DateModified = fileProperties.DateModified.LocalDateTime.ToString(),
+                    DateModifiedInLong = fileProperties.DateModified.ToUnixTimeSeconds(),
+                    Name = file.Name
                 });
+            }
 
-            backUpFiles.Sort((x, y) => { return -x.DateCreatInLong.CompareTo(y.DateCreatInLong); });
+            backUpFiles.Sort((x, y) => { return -x.DateModifiedInLong.CompareTo(y.DateModifiedInLong); });
             fileListView.DataContext = backUpFiles;
             databaseBackupFlyout.Placement = placeAt;
             databaseBackupFlyout.ShowAt(showAt);
@@ -93,20 +107,29 @@ namespace AnkiU.Views
 
         private void CancelButtonClickHandler(object sender, RoutedEventArgs e)
         {
+            IsUserCancel = true;
+            HideFlyout();
+        }
+
+        public void HideFlyout()
+        {
             databaseBackupFlyout.Hide();
         }
 
         private async void RestoreFromBackupClick(object sender, RoutedEventArgs e)
         {
+            databaseBackupFlyout.Closed -= OnFlyoutClosed;
             databaseBackupFlyout.Hide();
 
             var backup = (sender as FrameworkElement).DataContext as BackupFilesInformation;
             var filePath = backupFolder.Path + "\\" + backup.Name;
 
-            bool isContinue = await UIHelper.AskUserConfirmation
-                ("Backed up point: " + backup.DateCreate + "\n" +
-                 "This will permanently revert all your data (except media files) to the chosen backup file. Continue?\n" +
-                 "(A backup will also be created automatically before restoring)");
+            string message = "Backed up point: " + backup.DateModified + "\n" +
+                 "This will permanently revert all your data (except media files) to the chosen backup file. Continue?";
+            if (IsBackupBeforeRestore)
+                message += "\n(A backup will also be created automatically before restoring)";
+            bool isContinue = await UIHelper.AskUserConfirmation(message);            
+                
             if (!isContinue)
                 return;
             ProgressDialog progressDialog = ShowDialog();
@@ -114,7 +137,8 @@ namespace AnkiU.Views
             var tempFolder = await backupFolder.CreateFolderAsync("temp", CreationCollisionOption.ReplaceExisting);
             try
             {
-                await MainPage.BackupDatabase();
+                if(IsBackupBeforeRestore)
+                    await MainPage.BackupDatabase();
 
                 using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read))
                 using (var zipFile = new ZipArchive(fileStream, ZipArchiveMode.Read))
@@ -124,31 +148,42 @@ namespace AnkiU.Views
                     if (collectionFile == null)
                     {
                         progressDialog.Hide();
-                        await UIHelper.ShowMessageDialog("The chosen backup file is corrupted. Please choose a different one.");
+                        await UIHelper.ShowMessageDialog("The chosen backup file is corrupted. Please choose a different one.");                        
                         return;
                     }
 
                     progressDialog.ProgressBarLabel = "Start restoring data...";
-                    collection.Close();
+                    if(collection != null)
+                        collection.Close();
                     await collectionFile.CopyAsync(Storage.AppLocalFolder, collectionFile.Name, NameCollisionOption.ReplaceExisting);
                     await RestoreMediaDB(tempFolder);
 
                     collectionFile = null;
                     BackupRestoreFinish?.Invoke(null, null);
+                    IsRestoreFinished = true;
                     progressDialog.Hide();
-                    await UIHelper.ShowMessageDialog("Restoring finished.", "Success");
+                    await UIHelper.ShowMessageDialog("Restoring finished.", "Success");                    
                 }
             }
             catch
             {
                 progressDialog.Hide();
                 await UIHelper.ShowMessageDialog("Unexpected error!");
-                collection.ReOpen();
+                if(collection != null)
+                    collection.ReOpen();                
             }
             finally
             {
+                RegisterCloseEvent();
                 await tempFolder.DeleteAsync();
             }
+        }
+
+        private void RegisterCloseEvent()
+        {
+            IsFlyoutClosed = true;
+            databaseBackupFlyout.Closed -= OnFlyoutClosed; //Make sure we only hook this one
+            databaseBackupFlyout.Closed += OnFlyoutClosed;
         }
 
         private static async Task RestoreMediaDB(StorageFolder tempFolder)
@@ -164,6 +199,16 @@ namespace AnkiU.Views
             progressDialog.ProgressBarLabel = "Cheking backup file...";
             progressDialog.ShowInDeterminateStateNoStopAsync("Restore");
             return progressDialog;
+        }
+
+        private void OnFlyoutOpened(object sender, object e)
+        {
+            IsFlyoutClosed = false;
+        }
+
+        private void OnFlyoutClosed(object sender, object e)
+        {
+            IsFlyoutClosed = true;
         }
     }
 }
