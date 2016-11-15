@@ -36,9 +36,6 @@ namespace AnkiU.Anki.Syncer
 {
     public class FullSync : ISync
     {
-        private const string UPLOADING_MEDIA_LABEL = "Uploading media files ({0}/{1})...";
-        private const string SYNC_MEDIA_LABEL = "Syncing media files ({0}/{1})...";
-
         private StorageFolder tempSyncFolder = null;
         private StorageFolder deckImageFolder = null;
         private StorageFolder deckImageCacheFolder = null;
@@ -46,9 +43,12 @@ namespace AnkiU.Anki.Syncer
         private GeneralPreference remoteUserPref = null;
         private MainPage mainPage;
         private SyncDialog syncStateDialog;
-        private bool isSyncStateDialogClose = false;
-
-        private StorageFile remoteMediaDBFile;                       
+        private bool isSyncStateDialogClose = false;      
+        
+        public ISyncInstance SyncInstance { get { return syncInstance; } }
+        public SyncDialog SyncStateDialog { get { return syncStateDialog; } }
+        public MainPage MainPage { get { return mainPage; } }
+        public StorageFolder TempSyncFolder { get { return tempSyncFolder; } }
 
         public FullSync(MainPage mainPage, ISyncInstance syncInstance)
         {
@@ -57,6 +57,45 @@ namespace AnkiU.Anki.Syncer
             syncStateDialog.Opened += SyncStateDialogOpened;
             syncStateDialog.Closed += SyncStateDialogClosed;
             this.syncInstance = syncInstance;            
+        }
+
+        /// <summary>
+        /// Get a file from sync folder
+        /// </summary>
+        /// <param name="itemName">Name of the file</param>
+        /// <returns>The requested file. Null if not found.</returns>
+        public async Task<RemoteItem> TryGetItemInSyncFolderAsync(string itemName)
+        {
+            var items = await syncInstance.GetChildrenInRemoteFolder(Constant.ANKIROOT_SYNC_FOLDER);
+            foreach (var item in items)
+            {
+                if (item.Name == itemName)
+                    return item;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Create a file in the temp folder for syncing
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public async Task<StorageFile> CreateTempFileAsync(string fileName)
+        {
+            return await tempSyncFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+        }
+
+        public async Task<StorageFile> CopyToTempFolderAsync(StorageFile file, string fileName = null)
+        {
+            if (fileName == null)
+                fileName = file.Name;
+
+            return await file.CopyAsync(tempSyncFolder, fileName, NameCollisionOption.ReplaceExisting);
+        }
+
+        public void UpdateProgessDialog(string label, long count, long total)
+        {
+            syncStateDialog.Label = String.Format(label, count, total);
         }
 
         private void SyncStateDialogOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -473,330 +512,11 @@ namespace AnkiU.Anki.Syncer
         {
             if (!MainPage.UserPrefs.IsSyncMedia)            
                 return;
+
             syncStateDialog.Label = "Start syncing media files...";
-
-            remoteMediaDBFile = await TryGetUnCompressMediaDB();
-            if (remoteMediaDBFile == null)
-                return;
-
-            var deckMediaFolders = await mainPage.Collection.Media.MapDeckIdToDeckIdFolder();
-
-            using (var remoteMediaDB = new DB(remoteMediaDBFile.Path))
-            {                
-                string remoteMediaFolderPath = Constant.ANKIROOT_SYNC_FOLDER + "/" + mainPage.Collection.Media.MediaFolder.Name + "/";
-                var remoteMeta = remoteMediaDB.GetTable<MetaTable>().First();
-                long localLastMediaSync = mainPage.Collection.Media.GetLastUnixTimeSync();     
-                                   
-                if (remoteMeta.LastUnixTimeSync > localLastMediaSync)
-                {
-                    await DownLoadAndUploadMediaChanges(remoteMediaDB, deckMediaFolders, 
-                                                remoteMediaFolderPath, remoteMeta, localLastMediaSync);
-                }
-                else
-                {
-                    await UploadMediaChanges(deckMediaFolders, remoteMediaFolderPath, remoteMeta);
-                }
-            }                         
+            MediaSync mediaSync = new MediaSync(this);
+            await mediaSync.StartSyncMedia();
         }      
-
-        private async Task<StorageFile> TryGetUnCompressMediaDB()
-        {
-            StorageFile returnFile;
-            var remoteMediaDBZipItem = await TryGetItemInSyncFolderAsync(Constant.MEDIA_DB_NAME_ZIP);
-            if (remoteMediaDBZipItem == null)
-            {
-                var remoteMediaDBItem = await TryGetItemInSyncFolderAsync(Constant.MEDIA_DB_NAME);
-                if (remoteMediaDBItem == null)
-                {
-                    await UploadAllMediaFiles();
-                    return null;
-                }
-
-                returnFile = await CreateTempFileAsync(Constant.MEDIA_DB_NAME);
-                await syncInstance.DownloadItemWithPathAsync(Constant.MEDIA_DB_SYNC_PATH, returnFile);
-            }
-            else
-            {
-                var remoteMediaDBZip = await CreateTempFileAsync(Constant.MEDIA_DB_NAME_ZIP);
-                await syncInstance.DownloadItemWithPathAsync(Constant.ANKIROOT_SYNC_FOLDER + "/" + Constant.MEDIA_DB_NAME_ZIP,
-                                                             remoteMediaDBZip);
-                using (var fileStream = await remoteMediaDBZip.OpenStreamForReadAsync())
-                using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Read))
-                {
-                    zip.ExtractToDirectory(tempSyncFolder.Path);
-                }
-                returnFile = await tempSyncFolder.TryGetItemAsync(Constant.MEDIA_DB_NAME) as StorageFile;
-                if (returnFile == null)
-                {
-                    bool isUploadAll = await UIHelper.AskUserConfirmation("Media database in server is corrupted."
-                                                                         + " Do you want to re-upload all media files?");
-                    if (isUploadAll)
-                        await UploadAllMediaFiles();
-
-                    return null;
-                }                
-            }
-
-            return returnFile;
-        }
-
-        private async Task DownLoadAndUploadMediaChanges(DB remoteMediaDB, Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MetaTable remoteMeta, long localLastMediaSync)
-        {
-            var remoteMediasModified = remoteMediaDB.QueryColumn<MediaTable>
-                                ("Select * from media where mtime > ?", localLastMediaSync);
-
-            var localMediasModified = mainPage.Collection.Media.Database.QueryColumn<MediaTable>
-                                     ("Select * from media where mtime > ?", localLastMediaSync);            
-            ResolveConflictIfHas(remoteMediasModified, localMediasModified);
-
-            long total = remoteMediasModified.Count + localMediasModified.Count;
-            var outOfSyncRemoteFiles = await UpdateMediaFilesInLocal(deckMediaFolders, remoteMediaFolderPath, remoteMediasModified, 0, total);
-            await DeleteUnusedMediaDeckFolder(deckMediaFolders);
-
-            var outOfSyncLocalFiles = await UpdateMediaFilesInRemoteSever(deckMediaFolders, remoteMediaFolderPath, 
-                                                                     localMediasModified, total, remoteMediasModified.Count);
-            UpdateDownloadedRemoteMediaDB(remoteMediaDB, localMediasModified, outOfSyncLocalFiles, outOfSyncRemoteFiles);
-            
-            await UpdateLocalMediaDatabase();
-
-            if(localMediasModified.Count > 0 || outOfSyncRemoteFiles.Count > 0)
-                await UpdateSeverMediaDatabase();
-        }
-
-        private static void UpdateDownloadedRemoteMediaDB(DB remoteMediaDB, List<MediaTable> localMediasModified, 
-                                                        List<MediaTable> outOfSyncLocalFiles, List<MediaTable> outOfSyncRemoteFiles)
-        {
-            foreach (var file in outOfSyncLocalFiles)
-            {
-                localMediasModified.Remove(file);
-            }
-
-            foreach (var media in localMediasModified)
-            {
-                remoteMediaDB.InsertOrReplace(media);
-            }
-
-            foreach(var file in outOfSyncRemoteFiles)
-            {
-                remoteMediaDB.Delete<MediaTable>(file.RelativePathName);
-            }
-        }
-
-        private static void ResolveConflictIfHas(List<MediaTable> remoteMediasModified, List<MediaTable> localMediasModified)
-        {
-            for (int i = 0; i < localMediasModified.Count; i++)
-            {
-                var conflictIndex = remoteMediasModified.FindIndex(
-                                    (x) =>
-                                    {
-                                        return x.RelativePathName == localMediasModified[i].RelativePathName;
-                                    });
-                if (conflictIndex == -1)
-                    continue;
-
-                if (localMediasModified[i].IsAdded == remoteMediasModified[conflictIndex].IsAdded)
-                {
-                    remoteMediasModified.RemoveAt(conflictIndex);
-                    localMediasModified.RemoveAt(i);
-                    i--;
-                }           
-                else
-                {
-                    localMediasModified.RemoveAt(i);
-                    i--;
-                }
-           
-            }
-        }
-
-        private async Task<List<MediaTable>> UpdateMediaFilesInLocal(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, List<MediaTable> remoteMediasModified, long count, long total)
-        {
-            List<MediaTable> outOfSync = new List<MediaTable>();
-            foreach (var media in remoteMediasModified)
-            {
-                UpdateProgessDialog(SYNC_MEDIA_LABEL, count, total);
-                count++;
-
-                var splitString = media.RelativePathName.Split(new char[] { Media.DECK_NAME_SEPARATOR }, 2);
-                var deckId = long.Parse(splitString[0]);
-                if(!deckMediaFolders.ContainsKey(deckId))
-                {// If no deckIdFolder exists -> Deck in collection is removed and user did not sync media properly
-                    outOfSync.Add(media);
-                    continue;
-                }
-
-                var name = splitString[1];
-                if (media.IsAdded)
-                {                   
-                    await DownloadMediaFilesFromSever(deckMediaFolders, remoteMediaFolderPath, media, deckId, name);                    
-                }
-                else
-                {
-                    await RemoveMediaFilesInLocal(deckMediaFolders, media, deckId, name);
-                }
-            }
-
-            return outOfSync;
-        }
-
-        private async Task DownloadMediaFilesFromSever(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MediaTable media, long deckId, string name)
-        {
-            try
-            {
-                var oldFile = await deckMediaFolders[deckId].TryGetItemAsync(name) as StorageFile;
-                if (oldFile != null)
-                    await oldFile.DeleteAsync();
-
-                var newFile = await deckMediaFolders[deckId].CreateFileAsync(name,
-                                                    CreationCollisionOption.ReplaceExisting);
-                var remoteFilePath = remoteMediaFolderPath + media.RelativePathName;
-                await syncInstance.DownloadItemWithPathAsync(remoteFilePath, newFile);
-            }
-            catch //Syncing shouldn't stop if some files are not available
-            { }
-        }
-        private async Task RemoveMediaFilesInLocal(Dictionary<long, StorageFolder> deckMediaFolders, MediaTable media, long deckId, string name)
-        {
-            if (deckMediaFolders.ContainsKey(deckId))
-            {
-                var file = await deckMediaFolders[deckId].TryGetItemAsync(name) as StorageFile;
-                if (file != null)
-                    await file.DeleteAsync();
-            }
-        }
-        private async Task DeleteUnusedMediaDeckFolder(Dictionary<long, StorageFolder> deckMediaFolders)
-        {
-            var allFoldersInMedia = await mainPage.Collection.Media.MediaFolder.GetFoldersAsync();
-            foreach (var folder in allFoldersInMedia)
-            {
-                var key = long.Parse(folder.Name);
-                if (!deckMediaFolders.ContainsKey(key))
-                    await folder.DeleteAsync();
-            }
-        }
-        private async Task UpdateLocalMediaDatabase()
-        {
-            mainPage.Collection.Media.Database.Close();
-            await remoteMediaDBFile.CopyAsync(Storage.AppLocalFolder, Constant.MEDIA_DB_NAME, NameCollisionOption.ReplaceExisting);
-            await mainPage.Collection.Media.ConnectDatabaseAsync();
-        }
-
-        private async Task UploadMediaChanges(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MetaTable remoteMeta)
-        {
-            if (!mainPage.Collection.Media.IsDatabaseModified())
-                return;
-
-            var mediasModified = mainPage.Collection.Media.Database.QueryColumn<MediaTable>
-                                                     ("Select * from media where mtime > ?", remoteMeta.LastUnixTimeSync);
-            long total = mediasModified.Count;            
-
-            await UpdateMediaFilesInRemoteSever(deckMediaFolders, remoteMediaFolderPath, mediasModified, total, 0);
-
-            await DeleteUnusedFolderInServer(deckMediaFolders, remoteMediaFolderPath);
-            await UpdateSeverMediaDatabase();
-        }
-
-        private async Task<List<MediaTable>> UpdateMediaFilesInRemoteSever(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, List<MediaTable> mediasModified, long total, long count)
-        {
-            List<MediaTable> outOfSyncFiles = new List<MediaTable>();
-            foreach (var media in mediasModified)
-            {
-                UpdateProgessDialog(SYNC_MEDIA_LABEL, count, total);
-                count++;
-
-                var splitString = media.RelativePathName.Split(new char[] { Media.DECK_NAME_SEPARATOR }, 2);
-
-                var deckId = long.Parse(splitString[0]);
-                if (!deckMediaFolders.ContainsKey(deckId))
-                {
-                    outOfSyncFiles.Add(media);
-                    continue;
-                }
-
-                var name = splitString[1];
-                string remoteFilePath = remoteMediaFolderPath + media.RelativePathName;
-                if (media.IsAdded)
-                {
-                    var localFile = await deckMediaFolders[deckId].TryGetItemAsync(name) as StorageFile;
-                    if (localFile == null)
-                    {
-                        outOfSyncFiles.Add(media);
-                        continue;
-                    }
-
-                    await syncInstance.UploadItemWithPathAsync(localFile, remoteFilePath);
-                }
-                else
-                {
-                    await DeleteRemoteMediaFile(remoteFilePath);
-                }
-            }
-            return outOfSyncFiles;
-        }
-
-        private async Task DeleteRemoteMediaFile(string remoteFilePath)
-        {
-            try
-            {
-                await syncInstance.DeleteItemWithPathAsync(remoteFilePath);
-            }
-            catch { }
-        }
-        private async Task DeleteUnusedFolderInServer(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath)
-        {
-            var remoteDeckMediaFolders = await syncInstance.GetChildrenInRemoteFolder
-                                         (remoteMediaFolderPath.Substring(0, remoteMediaFolderPath.Length - 1));
-
-            foreach (var folder in remoteDeckMediaFolders)
-            {
-                var key = long.Parse(folder.Name);
-                if (!deckMediaFolders.ContainsKey(key))
-                    await syncInstance.DeleteItemWithPathAsync(remoteMediaFolderPath + folder.Name);                    
-            }
-        }
-
-        private async Task UploadAllMediaFiles()
-        {
-            var folders = await mainPage.Collection.Media.MediaFolder.GetFoldersAsync();
-            long count = 0;
-            long total = mainPage.Collection.Media.MediaCount();            
-            foreach (var folder in folders)
-            {                
-                string remoteDeckFolderPath = Constant.ANKIROOT_SYNC_FOLDER + "/"
-                                              + mainPage.Collection.Media.MediaFolder.Name + "/"
-                                              + folder.Name;
-                var files = await folder.GetFilesAsync();
-                foreach (var file in files)
-                {
-                    UpdateProgessDialog(UPLOADING_MEDIA_LABEL, count, total);
-                    await syncInstance.UploadItemWithPathAsync(file, remoteDeckFolderPath + "/" + file.Name);
-                    count++;
-                }
-            }
-
-            await UpdateSeverMediaDatabase();
-        }
-
-        private void UpdateProgessDialog(string label, long count, long total)
-        {            
-            syncStateDialog.Label = String.Format(label, count, total);
-        }
-
-        private async Task UpdateSeverMediaDatabase()
-        {
-            mainPage.Collection.Media.SetLastUnixTimeSync(DateTimeOffset.Now.ToUnixTimeSeconds());
-            mainPage.Collection.Media.MarkDatabaseClean();
-            var localFile = await Storage.AppLocalFolder.GetFileAsync(Constant.MEDIA_DB_NAME);
-            var mediaDatabase = await localFile.CopyAsync(tempSyncFolder, localFile.Name + "_upload");
-
-            var zipFile = await tempSyncFolder.CreateFileAsync(Constant.MEDIA_DB_NAME_ZIP + "_upload");
-            using (var fileStream = await zipFile.OpenStreamForWriteAsync())
-            using (var zip = new ZipArchive(fileStream, ZipArchiveMode.Create))
-            {
-                zip.CreateEntryFromFile(mediaDatabase.Path, Constant.MEDIA_DB_NAME);
-            }
-            await syncInstance.UploadItemWithPathAsync(zipFile, Constant.ANKIROOT_SYNC_FOLDER + "/" + Constant.MEDIA_DB_NAME_ZIP);
-        }       
 
         private async Task PrepareForSyncing()
         {
@@ -831,40 +551,7 @@ namespace AnkiU.Anki.Syncer
             {
                 remoteUserPref = remotePrefDatabase.GetTable<GeneralPreference>().First();
             }
-        }
+        }      
 
-        /// <summary>
-        /// Create a file in the temp folder for syncing
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        private async Task<StorageFile> CreateTempFileAsync(string fileName)
-        {
-            return await tempSyncFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-        }       
-
-        private async Task<StorageFile> CopyToTempFolderAsync(StorageFile file, string fileName = null)
-        {
-            if (fileName == null)
-                fileName = file.Name;
-
-            return await file.CopyAsync(tempSyncFolder, fileName, NameCollisionOption.ReplaceExisting);
-        }
-      
-        /// <summary>
-        /// Get a file from sync folder
-        /// </summary>
-        /// <param name="itemName">Name of the file</param>
-        /// <returns>The requested file. Null if not found.</returns>
-        private async Task<RemoteItem> TryGetItemInSyncFolderAsync(string itemName)
-        {
-            var items = await syncInstance.GetChildrenInRemoteFolder(Constant.ANKIROOT_SYNC_FOLDER);
-            foreach (var item in items)
-            {
-                if (item.Name == itemName)
-                    return item;
-            }
-            return null;
-        }
     }
 }

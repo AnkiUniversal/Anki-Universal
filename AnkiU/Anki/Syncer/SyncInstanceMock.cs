@@ -69,7 +69,7 @@ namespace AnkiU.Anki.Syncer
             var items = await folder.GetItemsAsync();
             List<RemoteItem> remoteItems = new List<RemoteItem>();
             foreach (var item in items)                            
-                remoteItems.Add(new RemoteItem(item.Name));
+                remoteItems.Add(new RemoteItem(item.Name, await GetLastDateModified(item)));
 
             return remoteItems;
         }
@@ -77,7 +77,7 @@ namespace AnkiU.Anki.Syncer
         public async Task<RemoteItem> GetRemoteItemWithPathAsync(string remoteFilePath)
         {
             var item = await syncFolder.GetItemAsync(remoteFilePath);
-            return new RemoteItem(item.Name);
+            return new RemoteItem(item.Name, await GetLastDateModified(item));
         }
 
         public void InitInstance()
@@ -97,7 +97,7 @@ namespace AnkiU.Anki.Syncer
             if (item == null)
                 return null;
             else
-                return new RemoteItem(item.Name);
+                return new RemoteItem(item.Name, await GetLastDateModified(item));
         }
 
         public async Task UploadItemWithPathAsync(StorageFile fileToUpload, string remoteFilePath)
@@ -111,6 +111,11 @@ namespace AnkiU.Anki.Syncer
                     folder = await folder.CreateFolderAsync(splitString[i]);
             }
             await fileToUpload.CopyAsync(folder, splitString[splitString.Length - 1], NameCollisionOption.ReplaceExisting);
+        }
+
+        private async Task<long> GetLastDateModified(IStorageItem item)
+        {
+            return (await item.GetBasicPropertiesAsync()).DateModified.ToUnixTimeSeconds();            
         }
     }
 }

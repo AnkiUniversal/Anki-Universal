@@ -115,6 +115,15 @@ namespace AnkiU.AnkiCore
                 return false;
         }
 
+        public bool HasTable<T>(string name) where T : class
+        {
+            var count = dbConnection.ExecuteScalar<int>("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", name);
+            if (count > 0)
+                return true;
+            else
+                return false;
+        }
+
         public string SaveTransactionPoint()
         {
             return dbConnection.SaveTransactionPoint();

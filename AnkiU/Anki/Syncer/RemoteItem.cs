@@ -26,10 +26,12 @@ namespace AnkiU.Anki.Syncer
     public class RemoteItem
     {
         public string Name { get; set; }      
-        
-        public RemoteItem(string name)
+        public long LastDateModifiedInSeconds { get; set; }
+
+        public RemoteItem(string name, long lastDateModifiedInSeconds)
         {
             Name = name;
+            LastDateModifiedInSeconds = lastDateModifiedInSeconds;
         }
     }
 }

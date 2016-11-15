@@ -314,6 +314,7 @@
     <Compile Include="Anki\Syncer\FullSync.cs" />
     <Compile Include="Anki\Syncer\ISync.cs" />
     <Compile Include="Anki\Syncer\ISyncInstance.cs" />
+    <Compile Include="Anki\Syncer\MediaSync.cs" />
     <Compile Include="Anki\Syncer\OneDriveSync.cs" />
     <Compile Include="Anki\Syncer\RemoteItem.cs" />
     <Compile Include="Anki\Syncer\SyncInstanceMock.cs" />

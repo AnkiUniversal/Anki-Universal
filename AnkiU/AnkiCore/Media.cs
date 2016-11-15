@@ -151,19 +151,34 @@ namespace AnkiU.AnkiCore
 
         public async Task ConnectDatabaseAsync()
         {
-            if (collection.IsServer)
-                return;
+            StorageFile store = null;
+            try
+            {
+                if (collection.IsServer)
+                    return;
 
-            mediaDatabaseName = Constant.MEDIA_DB_NAME;
+                mediaDatabaseName = Constant.MEDIA_DB_NAME;
 
-            bool create = false;
-            StorageFile store = (await appFolder.TryGetItemAsync(mediaDatabaseName)) as StorageFile;
-            if (store == null)
-                create = true;
+                bool create = false;
+                store = (await appFolder.TryGetItemAsync(mediaDatabaseName)) as StorageFile;
+                if (store == null)
+                    create = true;
 
-            database = new DB(appFolder.Path + "\\" + mediaDatabaseName);
-            if (create)
+                database = new DB(appFolder.Path + "\\" + mediaDatabaseName);
+                if (!database.HasTable<MediaTable>("media"))
+                    create = true;
+
+                if (create)
+                    InitMediaDatabase();
+            }
+            catch //Media DB is corrupted -> create new DB
+            {
+                if (store != null)
+                    await store.DeleteAsync();
+
+                database = new DB(appFolder.Path + "\\" + mediaDatabaseName);
                 InitMediaDatabase();
+            }
         }
 
         public void InitMediaDatabase()
@@ -1019,12 +1034,12 @@ namespace AnkiU.AnkiCore
         public long ModifiedTime { get; set; }
         [SQLite.Net.Attributes.Column("deckid")]
         public long DeckId { get; set; }
+        [SQLite.Net.Attributes.Column("dirty")]
+        public int Dirty { get; set; }
 
         #region Currently not used
         [SQLite.Net.Attributes.Column("csum")]
         public string CheckSum { get; set; }
-        [SQLite.Net.Attributes.Column("dirty")]
-        public int Dirty { get; set; }
         #endregion
     }
 

@@ -69,9 +69,11 @@ namespace AnkiU.Anki.Syncer
         {
             var items = await oneDriveClient.Drive.Special.AppRoot.ItemWithPath(folderPath).Children.Request().GetAsync();
             var remoteItems = new List<RemoteItem>(items.Count);
-            foreach(var item in items)            
-                remoteItems.Add(new RemoteItem(item.Name));
-
+            foreach (var item in items)
+            {
+                long lastModified = GetLastDateModified(item);
+                remoteItems.Add(new RemoteItem(item.Name, lastModified));
+            }
             return remoteItems;
         }
 
@@ -81,7 +83,10 @@ namespace AnkiU.Anki.Syncer
             foreach (var item in items)
             {
                 if (item.Name == itemName)
-                    return new RemoteItem(itemName);
+                {
+                    long lastModified = GetLastDateModified(item);
+                    return new RemoteItem(itemName, lastModified);
+                }
             }
             return null;
         }
@@ -94,7 +99,8 @@ namespace AnkiU.Anki.Syncer
         public async Task<RemoteItem> GetRemoteItemWithPathAsync(string remoteFilePath)
         {
             var item = await oneDriveClient.Drive.Special.AppRoot.ItemWithPath(remoteFilePath).Request().GetAsync();
-            return new RemoteItem(item.Name);
+            long lastModified = GetLastDateModified(item);
+            return new RemoteItem(item.Name, lastModified);
         }
 
         public async Task DownloadItemWithPathAsync(string remoteFilePath, StorageFile writeToFile)
@@ -198,6 +204,16 @@ namespace AnkiU.Anki.Syncer
                 await UIHelper.ShowMessageDialog("Quota limit reached");
             else
                 await UIHelper.ShowMessageDialog("Connection error.");
+        }
+
+        private static long GetLastDateModified(Item item)
+        {
+            long lastModified;
+            if (item.LastModifiedDateTime != null)
+                lastModified = item.LastModifiedDateTime.Value.ToUnixTimeSeconds();
+            else
+                lastModified = 0;
+            return lastModified;
         }
     }
 }
