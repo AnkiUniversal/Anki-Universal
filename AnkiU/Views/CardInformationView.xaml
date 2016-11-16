@@ -24,8 +24,9 @@
         </MenuFlyout>
 
         <MenuFlyout Placement="Bottom" x:Key="RightColumnContextMenu">
-            <MenuFlyoutItem Text="Answer" Click="AnswerMenuFlyoutItemClickHandler"/>
-            <MenuFlyoutItem Text="Due &amp; Relearn (Lapses)" Click="DueAndRelearnMenuFlyoutItemClickHandler"/>
+            <MenuFlyoutItem Text="Answer" Click="OnAnswerMenuFlyoutItemClickHandler"/>
+            <MenuFlyoutItem Text="Due &amp; Relearn (Lapses)" Click="OnDueAndRelearnMenuFlyoutItemClickHandler"/>
+            <MenuFlyoutItem Text="Created &amp; Modified" Click="OnCreatedAndModifiedFlyoutClick"/>
         </MenuFlyout>
     </UserControl.Resources>
 
@@ -46,7 +47,8 @@
 			BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,1,0" />
         <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Canvas.ZIndex="1" Visibility="{Binding Visibility, ElementName=lapsesLabel, Mode=OneWay}"
 			BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,1,0" />
-
+        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Canvas.ZIndex="1" Visibility="{Binding Visibility, ElementName=timeCreatedLabel, Mode=OneWay}"
+			BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,1,0" />
 
         <Button HorizontalAlignment="Stretch" 
 			Style="{StaticResource ButtonGray}"
@@ -153,7 +155,53 @@
                 </Path>
             </Grid>
         </Button>
-        
+
+        <Button HorizontalAlignment="Stretch" 
+			VerticalAlignment="Stretch"
+			Style="{StaticResource ButtonGray}"
+			Grid.Column="1" 
+			BorderThickness="0" FontSize="15" 
+			HorizontalContentAlignment="Stretch" Visibility="{Binding Visibility, ElementName=timeCreatedLabel}"
+			Background="Transparent" Canvas.ZIndex="0"
+			Foreground="{Binding Foreground, ElementName=userControl}" Padding="0"                
+			Click="TimeCreatedSortOrderButtonClickHandler" Holding="RightColumnButtonHoldingHandler" 
+			RightTapped="RightColumnButtonRightTappedHandler" PointerPressed="PointerPressedHandler">
+            <Grid>
+                <TextBlock  Visibility="Collapsed"                      
+					Text="Created" FontWeight="Bold" FontSize="15" x:Name="timeCreatedLabel" Margin="10,5,20,5"/>
+                <Path Style="{StaticResource ChevronDownIcon}" Fill="{Binding Foreground, ElementName=userControl}"  
+					Margin="0,0,5,0" HorizontalAlignment="Right"
+					Width="10" Height="6" RenderTransformOrigin="0.5,0.5" >
+                    <Path.RenderTransform>
+                        <CompositeTransform x:Name="createdSortOrderSymbolTrans"  Rotation="0"/>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Button>
+
+        <Button HorizontalAlignment="Stretch" 
+			VerticalAlignment="Stretch"
+			Style="{StaticResource ButtonGray}"
+			Grid.Column="2" 
+			BorderThickness="0" FontSize="15" 
+			HorizontalContentAlignment="Stretch" Visibility="{Binding Visibility, ElementName=timeModifiedLabel}"
+			Background="Transparent" Canvas.ZIndex="0"
+			Foreground="{Binding Foreground, ElementName=userControl}" Padding="0"                
+			Click="TimeModifiedSortOrderButtonClickHandler" Holding="RightColumnButtonHoldingHandler" 
+			RightTapped="RightColumnButtonRightTappedHandler" PointerPressed="PointerPressedHandler">
+            <Grid>
+                <TextBlock  Visibility="Collapsed"                      
+					Text="Modified" FontWeight="Bold" FontSize="15" x:Name="timeModifiedLabel" Margin="10,5,20,5"/>
+                <Path Style="{StaticResource ChevronDownIcon}" Fill="{Binding Foreground, ElementName=userControl}"  
+					Margin="0,0,5,0" HorizontalAlignment="Right"
+					Width="10" Height="6" RenderTransformOrigin="0.5,0.5" >
+                    <Path.RenderTransform>
+                        <CompositeTransform x:Name="modifiedSortOrderSymbolTrans"  Rotation="0"/>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Button>
+
         <Ellipse x:Name="pointToShowFlyout" Grid.RowSpan="3" Width="0" Height="0" Grid.ColumnSpan="3" Stroke="Transparent" Fill="Transparent" 
                  VerticalAlignment="Top" HorizontalAlignment="Left" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" 
                  IsTapEnabled="False" IsHitTestVisible="False"/>
@@ -228,6 +276,24 @@
 								Foreground="{Binding Foreground, ElementName=userControl}"
 								FontSize="{Binding FontSize, ElementName=userControl}"
 								TextAlignment="Left" Visibility="{Binding Visibility, ElementName=lapsesLabel, Mode=OneWay}"
+								HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
+                        </Grid>
+
+                        <Grid Grid.Column="1" Grid.ColumnSpan="2" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Margin="5,0,15,0" Grid.Column="0" Text="{x:Bind TimeCreatedStr, Mode=OneWay}" 
+								Foreground="{Binding Foreground, ElementName=userControl}"
+								FontSize="{Binding FontSize, ElementName=userControl}"
+								TextAlignment="Left"  Visibility="{Binding Visibility, ElementName=timeCreatedLabel, Mode=OneWay}"
+								HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
+
+                            <TextBlock Margin="5,0,15,0" Grid.Column="1" Text="{x:Bind TimeModifiedStr, Mode=OneWay}" 
+								Foreground="{Binding Foreground, ElementName=userControl}"
+								FontSize="{Binding FontSize, ElementName=userControl}"
+								TextAlignment="Left" Visibility="{Binding Visibility, ElementName=timeModifiedLabel, Mode=OneWay}"
 								HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap"/>
                         </Grid>
                     </Grid>

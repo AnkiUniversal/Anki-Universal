@@ -40,13 +40,15 @@ namespace AnkiU.ViewModels
 
         public List<CardInformation> PreviousCards { get; set; }
         public List<CardInformation> NextCards { get; set; }
-
-        private SearchSortColumn viewColumn = SearchSortColumn.Question;
+        
+        private Comparison<CardInformation> CurrentSortMethod;
         private int sign = 1;
 
         public CardInformationViewModel(Collection collection, IEnumerable<long> cardId)
         {
             this.collection = collection;
+            CurrentSortMethod = CompareQuestion;
+
             var temp = InitCardList(cardId);
             Cards = new ObservableCollection<CardInformation>(temp);
             PreviousCards = new List<CardInformation>();
@@ -70,6 +72,7 @@ namespace AnkiU.ViewModels
                     card.Question = toUpdate.Question;
                     card.Answer = toUpdate.Answer;
                     card.SortField = toUpdate.SortField;
+                    card.TimeModified = toUpdate.TimeModified;                    
                 }
             }
         }
@@ -107,24 +110,7 @@ namespace AnkiU.ViewModels
 
         private void SortByViewColumn(List<CardInformation> cards)
         {
-            switch (viewColumn)
-            {
-                case SearchSortColumn.SortField:
-                    cards.Sort(CompareSortField);
-                    break;
-                case SearchSortColumn.Question:
-                    cards.Sort(CompareQuestion);
-                    break;
-                case SearchSortColumn.Answer:
-                    cards.Sort(CompareAnswer);
-                    break;
-                case SearchSortColumn.Due:
-                    cards.Sort(CompareDue);
-                    break;
-                case SearchSortColumn.Lapse:
-                    cards.Sort(CompareLapse);
-                    break;
-            }
+            cards.Sort(CurrentSortMethod);
         }
 
         private int CompareSortField(CardInformation compared, CardInformation comparer)
@@ -159,6 +145,16 @@ namespace AnkiU.ViewModels
         private int CompareLapse(CardInformation compared, CardInformation comparer)
         {
             return sign * compared.Lapses.CompareTo(comparer.Lapses);
+        }
+
+        private int CompareTimeCreated(CardInformation compared, CardInformation comparer)
+        {
+            return sign * compared.Id.CompareTo(comparer.Id);
+        }
+
+        private int CompareTimeModified(CardInformation compared, CardInformation comparer)
+        {
+            return sign * compared.TimeModified.CompareTo(comparer.TimeModified);
         }
 
         private List<CardInformation> InitCardList(IEnumerable<long> cardId)
@@ -196,9 +192,8 @@ namespace AnkiU.ViewModels
             answerBuilder.Append(answer);
             answer = CleanMakeUp(answerBuilder.ToString());            
 
-            var dueStr = FindRealDueAndDueInString(c);
-            CardInformation card = new CardInformation(c.Id, c.NoteId, c.DeckId, c.OriginalDeckId, c.Due, dueStr, c.Ord, c.Type, c.Interval, c.Queue,
-                                                        c.Lapses, question, answer, n.GetSFld());
+            var dueStr = FindRealDueAndDueInString(c);            
+            CardInformation card = new CardInformation(c, dueStr, question, answer, n.GetSFld(), n.TimeModified);
             return card;
         }
 
@@ -289,57 +284,54 @@ namespace AnkiU.ViewModels
 
         public void SortWithDue(bool isReverse)
         {
-            viewColumn = SearchSortColumn.Due;
-            var temp = new List<CardInformation>(Cards);
-            sign = isReverse ? -1 : 1;
-            temp.Sort(CompareDue);
-            PopulateCards(temp);
-            NextCards.Sort(CompareDue);
-            PreviousCards.Sort(CompareDue);
+            CurrentSortMethod = CompareDue;
+            ReSortCurrentCards(isReverse);
         }
 
         public void SortWithLapse(bool isReverse)
         {
-            viewColumn = SearchSortColumn.Lapse;
-            var temp = new List<CardInformation>(Cards);
-            sign = isReverse ? -1 : 1;
-            temp.Sort(CompareLapse);
-            PopulateCards(temp);
-            NextCards.Sort(CompareLapse);
-            PreviousCards.Sort(CompareLapse);
+            CurrentSortMethod = CompareLapse;
+            ReSortCurrentCards(isReverse);
         }
 
         public void SortWithSortField(bool isReverse)
         {
-            viewColumn = SearchSortColumn.SortField;
-            var temp = new List<CardInformation>(Cards);
-            sign = isReverse ? -1 : 1;
-            temp.Sort(CompareSortField);
-            PopulateCards(temp);
-            NextCards.Sort(CompareSortField);
-            PreviousCards.Sort(CompareSortField);
+            CurrentSortMethod = CompareSortField;
+            ReSortCurrentCards(isReverse);
         }
 
         public void SortWithQuestion(bool isReverse)
         {
-            viewColumn = SearchSortColumn.Question;
-            var temp = new List<CardInformation>(Cards);
-            sign = isReverse ? -1 : 1;
-            temp.Sort(CompareQuestion);
-            PopulateCards(temp);
-            NextCards.Sort(CompareQuestion);
-            PreviousCards.Sort(CompareQuestion);
+            CurrentSortMethod = CompareQuestion;
+            ReSortCurrentCards(isReverse);
         }
 
         public void SortWithAnswer(bool isReverse)
         {
-            viewColumn = SearchSortColumn.Answer;
+            CurrentSortMethod = CompareAnswer;
+            ReSortCurrentCards(isReverse);
+        }
+
+        public void SortWithTimeCreated(bool isReverse)
+        {
+            CurrentSortMethod = CompareTimeCreated;
+            ReSortCurrentCards(isReverse);
+        }
+
+        public void SortWithTimeModified(bool isReverse)
+        {
+            CurrentSortMethod = CompareTimeModified;
+            ReSortCurrentCards(isReverse);
+        }
+
+        private void ReSortCurrentCards(bool isReverse)
+        {
             var temp = new List<CardInformation>(Cards);
             sign = isReverse ? -1 : 1;
-            temp.Sort(CompareAnswer);
+            temp.Sort(CurrentSortMethod);
             PopulateCards(temp);
-            NextCards.Sort(CompareAnswer);
-            PreviousCards.Sort(CompareAnswer);
+            NextCards.Sort(CurrentSortMethod);
+            PreviousCards.Sort(CurrentSortMethod);
         }
 
         public bool CheckIfAllIsReviewCards(IEnumerable<CardInformation> cards)

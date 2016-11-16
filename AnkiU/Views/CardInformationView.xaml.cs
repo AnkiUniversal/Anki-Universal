@@ -46,6 +46,7 @@ namespace AnkiU.Views
         private MenuFlyout rightColumnMenuFlyout = null;
         private MenuFlyout leftColumnMenuFlyout = null;
         private CardInformation tappedCard = null;
+        private bool isLeftListSort = true;
 
         public delegate void CardDoubleClickedHandler(CardInformation card);
         public event CardDoubleClickedHandler CardDoubleClicked;
@@ -60,6 +61,8 @@ namespace AnkiU.Views
         public bool IsAnswerColumReverse { get; set; } = false;
         public bool IsDueColumReverse { get; set; } = false;
         public bool IsLapseColumReverse { get; set; } = false;
+        public bool IsTimeCreatedColumReverse { get; set; } = false;
+        public bool IsTimeModifiedColumReverse { get; set; } = false;
 
         public SearchSortColumn CurrentSortColumn { get; set; } = SearchSortColumn.Question;
 
@@ -84,8 +87,91 @@ namespace AnkiU.Views
             return task.AsTask();
         }
 
+        private void QuestionSortMenuClick(object sender, RoutedEventArgs e)
+        {
+            if (isLeftListSort)
+            {
+                if (CurrentSortColumn == SearchSortColumn.SortField)
+                    currentSortBorder.Visibility = Visibility.Collapsed;
+                else
+                    currentSortBorder.Visibility = Visibility.Visible;
+            }
+
+            sortFieldButton.Visibility = Visibility.Collapsed;
+            questionButton.Visibility = Visibility.Visible;
+        }
+
+        private void SortFieldMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
+        {
+            if (isLeftListSort)
+            {
+                if (CurrentSortColumn == SearchSortColumn.Question)
+                    currentSortBorder.Visibility = Visibility.Collapsed;
+                else
+                    currentSortBorder.Visibility = Visibility.Visible;
+            }
+
+            questionButton.Visibility = Visibility.Collapsed;
+            sortFieldButton.Visibility = Visibility.Visible;
+        }
+
+        private void OnAnswerMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
+        {
+            if (!isLeftListSort)
+            {
+                if (CurrentSortColumn != SearchSortColumn.Answer)
+                    currentSortBorder.Visibility = Visibility.Collapsed;
+                else
+                    currentSortBorder.Visibility = Visibility.Visible;
+            }
+
+            dueLabel.Visibility = Visibility.Collapsed;
+            lapsesLabel.Visibility = Visibility.Collapsed;
+            timeCreatedLabel.Visibility = Visibility.Collapsed;
+            timeModifiedLabel.Visibility = Visibility.Collapsed;
+
+            answerLabel.Visibility = Visibility.Visible;
+        }
+
+        private void OnDueAndRelearnMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
+        {
+            if (!isLeftListSort)
+            {
+                if (CurrentSortColumn != SearchSortColumn.Due && CurrentSortColumn != SearchSortColumn.Lapse)
+                    currentSortBorder.Visibility = Visibility.Collapsed;
+                else
+                    currentSortBorder.Visibility = Visibility.Visible;
+            }
+
+            answerLabel.Visibility = Visibility.Collapsed;
+            timeCreatedLabel.Visibility = Visibility.Collapsed;
+            timeModifiedLabel.Visibility = Visibility.Collapsed;
+
+            dueLabel.Visibility = Visibility.Visible;
+            lapsesLabel.Visibility = Visibility.Visible;            
+        }
+
+        private void OnCreatedAndModifiedFlyoutClick(object sender, RoutedEventArgs e)
+        {
+            if (!isLeftListSort)
+            {
+                if (CurrentSortColumn != SearchSortColumn.TimeCreated && CurrentSortColumn != SearchSortColumn.TimeModified)
+                    currentSortBorder.Visibility = Visibility.Collapsed;
+                else
+                    currentSortBorder.Visibility = Visibility.Visible;
+            }
+
+            dueLabel.Visibility = Visibility.Collapsed;
+            lapsesLabel.Visibility = Visibility.Collapsed;
+            answerLabel.Visibility = Visibility.Collapsed;
+
+            timeCreatedLabel.Visibility = Visibility.Visible;
+            timeModifiedLabel.Visibility = Visibility.Visible;
+        }
+
         private void QuestionColumnSortOrderButtonClickHandler(object sender, RoutedEventArgs e)
         {
+            isLeftListSort = true;
             Grid.SetColumn(currentSortBorder, 0);
             Grid.SetColumnSpan(currentSortBorder, 1);
             currentSortBorder.Visibility = Visibility.Visible;
@@ -101,32 +187,27 @@ namespace AnkiU.Views
             SortColumnChangedEvent.Invoke(CurrentSortColumn, IsQuestionColumReverse);
         }
 
-        private void AnswerMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
+        private void SortFieldButtonClickHandler(object sender, RoutedEventArgs e)
         {
-            answerLabel.Visibility = Visibility.Visible;
-            if (CurrentSortColumn == SearchSortColumn.Due || CurrentSortColumn == SearchSortColumn.Lapse)
-                currentSortBorder.Visibility = Visibility.Collapsed;
-            else
-                currentSortBorder.Visibility = Visibility.Visible;
+            isLeftListSort = true;
+            Grid.SetColumn(currentSortBorder, 0);
+            Grid.SetColumnSpan(currentSortBorder, 1);
+            currentSortBorder.Visibility = Visibility.Visible;
+            if (CurrentSortColumn != SearchSortColumn.SortField)
+            {
+                CurrentSortColumn = SearchSortColumn.SortField;
+                SortColumnChangedEvent.Invoke(CurrentSortColumn, IsSortFieldColumnReverse);
+                return;
+            }
 
-            dueLabel.Visibility = Visibility.Collapsed;
-            lapsesLabel.Visibility = Visibility.Collapsed;           
-        }
-
-        private void DueAndRelearnMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
-        {
-            answerLabel.Visibility = Visibility.Collapsed;
-            if (CurrentSortColumn == SearchSortColumn.Answer)
-                currentSortBorder.Visibility = Visibility.Collapsed;
-            else
-                currentSortBorder.Visibility = Visibility.Visible;
-
-            dueLabel.Visibility = Visibility.Visible;
-            lapsesLabel.Visibility = Visibility.Visible;           
+            IsSortFieldColumnReverse = !IsSortFieldColumnReverse;
+            RotateSymbol(sortFieldColumSortOrderSymbolTrans, IsSortFieldColumnReverse);
+            SortColumnChangedEvent.Invoke(CurrentSortColumn, IsSortFieldColumnReverse);
         }
 
         private void AnswerSortOrderButtonClickHandler(object sender, RoutedEventArgs e)
         {
+            isLeftListSort = false;
             Grid.SetColumn(currentSortBorder, 1);
             Grid.SetColumnSpan(currentSortBorder, 2);
             currentSortBorder.Visibility = Visibility.Visible;
@@ -144,6 +225,7 @@ namespace AnkiU.Views
 
         private void DueSortOrderButtonClickHandler(object sender, RoutedEventArgs e)
         {
+            isLeftListSort = false;
             Grid.SetColumn(currentSortBorder, 1);
             Grid.SetColumnSpan(currentSortBorder, 1);
             currentSortBorder.Visibility = Visibility.Visible;
@@ -161,6 +243,7 @@ namespace AnkiU.Views
 
         private void LapseSortOrderButtonClickHandler(object sender, RoutedEventArgs e)
         {
+            isLeftListSort = false;
             Grid.SetColumn(currentSortBorder, 2);
             Grid.SetColumnSpan(currentSortBorder, 1);
             currentSortBorder.Visibility = Visibility.Visible;
@@ -174,6 +257,42 @@ namespace AnkiU.Views
             IsLapseColumReverse = !IsLapseColumReverse;
             RotateSymbol(lapseSortOrderSymbolTrans, IsLapseColumReverse);
             SortColumnChangedEvent.Invoke(CurrentSortColumn, IsLapseColumReverse);
+        }
+
+        private void TimeCreatedSortOrderButtonClickHandler(object sender, RoutedEventArgs e)
+        {
+            isLeftListSort = false;
+            Grid.SetColumn(currentSortBorder, 1);
+            Grid.SetColumnSpan(currentSortBorder, 1);
+            currentSortBorder.Visibility = Visibility.Visible;
+            if (CurrentSortColumn != SearchSortColumn.TimeCreated)
+            {
+                CurrentSortColumn = SearchSortColumn.TimeCreated;
+                SortColumnChangedEvent.Invoke(CurrentSortColumn, IsTimeCreatedColumReverse);
+                return;
+            }
+
+            IsTimeCreatedColumReverse = !IsTimeCreatedColumReverse;
+            RotateSymbol(createdSortOrderSymbolTrans, IsTimeCreatedColumReverse);
+            SortColumnChangedEvent.Invoke(CurrentSortColumn, IsTimeCreatedColumReverse);
+        }
+
+        private void TimeModifiedSortOrderButtonClickHandler(object sender, RoutedEventArgs e)
+        {
+            isLeftListSort = false;
+            Grid.SetColumn(currentSortBorder, 2);
+            Grid.SetColumnSpan(currentSortBorder, 1);
+            currentSortBorder.Visibility = Visibility.Visible;
+            if (CurrentSortColumn != SearchSortColumn.TimeModified)
+            {
+                CurrentSortColumn = SearchSortColumn.TimeModified;
+                SortColumnChangedEvent.Invoke(CurrentSortColumn, IsTimeModifiedColumReverse);
+                return;
+            }
+
+            IsTimeModifiedColumReverse = !IsTimeModifiedColumReverse;
+            RotateSymbol(modifiedSortOrderSymbolTrans, IsTimeModifiedColumReverse);
+            SortColumnChangedEvent.Invoke(CurrentSortColumn, IsTimeModifiedColumReverse);
         }
 
         private void RotateSymbol(CompositeTransform transform, bool isReverse)
@@ -286,46 +405,7 @@ namespace AnkiU.Views
                 leftColumnMenuFlyout.ShowAt(element, e.GetPosition(element));
                 e.Handled = true;
             }
-        }
-
-        private void SortFieldButtonClickHandler(object sender, RoutedEventArgs e)
-        {
-            Grid.SetColumn(currentSortBorder, 0);
-            Grid.SetColumnSpan(currentSortBorder, 1);
-            currentSortBorder.Visibility = Visibility.Visible;
-            if (CurrentSortColumn != SearchSortColumn.SortField)
-            {
-                CurrentSortColumn = SearchSortColumn.SortField;
-                SortColumnChangedEvent.Invoke(CurrentSortColumn, IsSortFieldColumnReverse);
-                return;
-            }
-
-            IsSortFieldColumnReverse = !IsSortFieldColumnReverse;
-            RotateSymbol(sortFieldColumSortOrderSymbolTrans, IsSortFieldColumnReverse);
-            SortColumnChangedEvent.Invoke(CurrentSortColumn, IsSortFieldColumnReverse);
-        }
-
-        private void QuestionSortMenuClick(object sender, RoutedEventArgs e)
-        {
-            questionButton.Visibility = Visibility.Visible;
-            if (CurrentSortColumn == SearchSortColumn.SortField)
-                currentSortBorder.Visibility = Visibility.Collapsed;
-            else
-                currentSortBorder.Visibility = Visibility.Visible;
-
-            sortFieldButton.Visibility = Visibility.Collapsed;            
-        }
-
-        private void SortFieldMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
-        {
-            sortFieldButton.Visibility = Visibility.Visible;
-            if (CurrentSortColumn == SearchSortColumn.Question)
-                currentSortBorder.Visibility = Visibility.Collapsed;
-            else
-                currentSortBorder.Visibility = Visibility.Visible;
-
-            questionButton.Visibility = Visibility.Collapsed;
-        }
+        }  
 
         private void OnItemDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
@@ -339,6 +419,7 @@ namespace AnkiU.Views
         {
             tappedCard = e.ClickedItem as CardInformation;            
         }
+
     }
 }
 

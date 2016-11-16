@@ -212,23 +212,68 @@ namespace AnkiU.Models
             }
         }
 
-        public CardInformation(long id, long noteId, long deckId, long outDeckId, long due, string dueStr, int ord, CardType type, 
-                               int interval, int queue, int lapses, string question, string answer, string sortField)
+        private long timeModified;
+        public long TimeModified
         {
-            this.id = id;
-            this.noteId = noteId;
-            this.deckId = deckId;
-            this.outDeckId = outDeckId;           
-            this.ord = ord;
-            this.type = type;
-            this.interval = interval;
-            this.queue = queue;
-            this.lapses = lapses;
+            get
+            {
+                return timeModified;
+            }
+            set
+            {
+                timeModified = value;
+                TimeModifiedStr = DateTimeOffset.FromUnixTimeSeconds(timeModified).LocalDateTime.ToString();
+            }
+        }
+
+        private string timeModifiedStr;
+        public string TimeModifiedStr
+        {
+            get
+            {
+                return timeModifiedStr;
+            }
+            set
+            {
+                timeModifiedStr = value;
+                RaisePropertyChanged("TimeModifiedStr");
+            }
+        }
+
+        private string timeCreatedStr;
+        public string TimeCreatedStr
+        {
+            get
+            {
+                return timeCreatedStr;
+            }
+            set
+            {
+                timeCreatedStr = value;
+                RaisePropertyChanged("TimeCreatedStr");
+            }
+        }
+
+        public CardInformation(Card c,  string dueStr, string question, string answer, string sortField, long noteTimeModified)
+        {            
+            this.id = c.Id;
+            this.noteId = c.NoteId;
+            this.deckId = c.DeckId;
+            this.outDeckId = c.OriginalDeckId;           
+            this.ord = c.Ord;
+            this.type = c.Type;
+            this.interval = c.Interval;
+            this.queue = c.Queue;
+            this.lapses = c.Lapses;
             this.question = question;
             this.answer = answer;
             this.dueStr = dueStr;
-            this.Due = due;
-            this.sortField = sortField;
+            this.Due = c.Due;
+            this.sortField = sortField;                      
+            this.timeCreatedStr = DateTimeOffset.FromUnixTimeMilliseconds(id).LocalDateTime.ToString();
+
+            //Must use property to notify TimeModifiedStr
+            this.TimeModified = noteTimeModified;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

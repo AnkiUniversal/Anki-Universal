@@ -216,6 +216,12 @@ namespace AnkiU.Pages
                 case SearchSortColumn.Lapse:
                     cardInforViewModel.SortWithLapse(isReverse);
                     break;
+                case SearchSortColumn.TimeCreated:
+                    cardInforViewModel.SortWithTimeCreated(isReverse);
+                    break;
+                case SearchSortColumn.TimeModified:
+                    cardInforViewModel.SortWithTimeModified(isReverse);
+                    break;
             }
         }
 

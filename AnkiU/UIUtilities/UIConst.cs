@@ -91,6 +91,8 @@ namespace AnkiU.UIUtilities
         Question,
         Answer,
         Due,
-        Lapse       
+        Lapse,
+        TimeCreated,
+        TimeModified      
     }
 }
