@@ -138,7 +138,7 @@ namespace AnkiU.Pages
         {
             mainPage.EnableChangingReadMode(this);
             ChangeBackgroundColor();
-            mainPage.DeckImageChangedEvent += MainPageDeckImageChangedHandler;
+            mainPage.DeckImageChangedEvent += OnDeckImageChanged;
             Window.Current.VisibilityChanged += CurrentWindowVisibilityChangedHandler;
             mainPage.GridViewButton.Click += GridViewButtonClickHandler;
             mainPage.ListViewButton.Click += ListViewButtonClickHandler;
@@ -212,10 +212,17 @@ namespace AnkiU.Pages
             }
         }  
 
-        private async void MainPageDeckImageChangedHandler(StorageFile fileToChange, long deckId, long modifiedTime)
+        private async void OnDeckImageChanged(StorageFile fileToChange, long deckId, long modifiedTime)
         {
-            var deckInfor = deckListViewModel.GetDeck(deckId);
-            await deckInfor.ChangeImage(fileToChange, modifiedTime);
+            try
+            {
+                var deckInfor = deckListViewModel.GetDeck(deckId);
+                await deckInfor.ChangeImage(fileToChange, modifiedTime);
+            }
+            catch
+            {
+                await UIHelper.ShowMessageDialog("Unable to change deck image!\n");
+            }
         }
 
         private void AddButtonClickHandler(object sender, RoutedEventArgs e)
@@ -310,7 +317,7 @@ namespace AnkiU.Pages
         private void UnHookAllEvents()
         {
             mainPage.DisableChangingReadMode();
-            mainPage.DeckImageChangedEvent -= MainPageDeckImageChangedHandler;
+            mainPage.DeckImageChangedEvent -= OnDeckImageChanged;
             Window.Current.VisibilityChanged -= CurrentWindowVisibilityChangedHandler;
             mainPage.GridViewButton.Click -= GridViewButtonClickHandler;
             mainPage.ListViewButton.Click -= ListViewButtonClickHandler;
