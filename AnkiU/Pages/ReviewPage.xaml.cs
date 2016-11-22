@@ -1124,7 +1124,7 @@ namespace AnkiU.Pages
                 }
                 else if (showAnswerButton.Visibility == Visibility.Visible)
                 {
-                    if (e == VirtualKey.Enter)                    
+                    if (e == VirtualKey.Enter || e == VirtualKey.Space)                    
                         await DisplayAnswer();                    
                 }
                 else
