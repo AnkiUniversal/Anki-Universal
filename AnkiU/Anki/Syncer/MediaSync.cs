@@ -52,28 +52,39 @@ namespace AnkiU.Anki.Syncer
 
         public async Task StartSyncMedia()
         {
-            await GetLastSyncLog();
-
-            remoteMediaDBFile = await TryGetUnCompressMediaDB();
-            if (remoteMediaDBFile == null)
-                return;
-
-            var deckMediaFolders = await fullSync.MainPage.Collection.Media.MapDeckIdToDeckIdFolder();
-
-            using (var remoteMediaDB = new DB(remoteMediaDBFile.Path))
+            try
             {
-                string remoteMediaFolderPath = Constant.ANKIROOT_SYNC_FOLDER + "/" + fullSync.MainPage.Collection.Media.MediaFolder.Name + "/";
-                var remoteMeta = remoteMediaDB.GetTable<MetaTable>().First();
-                long localLastMediaSync = fullSync.MainPage.Collection.Media.GetLastUnixTimeSync();
+                await GetLastSyncLog();
 
-                if (remoteMeta.LastUnixTimeSync > localLastMediaSync)
+                remoteMediaDBFile = await TryGetUnCompressMediaDB();
+                if (remoteMediaDBFile == null)
+                    return;
+
+                var deckMediaFolders = await fullSync.MainPage.Collection.Media.MapDeckIdToDeckIdFolder();
+
+                using (var remoteMediaDB = new DB(remoteMediaDBFile.Path))
                 {
-                    await DownLoadAndUploadMediaChanges(remoteMediaDB, deckMediaFolders,
-                                                remoteMediaFolderPath, remoteMeta, localLastMediaSync);
+                    string remoteMediaFolderPath = Constant.ANKIROOT_SYNC_FOLDER + "/" + fullSync.MainPage.Collection.Media.MediaFolder.Name + "/";
+                    var remoteMeta = remoteMediaDB.GetTable<MetaTable>().First();
+                    long localLastMediaSync = fullSync.MainPage.Collection.Media.GetLastUnixTimeSync();
+
+                    if (remoteMeta.LastUnixTimeSync > localLastMediaSync)
+                    {
+                        await DownLoadAndUploadMediaChanges(remoteMediaDB, deckMediaFolders,
+                                                    remoteMediaFolderPath, remoteMeta, localLastMediaSync);
+                    }
+                    else
+                    {
+                        await UploadMediaChanges(deckMediaFolders, remoteMediaFolderPath, remoteMeta);
+                    }
                 }
-                else
+            }
+            finally
+            {
+                if(mediaSyncLogDb != null)
                 {
-                    await UploadMediaChanges(deckMediaFolders, remoteMediaFolderPath, remoteMeta);
+                    mediaSyncLogDb.Close();
+                    mediaSyncLogDb = null;
                 }
             }
         }
