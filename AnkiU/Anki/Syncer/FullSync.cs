@@ -369,7 +369,7 @@ namespace AnkiU.Anki.Syncer
         {            
             try
             {
-                syncStateDialog.Label = "Donwloading database...";
+                syncStateDialog.Label = "Downloading database...";
                 if (await DownloadCollectionDatabase())
                 {
                     await DownloadDeckImages();
