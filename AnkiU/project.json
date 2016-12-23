@@ -8,6 +8,7 @@
     "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
     "OxyPlot.Windows": "1.0.0",
     "SQLite.Net-PCL": "3.1.1",
+    "SQLite.UWP.Native": "3.12.3",
     "Win2D.uwp": "1.19.0"
   },
   "frameworks": {

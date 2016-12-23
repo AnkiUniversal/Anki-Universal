@@ -359,7 +359,7 @@ namespace AnkiU.Pages
             currentCardDeckId = selectedDeckId;
 
             //WANRING: Run in transaction to ensure performance
-            //remember to call commit or rollback to database after each answer
+            //remember to call commit before leaving
             collection.Database.SaveTransactionPoint();
 
             EnterTutorialModeIfNeeded();

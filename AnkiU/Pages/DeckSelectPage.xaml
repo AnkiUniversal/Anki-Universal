@@ -218,7 +218,7 @@
         <Ellipse x:Name="pointToShowFlyout" Grid.RowSpan="3" Width="0" Height="0" Grid.ColumnSpan="3" Stroke="Transparent" Fill="Transparent" 
                  VerticalAlignment="Top" HorizontalAlignment="Left" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" IsHitTestVisible="False"/>
 
-        <Button Style="{StaticResource ButtonOcpacity}" Background="{Binding Background, ElementName=page}" Height="20" Grid.Row="0"
+        <Button Style="{StaticResource ButtonOcpacity}" Background="Transparent" Height="20" Grid.Row="0"
                     Canvas.ZIndex="1" Click="NoticeBoardExpandButtonClick" Padding="0"
                     HorizontalContentAlignment="Center" BorderThickness="0"
                     VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="3">
@@ -237,7 +237,7 @@
             </Grid.ColumnDefinitions>
             
             <Border Grid.ColumnSpan="3" 
-                    Background="{Binding Background, ElementName=page}">
+                    Background="Transparent">
 
             </Border>
 

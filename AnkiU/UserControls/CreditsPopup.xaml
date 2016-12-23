@@ -27,7 +27,7 @@
             <Button Style="{StaticResource ButtonBlue}" Click="CreditClose" 
                                 Width="35" Height="35" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                 VerticalAlignment="Center" HorizontalAlignment="Right">
-                <FontIcon FontWeight="SemiBold" FontSize="17" Glyph="&#xE8BB;" />
+                <FontIcon FontWeight="SemiBold" FontSize="17" Glyph="&#xE8BB;" IsTextScaleFactorEnabled="False" />
             </Button>
 
             <ScrollViewer 

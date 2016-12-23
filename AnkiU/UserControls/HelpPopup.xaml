@@ -46,7 +46,7 @@
 
             <Button Style="{StaticResource ButtonBlue}" Background="Transparent" BorderBrush="Transparent" x:Name="closeButtonTop" Padding="2" Visibility="Collapsed"
                     BorderThickness="0" Width="30" Height="30" VerticalAlignment="Top" HorizontalAlignment="Right" Click="CloseButtonClick" >
-                <FontIcon FontWeight="SemiBold" FontSize="15" Glyph="&#xE8BB;" />
+                <FontIcon FontWeight="SemiBold" FontSize="15" Glyph="&#xE8BB;" IsTextScaleFactorEnabled="False" />
             </Button>
 
             <StackPanel Padding="5,5,5,0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
