@@ -15,6 +15,7 @@
 
         <MenuFlyout x:Key="DeckContextMenu">
             <MenuFlyoutItem  Text="Add Notes" Click="AddNoteMenuFlyoutItemClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Add" />
+            <MenuFlyoutItem  Text="Create Deck Tile" Click="OnMenuFlyoutCreateDeckTileClick" Style="{StaticResource IconMenuFlyoutItem}" Tag="SetTile" />
             <MenuFlyoutItem  Text="Search Cards" Click="SeachCardMenuClickHandler" Style="{StaticResource IconMenuFlyoutItem}" Tag="Find" />
             <MenuFlyoutItem  Text="Statistics" Click="StatsMenuFlyoutItemClick" Style="{StaticResource PathMenuFlyoutItem}" Tag="{StaticResource ChartIcon}" />
             <MenuFlyoutSeparator />

@@ -29,6 +29,8 @@ using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 using AnkiU.Interfaces;
 using AnkiU.UIUtilities;
+using AnkiU.Anki.Notifications;
+using System.Diagnostics;
 
 namespace AnkiU.ViewModels
 {
@@ -149,6 +151,8 @@ namespace AnkiU.ViewModels
                 SortByDateAdded();
             else
                 SortByName();
+
+            UpdatePrimaryTile();
         }
 
         public void AddNewDeck(JsonObject deck)
@@ -267,6 +271,8 @@ namespace AnkiU.ViewModels
             
             deck.NewCards = deckCardCount.New;
             deck.DueCards = deckCardCount.Due;
+
+            var task = UpdateSecondaryTileIfHas(deck);
         }
 
         public async Task RemoveDeck(long deckId)
@@ -276,6 +282,7 @@ namespace AnkiU.ViewModels
             await toRemove.ChangeBackToDefaultImage();            
             SubtractCardsCountFromTotalIfNotChild(toRemove);
             Decks.Remove(toRemove);
+            await RemoveSecondaryTileIfHas(deckId);
         }
 
         public void SortByName()
@@ -296,6 +303,74 @@ namespace AnkiU.ViewModels
             var listDeck = Decks.ToList();            
             SortAllDecks(listDeck, DoSortByDate);
             UpdateDecks(listDeck);
+        }
+
+        public void UpdatePrimaryTile()
+        {
+            try
+            {
+                TilesHelper.SendPrimaryTileNoficiation(TotalNewCards.ToString(), TotalDueCards.ToString());
+            }
+            catch { }
+        }
+
+        public async Task UpdateAllSecondaryTilesIfHas()
+        {
+            try
+            {
+                var tiles = await TilesHelper.FindAllSecondaryTilesAsync();
+                foreach (var tile in tiles)
+                {
+                    long deckId = 0;
+                    var success = long.TryParse(tile.TileId, out deckId);
+                    if (success)
+                    {
+                        var deck = GetDeck(deckId);
+                        TilesHelper.SendSecondaryTileNotification(tile.TileId, deck.NewCards.ToString(), deck.DueCards.ToString());
+                        tile.VisualElements.BackgroundColor = GetColors(deck);
+
+                        await tile.UpdateAsync();
+                    }
+                }
+            }
+            catch(Exception e)
+            { //App should not crash if any error happen
+                Debug.WriteLine("DeckListViewModel.UpdateAllSecondaryTilesIfHas: " + e.Message);
+            }
+        }
+
+        public static Windows.UI.Color GetColors(DeckInformation deck)
+        {
+            if (deck.NewCards + deck.DueCards > 0)
+                return UIHelper.DeckWithNewOrDueCardsBrush.Color;
+            else
+                return UIHelper.AppDefaultTileBackgroundBrush.Color;
+        }
+
+        private async Task UpdateSecondaryTileIfHas(DeckInformation deck)
+        {
+            try
+            {
+                await TilesHelper.UpdateTile(deck.Id.ToString(), deck.NewCards.ToString(), deck.DueCards.ToString());
+
+            }
+            catch (Exception e)
+            { //App should not crash if any error happen
+                Debug.WriteLine("DeckListViewModel.DeleteSecondaryTileIfHas: " + e.Message);
+            }
+        }
+
+        private async Task RemoveSecondaryTileIfHas(long deckId)
+        {
+            try
+            {
+                await TilesHelper.RemoveTile(deckId.ToString());
+
+            }
+            catch (Exception e)
+            { //App should not crash if any error happen
+                Debug.WriteLine("DeckListViewModel.DeleteSecondaryTileIfHas: " + e.Message);
+            }
         }
 
         private void SortAllDecks(List<DeckInformation> decks, Comparison<DeckInformation> comarison)

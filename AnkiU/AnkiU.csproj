@@ -307,6 +307,8 @@
     <Compile Include="Anki\HtmlHelpter.cs" />
     <Compile Include="Anki\InkPreference.cs" />
     <Compile Include="Anki\InkToTextRecognizer.cs" />
+    <Compile Include="Anki\Notifications\TileHelper.cs" />
+    <Compile Include="Anki\Notifications\ToastHelper.cs" />
     <Compile Include="Anki\ObservableCollectionAutoResize.cs" />
     <Compile Include="Anki\RecognizerHelper.cs" />
     <Compile Include="Anki\DeckPreferences.cs" />

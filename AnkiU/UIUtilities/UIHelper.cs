@@ -63,6 +63,10 @@ namespace AnkiU.UIUtilities
         public static readonly CoreCursor HandCursor = new CoreCursor(CoreCursorType.Hand, 1);
         public static readonly CoreCursor ArrowCursor = new CoreCursor(CoreCursorType.Arrow, 1);
 
+        public static SolidColorBrush DeckWithNewOrDueCardsBrush { get; private set; }
+                       = Application.Current.Resources["DeckWithNewOrDueCards"] as SolidColorBrush;
+        public static SolidColorBrush AppDefaultTileBackgroundBrush { get; private set; }
+                        = Application.Current.Resources["AppDefaultTileBackgroundBrush"] as SolidColorBrush;
         public static SolidColorBrush BackgroundWhiteNormal { get; private set; } 
                        = Application.Current.Resources["BackgroundNormal"] as SolidColorBrush;
         public static SolidColorBrush ForeGroundLight { get; private set; }
@@ -73,7 +77,7 @@ namespace AnkiU.UIUtilities
                        = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 32, 32, 32));
         public static SolidColorBrush Transparent = new SolidColorBrush(Windows.UI.Colors.Transparent);
         public static SolidColorBrush IndioBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 8, 141, 199));
-
+        
         public static Windows.UI.Color ContentNightModeColor { get { return ContentNightModeBrush.Color; } }
         private static Windows.UI.Color defaultInkColorDay = Windows.UI.Color.FromArgb(255, 11, 96, 181);
         public static Windows.UI.Color DefaultInkColorDay { get { return defaultInkColorDay; } }

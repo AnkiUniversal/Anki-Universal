@@ -38,6 +38,9 @@ using Windows.UI;
 using AnkiU.Views;
 using System.Collections.Generic;
 using AnkiU.Anki;
+using Windows.UI.StartScreen;
+using AnkiU.Anki.Notifications;
+using Windows.ApplicationModel.Background;
 
 namespace AnkiU.Pages
 {
@@ -114,8 +117,14 @@ namespace AnkiU.Pages
             EnterTutorialModeIfNeeded();
 
             ShowAllButtonOfThisPage();
-            HookAllEvents();            
-        }    
+            HookAllEvents();
+
+            var task = deckListViewModel.UpdateAllSecondaryTilesIfHas();
+            
+            var backgroundTask = new AnkiUniversalDeckBackgroundTask();
+            backgroundTask.RegisterTimeTriggeredBackgroundTasks();
+        }   
+
 
         private void ShowDayTimeSymbol()
         {
@@ -1141,6 +1150,24 @@ namespace AnkiU.Pages
             {
                 helpPopup.Show();
             }
+        }
+
+        private async void OnMenuFlyoutCreateDeckTileClick(object sender, RoutedEventArgs e)
+        {
+            base.IsEnabled = false;
+
+            var tileId = deckShowContextMenu.Id.ToString();
+
+            SecondaryTile tile = TilesHelper.GenerateSecondaryTile(tileId, deckShowContextMenu.BaseName);
+            tile.VisualElements.ShowNameOnSquare150x150Logo = true;
+            tile.VisualElements.ShowNameOnSquare310x310Logo = true;
+            tile.VisualElements.ShowNameOnWide310x150Logo = true;
+            tile.VisualElements.BackgroundColor = DeckListViewModel.GetColors(deckShowContextMenu);
+
+            await tile.RequestCreateAsync();
+            
+            base.IsEnabled = true;
+            TilesHelper.SendSecondaryTileNotification(tileId, deckShowContextMenu.NewCards.ToString(), deckShowContextMenu.DueCards.ToString());
         }
     }
 }

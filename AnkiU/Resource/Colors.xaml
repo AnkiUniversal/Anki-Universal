@@ -14,6 +14,7 @@
     <SolidColorBrush x:Key="DeckListItemColorBrush" Color="#FF088DC7"/>
     <SolidColorBrush x:Key="DeckListBorderColorBrush" Color="#FFE4E4F3"/>
 
+    <SolidColorBrush x:Key="AppDefaultTileBackgroundBrush" Color="#FF17A1E5"/>
     <SolidColorBrush x:Key="DeckWithNewOrDueCards" Color="#FFFF8700"/>
     <SolidColorBrush x:Key="DeckWithNoCards" Color="#FF00BF4D"/>
 
