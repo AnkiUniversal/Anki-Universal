@@ -26,7 +26,7 @@ namespace AnkiU.Anki
 {
     public class ObservableCollectionAutoResize<T> : ObservableCollection<T>
     {
-        public bool isRemoveAtZero = false;
+        public bool IsRemoveAtZero { get; set; } = false;
 
         public int MaxCollectionSize { get; set; }
 
@@ -44,7 +44,7 @@ namespace AnkiU.Anki
                 int trimCount = Count - MaxCollectionSize;
                 for (int i = 0; i < trimCount; i++)
                 {
-                    if (isRemoveAtZero)
+                    if (IsRemoveAtZero)
                         RemoveAt(0);
                     else
                         RemoveAt(Count - i - 1);

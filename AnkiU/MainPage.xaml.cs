@@ -584,8 +584,7 @@ namespace AnkiU
             {
                 NavigationSetup();
                 SetupVisualEffects();
-
-                Window.Current.VisibilityChanged += VisibilityChangedHandler;
+   
                 InitCollectionFinished += InitCollectionFinishedHandler;
                 SyncButton.Click += SyncButtonClickHandler;
 
@@ -646,6 +645,8 @@ namespace AnkiU
                 await BackupIfNeeded();
                 ChangeReadModeButtonTextAndSymbol();
                 InitCollection();
+
+                Window.Current.VisibilityChanged += VisibilityChangedHandler;
             }
             catch (Exception ex)
             {
@@ -957,9 +958,9 @@ namespace AnkiU
                 }
                 catch
                 { //Any exception mean file is corrupted -> create default
-                    UserPrefDatabase.Close();
+                    if(UserPrefDatabase != null)
+                        UserPrefDatabase.Close();
                     await file.DeleteAsync();
-                    file = await Storage.AppLocalFolder.TryGetItemAsync(Constant.USER_PREF) as StorageFile;
                     CreateDefaultPreference();
                 }
             }
@@ -1406,7 +1407,7 @@ namespace AnkiU
             InkRecognizeButton.DataContext = languagesViewModel.Availables;
 
             // Set the text services so we can query when language changes
-            textServiceManager = CoreTextServicesManager.GetForCurrentView();
+            textServiceManager = CoreTextServicesManager.GetForCurrentView();            
             textServiceManager.InputLanguageChanged += TextServiceManagerInputLanguageChangedHandler;
         }
         private void languageSelectComboBoxLoadedHandler(object sender, RoutedEventArgs e)
