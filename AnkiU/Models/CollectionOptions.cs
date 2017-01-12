@@ -53,6 +53,19 @@ namespace AnkiU.Models
             }
         }
 
+        private int collapseTime;
+        public int CollapseTime
+        {
+            get
+            {
+                return collapseTime;
+            }
+            set
+            {
+                collapseTime = value;
+            }
+        }
+
         private AnkiCore.ReviewType reviewType;
         public int ReviewType
         {
@@ -68,11 +81,11 @@ namespace AnkiU.Models
                         reviewType = AnkiCore.ReviewType.DISTRIBUTE;
                         break;
                     case 1:
-                        reviewType = AnkiCore.ReviewType.FIRST;
-                        break;
-                    case 2:
                         reviewType = AnkiCore.ReviewType.LAST;
                         break;
+                    case 2:
+                        reviewType = AnkiCore.ReviewType.FIRST;
+                        break;                    
                     default:
                         reviewType = AnkiCore.ReviewType.DISTRIBUTE;
                         break;
@@ -93,12 +106,27 @@ namespace AnkiU.Models
             }
         }
 
+        private bool isEnableNotification;
+        public bool IsEnableNotification
+        {
+            get
+            {
+                return isEnableNotification;
+            }
+            set
+            {
+                isEnableNotification = value;
+            }
+        }
+
         public CollectionOptions()
         {
             IsShowDueCount = true;
             IsShowEstTime = true;
             ReviewType = (int)AnkiCore.ReviewType.DISTRIBUTE;
             IsTTSAutoplay = false;
+            CollapseTime = 20;
+            IsEnableNotification = true;
         }
 
         public override string ToString()
@@ -115,6 +143,10 @@ namespace AnkiU.Models
             if (compared.ReviewType != ReviewType)
                 return false;
             if (compared.IsTTSAutoplay != IsTTSAutoplay)
+                return false;
+            if (compared.CollapseTime != CollapseTime)
+                return false;
+            if (compared.IsEnableNotification != IsEnableNotification)
                 return false;
 
             return true;

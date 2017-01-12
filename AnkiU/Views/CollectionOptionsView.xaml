@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AnkiU.Views"
     xmlns:data="using:AnkiU.Models"
+    xmlns:controls="using:AnkiU.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -18,6 +19,8 @@
 
     <Grid Margin="0,0,10,0">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -52,5 +55,24 @@
         <CheckBox Grid.Row="3" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" x:Name="ttsAutoplayCheckBox" 
                     Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
                                   IsChecked="{x:Bind Options.IsTTSAutoplay, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
+
+        <TextBlock Grid.Row="4"  Grid.Column="0" Text="Include learn cards due in" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="Collapsed"/>
+        <Grid  Grid.Row="4"  Grid.Column="2"  Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <controls:NumbericTextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left"
+                                  Foreground="{Binding Foreground, ElementName=userControl}"                                   
+                                  MaxNumber="1000" MinNumber="10"
+                                  Number="{x:Bind Options.CollapseTime, Mode=TwoWay}">
+            </controls:NumbericTextBox>
+            <TextBlock Grid.Column="1" Margin="5,-5,5,0"  VerticalAlignment="Center" TextAlignment="Left" Text="minute(s)"/>
+        </Grid>
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Enable Notification" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <CheckBox Grid.Row="5" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
+                                  IsChecked="{x:Bind Options.IsEnableNotification, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
     </Grid>
 </UserControl>

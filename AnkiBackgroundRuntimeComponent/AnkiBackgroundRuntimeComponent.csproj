@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DB0D81E2-9A27-4354-AABF-2AE1ADF6567C}</ProjectGuid>
+    <ProjectGuid>{EB42171C-4D51-4815-A272-BD529F479174}</ProjectGuid>
     <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AnkiRuntimeComponent</RootNamespace>
-    <AssemblyName>AnkiRuntimeComponent</AssemblyName>
+    <RootNamespace>AnkiBackgroundRuntimeComponent</RootNamespace>
+    <AssemblyName>AnkiBackgroundRuntimeComponent</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
@@ -108,10 +108,14 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ButtonPassingWebToWinRT.cs" />
-    <Compile Include="KeyPassingWebToWinRT.cs" />
-    <Compile Include="EditableFieldPassWebToWinRT.cs" />
+    <Compile Include="AnkiUniversalDeckBackgroundTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{d087da6f-df74-4c85-8f7f-4bd32b793033}</Project>
+      <Name>Shared</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

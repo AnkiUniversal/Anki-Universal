@@ -22,11 +22,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
+using Windows.Storage;
 
 namespace AnkiU.ViewModels
 {
     public class CollectionOptionViewModel
     {
+        private const int COLLAPSE_CONVERT = 60;
+
         public CollectionOptions Options { get; set; }
         public CollectionOptions oldOptions;
 
@@ -48,6 +51,16 @@ namespace AnkiU.ViewModels
                 Options.IsShowEstTime = Config.GetNamedBoolean("estTimes");
                 Options.ReviewType = (int)Config.GetNamedNumber("newSpread");
                 Options.IsTTSAutoplay = MainPage.UserPrefs.IsAutoPlayTextSynth;
+                Options.CollapseTime = (int)Config.GetNamedNumber("collapseTime") / COLLAPSE_CONVERT;
+
+                var settings = ApplicationData.Current.LocalSettings;
+                if (settings.Values.ContainsKey("IsEnableNotifciation"))
+                    Options.IsEnableNotification = (bool)settings.Values["IsEnableNotifciation"];
+                else
+                {
+                    Options.IsEnableNotification = true;
+                    settings.Values["IsEnableNotifciation"] = true;
+                }
 
                 CopyOptions(Options, oldOptions);
             }
@@ -63,6 +76,8 @@ namespace AnkiU.ViewModels
             dest.IsShowEstTime = source.IsShowEstTime;
             dest.ReviewType = source.ReviewType;
             dest.IsTTSAutoplay = source.IsTTSAutoplay;
+            dest.CollapseTime = source.CollapseTime;
+            dest.IsEnableNotification = source.IsEnableNotification;
         }        
 
         public void SaveOptions()
@@ -70,7 +85,12 @@ namespace AnkiU.ViewModels
             Config["dueCounts"] = JsonValue.CreateBooleanValue(Options.IsShowDueCount);
             Config["estTimes"] = JsonValue.CreateBooleanValue(Options.IsShowEstTime);
             Config["newSpread"] = JsonValue.CreateNumberValue(Options.ReviewType);
+            Config["collapseTime"] = JsonValue.CreateNumberValue(Options.CollapseTime * COLLAPSE_CONVERT);
             MainPage.UserPrefs.IsAutoPlayTextSynth = Options.IsTTSAutoplay;
+            if (Options.IsEnableNotification)
+                ApplicationData.Current.LocalSettings.Values["IsEnableNotifciation"] = true;
+            else
+                ApplicationData.Current.LocalSettings.Values["IsEnableNotifciation"] = false;
 
             CopyOptions(Options, oldOptions);
         }

@@ -64,6 +64,9 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.Xaml.Media.Imaging;
 using AnkiU.Anki.Syncer;
+using Shared;
+using Windows.ApplicationModel.Background;
+using AnkiBackgroundRuntimeComponent;
 
 namespace AnkiU
 {
@@ -95,10 +98,11 @@ namespace AnkiU
         public const double ZOOM_STEP = 0.25;        
         public readonly string USER_PREF_FILE_PATH = Storage.AppLocalFolder.Path + "\\" + Constant.USER_PREF;
 
-        private ApplicationViewTitleBar titleBar;
-        private StatusBar statusBar;
+        public bool IsJustOpen { get; set; } = true;
+
         private readonly Style primaryAppButtonStyle;
         private readonly Style secondaryAppButtonStyle;
+        private bool isVisible = false; //WARNING: On desktop this does not ensure that the app is in foreground
 
         private CanvasControl canvas;
         private CanvasDevice canvasDevice;
@@ -118,6 +122,8 @@ namespace AnkiU
         }
 
         private bool isFinishInitation = false;
+
+        public static AnkiDeckBackgroundRegisterHelper BackgroundTaskHelper { get; private set; }
 
         public enum PrimaryButtons
         {            
@@ -173,7 +179,7 @@ namespace AnkiU
         public const int ZINDEX_MIDDLE = 0;
         public const int ZINDEX_LOWSET = -1;
 
-        public const string UNDO_LIMIT_REACHED_STRING = "Undo Limit Reached.";
+        public const string UNDO_LIMIT_REACHED_STRING = "Undo Limit Reached.";        
 
         public Collection Collection { get; set; }
 
@@ -647,12 +653,16 @@ namespace AnkiU
                 InitCollection();
 
                 Window.Current.VisibilityChanged += VisibilityChangedHandler;
+
+                BackgroundTaskHelper = new AnkiDeckBackgroundRegisterHelper();
+                BackgroundTaskHelper.RegisterBackgroundTasks();
+                ToastHelper.CheckAndMarkAlreadyShown();
             }
             catch (Exception ex)
             {
                 await UIHelper.ShowMessageDialog(ex.Message, "Failed to init MainPage navigation");
             }
-        }
+        }        
 
         private void InitCollection()
         {
@@ -777,14 +787,11 @@ namespace AnkiU
         private void NavigationSetup()
         {
             SystemNavigationManager currentView = SystemNavigationManager.GetForCurrentView();
-            currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))            
-                titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;            
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                statusBar = StatusBar.GetForCurrentView();
+                var statusBar = StatusBar.GetForCurrentView();
                 if(statusBar != null)
                 {
                     statusBar.BackgroundOpacity = 1;                    
@@ -904,13 +911,30 @@ namespace AnkiU
 
         private async void VisibilityChangedHandler(object sender, VisibilityChangedEventArgs e)
         {
-            if (e.Visible == false)
+            isVisible = e.Visible;
+            if (isVisible == false)
             {
                 UpdateUserPreference();
-                UpdateDeckPrefs();                       
+                UpdateDeckPrefs();
+
+                await UpdateTilesAsync();
             }
-            else if(isFinishInitation)
-                await BackupIfNeeded();
+            else 
+            {
+                if (isFinishInitation)
+                    await BackupIfNeeded();
+            }
+        }
+
+        private async Task UpdateTilesAsync()
+        {
+            //Using shared for more light weight code and avoid collision + unneccessary changes to database
+            using (var collection = await Shared.AnkiCore.Storage.OpenCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME))
+            {
+                Shared.ViewModels.DeckListViewModel viewModel = new Shared.ViewModels.DeckListViewModel(collection);
+                viewModel.GetAllDeckInformation();
+                await viewModel.UpdateAllSecondaryTilesIfHas();
+            }
         }
 
         public void UpdateUserPreference()
@@ -1844,17 +1868,26 @@ namespace AnkiU
         private void ChangeStatusAndTitleToBlue()
         {
             var defaultBrush = Application.Current.Resources["ButtonBackGroundNormal"] as SolidColorBrush;
-            if (titleBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
-                titleBar.BackgroundColor = defaultBrush.Color;
-                titleBar.ForegroundColor = Colors.White;
-                titleBar.ButtonBackgroundColor = defaultBrush.Color;
-                titleBar.ButtonForegroundColor = Colors.White;
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.BackgroundColor = defaultBrush.Color;
+                    titleBar.ForegroundColor = Colors.White;
+                    titleBar.ButtonBackgroundColor = defaultBrush.Color;
+                    titleBar.ButtonForegroundColor = Colors.White;
+                }
             }
-            if (statusBar != null)
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                statusBar.BackgroundColor = defaultBrush.Color;
-                statusBar.ForegroundColor = Colors.White;
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundColor = defaultBrush.Color;
+                    statusBar.ForegroundColor = Colors.White;
+                }
             }
         }
 
@@ -1878,41 +1911,57 @@ namespace AnkiU
 
         private void ChangeTitleBarToDayMode()
         {
-            if (titleBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
-                titleBar.BackgroundColor = Colors.White;
-                titleBar.ForegroundColor = Colors.Black;
-                titleBar.ButtonBackgroundColor = Colors.White;
-                titleBar.ButtonForegroundColor = Colors.Black;
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.BackgroundColor = Colors.White;
+                    titleBar.ForegroundColor = Colors.Black;
+                    titleBar.ButtonBackgroundColor = Colors.White;
+                    titleBar.ButtonForegroundColor = Colors.Black;
+                }
             }
         }
 
         private void ChangeTitleBarToNightMode()
         {
-            if (titleBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
-                titleBar.BackgroundColor = Colors.Black;
-                titleBar.ForegroundColor = Colors.White;
-                titleBar.ButtonBackgroundColor = Colors.Black;
-                titleBar.ButtonForegroundColor = Colors.White;
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.BackgroundColor = Colors.Black;
+                    titleBar.ForegroundColor = Colors.White;
+                    titleBar.ButtonBackgroundColor = Colors.Black;
+                    titleBar.ButtonForegroundColor = Colors.White;
+                }
             }
         }
 
         private void ChangeStatusBarToNightMode()
         {
-            if (statusBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                statusBar.BackgroundColor = Colors.Black;
-                statusBar.ForegroundColor = Colors.White;
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundColor = Colors.Black;
+                    statusBar.ForegroundColor = Colors.White;
+                }
             }
         }
 
         private void ChangeStatusBarToDayMode()
         {
-            if (statusBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                statusBar.BackgroundColor = Colors.White;
-                statusBar.ForegroundColor = Colors.Black;                
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundColor = Colors.White;
+                    statusBar.ForegroundColor = Colors.Black;
+                }
             }
         }
 

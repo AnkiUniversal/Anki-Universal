@@ -26,68 +26,89 @@ using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.StartScreen;
 
-namespace AnkiU.Anki.Notifications
+namespace Shared
 {
     public class TilesHelper
     {
-        private static readonly string XML_TEMPLATE = $@"
+        private static readonly string HAVE_CARD_XML = $@"
                                                 <tile version='3'>
                                                     <visual branding='nameAndLogo'>
                                                         <binding template='TileMedium'>
-                                                            <text hint-wrap='true'>New Cards</text>
+                                                            <text hint-wrap='true'>New Card(s)</text>
                                                             <text hint-wrap='true' hint-style='captionSubtle'>NewNumber</text>
-                                                            <text hint-wrap='true'>Due Cards</text>
+                                                            <text hint-wrap='true'>Due Card(s)</text>
                                                             <text hint-wrap='true' hint-style='captionSubtle'>DueNumber</text>   
                                                         </binding>
                                                         <binding template='TileWide'>
-                                                            <text hint-wrap='true'>New Cards</text>
+                                                            <text hint-wrap='true'>New Card(s)</text>
                                                             <text hint-wrap='true' hint-style='captionSubtle'>NewNumber</text>
-                                                            <text hint-wrap='true'>Due Cards</text>
+                                                            <text hint-wrap='true'>Due Card(s)</text>
                                                             <text hint-wrap='true' hint-style='captionSubtle'>DueNumber</text>   
                                                         </binding>
                                                         <binding template='TileLarge'>
-                                                            <text hint-wrap='true'>New Cards</text>
+                                                            <text hint-wrap='true'>New Card(s)</text>
                                                             <text hint-wrap='true' hint-style='captionSubtle'>NewNumber</text>
-                                                            <text hint-wrap='true'>Due Cards</text>
+                                                            <text hint-wrap='true'>Due Card(s)</text>
                                                             <text hint-wrap='true' hint-style='captionSubtle'>DueNumber</text>   
                                                         </binding>
                                                     </visual>
                                                 </tile>";
 
-        public static void SendPrimaryTileNoficiation(string newCards, string dueCards)
+
+        public static void UpdatePrimaryTile(long totalNewCards, long totalDueCards)
+        {
+            if (totalDueCards + totalNewCards > 0)
+                SendPrimaryTileNotification(totalNewCards.ToString(), totalDueCards.ToString());
+            else
+                ClearPrimaryTileNotification();
+        }
+
+        private static void ClearPrimaryTileNotification()
+        {
+            TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+        }
+
+        private static void SendPrimaryTileNotification(string newCards, string dueCards)
         {
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(XML_TEMPLATE);
+            doc.LoadXml(HAVE_CARD_XML);
 
             UpdateXmlNewDueCards(newCards, dueCards, doc);
             
-            TileNotification notification = new TileNotification(doc);
-            TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
+            TileNotification notification = new TileNotification(doc);                        
+            TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);            
+        }
+
+        public static void ClearSecondaryTileNofification(string tileId)
+        {
+            TileUpdateManager.CreateTileUpdaterForSecondaryTile(tileId).Clear();
         }
 
         public static void SendSecondaryTileNotification(string tileId, string newCards, string dueCards)
         {
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(XML_TEMPLATE);
+            doc.LoadXml(HAVE_CARD_XML);
 
             UpdateXmlNewDueCards(newCards, dueCards, doc);
 
             TileNotification notification = new TileNotification(doc);
-            TileUpdateManager.CreateTileUpdaterForSecondaryTile(tileId).Update(notification);
+            TileUpdateManager.CreateTileUpdaterForSecondaryTile(tileId).Update(notification);            
+        }
+
+        public static async Task UpdateTile(string tileId, string newCards, string dueCards, Color color)
+        {
+            var tile = await FindExisting(tileId);
+            if (tile != null)
+            {
+                SendSecondaryTileNotification(tileId, newCards, dueCards);
+                tile.VisualElements.BackgroundColor = color;
+                await tile.UpdateAsync();
+            }
         }
 
         public static async Task<IReadOnlyList<SecondaryTile>> FindAllSecondaryTilesAsync()
         {
             return await SecondaryTile.FindAllAsync();
-        }
-
-        public static async Task UpdateTile(string tileId, string newCards, string dueCards)
-        {
-            var tile = await FindExisting(tileId);
-            if (tile != null)
-            {                
-                SendSecondaryTileNotification(tileId, newCards, dueCards);
-            }
         }
 
         public static async Task RemoveTile(string tileId)
@@ -151,53 +172,6 @@ namespace AnkiU.Anki.Notifications
             return tile;
         }
 
-        public static async Task UpdateTiles(string xml)
-        {
-            XmlDocument doc;
-
-            try
-            {
-                doc = new XmlDocument();
-                doc.LoadXml(xml);
-            }
-
-            catch (Exception ex)
-            {
-                await new MessageDialog(ex.ToString(), "ERROR: Invalid XML").ShowAsync();
-                return;
-            }
-
-            await UpdateTiles(doc);
-        }
-
-        public static async Task UpdateTiles(XmlDocument doc)
-        {
-            try
-            {
-                TileUpdateManager.CreateTileUpdaterForApplication().Update(new TileNotification(doc));
-
-                await UpdateTile("Small", doc);
-                await UpdateTile("Medium", doc);
-                await UpdateTile("Wide", doc);
-                await UpdateTile("Large", doc);
-            }
-
-            catch (Exception ex)
-            {
-                await new MessageDialog(ex.ToString(), "ERROR: Failed updating tiles").ShowAsync();
-            }
-        }
-
-        public static async Task UpdateTile(string tileId, XmlDocument doc)
-        {
-            if (!SecondaryTile.Exists(tileId))
-            {
-                SecondaryTile tile = GenerateSecondaryTile(tileId, tileId);
-                tile.VisualElements.ShowNameOnSquare310x310Logo = true;
-                await tile.RequestCreateAsync();
-            }
-
-            TileUpdateManager.CreateTileUpdaterForSecondaryTile(tileId).Update(new TileNotification(doc));
-        }
+           
     }
 }

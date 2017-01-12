@@ -9,6 +9,7 @@
 //
 //*********************************************************
 
+using Shared.AnkiCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,29 @@ using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.Storage;
 using Windows.UI.Notifications;
 
-namespace AnkiU.Anki.Notifications
+namespace Shared
 {
     public class ToastHelper
-    {
+    {        
+        public static bool CheckAndMarkAlreadyShown()
+        {   
+            var today = DateTimeOffset.Now.DayOfYear;
+            var settings = ApplicationData.Current.LocalSettings;
+            object dayShow;
+            bool isSuccess = settings.Values.TryGetValue("NoticeToast", out dayShow);
+            if(isSuccess)
+            {
+                if (Convert.ToInt32(dayShow) == today)
+                    return true;
+            }
+
+            settings.Values["NoticeToast"] = today;
+            return false;
+        }
+
         public static ToastNotification PopToast(string title, string content)
         {
             return PopToast(title, content, null, null);
@@ -30,13 +48,28 @@ namespace AnkiU.Anki.Notifications
 
         public static ToastNotification PopToast(string title, string content, string tag, string group)
         {
-            string xml = $@"<toast activationType='foreground'>
-                                            <visual>
-                                                <binding template='ToastGeneric'>
-                                                </binding>
-                                            </visual>
-                                        </toast>";
+            string xml = 
+                $@"
+                <toast activationType='foreground' launch='args' scenario='reminder'>
+                    <visual>
+                        <binding template='ToastGeneric'>                            
+                        </binding>
+                    </visual>
+                    <actions>
+                            <input id='snoozeTime' type='selection' defaultInput='15' >
+                                  <selection id='1' content='1 minute' />
+                                  <selection id='15' content='15 minutes' />                                  
+                                  <selection id='30' content='30 minutes' />
+                                  <selection id='60' content='1 hour' />                                  
+                                  <selection id='180' content='3 hours' />
+                            </input>
 
+                        <action activationType='system' arguments='snooze' hint-inputId='snoozeTime' content='' />
+
+                        <action activationType='system' arguments='dismiss' content=''/>
+                    </actions>
+
+                </toast>";
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xml);
 

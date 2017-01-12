@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
 
-namespace AnkiU.Anki.Notifications
+namespace Shared
 {
     class BackgroundTasksHelper
     {
@@ -43,7 +43,7 @@ namespace AnkiU.Anki.Notifications
             builder.Name = name;
             builder.TaskEntryPoint = taskEntryPoint;
             builder.SetTrigger(trigger);
-
+                        
             if (condition != null)
             {
                 builder.AddCondition(condition);
@@ -72,10 +72,6 @@ namespace AnkiU.Anki.Notifications
         /// <param name="name">Name of the background task to unregister.</param>
         public static void UnregisterBackgroundTasks(string name)
         {
-            //
-            // Loop through all background tasks and unregister any with SampleBackgroundTaskName or
-            // SampleBackgroundTaskWithConditionName.
-            //
             foreach (var cur in BackgroundTaskRegistration.AllTasks)
             {
                 if (cur.Value.Name == name)
@@ -83,8 +79,6 @@ namespace AnkiU.Anki.Notifications
                     cur.Value.Unregister(true);
                 }
             }
-
-
         }
 
     
