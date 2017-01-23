@@ -30,16 +30,16 @@ namespace Shared
         /// <param name="name">A name for the background task.</param>
         /// <param name="trigger">The trigger for the background task.</param>
         /// <param name="condition">An optional conditional event that must be true for the task to fire.</param>
-        public static BackgroundTaskRegistration RegisterBackgroundTask(string taskEntryPoint, string name, IBackgroundTrigger trigger, IBackgroundCondition condition, bool isRequireBackgroundAccess)
+        public static async Task<BackgroundTaskRegistration> RegisterBackgroundTask(string taskEntryPoint, string name, IBackgroundTrigger trigger, IBackgroundCondition condition, bool isRequireBackgroundAccess)
         {
             if (isRequireBackgroundAccess)
             {
                 // If the user denies access, the task will not run.
-                var requestTask = BackgroundExecutionManager.RequestAccessAsync();
+                var requestTask = await BackgroundExecutionManager.RequestAccessAsync();
             }
 
             var builder = new BackgroundTaskBuilder();
-
+            
             builder.Name = name;
             builder.TaskEntryPoint = taskEntryPoint;
             builder.SetTrigger(trigger);

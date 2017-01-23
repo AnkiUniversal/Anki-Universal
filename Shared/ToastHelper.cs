@@ -25,7 +25,7 @@ namespace Shared
 {
     public class ToastHelper
     {        
-        public static bool CheckAndMarkAlreadyShown()
+        public static bool IsAlreadyShown()
         {   
             var today = DateTimeOffset.Now.DayOfYear;
             var settings = ApplicationData.Current.LocalSettings;
@@ -36,17 +36,33 @@ namespace Shared
                 if (Convert.ToInt32(dayShow) == today)
                     return true;
             }
-
-            settings.Values["NoticeToast"] = today;
             return false;
         }
 
-        public static ToastNotification PopToast(string title, string content)
+        public static void MarkAlreadyShown()
         {
-            return PopToast(title, content, null, null);
+            var today = DateTimeOffset.Now.DayOfYear;
+            var settings = ApplicationData.Current.LocalSettings;
+            settings.Values["NoticeToast"] = today;
         }
 
-        public static ToastNotification PopToast(string title, string content, string tag, string group)
+        public static void SetNotShownForToday()
+        {            
+            var settings = ApplicationData.Current.LocalSettings;
+            object dayShow;
+            bool isSuccess = settings.Values.TryGetValue("NoticeToast", out dayShow);
+            if (isSuccess)
+            {
+                settings.Values["NoticeToast"] = Convert.ToInt32(dayShow) - 1;
+            }            
+        }
+
+        public static ToastNotification CreateToast(string title, string content)
+        {
+            return CreateToast(title, content, null, null);
+        }
+
+        public static ToastNotification CreateToast(string title, string content, string tag, string group)
         {
             string xml = 
                 $@"
@@ -84,25 +100,25 @@ namespace Shared
             el.InnerText = content;
             binding.AppendChild(el);
 
-            return PopCustomToast(doc, tag, group);
+            return CreateCustomToast(doc, tag, group);
         }
 
-        public static ToastNotification PopCustomToast(string xml)
+        public static ToastNotification CreateCustomToast(string xml)
         {
-            return PopCustomToast(xml, null, null);
+            return CreateCustomToast(xml, null, null);
         }
 
-        public static ToastNotification PopCustomToast(string xml, string tag, string group)
+        public static ToastNotification CreateCustomToast(string xml, string tag, string group)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xml);
 
 
-            return PopCustomToast(doc, tag, group);
+            return CreateCustomToast(doc, tag, group);
         }
 
         [DefaultOverloadAttribute]
-        public static ToastNotification PopCustomToast(XmlDocument doc, string tag, string group)
+        public static ToastNotification CreateCustomToast(XmlDocument doc, string tag, string group)
         {
             var toast = new ToastNotification(doc);
 
@@ -110,11 +126,14 @@ namespace Shared
                 toast.Tag = tag;
 
             if (group != null)
-                toast.Group = group;
-
-            ToastNotificationManager.CreateToastNotifier().Show(toast);
+                toast.Group = group;            
 
             return toast;
+        }
+
+        public static void PopToast(ToastNotification toast)
+        {
+            ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
         public static string ToString(ValueSet valueSet)

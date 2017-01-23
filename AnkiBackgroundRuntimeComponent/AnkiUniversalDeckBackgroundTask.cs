@@ -32,11 +32,8 @@ namespace AnkiBackgroundRuntimeComponent
                     deckListViewModel.GetAllDeckInformation();
                     await deckListViewModel.UpdateAllSecondaryTilesIfHas();
 
-                    if (taskInstance.Task.Name.Equals(AnkiDeckBackgroundRegisterHelper.SYSTEM_TRIGGERED_TASK_NAME))
-                    {
-                        if (deckListViewModel.TotalNewCards + deckListViewModel.TotalDueCards > 0)                        
-                            ShowToastIfNeeded(deckListViewModel);                        
-                    }
+                    if (deckListViewModel.TotalNewCards + deckListViewModel.TotalDueCards > 0)                        
+                        ShowToastIfNeeded(deckListViewModel);                        
                 }
             }
             catch
@@ -71,16 +68,16 @@ namespace AnkiBackgroundRuntimeComponent
             if (!isShown)
                 return;
 
-            if (ToastHelper.CheckAndMarkAlreadyShown())
+            if (ToastHelper.IsAlreadyShown())
                 return;
 
             string message = String.Format("You have {0} new card(s) and {1} due card(s) to review today.",
                                                                     deckListViewModel.TotalNewCards,
                                                                     deckListViewModel.TotalDueCards);        
-            ToastHelper.PopToast("Review", message);
+            var toast = ToastHelper.CreateToast("Review", message);
+            ToastHelper.PopToast(toast);
+            ToastHelper.MarkAlreadyShown();
         }
-
- 
 
         private void MakeSureOnlyHookCancelOne(IBackgroundTaskInstance taskInstance)
         {

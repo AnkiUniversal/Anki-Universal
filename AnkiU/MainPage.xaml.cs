@@ -655,8 +655,8 @@ namespace AnkiU
                 Window.Current.VisibilityChanged += VisibilityChangedHandler;
 
                 BackgroundTaskHelper = new AnkiDeckBackgroundRegisterHelper();
-                BackgroundTaskHelper.RegisterBackgroundTasks();
-                ToastHelper.CheckAndMarkAlreadyShown();
+                await BackgroundTaskHelper.RegisterBackgroundTasks();
+                ToastHelper.MarkAlreadyShown();
             }
             catch (Exception ex)
             {
@@ -1609,7 +1609,7 @@ namespace AnkiU
             InkNotHideStateSymbol();
             InkPenStateSymbol();
 
-            ChangeCursorIfNeeded();
+            TryChangeCursorIfNeeded();
         }
 
         private void InkEraserToggleButtonClickHandler(object sender, RoutedEventArgs e)
@@ -1645,7 +1645,7 @@ namespace AnkiU
             if (IsInkHideState())
             {
                 InkNotHideStateSymbol();
-                ChangeCursorIfNeeded();
+                TryChangeCursorIfNeeded();
             }
             else
             {
@@ -1690,13 +1690,20 @@ namespace AnkiU
         }
 
         private bool isCusorNotArrow = false;
-        public void ChangeCursorIfNeeded()
+        public void TryChangeCursorIfNeeded()
         {
-            if (UIHelper.IsHasPen())
+            try
             {
-                cursor = new CoreCursor(CoreCursorType.Custom, MainPage.CUSTOM_CURSOR_CIRCLE_ID);
-                Window.Current.CoreWindow.PointerCursor = cursor;
-                isCusorNotArrow = true;
+                if (UIHelper.IsHasPen())
+                {
+                    cursor = new CoreCursor(CoreCursorType.Custom, MainPage.CUSTOM_CURSOR_CIRCLE_ID);
+                    Window.Current.CoreWindow.PointerCursor = cursor;
+                    isCusorNotArrow = true;
+                }
+            }
+            catch
+            {
+                ChangeCusorToArrow();
             }
         }
 

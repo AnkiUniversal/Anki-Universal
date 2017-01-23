@@ -24,27 +24,29 @@ namespace Shared
         public IBackgroundTaskRegistration SytemTriggeredBackgroundTask { get; private set; }
         public IBackgroundTaskRegistration TimeTriggeredBackgroundTask { get; private set; }
 
-        public void RegisterBackgroundTasks()
+        public async Task RegisterBackgroundTasks()
         {
             isSystemTaskRegistered = GetTaskStatus(SYSTEM_TRIGGERED_TASK_NAME);
+            isTimeTaskRegistered = GetTaskStatus(TIME_TRIGGERED_TASK_NAME);
+
             if (!isSystemTaskRegistered)
-            {
+            {                
                 var trigger = new SystemTrigger(SystemTriggerType.UserPresent | SystemTriggerType.SessionConnected, false);
-                SytemTriggeredBackgroundTask = BackgroundTasksHelper.RegisterBackgroundTask(ENTRY_POINT,
+                SytemTriggeredBackgroundTask = await BackgroundTasksHelper.RegisterBackgroundTask(ENTRY_POINT,
                                                 SYSTEM_TRIGGERED_TASK_NAME,
                                                 trigger,
                                                 null,
                                                 true);
                 isSystemTaskRegistered = true;
             }
-
-            isTimeTaskRegistered = GetTaskStatus(TIME_TRIGGERED_TASK_NAME);
+            
             if (!isTimeTaskRegistered)
             {
-                TimeTriggeredBackgroundTask = BackgroundTasksHelper.RegisterBackgroundTask(ENTRY_POINT,
+                SystemCondition userPresentCondition = new SystemCondition(SystemConditionType.UserPresent);
+                TimeTriggeredBackgroundTask = await BackgroundTasksHelper.RegisterBackgroundTask(ENTRY_POINT,
                                                                     TIME_TRIGGERED_TASK_NAME,
                                                                     new TimeTrigger(BACKGROUND_RATE, false),
-                                                                    null,
+                                                                    userPresentCondition,
                                                                     true);
                 isTimeTaskRegistered = true;
             }
