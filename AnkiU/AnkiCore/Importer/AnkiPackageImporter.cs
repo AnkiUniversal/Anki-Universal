@@ -64,13 +64,16 @@ namespace AnkiU.AnkiCore.Importer
         public async override Task Run()
         {                        
             tempDir = await destCol.Folder.CreateFolderAsync(tempDirName, CreationCollisionOption.ReplaceExisting);
+            
             string collectionName = "collection.anki2";
             string mapFileName = "media";
             string mapAnkiU = "mediaAnkiU";
             AnkiImportFinishCode code = AnkiImportFinishCode.UnableToUnzip;
             try
             {
-                using (archive = new ZipArchive(new FileStream(packageFile.Path, FileMode.Open), ZipArchiveMode.Read))
+                packageFile = await packageFile.CopyAsync(tempDir, packageFile.Name, NameCollisionOption.ReplaceExisting);
+                using(var fileStream = (await packageFile.OpenReadAsync()).AsStream())
+                using (archive = new ZipArchive(fileStream, ZipArchiveMode.Read))
                 {
                     // We extract the zip contents into a temporary directory and do a little more
                     // validation than the python client to ensure the extracted collection is an apkg.
@@ -175,8 +178,12 @@ namespace AnkiU.AnkiCore.Importer
             }
             finally
             {
-                // Clean up our temporary files
-                tempDir =  await destCol.Folder.TryGetItemAsync(tempDirName) as StorageFolder;
+                if (tempDir == null)
+                {
+                    // Clean up our temporary files
+                    tempDir = await destCol.Folder.TryGetItemAsync(tempDirName) as StorageFolder;
+                }
+
                 if (tempDir != null)
                 {
                     if (sourceCol != null)
@@ -272,7 +279,7 @@ namespace AnkiU.AnkiCore.Importer
             string fileName;
             long deckIdInDest;
             long deckIdInSource;
-            string indexInArcive;
+            string indexInArchive;
             StorageFolder folder;
             try
             {
@@ -284,13 +291,13 @@ namespace AnkiU.AnkiCore.Importer
                         deckIdInDest = media.Key.Value;
                         deckIdInSource = ImportedDeckIdMap[deckIdInDest];
 
-                        bool isHave = mediaToDeckIdMap[deckIdInSource].TryGetValue(fileName, out indexInArcive);
+                        bool isHave = mediaToDeckIdMap[deckIdInSource].TryGetValue(fileName, out indexInArchive);
 
                         if (isHave)
                         {
                             folder = deckIdFolderMap[deckIdInDest];
 
-                            archive.GetEntry(indexInArcive)
+                            archive.GetEntry(indexInArchive)
                                 .ExtractToFile(folder.Path + "\\" + fileName, true);
 
                             destCol.Media.MarkFileAddIntoDatabase(fileName, deckIdInDest);

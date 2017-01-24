@@ -137,7 +137,6 @@ namespace Shared.AnkiCore
             database = db;
 
             this.relativePath = relativePath;
-            OpenLog();
             this.isSever = server;
             this.lastSave = DateTimeOffset.Now.ToUnixTimeSeconds();
             ClearUndo();
@@ -169,51 +168,7 @@ namespace Shared.AnkiCore
         public void ClearUndo()
         {
             undoList = new LinkedList<object[]>();
-        }
-
-        private void OpenLog()
-        {
-            if (!debugLog)
-            {
-                return;
-            }
-            Task task = Task.Factory.StartNew(async () =>
-            {
-                try
-                {
-                    string rlPath = relativePath.ReplaceFirst(".anki2", ".log");
-                    StorageFile lpath = null;
-
-                    lpath = await folder.TryGetItemAsync(rlPath) as StorageFile;
-                    if (lpath != null)
-                    {
-                        var fprop = (await lpath.GetBasicPropertiesAsync()).Size;
-                        if (fprop > 10 * 1024 * 1024)
-                        {
-                            await lpath.RenameAsync(rlPath + ".old", NameCollisionOption.ReplaceExisting);
-                        }
-                    }
-                    FileStream file = new FileStream(folder.Path + "\\" + rlPath, FileMode.OpenOrCreate);
-                    logHnd = new StreamWriter(file, Encoding.UTF8);
-                }
-                catch (FieldAccessException)
-                {
-                    // turn off logging if we can't open the log file
-                    Debug.WriteLine("Failed to open collection.log file - disabling logging");
-                    debugLog = false;
-                }
-            });
-            task.Wait();
-        }
-
-        private void CloseLog()
-        {
-            if (logHnd != null)
-            {
-                logHnd.Dispose();
-                logHnd = null;
-            }
-        }
+        }      
 
         public void Load()
         {
@@ -244,7 +199,6 @@ namespace Shared.AnkiCore
             if (database == null)
             {
                 database = new DB(folder.Path + "\\" + RelativePath);
-                OpenLog();
             }
         }
 
