@@ -95,6 +95,12 @@ namespace AnkiU.UserControls
 
                     isRecording = true;
                 }
+                else
+                {
+                    ResetViewToStart();
+                    DisplayCurrentTimeSpan(new TimeSpan(0));
+                    await UIHelper.ShowMessageDialog("Unable to start recording. Please make sure you have a recording device and the app is allowed to access it.");                    
+                }
             });
         }
 
@@ -129,7 +135,7 @@ namespace AnkiU.UserControls
             }
             catch (Exception ex)
             {
-                ThrowException(ex);
+                //ThrowException(ex);
                 return false;                         
             }
             return true;
@@ -172,14 +178,19 @@ namespace AnkiU.UserControls
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                stopRecordButton.Visibility = Visibility.Collapsed;
-                recordButton.Visibility = Visibility.Visible;
+                ResetViewToStart();
                 playButton.IsEnabled = true;
-                StopTimerCount();
 
                 await capture.StopRecordAsync();
                 isRecording = false;
             });
+        }
+
+        private void ResetViewToStart()
+        {
+            stopRecordButton.Visibility = Visibility.Collapsed;
+            recordButton.Visibility = Visibility.Visible;            
+            StopTimerCount();
         }
 
         private async void StartRecordTimerCount()
