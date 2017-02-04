@@ -607,12 +607,20 @@ namespace AnkiU.Pages
                 try
                 {
                     var newName = deckListViewModel.GetNewFullName(deckShowContextMenu, baseName);
-                    var deck = collection.Deck.Get(deckShowContextMenu.Id);
+                    var deck = collection.Deck.Get(deckShowContextMenu.Id);               
                     collection.Deck.Rename(deck, newName);
                     deckListViewModel.UpdateDeckName(deckShowContextMenu);
 
                     collection.Deck.Save(deck);
                     collection.SaveAndCommitAsync();
+
+                    var tile = await TilesHelper.FindExisting(deckShowContextMenu.Id.ToString());
+                    if (tile != null)
+                    {
+                        tile.DisplayName = newName;
+                        await tile.UpdateAsync();
+                    }
+
                 }
                 catch (DeckRenameException ex)
                 {

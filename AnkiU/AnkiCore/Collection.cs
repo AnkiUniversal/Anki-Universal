@@ -994,88 +994,99 @@ namespace AnkiU.AnkiCore
         /// <returns></returns>
         public Dictionary<string, string> RenderQA(object[] data, string qfmt = null, string afmt = null)
         {
-            // data is [cid, nid, mid, did, ord, tags, flds]
-            // unpack fields and create dict
-            string[] flist = Utils.SplitFields((string)data[6]);
-            Dictionary<string, string> fields = new Dictionary<string, string>();
-            JsonObject model = models.Get(Convert.ToInt64(data[2]));
-            Dictionary<string, KeyValuePair<int, JsonObject>> fmap = models.FieldMap(model);
-            int key;
-            foreach (string name in fmap.Keys)
+            try
             {
-                key = fmap[name].Key;
-                fields.Add(name, flist[key]);
-            }
-            int cardNum = ((int)data[4]) + 1;
-            fields["Tags"] = ((string)data[5]).Trim();
-            fields["Type"] = model.GetNamedString("name");
-            fields["Deck"] = decks.GetDeckName((long)data[3]);
-            string[] parents = fields["Deck"].Split(new string[] { "::" }, 
-                                    StringSplitOptions.None);
-            fields["Subdeck"] = parents[parents.Length - 1];
-            JsonObject template;
-            if (model.GetNamedNumber("type") == (double)ModelType.STD)
-            {
-                try
+                // data is [cid, nid, mid, did, ord, tags, flds]
+                // unpack fields and create dict
+                string[] flist = Utils.SplitFields((string)data[6]);
+                Dictionary<string, string> fields = new Dictionary<string, string>();
+                JsonObject model = models.Get(Convert.ToInt64(data[2]));
+                Dictionary<string, KeyValuePair<int, JsonObject>> fmap = models.FieldMap(model);
+                int key;
+                foreach (string name in fmap.Keys)
                 {
-                    template = model.GetNamedArray("tmpls").GetObjectAt(Convert.ToUInt32(data[4]));
+                    key = fmap[name].Key;
+                    fields.Add(name, flist[key]);
                 }
-                catch
-                {                    
-                    //This should only happen if user changes this card note type from cloze to standard
-                    //and the note of this card contains more than one cloze
-                    template = model.GetNamedArray("tmpls").GetObjectAt(0);
-                }
-            }
-            else
-            {
-                template = model.GetNamedArray("tmpls").GetObjectAt(0);
-            }
-            fields.Add("Card", template.GetNamedString("name"));
-            fields.Add(String.Format(Media.locale, "c{0}", cardNum), "1");
-            // render q & a
-            Dictionary<string, string> d = new Dictionary<string, string>();
-            d.Add("id", ((long)data[0]).ToString());
-            qfmt = string.IsNullOrEmpty(qfmt) ? template.GetNamedString("qfmt") : qfmt;
-            afmt = string.IsNullOrEmpty(afmt) ? template.GetNamedString("afmt") : afmt;
-
-            var dict = new KeyValuePair<string, string>[] 
-                            { new KeyValuePair<string, string>("q", qfmt),
-                              new KeyValuePair<string, string>("a", afmt) };
-
-            foreach (var p in dict)
-            {
-                string type = p.Key;
-                string format = p.Value;
-                if (type.Equals("q"))
+                int cardNum = ((int)data[4]) + 1;
+                fields["Tags"] = ((string)data[5]).Trim();
+                fields["Type"] = model.GetNamedString("name");
+                fields["Deck"] = decks.GetDeckName((long)data[3]);
+                string[] parents = fields["Deck"].Split(new string[] { "::" },
+                                        StringSplitOptions.None);
+                fields["Subdeck"] = parents[parents.Length - 1];
+                JsonObject template;
+                if (model.GetNamedNumber("type") == (double)ModelType.STD)
                 {
-                    format = clozePatternQ.Replace(format, String.Format(Media.locale, "{{{{$1cq-{0}:", cardNum));
-                    format = clozeTagStart.Replace(format, String.Format(Media.locale, "<%%cq:{0}:", cardNum));
+                    try
+                    {
+                        template = model.GetNamedArray("tmpls").GetObjectAt(Convert.ToUInt32(data[4]));
+                    }
+                    catch
+                    {
+                        //This should only happen if user changes this card note type from cloze to standard
+                        //and the note of this card contains more than one cloze
+                        template = model.GetNamedArray("tmpls").GetObjectAt(0);
+                    }
                 }
                 else
                 {
-                    format = clozePatternA.Replace(format, String.Format(Media.locale, "{{{{$1ca-{0}:", cardNum));
-                    format = clozeTagStart.Replace(format, String.Format(Media.locale, "<%%ca:{0}:", cardNum));
-                    // Java ver: The following line differs from python ver // TODO: why?
-                    fields.Add("FrontSide", d["q"]); // fields.put("FrontSide", mMedia.stripAudio(d.get("q")));
+                    template = model.GetNamedArray("tmpls").GetObjectAt(0);
                 }
-                //WARNING: there is no hook name "mungeFields" in both java and python ver
-                //so this line basically just return back the args!
-                fields = (Dictionary<string, string>)Hooks.Hooks.RunFilter("mungeFields", fields, model, data, this);
-                string html = new Templates.Template(format, fields).Render();
-                d.Add(type, (string)Hooks.Hooks.RunFilter("mungeQA", html, type, fields, model, data, this));
-                // empty cloze?
-                if (type.Equals("q") && model.GetNamedNumber("type") == (double)ModelType.CLOZE)
+                fields.Add("Card", template.GetNamedString("name"));
+                fields.Add(String.Format(Media.locale, "c{0}", cardNum), "1");
+                // render q & a
+                Dictionary<string, string> result = new Dictionary<string, string>();
+                result.Add("id", ((long)data[0]).ToString());
+                qfmt = string.IsNullOrEmpty(qfmt) ? template.GetNamedString("qfmt") : qfmt;
+                afmt = string.IsNullOrEmpty(afmt) ? template.GetNamedString("afmt") : afmt;
+
+                var dict = new KeyValuePair<string, string>[]
+                                { new KeyValuePair<string, string>("q", qfmt),
+                              new KeyValuePair<string, string>("a", afmt) };
+
+                foreach (var p in dict)
                 {
-                    var avail = Models.AvailableClozeOrds(model, (string)data[6], false);
-                    if (avail.Count == 0)
+                    string type = p.Key;
+                    string format = p.Value;
+                    if (type.Equals("q"))
                     {
-                        string link = string.Format("<a href={0}#cloze>{1}</a>", HttpSite.HELP, "help");
-                        d["q"] = string.Format("Please edit this note and add some cloze deletions. ({0})", link);
+                        format = clozePatternQ.Replace(format, String.Format(Media.locale, "{{{{$1cq-{0}:", cardNum));
+                        format = clozeTagStart.Replace(format, String.Format(Media.locale, "<%%cq:{0}:", cardNum));
+                    }
+                    else
+                    {
+                        format = clozePatternA.Replace(format, String.Format(Media.locale, "{{{{$1ca-{0}:", cardNum));
+                        format = clozeTagStart.Replace(format, String.Format(Media.locale, "<%%ca:{0}:", cardNum));
+                        // Java ver: The following line differs from python ver // TODO: why?
+                        fields.Add("FrontSide", result["q"]); // fields.put("FrontSide", mMedia.stripAudio(d.get("q")));
+                    }
+                    //WARNING: there is no hook name "mungeFields" in both java and python ver
+                    //so this line basically just return back the args!
+                    fields = (Dictionary<string, string>)Hooks.Hooks.RunFilter("mungeFields", fields, model, data, this);
+                    string html = new Templates.Template(format, fields).Render();
+                    result.Add(type, (string)Hooks.Hooks.RunFilter("mungeQA", html, type, fields, model, data, this));
+                    // empty cloze?
+                    if (type.Equals("q") && model.GetNamedNumber("type") == (double)ModelType.CLOZE)
+                    {
+                        var avail = Models.AvailableClozeOrds(model, (string)data[6], false);
+                        if (avail.Count == 0)
+                        {
+                            string link = string.Format("<a href={0}#cloze>{1}</a>", HttpSite.HELP, "help");
+                            result["q"] = string.Format("Please edit this note and add some cloze deletions. ({0})", link);
+                        }
                     }
                 }
+                return result;
             }
-            return d;
+            catch(IndexOutOfRangeException)
+            {
+                Dictionary<string, string> result = new Dictionary<string, string>();
+                result.Add("id", "404");
+                result["q"] = "Wrong data format. Please contact our support and send us your collection if you see this error.";
+                result["a"] = "";
+                return result;
+            }
         }
 
         /// <summary>
