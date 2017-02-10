@@ -1062,7 +1062,7 @@ namespace AnkiU.Pages
             if(MainPage.UserPrefs.IsAutoPlayTextSynth && MainPage.UserPrefs.IsHasTextSynthDeckPreference)
             {
                 if(!MainPage.DeckTextSynthPrefs.IsEmpty() && MainPage.DeckTextSynthPrefs.HasId(selectedDeckId))
-                {
+                {                    
                     await cardView.PlayTextToSpeech(text);
                 }
             }

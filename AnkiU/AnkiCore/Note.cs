@@ -128,7 +128,7 @@ namespace AnkiU.AnkiCore
             {
                 usn = collection.Usn;
             }
-            string sfld = Utils.StripHTMLMedia(this.fields[collection.Models.SortIdx(model)]);
+            string sfld = Utils.StripHTMLKeepMediaName(this.fields[collection.Models.SortIdx(model)]);
             string tags = StringTags();
             string fields = JoinedFields();
             if (mod == null && collection.Database.QueryScalar<int>
@@ -289,8 +289,8 @@ namespace AnkiU.AnkiCore
             foreach (var note in listNote)
             {
                 string compared = HtmlEditor.RemoveDivWrap(Utils.SplitFields(note.Fields)[0]).Trim();
-                if (Utils.StripHTMLMedia(compared)
-                    .Equals(Utils.StripHTMLMedia(text)))
+                if (Utils.StripHTMLKeepMediaName(compared)
+                    .Equals(Utils.StripHTMLKeepMediaName(text)))
                 {
                     DupeNoteId = note.Id;
                     return FirstField.Duplicate;

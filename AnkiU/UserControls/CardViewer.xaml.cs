@@ -473,7 +473,7 @@ namespace AnkiU.UserControls
 
         private async Task StartPlayTextToSpeech(string text)
         {
-            text = Utils.StripHTMLMedia(text);
+            text = Utils.StripHTML(text);
             await speechSynth.StartTextToSpeech(text);
         }
 

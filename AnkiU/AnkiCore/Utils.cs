@@ -434,7 +434,7 @@ namespace AnkiU.AnkiCore
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static String StripHTMLMedia(String s)
+        public static String StripHTMLKeepMediaName(String s)
         {
             return StripHTML(imgPattern.Replace(s, " $1 "));
         }
@@ -479,7 +479,7 @@ namespace AnkiU.AnkiCore
 
         public static long FieldChecksum(string data)
         {
-            return Convert.ToInt64(Checksum(StripHTMLMedia(data)).Substring(0, 8), 16);
+            return Convert.ToInt64(Checksum(StripHTMLKeepMediaName(data)).Substring(0, 8), 16);
         }
 
         /// <summary>
