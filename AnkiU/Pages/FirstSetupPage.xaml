@@ -76,11 +76,11 @@
                       From="1.0" To="0.0" Duration="0:0:0.3"/>
                 </Storyboard>
             </StackPanel.Resources>
-            <TextBlock x:Name="quote" Text="Every great journey begins with a single &quot;Click&quot;" Foreground="White" VerticalAlignment="Center"
+            <TextBlock x:Name="quote" Visibility="Collapsed" Text="Every great journey begins with a single &quot;Click&quot;" Foreground="White" VerticalAlignment="Center"
                    HorizontalAlignment="Center" FontSize="22" TextWrapping="Wrap" TextAlignment="Center" Opacity="0"
                    FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" FontStyle="Italic" RenderTransformOrigin="0.5,0.5" >
             </TextBlock>
-            <TextBlock x:Name="source" Text="-The Internet" Foreground="White" VerticalAlignment="Center" Margin="0,10,0,0"
+            <TextBlock x:Name="source" Visibility="Collapsed" Text="-The Internet" Foreground="White" VerticalAlignment="Center" Margin="0,10,0,0"
                    HorizontalAlignment="Right" FontSize="24" TextWrapping="Wrap" TextAlignment="Right" Opacity="0"
                    FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book"  />
         </StackPanel>

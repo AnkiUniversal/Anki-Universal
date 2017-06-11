@@ -17,7 +17,9 @@ namespace AnkiU.Anki.Syncer
             syncFolder = SyncFolder;
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task AuthenciateAccount()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             return;
         }
@@ -85,7 +87,9 @@ namespace AnkiU.Anki.Syncer
             return;
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task InitSyncFolderIfNeeded()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             return;
         }

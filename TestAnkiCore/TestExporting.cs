@@ -158,7 +158,7 @@ namespace TestAnkiCore
         }
 
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async Task TestExportAnkiPkgSimpleCollection()
         {
             string fileName = "今日.mp3";
@@ -190,7 +190,7 @@ namespace TestAnkiCore
         }
 
         /// <summary>
-        /// Stress test. Only run if have time to kill
+        /// Stress test. No longer needed
         /// </summary>
         /// <returns></returns>
         [TestMethod, Ignore]

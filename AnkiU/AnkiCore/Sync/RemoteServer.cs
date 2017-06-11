@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
+using Windows.Web.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
@@ -69,15 +69,23 @@ namespace AnkiU.AnkiCore.Sync
         /// <param name="user"></param>
         /// <param name="pw"></param>
         /// <returns></returns>
-        public async override Task<HttpResponseMessage> HostKey(string user, string pw)
+        public async override Task<string> HostKey(string user, string pw)
         {
             postVars = new Dictionary<string, object>();
             JsonObject jo = new JsonObject();
-            jo.Add("u", JsonValue.CreateStringValue(user));
             jo.Add("p", JsonValue.CreateStringValue(pw));
+            jo.Add("u", JsonValue.CreateStringValue(user));            
             using (MemoryStream stream = GetInputStream(Utils.JsonToString(jo)))
             {
-                return await Request("hostKey", stream);
+                var respone = await Request("hostKey", stream);
+                if (respone.StatusCode == HttpStatusCode.Ok)
+                {
+                    var content = await respone.Content.ReadAsStringAsync();
+                    var jObject = JsonObject.Parse(content);
+                    return jObject.GetNamedString("key");
+                }
+                else
+                    throw new Exception("Wrong AnkiWeb ID or Password!");
             }
         }
 

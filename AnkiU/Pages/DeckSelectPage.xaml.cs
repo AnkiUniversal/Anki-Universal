@@ -39,7 +39,7 @@ using AnkiU.Views;
 using System.Collections.Generic;
 using AnkiU.Anki;
 using Windows.UI.StartScreen;
-using AnkiU.Anki.Notifications;
+using Shared;
 using Windows.ApplicationModel.Background;
 
 namespace AnkiU.Pages
@@ -50,10 +50,10 @@ namespace AnkiU.Pages
         private const double DEFAULT_OPACITY = 0.8;
         private const double REFRESH_RATE = 1;
 
+        private App app;
+
         private IAnkiDecksView decksView;
         private DeckListViewModel deckListViewModel;        
-
-        private static bool isNoticeBoardClosed = false;
 
         private DeckConfigNameViewModel configNameViewModel;
 
@@ -104,45 +104,23 @@ namespace AnkiU.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
             mainPage = e.Parameter as MainPage;
             if (mainPage == null)
                 throw new Exception("Wrong input parameter!");
-            
+            app = App.Current as App;
+
             collection = mainPage.Collection;
             GetDecksInformation();
-            CloseNoticeBoardIfNeeded();
-            UpdateNoticeText();
-            ShowDayTimeSymbol();
-
             EnterTutorialModeIfNeeded();
-
-            ShowAllButtonOfThisPage();
+            
             HookAllEvents();
+            ShowAllButtonOfThisPage();
 
             var task = deckListViewModel.UpdateAllSecondaryTilesIfHas();
             
-            var backgroundTask = new AnkiUniversalDeckBackgroundTask();
-            backgroundTask.RegisterTimeTriggeredBackgroundTasks();
-        }   
-
-
-        private void ShowDayTimeSymbol()
-        {
-            TimeSpan start = new TimeSpan(6, 0, 0);
-            TimeSpan end = new TimeSpan(18, 0, 0);
-            TimeSpan now = DateTime.Now.TimeOfDay;
-            if ((now > start) && (now < end))
-            {
-                moonSymbol.Visibility = Visibility.Collapsed;
-                sunSymbol.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                moonSymbol.Visibility = Visibility.Visible;
-                sunSymbol.Visibility = Visibility.Collapsed;
-            }
         }
-
+        
         private void HookAllEvents()
         {
             mainPage.EnableChangingReadMode(this);
@@ -154,6 +132,36 @@ namespace AnkiU.Pages
             mainPage.AddButton.Click += AddButtonClickHandler;
             mainPage.DragAndDropButton.Click += DragAndDropButtonClick;
             mainPage.CommanBar.Opening += OnCommanBarOpening;
+            mainPage.DeckChanged += OnMainPageDeckChanged;
+            if(app != null)
+                app.AppLaunchFromtTile += OnAppLaunchFromtTile;
+        }
+
+        private async Task DelayNavigateToOtherPage()
+        {
+            await Task.Delay(50);
+            HandleLiveTileInteraction(app);
+        }
+
+        private void OnAppLaunchFromtTile(object sender, RoutedEventArgs e)
+        {
+            HandleLiveTileInteraction(app);
+        }
+
+        private void HandleLiveTileInteraction(App app)
+        {            
+            if (app != null && app.TileId != null)
+            {
+                var deck = deckListViewModel.GetDeck((long)app.TileId);
+                app.ClearTileId();
+                if (deck != null)
+                {
+                    if (deck.NewCards + deck.DueCards > 0)
+                        NavigateToReviewPage(deck);
+                    else
+                        NavigateToNoteEditorPage(deck.Id);
+                }
+            }
         }
 
         private void OnCommanBarOpening(object sender, object e)
@@ -198,8 +206,6 @@ namespace AnkiU.Pages
             try
             {
                 deckListViewModel.DragAnDrop(parent, child, decksView);
-
-                UpdateNoticeText();
             }
             catch(DeckRenameException ex)
             {
@@ -256,9 +262,10 @@ namespace AnkiU.Pages
         private void CurrentWindowVisibilityChangedHandler(object sender, VisibilityChangedEventArgs e)
         {
             if (!e.Visible)
-                SaveSession();
+                SaveSession();                
 
-            RefreshCardCountsIfNeeded();
+
+            RefreshCardCountsIfNeeded();            
         }
 
         private void RefreshCardCountsIfNeeded()
@@ -274,8 +281,6 @@ namespace AnkiU.Pages
                 //Make sure we don't accidentally bump this up
                 if (!isModified)
                     collection.ClearIsModified();
-
-                UpdateNoticeText();
             }
         }
 
@@ -285,13 +290,14 @@ namespace AnkiU.Pages
         }
 
         private void ShowAllButtonOfThisPage()
-        {
+        {            
             mainPage.DragAndDropButton.Visibility = Visibility.Visible;
             mainPage.RootSplitView.Pane.Visibility = Visibility.Visible;
             mainPage.HelpSplitView.Visibility = Visibility.Visible;
-            mainPage.AddButton.Visibility = Visibility.Visible;
+            mainPage.AddButton.Visibility = Visibility.Visible;            
             mainPage.SplitViewToggleButton.Visibility = Visibility.Visible;
-            mainPage.SyncButton.Visibility = Visibility.Visible;
+            mainPage.SyncButton.Visibility = Visibility.Visible;                
+
             if (MainPage.UserPrefs.IsDeckListView)
                 SwitchToListView();
             else
@@ -333,6 +339,10 @@ namespace AnkiU.Pages
             mainPage.AddButton.Click -= AddButtonClickHandler;
             mainPage.DragAndDropButton.Click -= DragAndDropButtonClick;
             mainPage.CommanBar.Opening -= OnCommanBarOpening;
+            mainPage.DeckChanged -= OnMainPageDeckChanged;
+
+            if (app != null)
+                app.AppLaunchFromtTile -= OnAppLaunchFromtTile;
         }
 
         private void ListViewButtonClickHandler(object sender, RoutedEventArgs e)
@@ -343,13 +353,6 @@ namespace AnkiU.Pages
         private void GridViewButtonClickHandler(object sender, RoutedEventArgs e)
         {
             SwitchToGridView();
-        }
-
-        private void UpdateNoticeText()
-        {
-            totalCardsText.Text = "TODAY'S CARDS: " + (deckListViewModel.TotalNewCards + deckListViewModel.TotalDueCards);
-            newCardsText.Text = "NEW: " + deckListViewModel.TotalNewCards;
-            dueCardsText.Text = "DUE: " + deckListViewModel.TotalDueCards;
         }
 
         private void SwitchToGridView()
@@ -407,7 +410,12 @@ namespace AnkiU.Pages
 
         private void DeckListViewItemClickEventHandler(DeckInformation deck)
         {
-            mainPage.Collection.Deck.Select(deck.Id, false);            
+            NavigateToReviewPage(deck);
+        }
+
+        private void NavigateToReviewPage(DeckInformation deck)
+        {
+            mainPage.Collection.Deck.Select(deck.Id, false);
             if (deck.NewCards > 0 || deck.DueCards > 0)
             {
                 MakesureCleanState();
@@ -456,8 +464,6 @@ namespace AnkiU.Pages
                 var deckInfor = deckListViewModel.GetDeck(deckId);
                 deckListViewModel.ResortNonSubdeck(deckInfor);
             }
-
-            UpdateNoticeText();
         }
 
         private void MakesureCleanState()
@@ -596,12 +602,20 @@ namespace AnkiU.Pages
                 try
                 {
                     var newName = deckListViewModel.GetNewFullName(deckShowContextMenu, baseName);
-                    var deck = collection.Deck.Get(deckShowContextMenu.Id);
+                    var deck = collection.Deck.Get(deckShowContextMenu.Id);               
                     collection.Deck.Rename(deck, newName);
                     deckListViewModel.UpdateDeckName(deckShowContextMenu);
 
                     collection.Deck.Save(deck);
                     collection.SaveAndCommitAsync();
+
+                    var tile = await TilesHelper.FindExisting(deckShowContextMenu.Id.ToString());
+                    if (tile != null)
+                    {
+                        tile.DisplayName = newName;
+                        await tile.UpdateAsync();
+                    }
+
                 }
                 catch (DeckRenameException ex)
                 {
@@ -782,7 +796,6 @@ namespace AnkiU.Pages
             var parent = collection.Deck.Parents(selectedDeckId);
             UpdateParentsCardCountIfNeeded(parent);
 
-            UpdateNoticeText();
             collection.SaveAndCommitAsync();
         }        
 
@@ -798,7 +811,6 @@ namespace AnkiU.Pages
                 ReorderCardsIfRandom(config);
                 collection.Deck.RemoveConfiguration(config.Id);
                 deckListViewModel.UpdateCardCountAllDecks();
-                UpdateNoticeText();
                 collection.SaveAndCommit();
             }
         }
@@ -878,7 +890,6 @@ namespace AnkiU.Pages
                     UpdateOriginalDeckCardCountIfNeeded(originalDeckId);
                     UpdateParentsCardCountIfNeeded(parents);
 
-                    UpdateNoticeText();
                     dialog.Hide();
                     collection.Save();
                     collection.Database.Commit();
@@ -963,7 +974,12 @@ namespace AnkiU.Pages
 
         private void AddNoteMenuFlyoutItemClickHandler(object sender, RoutedEventArgs e)
         {
-            collection.Deck.Select(deckShowContextMenu.Id, false);
+            NavigateToNoteEditorPage(deckShowContextMenu.Id);
+        }
+
+        private void NavigateToNoteEditorPage(long id)
+        {
+            collection.Deck.Select(id, false);
             NoteEditorPageParameter param = new NoteEditorPageParameter() { CurrentNote = null, Mainpage = mainPage };
             Frame.Navigate(typeof(NoteEditor), param);
         }
@@ -1004,32 +1020,6 @@ namespace AnkiU.Pages
             Frame.Navigate(typeof(StatsPage), mainPage);
         }
 
-        private void NoticeBoardExpandButtonClick(object sender, RoutedEventArgs e)
-        {
-            if (noticeBoardRoot.Visibility == Visibility.Collapsed)
-            {
-                OpenNoticeBoard();
-            }
-            else
-            {
-                CloseNoticeBoard();
-            }
-        }
-
-        private void CloseNoticeBoard()
-        {
-            noticeBoardRoot.Visibility = Visibility.Collapsed;
-            expandSymbolRotation.Rotation = 0;
-            isNoticeBoardClosed = true;
-        }
-
-        private void OpenNoticeBoard()
-        {
-            noticeBoardRoot.Visibility = Visibility.Visible;
-            expandSymbolRotation.Rotation = 180;
-            isNoticeBoardClosed = false;
-        }
-
         private void SortByDateAddedClick(object sender, RoutedEventArgs e)
         {
             deckListViewModel.SortByDateAdded();
@@ -1038,6 +1028,13 @@ namespace AnkiU.Pages
         private void SortByNameClick(object sender, RoutedEventArgs e)
         {
             deckListViewModel.SortByName();
+        }
+
+        private void OnMainPageDeckChanged(long deckId)
+        {
+            deckListViewModel.AddOrUpdateDeckCardCount(deckId);
+            var parent = collection.Deck.Parents(deckId);
+            UpdateParentsCardCountIfNeeded(parent);
         }
 
         private void EnterTutorialModeIfNeeded()
@@ -1061,8 +1058,6 @@ namespace AnkiU.Pages
 
         private void DeckCreationTutorialSetup()
         {
-            CloseNoticeBoard();
-            mainPage.SplitViewToggleButton.IsEnabled = false;
             mainPage.AddButton.Click += TutorialAddButtonClickHandler;
             NewDeckCreatedEvent += TutorialNewDeckCreatedEvent;
             helpPopup = new HelpPopup();
@@ -1078,7 +1073,6 @@ namespace AnkiU.Pages
 
         private void CardViewTutorialSetup()
         {
-            mainPage.SplitViewToggleButton.IsEnabled = false;
             helpPopup = new HelpPopup();
             UIHelper.AddToGridInFull(mainGrid, helpPopup);
             helpPopup.Title = "View your card";
@@ -1090,7 +1084,6 @@ namespace AnkiU.Pages
 
         private void SharedDeckTutorialSetup()
         {
-            mainPage.SplitViewToggleButton.IsEnabled = true;
             mainPage.SplitViewToggleButton.Click += TutorialSplitViewToggleButtonClick;
             helpPopup = new HelpPopup();
             UIHelper.AddToGridInFull(mainGrid, helpPopup);
@@ -1138,12 +1131,6 @@ namespace AnkiU.Pages
             helpPopup.Hide();
         }
 
-        private void CloseNoticeBoardIfNeeded()
-        {
-            if (isNoticeBoardClosed)
-                CloseNoticeBoard();
-        }
-
         private void NewDeckFlyoutClosedWithoutCreatingDeckHandler()
         {
             if(helpPopup != null && AllHelps.Tutorial == AllHelps.TutorialState.DeckCreation)
@@ -1164,9 +1151,12 @@ namespace AnkiU.Pages
             tile.VisualElements.ShowNameOnWide310x150Logo = true;
             tile.VisualElements.BackgroundColor = DeckListViewModel.GetColors(deckShowContextMenu);
 
-            await tile.RequestCreateAsync();
-            
+            var isSuccess = await tile.RequestCreateAsync();
             base.IsEnabled = true;
+            if (!isSuccess)                            
+                return;
+            
+            
             TilesHelper.SendSecondaryTileNotification(tileId, deckShowContextMenu.NewCards.ToString(), deckShowContextMenu.DueCards.ToString());
         }
     }

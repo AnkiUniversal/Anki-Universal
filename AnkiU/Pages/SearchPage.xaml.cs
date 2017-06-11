@@ -230,7 +230,7 @@ namespace AnkiU.Pages
             mainPage.HookZooming(cardInformationView);
             mainPage.IsAutoSwitchZoomButtonToSecondary = false;
             mainPage.ZoomButtonsSeparator.Visibility = Visibility.Collapsed;
-            if (mainPage.WindowSizeState == WindowSizeState.narrow)                            
+            if (mainPage.WindowSizeState == WindowSizeState.narrow)            
                 mainPage.MoveZoomButtonToPrimary();            
 
             mainPage.EnableChangingReadMode(this);
@@ -251,10 +251,10 @@ namespace AnkiU.Pages
         {
             noteEditorControl.ClosedEvent -= NoteEditorClosed;
 
-            mainPage.UnhookZooming();            
-            if (mainPage.WindowSizeState == WindowSizeState.narrow)                            
-                mainPage.MoveZoomButtonToSecondary();
-            
+            mainPage.UnhookZooming();
+            if (mainPage.WindowSizeState == WindowSizeState.narrow)
+                mainPage.MoveZoomButtonToSecondary();  
+
             mainPage.IsAutoSwitchZoomButtonToSecondary = true;            
             mainPage.DisableChangingReadMode();
 
@@ -264,12 +264,32 @@ namespace AnkiU.Pages
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            UnHookAllEvents();
+            if (cardViewPopup != null && cardViewPopup.IsOpen)
+            {
+                cardViewPopup.Hide();                
+                e.Cancel = true;
+                return;
+            }
+
+            if (noteEditorControl.IsNavigated)
+            {
+                noteEditorControl.Close();
+                e.Cancel = true;
+                return;
+            }
 
             if (cardViewPopup != null)
                 cardViewPopup.Close();
-            if (noteEditorControl.IsNavigated)
-                noteEditorControl.Close();
+
+            UnHookAllEvents();
+
+            //WARNING: Added on Creator Update
+            //After returning form SearchCardPage, command bar buttons 
+            //do not appear as intended. So we have to do this to ensure they are shown.         
+            mainPage.SyncButton.Visibility = Visibility.Visible;
+            mainPage.CommanBar.IsOpen = true;
+            mainPage.CommanBar.IsOpen = false;
+            mainPage.SyncButton.Visibility = Visibility.Collapsed;
 
             base.OnNavigatingFrom(e);
         }

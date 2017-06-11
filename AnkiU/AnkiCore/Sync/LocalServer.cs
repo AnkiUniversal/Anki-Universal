@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
+using Windows.Web.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
@@ -102,8 +102,8 @@ namespace AnkiU.AnkiCore.Sync
             {
                 HttpResponseMessage httpResponse = new HttpResponseMessage();
                 JsonObject json = base.Meta();
-                httpResponse.StatusCode = System.Net.HttpStatusCode.OK;
-                httpResponse.Content = new StringContent(Utils.JsonToString(json));
+                httpResponse.StatusCode = HttpStatusCode.Ok;
+                httpResponse.Content = new HttpStringContent(Utils.JsonToString(json));                
                 return httpResponse;
             });
             return task;

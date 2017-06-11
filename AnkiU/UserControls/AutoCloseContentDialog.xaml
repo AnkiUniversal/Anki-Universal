@@ -1,0 +1,19 @@
+﻿<ContentDialog
+    x:Class="AnkiU.UserControls.AutoCloseContentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AnkiU.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" 
+    HorizontalAlignment="Center"
+    VerticalAlignment="Center"
+    Title="TITLE"    
+    x:Name="dialog">
+
+    <Grid>
+        <TextBlock Text="Put content here" TextWrapping="Wrap" 
+                   FontSize="20" x:Name="message"
+                   TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5"/>
+    </Grid>
+</ContentDialog>

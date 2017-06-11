@@ -527,7 +527,13 @@ namespace AnkiU.AnkiCore
             Save();
         }
 
-        public void Rename(JsonObject jObj, string newName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jObj">Json Deck to rename</param>
+        /// <param name="newName">New name</param>
+        /// <param name="isNeedAddToActive">Is need to add to active deck after rename</param>
+        public string Rename(JsonObject jObj, string newName, bool isNeedAddToActive = true)
         {
             //Different with java and python ver, we don't throw exception here and only add "_"            
             //Check for unique name should be done in other function
@@ -566,7 +572,10 @@ namespace AnkiU.AnkiCore
             newName = EnsureParents(newName);
             Save(jObj);
             // renaming may have altered active deckId order
-            MaybeAddToActive();
+            if(isNeedAddToActive)
+                MaybeAddToActive();
+
+            return newName;
         }
 
         public void RenameForDragAndDrop(long draggedDeckDid, long? ontoDeckDid)

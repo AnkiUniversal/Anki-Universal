@@ -22,6 +22,18 @@ namespace AnkiU
     /// </summary>
     sealed partial class App : Application
     {
+        public event RoutedEventHandler AppLaunchFromtTile;
+        public long? TileId { get; private set; }
+
+        public delegate void ProtocolActivateHandler(ProtocolActivatedEventArgs args);
+        public event ProtocolActivateHandler ProtocolActivateEvent;
+        public ProtocolActivatedEventArgs ProtocolActivatedArgs { get; private set; }
+
+        public void ClearTileId()
+        {
+            TileId = null;
+        }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -77,9 +89,60 @@ namespace AnkiU
                 // parameter
                 rootFrame.Navigate(typeof(MainPage), e.Arguments);
             }
+
+            long id;
+            if(long.TryParse(e.TileId, out id))
+            {
+                TileId = id;
+                AppLaunchFromtTile?.Invoke(this, null);
+            }
+            else
+            {
+                TileId = null;
+            }
+
             // Ensure the current window is active
             Window.Current.Activate();
         }
+
+        public void FireAppLaunchFromtTileIfNeeded()
+        {
+            if(TileId != null)
+                AppLaunchFromtTile?.Invoke(this, null);
+        }
+
+        protected override void OnActivated(IActivatedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            // Do not repeat app initialization when the Window already has content,
+            // just ensure that the window is active
+            if (rootFrame == null)
+            {
+                // Create a Frame to act as the navigation context and navigate to the first page
+                rootFrame = new Frame();
+                rootFrame.NavigationFailed += OnNavigationFailed;
+
+                // Place the frame in the current Window
+                Window.Current.Content = rootFrame;
+            }
+
+            if (rootFrame.Content == null)
+                rootFrame.Navigate(typeof(MainPage), null);
+
+            if (e.Kind == ActivationKind.Protocol)
+            {
+                var protocolEvent = e as ProtocolActivatedEventArgs;
+                if (protocolEvent != null)
+                {
+                    ProtocolActivatedArgs = protocolEvent;
+                    ProtocolActivateEvent?.Invoke(protocolEvent);
+                }
+            }
+
+            // Ensure the current window is active
+            Window.Current.Activate();
+        }        
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
@@ -99,7 +162,7 @@ namespace AnkiU
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
+        {            
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();

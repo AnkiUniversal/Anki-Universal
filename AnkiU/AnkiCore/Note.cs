@@ -128,7 +128,7 @@ namespace AnkiU.AnkiCore
             {
                 usn = collection.Usn;
             }
-            string sfld = Utils.StripHTMLMedia(this.fields[collection.Models.SortIdx(model)]);
+            string sfld = Utils.StripHTMLKeepMediaName(this.fields[collection.Models.SortIdx(model)]);
             string tags = StringTags();
             string fields = JoinedFields();
             if (mod == null && collection.Database.QueryScalar<int>
@@ -227,6 +227,12 @@ namespace AnkiU.AnkiCore
             fields[FieldOrd(Field)] = value;
         }
 
+        public void TrySetItem(string Field, string value)
+        {
+            if(map.ContainsKey(Field))
+                fields[FieldOrd(Field)] = value;
+        }
+
         public bool ContainsKey(String key)
         {
             return map.ContainsKey(key);
@@ -289,8 +295,8 @@ namespace AnkiU.AnkiCore
             foreach (var note in listNote)
             {
                 string compared = HtmlEditor.RemoveDivWrap(Utils.SplitFields(note.Fields)[0]).Trim();
-                if (Utils.StripHTMLMedia(compared)
-                    .Equals(Utils.StripHTMLMedia(text)))
+                if (Utils.StripHTMLKeepMediaName(compared)
+                    .Equals(Utils.StripHTMLKeepMediaName(text)))
                 {
                     DupeNoteId = note.Id;
                     return FirstField.Duplicate;

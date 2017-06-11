@@ -46,7 +46,6 @@ namespace AnkiU.Anki.Syncer
         private bool isSyncStateDialogClose = false;      
         
         public ISyncInstance SyncInstance { get { return syncInstance; } }
-        public SyncDialog SyncStateDialog { get { return syncStateDialog; } }
         public MainPage MainPage { get { return mainPage; } }
         public StorageFolder TempSyncFolder { get { return tempSyncFolder; } }
 

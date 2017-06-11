@@ -47,7 +47,7 @@ namespace AnkiU.UserControls
 
         public bool? ThreeStateChoose { get; set; } = null;
 
-        private bool isClosed = false;
+        private bool isClosed = true;
 
         public ThreeOptionsDialog()
         {

@@ -12,7 +12,7 @@
     d:DesignHeight="300"
     d:DesignWidth="200">
 
-    <Grid Background="{Binding Background,ElementName=userControl}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -21,24 +21,24 @@
                                   HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Hidden">
             <StackPanel Margin="5">
                 <TextBlock Margin="0,10"
-                        Text="Tutorials" Foreground="{Binding Foreground, ElementName=userControl}" 
+                        Text="Tutorials" Foreground="White" 
                        FontSize="22" HorizontalAlignment="Center"
                        FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" />
 
-                <Border BorderThickness="0,1,0,0" BorderBrush="{Binding Foreground, ElementName=userControl}" Margin="0,0,0,5"/>
+                <Border BorderThickness="0,1,0,0" BorderBrush="White" Margin="0,0,0,5"/>
 
                 <Button Style="{StaticResource ButtonBlue}" 
                     BorderThickness="0"       
                     x:Name="button"
                     Background="Transparent"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Foreground="White"
                     Height="35"
                     Padding="5"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="AddDeckAndNoteClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Foreground="{StaticResource ButtonBackGroundNormal}" Symbol="Flag" Margin="0,0,5,0" x:Name="DecksAndNotesFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0" x:Name="DecksAndNotesFlag"/>
                         <TextBlock Text="Decks &amp; Notes" />
                     </StackPanel>
                 </Button>
@@ -48,12 +48,12 @@
                     Background="Transparent"
                     Height="35"
                     Padding="5"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="NoteTypeAndTemplateClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Foreground="{StaticResource ButtonBackGroundNormal}" Symbol="Flag" Margin="0,0,5,0"  x:Name="NoteTypeAndTemplateFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="NoteTypeAndTemplateFlag"/>
                         <TextBlock Text="Note Types &amp; Templates" />
                     </StackPanel>
                 </Button>
@@ -63,7 +63,7 @@
                     Background="Transparent" 
                     Height="35"
                     Padding="5"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Visibility="Collapsed"
@@ -82,7 +82,7 @@
                     Padding="5"
                         x:Name="templateWithClozeField"
                     Visibility="{Binding Visibility,ElementName=templateWithTypeField}"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"                                   
                     Click="TemplateWithClozeFieldClick">
@@ -97,12 +97,12 @@
                     Background="Transparent"
                     Height="35"
                     Padding="5"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="CustomStudy">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Foreground="{StaticResource ButtonBackGroundNormal}" Symbol="Flag" Margin="0,0,5,0"  x:Name="CustomStudyFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="CustomStudyFlag"/>
                         <TextBlock Text="Custom Study" />
                     </StackPanel>
                 </Button>
@@ -114,12 +114,12 @@
                     Padding="5"
                     x:Name="DataSyncing"
                     Visibility="Visible"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"                                   
                     Click="DataSyncingClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Foreground="{StaticResource ButtonBackGroundNormal}" Symbol="Flag" Margin="0,0,5,0"  x:Name="DataSyncingFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="DataSyncingFlag"/>
                         <TextBlock Text="Data Syncing" />
                     </StackPanel>
                 </Button>
@@ -131,7 +131,7 @@
                     Padding="5"
                     x:Name="DeckOption"
                     Visibility="Collapsed"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"                                   
                     Click="ShowDeckOptionHelp">
@@ -144,19 +144,19 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="1">
-            <Border  BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,2,0,0" Margin="3,0,3,0" />
+            <Border  BorderBrush="White" BorderThickness="0,2,0,0" Margin="3,0,3,0" />
             <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
                     BorderThickness="0"        
                     Margin="2"
                     Background="Transparent"
                     Height="35"
                     Padding="5,0,0,0"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="UserManualClick">
                 <StackPanel Orientation="Horizontal">
-                    <Path Style="{StaticResource BookIcon}" Margin="0,0,5,0" Fill="{Binding Foreground,ElementName=userControl}" />
+                    <Path Style="{StaticResource BookIcon}" Margin="0,0,5,0" Fill="White" />
                     <TextBlock FontSize="16" Text="User Manual (Online)" />
                 </StackPanel>
             </Button>
@@ -167,12 +167,12 @@
                     Background="Transparent"
                     Height="35"
                     Padding="5,0,0,0"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="CreditClick">
                 <StackPanel Orientation="Horizontal">
-                    <Path Style="{StaticResource InfoIcon}" Margin="0,0,5,0" Fill="{Binding Foreground,ElementName=userControl}" />
+                    <Path Style="{StaticResource InfoIcon}" Margin="0,0,5,0" Fill="White" />
                     <TextBlock FontSize="16" Text="About" />
                 </StackPanel>
             </Button>

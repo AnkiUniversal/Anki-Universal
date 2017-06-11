@@ -37,6 +37,7 @@ namespace TestAnkiCore
     public class TestImporting
     {
         public StorageFolder tempFolder;
+        private string defaultDeckId = "1";
 
         [TestInitialize()]
         public async Task Setup()
@@ -63,31 +64,36 @@ namespace TestAnkiCore
         public async Task TestAnki2MediaDupes()
         {
             long mid;
+            string exportFileName = "testAnki2MediaDupe.apkg";
             using (Collection col = await Utils.GetEmptyCollection(tempFolder))
             {
                 //Add a note
                 Note n = col.NewNote();
                 n.SetItem("Front", "[sound:foo.mp3]");
                 mid = (long)n.Model.GetNamedNumber("id");
-                col.AddNote(n);
-
+                col.AddNote(n);                
+                var folder = await col.Media.MediaFolder.CreateFolderAsync(defaultDeckId);
                 //Add that sound to the media folder
-                using (FileStream file = new FileStream(col.Media.MediaFolder.Path + "\\" + "foo.mp3", FileMode.Create))
+                using (FileStream file = new FileStream(folder.Path + "\\" + "foo.mp3", FileMode.Create))
                 {
                     byte[] buf = Encoding.UTF8.GetBytes("foo");
                     file.Write(buf, 0, buf.Length);
                 }
+                AnkiU.AnkiCore.Exporter.AnkiPackageExporter exporter = new AnkiU.AnkiCore.Exporter.AnkiPackageExporter(col);
+                await exporter.ExportInto(tempFolder, exportFileName);
             }
 
             //It should be imported correctly into an empty deck
+            StorageFile exportedFiles = await tempFolder.GetFileAsync(exportFileName);
             StorageFolder tempFolder2 = await Utils.localFolder.CreateFolderAsync("tempFolder2");
             using (Collection empty = await Utils.GetEmptyCollection(tempFolder2))
             {
-                Importer imp = new Anki2Importer(empty, tempFolder, "test.anki2");
+                Importer imp = new AnkiPackageImporter(empty, exportedFiles);
                 await imp.Run();
                 
                 var expected = new List<string> { "foo.mp3" };
-                var storageFiles = await empty.Media.MediaFolder.GetFilesAsync();
+                var folder = await empty.Media.MediaFolder.GetFolderAsync(defaultDeckId);
+                var storageFiles = await folder.GetFilesAsync();
                 var actual = (from s in storageFiles select s.Name).ToList();
                 Assert.IsTrue(actual.SequenceEqual(expected), actual.PrintArray());
 
@@ -96,7 +102,7 @@ namespace TestAnkiCore
                 empty.RemoveCardsAndNoteIfNoCardsLeft((from c in cardList select c.Id).ToArray());
                 imp = new Anki2Importer(empty, tempFolder, "test.anki2");
                 await imp.Run();
-                storageFiles = await empty.Media.MediaFolder.GetFilesAsync();
+                storageFiles = await folder.GetFilesAsync();
                 actual = (from s in storageFiles select s.Name).ToList();
                 Assert.IsTrue(actual.SequenceEqual(expected), actual.PrintArray());
 
@@ -149,7 +155,6 @@ namespace TestAnkiCore
         [TestMethod]
         public async Task TestApkg()
         {
-
             //Copy apkg file to test folder 
             string assetFileName = @"ms-appx:///TestAssets/media.apkg";
             StorageFile assetFile = await StorageFile.GetFileFromApplicationUriAsync(

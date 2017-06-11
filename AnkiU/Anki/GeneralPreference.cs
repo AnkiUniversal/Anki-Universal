@@ -335,6 +335,21 @@ namespace AnkiU.Anki
             }
         }
 
+        private int syncService;
+        [SQLite.Net.Attributes.Column("SyncService")]
+        public int SyncService
+        {
+            get { return syncService; }
+            set
+            {
+                if (syncService == value)
+                    return;
+
+                syncService = value;
+                IsModified = true;
+            }
+        }
+
         private JsonObject helpPreferencesJson;
         [SQLite.Net.Attributes.Column("Helps")]
         public string Helps
@@ -371,6 +386,7 @@ namespace AnkiU.Anki
             userPrefs.BackupsMinTime = 12;
             userPrefs.helpPreferencesJson = new JsonObject();
 
+            userPrefs.syncService = 0;
             userPrefs.LastSyncTime = 0;
             userPrefs.IsSyncMedia = false;
             userPrefs.isSyncOnOpen = false;

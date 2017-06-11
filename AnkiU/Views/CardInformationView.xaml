@@ -219,6 +219,7 @@
 			IsItemClickEnabled="True"
             ItemClick="OnCardListViewItemClick"
 			SelectionMode="Multiple"
+            IsMultiSelectCheckBoxEnabled="False"
 			ItemsSource="{Binding}"                   
 			RightTapped="CardListRightTappedHandler"
 			PointerPressed="CardListPointerPressedHandler" 

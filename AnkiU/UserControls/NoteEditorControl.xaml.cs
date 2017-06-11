@@ -71,7 +71,7 @@ namespace AnkiU.UserControls
             await noteEditorPage.ClearPage();
             contentFrame.Content = null;
             contentFrame = null;
-            GC.Collect();
+            //GC.Collect(); //Disable in "Creator Update"
 
             IsNavigated = false;
 

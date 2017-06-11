@@ -291,7 +291,6 @@ namespace AnkiU.Models
         {
             //First force reload new image and remove old one in cache
             ImagePath = file.Path;
-            GC.Collect();
 
             StorageFolder folder = await GetDeckImageFolder();
             var oldFile = await folder.TryGetItemAsync(id.ToString()) as StorageFile;

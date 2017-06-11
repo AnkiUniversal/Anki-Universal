@@ -181,8 +181,7 @@ namespace AnkiU.Anki.Syncer
 
         public void Close()
         {
-            oneDriveClient = null;
-            GC.Collect();            
+            oneDriveClient = null;         
         }
 
         public async Task ExceptionHandler(Exception ex)

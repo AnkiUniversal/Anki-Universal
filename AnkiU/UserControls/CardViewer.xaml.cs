@@ -182,7 +182,7 @@ namespace AnkiU.UserControls
             isWebViewReady = false;
             webViewGrid.Children.Clear();
             webViewControl = null;
-            GC.Collect();
+            //GC.Collect(); //Disable in Creator Update
         }
 
         private void ClearSpeechSynthIfNeeded()
@@ -473,7 +473,7 @@ namespace AnkiU.UserControls
 
         private async Task StartPlayTextToSpeech(string text)
         {
-            text = Utils.StripHTMLMedia(text);
+            text = Utils.StripHTML(text);
             await speechSynth.StartTextToSpeech(text);
         }
 

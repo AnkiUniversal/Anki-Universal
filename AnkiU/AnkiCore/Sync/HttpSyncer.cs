@@ -23,8 +23,7 @@ using System.Threading.Tasks;
 using Windows.Data.Json;
 using System.IO;
 using System.IO.Compression;
-using System.Net.Http;
-using System.Net;
+using Windows.Web.Http;
 
 namespace AnkiU.AnkiCore.Sync
 {
@@ -59,7 +58,7 @@ namespace AnkiU.AnkiCore.Sync
             }
 
             HttpStatusCode resultCode = resp.StatusCode;
-            if (!(resultCode == HttpStatusCode.OK || resultCode == HttpStatusCode.Forbidden))
+            if (!(resultCode == HttpStatusCode.Ok || resultCode == HttpStatusCode.Forbidden))
             {
                 string reason = resp.ReasonPhrase;
                 throw new UnknownHttpResponseException(reason, resultCode);
@@ -73,90 +72,107 @@ namespace AnkiU.AnkiCore.Sync
         /// support file uploading, so this is the more compatible choice.
         /// </summary>
         /// <param name="method"></param>
-        /// <param name="fobj"></param>
+        /// <param name="inputStream"></param>
         /// <param name="comp"></param>
         /// <param name="registerData"></param>
         /// <returns></returns>
-        public async Task<HttpResponseMessage> Request(string method, Stream fobj = null, int comp = 6, JsonObject registerData = null)
+        public async Task<HttpResponseMessage> Request(string method, Stream inputStream = null, int comp = 6, JsonObject registerData = null)
         {
-            using (var temp = new TempFile(@"\syncer.tmp"))
-            using (StringWriter buf = new StringWriter())
-            using (FileStream tmpFileBuffer = new FileStream(temp.Path, FileMode.Create, FileAccess.ReadWrite))
+            try
             {
-                string bdry = "--" + BOUNDARY;
-                // post vars
-                postVars.Add("c", comp != 0 ? 1 : 0);
-                foreach (string key in postVars.Keys)
+                using (StringWriter buf = new StringWriter())
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    buf.Write(bdry + "\r\n");
-                    buf.Write(String.Format(Media.locale, "Content-Disposition: form-data; name=\"{0}\"\r\n\r\n{1}\r\n",
-                                key,
-                                postVars[key]));
-                }
-
-
-                // payload as raw data or json
-                if (fobj != null)
-                {
-                    // header
-                    buf.Write(bdry + "\r\n");
-                    buf.Write("Content-Disposition: form-data; name=\"data\"; filename=\"data\"\r\nContent-Type: application/octet-stream\r\n\r\n");
-                    byte[] buffer = Encoding.UTF8.GetBytes(buf.ToString());
-                    tmpFileBuffer.Write(buffer, 0, buffer.Length);
-
-                    // write file into buffer, optionally compressing
-                    int len = 0;
-                    byte[] chunk = new byte[65536];
-                    if (comp != 0)
+                    string bdry = "--" + BOUNDARY;
+                    // post vars
+                    postVars.Add("c", comp != 0 ? 1 : 0);
+                    foreach (string key in postVars.Keys)
                     {
-                        using (GZipStream tgt = new GZipStream(tmpFileBuffer, CompressionLevel.Optimal))
+                        buf.Write(bdry + "\r\n");
+                        buf.Write(String.Format("Content-Disposition: form-data; name=\"{0}\"\r\n\r\n{1}\r\n",
+                                    key, postVars[key]));
+                    }
+
+
+                    // payload as raw data or json
+                    if (inputStream != null)
+                    {
+                        // header
+                        buf.Write(bdry + "\r\n");
+                        buf.Write("Content-Disposition: form-data; name=\"data\"; filename=\"data\"\r\nContent-Type: application/octet-stream\r\n\r\n");
+                        byte[] buffer = Encoding.UTF8.GetBytes(buf.ToString());
+                        memoryStream.Write(buffer, 0, buffer.Length);
+
+                        // write file into buffer, optionally compressing
+                        int len = 0;
+                        byte[] chunk = new byte[65536];
+                        if (comp != 0)
                         {
-                            while ((len = fobj.Read(chunk, 0, chunk.Length)) >= 0)
+                            using (GZipStream gzipStream = new GZipStream(memoryStream, CompressionMode.Compress, true))
                             {
-                                tgt.Write(chunk, 0, len);
+                                while ((len = inputStream.Read(chunk, 0, chunk.Length)) > 0)
+                                {
+                                    gzipStream.Write(chunk, 0, len);
+                                }
                             }
                         }
+                        else
+                        {
+                            while ((len = inputStream.Read(chunk, 0, chunk.Length)) > 0)
+                            {
+                                memoryStream.Write(chunk, 0, len);
+                            }
+                        }
+                        buffer = Encoding.UTF8.GetBytes("\r\n" + bdry + "--\r\n");
+                        memoryStream.Write(buffer, 0, buffer.Length);
                     }
                     else
                     {
-                        while ((len = fobj.Read(chunk, 0, chunk.Length)) >= 0)
-                        {
-                            tmpFileBuffer.Write(chunk, 0, len);
-                        }
+                        byte[] buffer = Encoding.UTF8.GetBytes(buf.ToString());
+                        memoryStream.Write(buffer, 0, buffer.Length);
                     }
-                    buffer = Encoding.UTF8.GetBytes("\r\n" + bdry + "--\r\n");
-                    tmpFileBuffer.Write(buffer, 0, buffer.Length);
-                }
-                else
-                {
-                    byte[] buffer = Encoding.UTF8.GetBytes(buf.ToString());
-                    tmpFileBuffer.Write(buffer, 0, buffer.Length);
-                }
 
-                // connection headers
-                string url = Syncing.BASE;
-                if (method.Equals("register"))
-                {
-                    url = url + "account/signup" + "?username=" + registerData.GetNamedString("u") + "&password="
-                            + registerData.GetNamedString("p");
+                    // connection headers
+                    string url = Syncing.BASE;
+                    if (method.Equals("register"))
+                    {
+                        url = url + "account/signup" + "?username=" + registerData.GetNamedString("u") + "&password="
+                                + registerData.GetNamedString("p");
+                    }
+                    else if (method.StartsWith("upgrade"))
+                    {
+                        url = url + method;
+                    }
+                    else
+                    {
+                        url = SyncURL() + method;
+                    }
+
+                    memoryStream.Position = 0;
+                    Uri uri = new Uri(url);
+                    HttpRequestMessage httpPost = new HttpRequestMessage(HttpMethod.Post, uri);                    
+                    HttpStreamContent streamContent = new HttpStreamContent(memoryStream.AsInputStream());
+                    httpPost.Content = streamContent;
+             
+                    httpPost.Content.Headers.Add("Content-type", "multipart/form-data; boundary=" + BOUNDARY);
+                    using (HttpClient httpClient = new HttpClient())
+                    {
+                        httpClient.DefaultRequestHeaders.Add("user-agent", "Windows 10 (Anki Universal)");
+                        HttpResponseMessage httpResponse = await httpClient.SendRequestAsync(httpPost);
+                        // we assume badAuthRaises flag from Anki Desktop always False
+                        // so just throw new RuntimeException if response code not 200 or 403
+                        AssertOk(httpResponse);
+                        return httpResponse;
+                    }
                 }
-                else if (method.StartsWith("upgrade"))
-                {
-                    url = url + method;
-                }
-                else
-                {
-                    url = SyncURL() + method;
-                }
-                HttpRequestMessage httpPost = new HttpRequestMessage(HttpMethod.Post, url);
-                httpPost.Content = new StreamContent(tmpFileBuffer);
-                httpPost.Content.Headers.Add("Content-type", "multipart/form-data; boundary=" + BOUNDARY);
-                HttpClient httpClient = new HttpClient();
-                HttpResponseMessage httpResponse = await httpClient.SendAsync(httpPost);
-                // we assume badAuthRaises flag from Anki Desktop always False
-                // so just throw new RuntimeException if response code not 200 or 403
-                AssertOk(httpResponse);
-                return httpResponse;
+            }
+            catch(UnknownHttpResponseException ex)
+            {
+                throw ex;
+            }
+            catch(Exception ex)
+            {
+                throw new HttpSyncerException(ex.StackTrace);
             }
         }
 
@@ -220,7 +236,7 @@ namespace AnkiU.AnkiCore.Sync
             return new MemoryStream(Encoding.UTF8.GetBytes(str ?? ""));
         }
 
-        public virtual Task<HttpResponseMessage> HostKey(string user, string password) { return null; }
+        public virtual Task<string> HostKey(string user, string password) { return null; }
         public virtual Task<JsonObject> ApplyChanges(JsonObject kw) { return null; }
         public virtual Task<JsonObject> Start(JsonObject kw) { return null; }
         public virtual Task<JsonObject> Chunk(JsonObject kw = null) { return null; }
@@ -254,6 +270,12 @@ namespace AnkiU.AnkiCore.Sync
         {
             this.responseCode = code;
         }
+    }
+
+    public class HttpSyncerException : Exception
+    {
+        public HttpSyncerException(string message) : base(message)
+        { }
     }
 
 }

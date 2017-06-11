@@ -284,7 +284,7 @@ namespace AnkiU.Pages
         }
         
         protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
+        {            
             if (!noteFieldView.HtmlEditor.IsContentCheckOnce)
             {
                 e.Cancel = true;
@@ -312,15 +312,16 @@ namespace AnkiU.Pages
                 UnHookAllEvents();
             }
 
+            collection.SaveAndCommitAsync();
+            noteFieldView.HtmlEditor.ClearWebViewControl();
+
             base.OnNavigatingFrom(e);
         }
 
-        protected async override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);            
-            collection.SaveAndCommitAsync();
-            noteFieldView.HtmlEditor.ClearWebViewControl();
-            await TryDeleteTempFolder();                     
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {                                       
+            var task =  TryDeleteTempFolder();
+            base.OnNavigatedFrom(e);
         }
 
         /// <summary>

@@ -11,7 +11,7 @@
     <AssemblyName>AnkiRuntimeComponent</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -108,8 +108,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnkiUniversalDeckBackgroundTask.cs" />
-    <Compile Include="BackgroundTasksHelper.cs" />
     <Compile Include="ButtonPassingWebToWinRT.cs" />
     <Compile Include="KeyPassingWebToWinRT.cs" />
     <Compile Include="EditableFieldPassWebToWinRT.cs" />

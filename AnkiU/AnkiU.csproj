@@ -11,8 +11,8 @@
     <AssemblyName>AnkiU</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.15063.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -33,6 +33,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <CodeAnalysisRuleSet>AnkiU.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -45,6 +46,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <CodeAnalysisRuleSet>AnkiU.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -56,6 +58,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <CodeAnalysisRuleSet>AnkiU.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <OutputPath>bin\ARM\Release\</OutputPath>
@@ -68,6 +71,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <CodeAnalysisRuleSet>AnkiU.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -79,6 +83,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <CodeAnalysisRuleSet>AnkiU.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -91,6 +96,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <CodeAnalysisRuleSet>AnkiU.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
@@ -211,6 +217,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Licenses\Win2D\License.txt" />
+    <None Include="AnkiU.ruleset" />
     <None Include="AnkiU_StoreKey.pfx" />
     <Content Include="html\tinymce\skins\lightgray\fonts\tinymce-small.eot" />
     <Content Include="html\tinymce\skins\lightgray\fonts\tinymce-small.json" />
@@ -278,6 +285,7 @@
     <Compile Include="AnkiCore\Importer\AnkiPackageImporter.cs" />
     <Compile Include="AnkiCore\Exporter\Exporter.cs" />
     <Compile Include="AnkiCore\Importer\Importer.cs" />
+    <Compile Include="AnkiCore\Importer\NlpJdictImporter.cs" />
     <Compile Include="AnkiCore\Importer\NoteImporter.cs" />
     <Compile Include="AnkiCore\Importer\TextImporter.cs" />
     <Compile Include="AnkiCore\revlog.cs" />
@@ -307,12 +315,11 @@
     <Compile Include="Anki\HtmlHelpter.cs" />
     <Compile Include="Anki\InkPreference.cs" />
     <Compile Include="Anki\InkToTextRecognizer.cs" />
-    <Compile Include="Anki\Notifications\TileHelper.cs" />
-    <Compile Include="Anki\Notifications\ToastHelper.cs" />
     <Compile Include="Anki\ObservableCollectionAutoResize.cs" />
     <Compile Include="Anki\RecognizerHelper.cs" />
     <Compile Include="Anki\DeckPreferences.cs" />
     <Compile Include="Anki\GeneralPreference.cs" />
+    <Compile Include="Anki\Syncer\AnkiWebSync.cs" />
     <Compile Include="Anki\Syncer\FullSync.cs" />
     <Compile Include="Anki\Syncer\ISync.cs" />
     <Compile Include="Anki\Syncer\ISyncInstance.cs" />
@@ -408,11 +415,17 @@
     <Compile Include="UserControls\AdvancedSearchPopup.xaml.cs">
       <DependentUpon>AdvancedSearchPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\AnkiWebLogin.xaml.cs">
+      <DependentUpon>AnkiWebLogin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\AudioRecorder.xaml.cs">
       <DependentUpon>AudioRecorder.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\AudioRecorderDialog.xaml.cs">
       <DependentUpon>AudioRecorderDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AutoCloseContentDialog.xaml.cs">
+      <DependentUpon>AutoCloseContentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\CardViewPopup.xaml.cs">
       <DependentUpon>CardViewPopup.xaml</DependentUpon>
@@ -521,6 +534,9 @@
     </Compile>
     <Compile Include="Views\CollectionOptionsView.xaml.cs">
       <DependentUpon>CollectionOptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DeckChooserFlyout.xaml.cs">
+      <DependentUpon>DeckChooserFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DeckGeneralOptionsView.xaml.cs">
       <DependentUpon>DeckGeneralOptionsView.xaml</DependentUpon>
@@ -721,11 +737,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\AnkiWebLogin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\AudioRecorder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\AudioRecorderDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AutoCloseContentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -845,6 +869,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\DeckChooserFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\DeckGeneralOptionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -922,15 +950,23 @@
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
-      <Name>Windows Mobile Extensions for the UWP %28WindowsMobile, Version=10.0.10586.0%29</Name>
+    <SDKReference Include="WindowsMobile, Version=10.0.15063.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\AnkiBackgroundRuntimeComponent\AnkiBackgroundRuntimeComponent.csproj">
+      <Project>{eb42171c-4d51-4815-a272-bd529f479174}</Project>
+      <Name>AnkiBackgroundRuntimeComponent</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AnkiRuntimeComponent\AnkiRuntimeComponent.csproj">
       <Project>{db0d81e2-9a27-4354-aabf-2ae1adf6567c}</Project>
       <Name>AnkiRuntimeComponent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{d087da6f-df74-4c85-8f7f-4bd32b793033}</Project>
+      <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using Windows.Data.Json;
 using System.IO;
 using System.IO.Compression;
-using System.Net.Http;
+using Windows.Web.Http;
 using System.Net;
 
 namespace AnkiU.AnkiCore.Sync

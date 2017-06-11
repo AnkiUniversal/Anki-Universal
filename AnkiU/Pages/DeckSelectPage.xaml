@@ -7,7 +7,7 @@
     xmlns:data="using:AnkiU.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"         
-    x:Name="page"        
+    x:Name="page"    
     Background="{StaticResource BackgroundNormal}"
     mc:Ignorable="d">
 
@@ -208,7 +208,7 @@
                             VerticalAlignment="Stretch" 
                             Grid.ColumnSpan="3" 
                             Grid.Row="1"
-                            Margin="5,10,5,5"
+                            Margin="5,23,5,5"
                             Grid.RowSpan="2"                             
                             Foreground="{Binding Foreground,ElementName=page}"
                             Visibility="Collapsed"
@@ -219,58 +219,5 @@
         <Ellipse x:Name="pointToShowFlyout" Grid.RowSpan="3" Width="0" Height="0" Grid.ColumnSpan="3" Stroke="Transparent" Fill="Transparent" 
                  VerticalAlignment="Top" HorizontalAlignment="Left" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" IsHitTestVisible="False"/>
 
-        <Button Style="{StaticResource ButtonOcpacity}" Background="Transparent" Height="20" Grid.Row="0"
-                    Canvas.ZIndex="1" Click="NoticeBoardExpandButtonClick" Padding="0"
-                    HorizontalContentAlignment="Center" BorderThickness="0"
-                    VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="3">
-            <Path Style="{StaticResource ChevronDoubleDownIcon}"  Fill="{Binding Foreground, ElementName=page}" RenderTransformOrigin="0.5,0.5">
-                <Path.RenderTransform>
-                    <CompositeTransform x:Name="expandSymbolRotation" Rotation="180"/>
-                </Path.RenderTransform>
-            </Path>
-        </Button>
-        <Grid x:Name="noticeBoardRoot" Grid.Column="0" PointerPressed="PointerPressedHandler" RightTapped="DeckViewRightTapped" Holding="DeckItemHolding"
-              Grid.ColumnSpan="3" Grid.Row="0" Visibility="Visible" Height="80">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            
-            <Border Grid.ColumnSpan="3" 
-                    Background="Transparent">
-
-            </Border>
-
-            <Grid  Margin="-5,25,0,0" x:Name="textBlockRoot" Grid.ColumnSpan="3" HorizontalAlignment="Center">
-                <Path x:Name="sunSymbol" Style="{StaticResource SunPathIcon}" Fill="{Binding Foreground, ElementName=page}" Stroke="{Binding Foreground, ElementName=page}" Visibility="Visible"
-                      HorizontalAlignment="Left" Margin="-1,-12,0,0" Width="30" Height="30" RenderTransformOrigin="0.5,0.5">
-                </Path>
-
-                <Path x:Name="moonSymbol" Style="{StaticResource MoonPathIcon}" Fill="{Binding Foreground, ElementName=page}" Visibility="Visible"
-                      HorizontalAlignment="Left" Margin="1,-10,0,0" Width="25" Height="25" >
-                </Path>
-
-                <TextBlock x:Name="totalCardsText" Text="TODAY'S CARD: 2000" Margin="35,-5,0,0"
-                           TextAlignment="Center" 
-                           FontWeight="SemiBold" 
-                           FontSize="20" />
-
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="35,25,0,0">
-                    <TextBlock x:Name="newCardsText" 
-                           Text="New: 1000." 
-                           TextAlignment="Left" 
-                           FontWeight="SemiBold" 
-                           FontSize="15" />
-
-                    <TextBlock x:Name="dueCardsText"
-                           Text="Due: 1000." Margin="20,0,0,0"
-                           TextAlignment="Left" 
-                           FontWeight="SemiBold" 
-                           FontSize="15" />
-                </StackPanel>
-            </Grid>
-                        
-        </Grid>
     </Grid>
 </Page>

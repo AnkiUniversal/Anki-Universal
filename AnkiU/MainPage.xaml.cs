@@ -64,6 +64,9 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.Xaml.Media.Imaging;
 using AnkiU.Anki.Syncer;
+using Shared;
+using Windows.ApplicationModel.Background;
+using AnkiBackgroundRuntimeComponent;
 
 namespace AnkiU
 {
@@ -83,7 +86,7 @@ namespace AnkiU
     {
         private const string WINSIZE_NARROW = "narrow";
         private const string WINSIZE_MEDIUM = "medium";
-        private const string WINSIZE_WIDE = "wide";
+        private const string WINSIZE_WIDE = "wide";        
 
         public const int COMMAND_BAR_EXPAND_HEIGHT = 13;
         public const int CUSTOM_CURSOR_CIRCLE_ID = 101;
@@ -95,17 +98,23 @@ namespace AnkiU
         public const double ZOOM_STEP = 0.25;        
         public readonly string USER_PREF_FILE_PATH = Storage.AppLocalFolder.Path + "\\" + Constant.USER_PREF;
 
-        private ApplicationViewTitleBar titleBar;
-        private StatusBar statusBar;
         private readonly Style primaryAppButtonStyle;
         private readonly Style secondaryAppButtonStyle;
+        private bool isVisible = false; //WARNING: On desktop this does not ensure that the app is in foreground
+
+        private DeckChooserFlyout nlpDeckImportFlyout;
+        private WwwFormUrlDecoder decoder;
+        private ThreeOptionsDialog nlpImportDiaglog;
+        private string deckToImportName;
+        private long deckToImportID = 0;
+        private bool isInProtocolActivate = false;
 
         private CanvasControl canvas;
         private CanvasDevice canvasDevice;
 
         private CoreCursor cursor = new CoreCursor(CoreCursorType.Arrow, 0);
 
-        private FullSync sync = null;
+        private ISync sync = null;
 
         private AllHelps allHelps;        
         public AllHelps AllHelps
@@ -118,6 +127,8 @@ namespace AnkiU
         }
 
         private bool isFinishInitation = false;
+
+        public static AnkiDeckBackgroundRegisterHelper BackgroundTaskHelper { get; private set; }
 
         public enum PrimaryButtons
         {            
@@ -174,6 +185,7 @@ namespace AnkiU
         public const int ZINDEX_LOWSET = -1;
 
         public const string UNDO_LIMIT_REACHED_STRING = "Undo Limit Reached.";
+        private const string NLP_JDICT_PKG_NAME = "36558AnkiUniversal.NLPJapaneseDictionary_qh2hfqm01f5q4";
 
         public Collection Collection { get; set; }
 
@@ -195,10 +207,12 @@ namespace AnkiU
         public event RoutedEventHandler InkToTextSelectorLoaded;
         public event RoutedEventHandler InkHideToggleButtonClick;
         public event RoutedEventHandler InkEraserToggleButtonClick;
-        public event RoutedEventHandler TextToSpeechToggleButtonClick;
+        public event RoutedEventHandler TextToSpeechToggleButtonClick;        
 
         public delegate void DeckImageChangeHandler(StorageFile fileToChange, long deckId, long modifiedTime);
         public event DeckImageChangeHandler DeckImageChangedEvent;
+        public delegate void DeckChangedHandler(long deckId);
+        public event DeckChangedHandler DeckChanged;
 
         #region UIElement wrapper
         public Grid MainGrid { get { return mainGrid; } } 
@@ -579,7 +593,7 @@ namespace AnkiU
             this.InitializeComponent();
             currentDispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
             primaryAppButtonStyle = Application.Current.Resources["PrimaryAppButton"] as Style;
-            secondaryAppButtonStyle = Application.Current.Resources["SecondaryAppButton"] as Style;
+            secondaryAppButtonStyle = Application.Current.Resources["SecondaryAppButton"] as Style;            
             try
             {
                 NavigationSetup();
@@ -609,21 +623,32 @@ namespace AnkiU
         private async void InitCollectionFinishedHandler()
         {
             if (!UserPrefs.IsFirstTimeOpenApp)
-            {                
-                await NavigateToDeckSelectPage();               
-                SyncOnStarupIfNeeded();
+            {
+                await NavigateToDeckSelectPage();
+                if (UserPrefs.IsSyncOnOpen)
+                    await StartSync();
             }
+
+            await HookProtocolEvent();
+            FireAppTileEventIfNeeded();
         }
 
-        private async void SyncOnStarupIfNeeded()
+        private async Task HookProtocolEvent()
         {
-            await CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                if (UserPrefs.IsSyncOnOpen)
-                {
-                    SyncButtonClickHandler(null, null);
-                }
-            });
+            await Task.Delay(250); //Avoid race condition on startup
+            var currentApp = Application.Current as App;
+            if (currentApp != null)
+                currentApp.ProtocolActivateEvent += OnProtocolActivateEvent;
+
+            if (currentApp.ProtocolActivatedArgs != null)
+                OnProtocolActivateEvent(currentApp.ProtocolActivatedArgs);
+        }
+
+        private void FireAppTileEventIfNeeded()
+        {
+            var app = App.Current as App;
+            if (app != null)
+                app.FireAppLaunchFromtTileIfNeeded();
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -647,6 +672,10 @@ namespace AnkiU
                 InitCollection();
 
                 Window.Current.VisibilityChanged += VisibilityChangedHandler;
+
+                BackgroundTaskHelper = new AnkiDeckBackgroundRegisterHelper();
+                await BackgroundTaskHelper.RegisterBackgroundTasks();
+                ToastHelper.MarkAlreadyShown();
             }
             catch (Exception ex)
             {
@@ -777,14 +806,11 @@ namespace AnkiU
         private void NavigationSetup()
         {
             SystemNavigationManager currentView = SystemNavigationManager.GetForCurrentView();
-            currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))            
-                titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            currentView.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;            
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                statusBar = StatusBar.GetForCurrentView();
+                var statusBar = StatusBar.GetForCurrentView();
                 if(statusBar != null)
                 {
                     statusBar.BackgroundOpacity = 1;                    
@@ -904,13 +930,30 @@ namespace AnkiU
 
         private async void VisibilityChangedHandler(object sender, VisibilityChangedEventArgs e)
         {
-            if (e.Visible == false)
+            isVisible = e.Visible;
+            if (isVisible == false)
             {
                 UpdateUserPreference();
-                UpdateDeckPrefs();                       
+                UpdateDeckPrefs();
+
+                await UpdateTilesAsync();
             }
-            else if(isFinishInitation)
-                await BackupIfNeeded();
+            else 
+            {
+                if (isFinishInitation)
+                    await BackupIfNeeded();
+            }
+        }
+
+        private async Task UpdateTilesAsync()
+        {
+            //Using shared for more light weight code and avoid collision + unneccessary changes to database
+            using (var collection = await Shared.AnkiCore.Storage.OpenCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME))
+            {
+                Shared.ViewModels.DeckListViewModel viewModel = new Shared.ViewModels.DeckListViewModel(collection);
+                viewModel.GetAllDeckInformation();
+                await viewModel.UpdateAllSecondaryTilesIfHas();
+            }
         }
 
         public void UpdateUserPreference()
@@ -1184,7 +1227,6 @@ namespace AnkiU
         {
             RepositionCommanBar(e.OldState.Name);
         }
-
         private void RepositionCommanBar(string oldStateName)
         {
             int lastPrimary;
@@ -1263,7 +1305,7 @@ namespace AnkiU
             {
                 commandBar.PrimaryCommands.Remove(button);
                 button.Style = secondaryAppButtonStyle;
-                commandBar.SecondaryCommands.Add(button);
+                commandBar.SecondaryCommands.Add(button);                                
             }
         }
 
@@ -1295,9 +1337,9 @@ namespace AnkiU
         {
             if (commandBar.SecondaryCommands.Contains(button))
             {
-                commandBar.SecondaryCommands.Remove(button);                
-                commandBar.PrimaryCommands.Add(button);
-                button.Style = primaryAppButtonStyle;                
+                commandBar.SecondaryCommands.Remove(button);
+                button.Style = primaryAppButtonStyle;
+                commandBar.PrimaryCommands.Add(button);                                
             }
         }
 
@@ -1312,9 +1354,9 @@ namespace AnkiU
         {
             if (commandBar.SecondaryCommands.Contains(button))
             {
-                commandBar.SecondaryCommands.Remove(button);                
-                commandBar.PrimaryCommands.Insert(index, button);
-                button.Style = primaryAppButtonStyle;                
+                commandBar.SecondaryCommands.Remove(button);
+                button.Style = primaryAppButtonStyle;
+                commandBar.PrimaryCommands.Insert(index, button);                
             }
         }
 
@@ -1331,7 +1373,7 @@ namespace AnkiU
             if (commandBar.PrimaryCommands.Contains(sep))
             {
                 commandBar.PrimaryCommands.Remove(sep);
-                commandBar.SecondaryCommands.Add(sep);
+                commandBar.SecondaryCommands.Add(sep);             
             }
         }
         public void MoveSeparatorFromSecondaryToPrimary(AppBarSeparator sep, int index)
@@ -1421,27 +1463,34 @@ namespace AnkiU
         }
         private void SetDefaultRecognizerByCurrentInputMethodLanguageTag()
         {
-            // Query recognizer name based on current input method language tag (bcp47 tag)
-            Language currentInputLanguage = textServiceManager.InputLanguage;
-
-            if (currentInputLanguage != previousInputLanguage)
+            try
             {
-                // try query with the full BCP47 name
-                string recognizerName = RecognizerHelper.LanguageTagToRecognizerName(currentInputLanguage.LanguageTag);
+                // Query recognizer name based on current input method language tag (bcp47 tag)
+                Language currentInputLanguage = textServiceManager.InputLanguage;
 
-                if (recognizerName != string.Empty)
+                if (currentInputLanguage != previousInputLanguage)
                 {
-                    for (int index = 0; index < installedLanguagesList.Count; index++)
+                    // try query with the full BCP47 name
+                    string recognizerName = RecognizerHelper.LanguageTagToRecognizerName(currentInputLanguage.LanguageTag);
+
+                    if (recognizerName != string.Empty)
                     {
-                        if (installedLanguagesList[index].Name == recognizerName)
+                        for (int index = 0; index < installedLanguagesList.Count; index++)
                         {
-                            InkRecognizerContainer.SetDefaultRecognizer(installedLanguagesList[index]);
-                            languageSelectComboBox.SelectedIndex = index;
-                            previousInputLanguage = currentInputLanguage;
-                            break;
+                            if (installedLanguagesList[index].Name == recognizerName)
+                            {
+                                InkRecognizerContainer.SetDefaultRecognizer(installedLanguagesList[index]);
+                                languageSelectComboBox.SelectedIndex = index;
+                                previousInputLanguage = currentInputLanguage;
+                                break;
+                            }
                         }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                var task = UIHelper.ShowMessageDialog(ex.Message);
             }
         }
 
@@ -1585,7 +1634,7 @@ namespace AnkiU
             InkNotHideStateSymbol();
             InkPenStateSymbol();
 
-            ChangeCursorIfNeeded();
+            TryChangeCursorIfNeeded();
         }
 
         private void InkEraserToggleButtonClickHandler(object sender, RoutedEventArgs e)
@@ -1621,7 +1670,7 @@ namespace AnkiU
             if (IsInkHideState())
             {
                 InkNotHideStateSymbol();
-                ChangeCursorIfNeeded();
+                TryChangeCursorIfNeeded();
             }
             else
             {
@@ -1666,13 +1715,20 @@ namespace AnkiU
         }
 
         private bool isCusorNotArrow = false;
-        public void ChangeCursorIfNeeded()
+        public void TryChangeCursorIfNeeded()
         {
-            if (UIHelper.IsHasPen())
+            try
             {
-                cursor = new CoreCursor(CoreCursorType.Custom, MainPage.CUSTOM_CURSOR_CIRCLE_ID);
-                Window.Current.CoreWindow.PointerCursor = cursor;
-                isCusorNotArrow = true;
+                if (UIHelper.IsHasPen())
+                {
+                    cursor = new CoreCursor(CoreCursorType.Custom, MainPage.CUSTOM_CURSOR_CIRCLE_ID);
+                    Window.Current.CoreWindow.PointerCursor = cursor;
+                    isCusorNotArrow = true;
+                }
+            }
+            catch
+            {
+                ChangeCusorToArrow();
             }
         }
 
@@ -1844,17 +1900,26 @@ namespace AnkiU
         private void ChangeStatusAndTitleToBlue()
         {
             var defaultBrush = Application.Current.Resources["ButtonBackGroundNormal"] as SolidColorBrush;
-            if (titleBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
-                titleBar.BackgroundColor = defaultBrush.Color;
-                titleBar.ForegroundColor = Colors.White;
-                titleBar.ButtonBackgroundColor = defaultBrush.Color;
-                titleBar.ButtonForegroundColor = Colors.White;
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.BackgroundColor = defaultBrush.Color;
+                    titleBar.ForegroundColor = Colors.White;
+                    titleBar.ButtonBackgroundColor = defaultBrush.Color;
+                    titleBar.ButtonForegroundColor = Colors.White;
+                }
             }
-            if (statusBar != null)
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                statusBar.BackgroundColor = defaultBrush.Color;
-                statusBar.ForegroundColor = Colors.White;
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundColor = defaultBrush.Color;
+                    statusBar.ForegroundColor = Colors.White;
+                }
             }
         }
 
@@ -1878,41 +1943,57 @@ namespace AnkiU
 
         private void ChangeTitleBarToDayMode()
         {
-            if (titleBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
-                titleBar.BackgroundColor = Colors.White;
-                titleBar.ForegroundColor = Colors.Black;
-                titleBar.ButtonBackgroundColor = Colors.White;
-                titleBar.ButtonForegroundColor = Colors.Black;
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.BackgroundColor = Colors.White;
+                    titleBar.ForegroundColor = Colors.Black;
+                    titleBar.ButtonBackgroundColor = Colors.White;
+                    titleBar.ButtonForegroundColor = Colors.Black;
+                }
             }
         }
 
         private void ChangeTitleBarToNightMode()
         {
-            if (titleBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
-                titleBar.BackgroundColor = Colors.Black;
-                titleBar.ForegroundColor = Colors.White;
-                titleBar.ButtonBackgroundColor = Colors.Black;
-                titleBar.ButtonForegroundColor = Colors.White;
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.BackgroundColor = Colors.Black;
+                    titleBar.ForegroundColor = Colors.White;
+                    titleBar.ButtonBackgroundColor = Colors.Black;
+                    titleBar.ButtonForegroundColor = Colors.White;
+                }
             }
         }
 
         private void ChangeStatusBarToNightMode()
         {
-            if (statusBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                statusBar.BackgroundColor = Colors.Black;
-                statusBar.ForegroundColor = Colors.White;
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundColor = Colors.Black;
+                    statusBar.ForegroundColor = Colors.White;
+                }
             }
         }
 
         private void ChangeStatusBarToDayMode()
         {
-            if (statusBar != null)
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                statusBar.BackgroundColor = Colors.White;
-                statusBar.ForegroundColor = Colors.Black;                
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundColor = Colors.White;
+                    statusBar.ForegroundColor = Colors.Black;
+                }
             }
         }
 
@@ -2216,7 +2297,7 @@ namespace AnkiU
         /// <param name="e"></param>
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            MakeSureNoMemoryLeakInWin2D();
+            MakeSureNoMemoryLeakInWin2D();            
             base.OnNavigatedFrom(e);
         }
 
@@ -2258,9 +2339,22 @@ namespace AnkiU
         }
 
         private async void SyncButtonClickHandler(object sender, RoutedEventArgs e)
-        {            
-            if (sync == null)
-                sync = new FullSync(this, new OneDriveSync());
+        {
+            await StartSync();
+        }
+
+        private async Task StartSync()
+        {
+            if (UserPrefs.SyncService == SettingPage.SYNC_ONEDRIVE)
+            {
+                if (sync == null || !(sync is FullSync))
+                    sync = new FullSync(this, new OneDriveSync());                
+            }
+            else
+            {
+                if(sync == null || !(sync is AnkiWebSync))
+                    sync = new AnkiWebSync(this);                
+            }
             await sync.StartSync();
         }
 
@@ -2271,9 +2365,9 @@ namespace AnkiU
 
         private async void SendFeedBackClick(object sender, RoutedEventArgs e)
         {
-            string message = "For Bugs: Please describe the steps need to reproduce them.\n"
+            string message = "For bugs: Please describe the steps needed to reproduce them.\n"
                             + "For feature requests: Please mention briefly why you need them.\n"
-                            + "We will reply to your email in one business day.\n";
+                            + "We'll reply to your email in one business day.\n";
             await UIHelper.LaunchEmailApp("ankiuniversal@gmail.com", message);
         }
 
@@ -2313,6 +2407,112 @@ namespace AnkiU
             textToSpeechOffSymbol.Visibility = Visibility.Collapsed;
             textToSpeechOnSymbol.Visibility = Visibility.Visible;
             textToSpeechToggle.Label = "Enable Text to Speech";
+        }
+
+        private async void OnProtocolActivateEvent(Windows.ApplicationModel.Activation.ProtocolActivatedEventArgs args)
+        {
+            if (isInProtocolActivate)
+                return;
+
+            try
+            {
+                isInProtocolActivate = true;
+                if (args.CallerPackageFamilyName.Equals(NLP_JDICT_PKG_NAME))
+                {
+                    decoder = new WwwFormUrlDecoder(args.Uri.Query);
+                    await AskUserConfirmation();
+                    if (nlpImportDiaglog.IsRightButtonClick())
+                        return;
+
+                    if (nlpImportDiaglog.IsLeftButtonClick())
+                    {
+                        if (deckToImportID == 0)                        
+                            deckToImportID = (long) this.Collection.Deck.AddOrResuedDeck(deckToImportName, true);
+                        
+                        await AddNoteFromNlpDictionary();
+                        return;
+                    }
+
+                    if (nlpDeckImportFlyout == null)
+                    {
+                        nlpDeckImportFlyout = new DeckChooserFlyout(Collection, "Import to Deck");
+                        nlpDeckImportFlyout.OkClick += OnNlpDeckImportFlyoutOkClick;
+                    }
+                    nlpDeckImportFlyout.GetDeckList();
+                    nlpDeckImportFlyout.ShowFlyout(commandBar, FlyoutPlacementMode.Bottom);
+                }
+            }
+            finally
+            {
+                isInProtocolActivate = false;
+            }
+        }
+
+        private async Task AskUserConfirmation()
+        {
+            if (nlpImportDiaglog == null)
+            {
+                nlpImportDiaglog = new ThreeOptionsDialog();
+                nlpImportDiaglog.Title = "";
+                nlpImportDiaglog.LeftButton.Content = "Add";
+                nlpImportDiaglog.MiddleButton.Content = "Deck";
+                nlpImportDiaglog.NotAskAgainVisibility = Visibility.Visible;
+            }            
+
+            if (!nlpImportDiaglog.IsNotAskAgain())
+            {               
+                if (nlpDeckImportFlyout == null)
+                    deckToImportName = NlpJdictImporter.MODEL_NAME;
+                else
+                {
+                    var selectedDeck = nlpDeckImportFlyout.GetSelectedDeck();
+                    if (selectedDeck != null)
+                    {
+                        deckToImportName = selectedDeck.Name;
+                        deckToImportID = selectedDeck.Id;
+                    }
+                    else
+                    {
+                        deckToImportName = NlpJdictImporter.MODEL_NAME;
+                        deckToImportID = 0;
+                    }
+                }
+
+                nlpImportDiaglog.Message = "Add to deck: " + deckToImportName;                
+                await nlpImportDiaglog.ShowAsync();
+            }
+        }
+
+        private async void OnNlpDeckImportFlyoutOkClick(object sender, RoutedEventArgs e)
+        {
+            var deck = nlpDeckImportFlyout.GetSelectedDeck();
+            if(deck == null)            
+                return;
+            
+            deckToImportID = deck.Id;
+            await AddNoteFromNlpDictionary();
+        }
+
+        private async Task AddNoteFromNlpDictionary()
+        {
+            if (!this.Collection.Deck.HasDeckId(deckToImportID))
+                deckToImportID = (long)this.Collection.Deck.AddOrResuedDeck(NlpJdictImporter.MODEL_NAME, true);
+
+            NlpJdictImporter importer = new NlpJdictImporter(Collection, deckToImportID);
+            var success = await importer.AddNote(decoder);
+
+            if (success)
+                DeckChanged?.Invoke(importer.DeckId);           
+
+            await ActivateNLPJDictAgain();
+        }
+
+        private static async Task ActivateNLPJDictAgain()
+        {          
+            var options = new Windows.System.LauncherOptions();
+            options.TargetApplicationPackageFamilyName = NLP_JDICT_PKG_NAME;
+            Uri uri = new Uri("com.ankiuniversal.nlpjdict:");
+            await Windows.System.Launcher.LaunchUriAsync(uri, options);
         }
     }   
 

@@ -71,31 +71,49 @@ namespace AnkiU.UserControls
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                if (isRecording)
-                    return;
-
-                recordButton.Visibility = Visibility.Collapsed;
-                stopRecordButton.Visibility = Visibility.Visible;
-                playButton.IsEnabled = false;
-                StartRecordTimerCount();
-
-                if (await SetupRecordProcess())
+                try
                 {
-                    if (UIHelper.GetDeviceFamily() != "Windows.Mobile")
-                        await capture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp3(AudioEncodingQuality.Auto), buffer);
-                    else
-                    { //No mp3 or wma on win mobile so we use mp4 instead, still give better compressed size than using raw format                   
-                        await capture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto), buffer);
-                    }
                     if (isRecording)
-                    {
-                        ThrowInvalidOperantionException();
                         return;
-                    }
 
-                    isRecording = true;
+                    recordButton.Visibility = Visibility.Collapsed;
+                    stopRecordButton.Visibility = Visibility.Visible;
+                    playButton.IsEnabled = false;
+                    StartRecordTimerCount();
+
+                    if (await SetupRecordProcess())
+                    {
+                        if (UIHelper.GetDeviceFamily() != "Windows.Mobile")
+                            await capture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp3(AudioEncodingQuality.Auto), buffer);
+                        else
+                        { //No mp3 or wma on win mobile so we use mp4 instead, still give better compressed size than using raw format                   
+                            await capture.StartRecordToStreamAsync(MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto), buffer);
+                        }
+                        if (isRecording)
+                        {
+                            ThrowInvalidOperantionException();
+                            return;
+                        }
+
+                        isRecording = true;
+                    }
+                    else
+                    {
+                        await UnableToStartRecording();
+                    }
+                }
+                catch
+                {
+                    await UnableToStartRecording();
                 }
             });
+        }
+
+        private async Task UnableToStartRecording()
+        {
+            ResetViewToStart();
+            DisplayCurrentTimeSpan(new TimeSpan(0));
+            await UIHelper.ShowMessageDialog("Unable to start recording. Please make sure you have a recording device and the app is allowed to access it.");
         }
 
         [Conditional("DEBUG")]
@@ -113,7 +131,6 @@ namespace AnkiU.UserControls
             if (capture != null)
             {
                 capture.Dispose();
-                GC.Collect();
             }
 
             try
@@ -172,14 +189,19 @@ namespace AnkiU.UserControls
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                stopRecordButton.Visibility = Visibility.Collapsed;
-                recordButton.Visibility = Visibility.Visible;
+                ResetViewToStart();
                 playButton.IsEnabled = true;
-                StopTimerCount();
 
                 await capture.StopRecordAsync();
                 isRecording = false;
             });
+        }
+
+        private void ResetViewToStart()
+        {
+            stopRecordButton.Visibility = Visibility.Collapsed;
+            recordButton.Visibility = Visibility.Visible;            
+            StopTimerCount();
         }
 
         private async void StartRecordTimerCount()
@@ -235,7 +257,7 @@ namespace AnkiU.UserControls
                 playback.Stop();
                 StopTimerCount();
                 playback = null;
-                GC.Collect();
+                //GC.Collect(); //Disable in "Creator Update"
 
                 playButton.Visibility = Visibility.Visible;
                 stopPlayButton.Visibility = Visibility.Collapsed;
@@ -285,7 +307,7 @@ namespace AnkiU.UserControls
                     folder = ApplicationData.Current.LocalFolder;
 
                 IRandomAccessStream audio = buffer.CloneStream();
-                if (audio == null)
+                if (audio == null || audio.Size == 0)
                     return null;
 
                 var name = UIHelper.GetDateTimeStringForName();
@@ -329,7 +351,7 @@ namespace AnkiU.UserControls
                 stopwatch.Stop();
                 stopwatch = null;
             }
-            GC.Collect();
+            //GC.Collect(); //Disable in "Creator Update"
         }
 
         public void Dispose()

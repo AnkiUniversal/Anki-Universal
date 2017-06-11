@@ -13,7 +13,6 @@
     mc:Ignorable="d" BorderBrush="White" BorderThickness="1" >
 
     <Page.Resources>
-        <SolidColorBrush x:Key="ButtonBackGroundNormal" Color="#FF088DC7"/>
 
         <Storyboard x:Name="NoticeMe" x:FieldModifier="public">
             <ColorAnimationUsingKeyFrames x:Name="BlinkingBlue" x:FieldModifier="public"  Duration="0:0:0.8" RepeatBehavior="Forever" AutoReverse="True"
@@ -129,434 +128,435 @@
 
     </Page.Resources>
 
-    <Page.TopAppBar>
-        <CommandBar x:Name="commandBar" Foreground="Black" Background="{StaticResource BackgroundNormal}"
-                    BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,0,1">
-            <CommandBar.CommandBarOverflowPresenterStyle>
-                <Style TargetType="CommandBarOverflowPresenter">
-                    <Setter Property="MaxWidth" Value="{ThemeResource CommandBarOverflowMaxWidth}"/>
-                    <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
-                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                    <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto"/>
-                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-                    <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
-                    <Setter Property="Padding" Value="0,0,0,5"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
+    <Grid Background="Transparent">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <CommandBar x:Name="commandBar" Foreground="Black" Background="{StaticResource BackgroundNormal}" IsDynamicOverflowEnabled="False">
+                <CommandBar.CommandBarOverflowPresenterStyle>
+                    <Style TargetType="CommandBarOverflowPresenter">
+                        <Setter Property="MaxWidth" Value="{ThemeResource CommandBarOverflowMaxWidth}"/>
+                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
+                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+                        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto"/>
+                        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                        <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
+                        <Setter Property="Padding" Value="0,0,0,5"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
                             <ControlTemplate TargetType="CommandBarOverflowPresenter">
-                                <Grid x:Name="secondaryCommanBarGrid" 
-                                      Background="{Binding Background, ElementName=commandBar}" 
-                                      BorderThickness="1,0,0,1" 
-                                      Opacity="{Binding Opacity, ElementName=commandBar}"
-                                      BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" Padding="{TemplateBinding Padding}">
+                                <Grid x:Name="secondaryCommanBarGrid"                                         
+                                    Background="{Binding Background, ElementName=commandBar}" 
+                                      Opacity="0.8"
+                                      Padding="{TemplateBinding Padding}">
                                     <ScrollViewer AutomationProperties.AccessibilityView="Raw" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" 
                                                   VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}">
-                                        <ItemsPresenter x:Name="ItemsPresenter" Margin="0"/>
-                                    </ScrollViewer>
-                                    <Rectangle Stroke="{ThemeResource SystemControlForegroundTransparentBrush}" StrokeThickness="1"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </CommandBar.CommandBarOverflowPresenterStyle>
+                                            <ItemsPresenter x:Name="ItemsPresenter" Margin="0"/>
+                                        </ScrollViewer>
+                                        <Rectangle Stroke="{ThemeResource SystemControlForegroundTransparentBrush}" StrokeThickness="1"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </CommandBar.CommandBarOverflowPresenterStyle>
 
-            <CommandBar.Content>
-                <Grid VerticalAlignment="Stretch">
-                    <Button Background="Transparent" x:Name="splitViewToggleButton" Width="40" Height="48" Style="{StaticResource SplitViewTogglePaneButton}" Foreground="{Binding Foreground, ElementName=commandBar}" Click="SplitPaneToggleClickHandler" />
-                </Grid>
-            </CommandBar.Content>
+                <CommandBar.Content>
+                    <Grid VerticalAlignment="Stretch">
+                        <Button Background="Transparent" x:Name="splitViewToggleButton" Width="40" Height="48" Style="{StaticResource SplitViewTogglePaneButton}" Foreground="{Binding Foreground, ElementName=commandBar}" Click="SplitPaneToggleClickHandler" />
+                    </Grid>
+                </CommandBar.Content>
 
-            <CommandBar.PrimaryCommands>
-                <AppBarButton x:Name="undoButton" Visibility="Collapsed" Icon="Undo" Label="Undo" ToolTipService.ToolTip="Ctrl + Z"
+                <CommandBar.PrimaryCommands>
+                    <AppBarButton x:Name="undoButton" Visibility="Collapsed" Icon="Undo" Label="Undo" ToolTipService.ToolTip="Ctrl + Z"
                               Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}"/>
-                <AppBarButton x:Name="saveButton" Visibility="Collapsed" Icon="Save" Label="Save"  ToolTipService.ToolTip="Ctrl + S"
+                    <AppBarButton x:Name="saveButton" Visibility="Collapsed" Icon="Save" Label="Save"  ToolTipService.ToolTip="Ctrl + S"
                               Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}"/>
-                <AppBarButton x:Name="editButton" Visibility="Collapsed" Icon="Edit" Label="Edit" 
+                    <AppBarButton x:Name="editButton" Visibility="Collapsed" Icon="Edit" Label="Edit" AllowFocusOnInteraction="True"
                               Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Edit"/>
 
-                <AppBarSeparator x:Name="inkSeparator" Background="Transparent" Visibility="{Binding Visibility, ElementName=inkOnOffButton}" Foreground="{Binding Foreground, ElementName=commandBar}"/>
-                <AppBarButton x:Name="inkOnOffButton" Visibility="Collapsed" Label="Ink On" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Turn Ink On/Off" >
-                    <Grid >
-                        <Path x:Name="inkOnSymbol" Style="{StaticResource InkInputIcon}" Canvas.ZIndex="0" Stroke="Transparent" Fill="{Binding Foreground, ElementName=commandBar}"/>
-                        <Path x:Name="inkOffSymbol" Width="23" Height="17" 
+                    <AppBarSeparator x:Name="inkSeparator" Background="Transparent" Visibility="{Binding Visibility, ElementName=inkOnOffButton}" Foreground="{Binding Foreground, ElementName=commandBar}"/>
+                    <AppBarButton x:Name="inkOnOffButton" Visibility="Collapsed" Label="Ink On" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Turn Ink On/Off" >
+                        <Grid >
+                            <Path x:Name="inkOnSymbol" Style="{StaticResource InkInputIcon}" Canvas.ZIndex="0" Stroke="Transparent" Fill="{Binding Foreground, ElementName=commandBar}"/>
+                            <Path x:Name="inkOffSymbol" Width="23" Height="17" 
                               Style="{StaticResource InkOffIcon}" VerticalAlignment="Center" HorizontalAlignment="Center"
                               Stroke="Transparent" Visibility="Collapsed"
                               Canvas.ZIndex="1" Fill="{Binding Foreground, ElementName=commandBar}"  >
-                        </Path>
-                    </Grid>
-                </AppBarButton>
+                            </Path>
+                        </Grid>
+                    </AppBarButton>
 
-                <AppBarButton x:Name="inkRecognizeButton" Visibility="Collapsed" Icon="Character" Label="Ink to Text" Click="InkRecognizeButtonClickHandler" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Ink To Text"/>
+                    <AppBarButton x:Name="inkRecognizeButton" AllowFocusOnInteraction="True" Visibility="Collapsed" Icon="Character" Label="Ink to Text" Click="InkRecognizeButtonClickHandler" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Ink To Text"/>
 
-                <AppBarButton x:Name="inkHideToggleButton"  Click="InkHideToggleButtonClickHandler" Visibility="Collapsed"  Label="Hide Ink" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Ink Toggle">
-                    <Grid >
-                        <Path  x:Name="inkHideSymbol" Visibility="Visible" 
+                    <AppBarButton x:Name="inkHideToggleButton"  Click="InkHideToggleButtonClickHandler" Visibility="Collapsed"  Label="Hide Ink" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Ink Toggle">
+                        <Grid >
+                            <Path  x:Name="inkHideSymbol" Visibility="Visible" 
                               Style="{StaticResource InkHideIcon}" Fill="{Binding Foreground, ElementName=commandBar}" Stroke="Transparent" RenderTransformOrigin="0.5,0.5" >
-                            <Path.RenderTransform>
-                                <CompositeTransform ScaleX="-1"/>
-                            </Path.RenderTransform>
-                        </Path>
-                        <Path x:Name="inkShowSymbol"  Visibility="Collapsed"                              
+                                <Path.RenderTransform>
+                                    <CompositeTransform ScaleX="-1"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <Path x:Name="inkShowSymbol"  Visibility="Collapsed"                              
                               Style="{StaticResource InkShowIcon}" Fill="{Binding Foreground, ElementName=commandBar}" >
-                        </Path>
-                    </Grid>
-                </AppBarButton>
-                <AppBarButton x:Name="inkClearButton"  Visibility="Collapsed" Label="Clear"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Clear Ink">
-                    <Grid >
-                        <Path Width="20" Height="20" UseLayoutRounding="True"
+                            </Path>
+                        </Grid>
+                    </AppBarButton>
+                    <AppBarButton x:Name="inkClearButton"  Visibility="Collapsed" Label="Clear"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Clear Ink">
+                        <Grid >
+                            <Path Width="20" Height="20" UseLayoutRounding="True"
                               Style="{StaticResource EraseAllIcon}"
                               Fill="Transparent"
                               Stroke="{Binding Foreground, ElementName=commandBar}" StrokeThickness="1.25" >
-                        </Path>
-                    </Grid>
-                </AppBarButton>
-                <AppBarButton x:Name="inkEraserToggleButton"  Visibility="Collapsed" Label="Eraser" Click="InkEraserToggleButtonClickHandler" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Eraser Toggle">
-                    <Grid>
-                        <Path x:Name="inkEraserToggleButtonPenSymbol" Style="{StaticResource PenIcon}" Visibility="Collapsed" StrokeThickness="1.25" Fill="Transparent" Stroke="{Binding Foreground, ElementName=commandBar}" />
-                        <Path x:Name="inkEraserToggleButtonEraserSymbol" Width="18" Height="12" Visibility="Visible" 
+                            </Path>
+                        </Grid>
+                    </AppBarButton>
+                    <AppBarButton x:Name="inkEraserToggleButton"  Visibility="Collapsed" Label="Eraser" Click="InkEraserToggleButtonClickHandler" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Eraser Toggle">
+                        <Grid>
+                            <Path x:Name="inkEraserToggleButtonPenSymbol" Style="{StaticResource PenIcon}" Visibility="Collapsed" StrokeThickness="1.25" Fill="Transparent" Stroke="{Binding Foreground, ElementName=commandBar}" />
+                            <Path x:Name="inkEraserToggleButtonEraserSymbol" Width="18" Height="12" Visibility="Visible" 
                                    RenderTransformOrigin="0.5,0.5" StrokeThickness="1.2"
                                     Style="{StaticResource EraserIcon}"
                                    Fill="Transparent" Stroke="{Binding Foreground, ElementName=commandBar}" >
-                            <Path.RenderTransform>
-                                <CompositeTransform Rotation="-45" />
-                            </Path.RenderTransform>
-                        </Path>
-                    </Grid>
-                </AppBarButton>
+                                <Path.RenderTransform>
+                                    <CompositeTransform Rotation="-45" />
+                                </Path.RenderTransform>
+                            </Path>
+                        </Grid>
+                    </AppBarButton>
 
-                <AppBarButton x:Name="addButton" Icon="Add" Label="Add Deck" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Add Deck" />
-                <AppBarButton x:Name="dragAndHoldButton" Label="Drag Deck" Click="OnDragAndHoldButtonClick" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Drag Decks">
-                    <SymbolIcon Symbol="Pictures" RenderTransformOrigin="0.5,0.5" >
-                        <SymbolIcon.RenderTransform>
-                            <CompositeTransform ScaleX="0.9" ScaleY="1.4"/>
-                        </SymbolIcon.RenderTransform>
-                    </SymbolIcon>
-                </AppBarButton>
-                <AppBarButton x:Name="listViewButton" Icon="List" Label="List" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="List View"/>
-                <AppBarButton x:Name="gridViewButton" Visibility="Collapsed" Icon="ViewAll" Label="Panel" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Panel View"/>
-                <AppBarButton x:Name="syncButton" Visibility="Visible" Icon="Sync" Label="Sync" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Sync"/>
-            </CommandBar.PrimaryCommands>
+                    <AppBarButton x:Name="addButton" AllowFocusOnInteraction="True" Icon="Add" Label="Add Deck" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Add Deck" />
+                    <AppBarButton x:Name="dragAndHoldButton" Label="Drag Deck" Click="OnDragAndHoldButtonClick" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Drag Decks">
+                        <SymbolIcon Symbol="Pictures" RenderTransformOrigin="0.5,0.5" >
+                            <SymbolIcon.RenderTransform>
+                                <CompositeTransform ScaleX="0.9" ScaleY="1.4"/>
+                            </SymbolIcon.RenderTransform>
+                        </SymbolIcon>
+                    </AppBarButton>
+                    <AppBarButton x:Name="listViewButton" Icon="List" Label="List" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="List View"/>
+                    <AppBarButton x:Name="gridViewButton" Visibility="Collapsed" Icon="ViewAll" Label="Panel" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Panel View"/>
+                    <AppBarButton x:Name="syncButton" Visibility="Visible" Icon="Sync" Label="Sync" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Sync"/>
+                </CommandBar.PrimaryCommands>
 
-            <CommandBar.SecondaryCommands>
-                <AppBarButton x:Name="textToSpeechToggle" Visibility="Collapsed" Label="Enable Text to Speech" Style="{StaticResource SecondaryAppButton}"  Background="{Binding Background, ElementName=commandBar}" Foreground="{Binding Foreground, ElementName=commandBar}" Click="OnTextToSpeechToggleClick" ToolTipService.ToolTip="Toggle Text to Speech">
-                    <Grid>
-                        <Path x:Name="textToSpeechOnSymbol" Style="{StaticResource SpeakerIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Visible"/>
-                        <Path x:Name="textToSpeechOffSymbol" Style="{StaticResource SpeakerOffIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Collapsed"/>
-                    </Grid>
-                </AppBarButton>
-                <AppBarButton x:Name="oneHandButton" Visibility="Collapsed" Label="One Hand Mode" Style="{StaticResource SecondaryAppButton}"  Background="{Binding Background, ElementName=commandBar}" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="One Hand Mode">
-                    <FontIcon  FontSize="19" Glyph="&#xEBFC;" />
-                </AppBarButton>
-                
-                <AppBarSeparator  x:Name="zoomButtonsSeparator"  Visibility="{Binding Visibility, ElementName=zoomResetButton}" Foreground="{Binding Foreground, ElementName=commandBar}"/>
-                <AppBarButton x:Name="zoomInButton" Visibility="Collapsed" Icon="ZoomIn" Label="Zoom+" Style="{StaticResource SecondaryAppButton}"  Background="{Binding Background, ElementName=commandBar}" Foreground="{Binding Foreground, ElementName=commandBar}" Click="ZoomInButtonClickHandler" ToolTipService.ToolTip="Zoom In"/>
-                <AppBarButton x:Name="zoomResetButton" Visibility="Collapsed" Icon="Zoom" Label="Default"  Style="{StaticResource SecondaryAppButton}" Click="ZoomResetButtonClickHandler"  Background="{Binding Background, ElementName=commandBar}" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Zoom Reset"/>
-                <AppBarButton x:Name="zoomOutButton" Visibility="Collapsed" Icon="ZoomOut" Label="Zoom-"  Style="{StaticResource SecondaryAppButton}" Click="ZoomOutButtonClickHandler"  Background="{Binding Background, ElementName=commandBar}" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Zoom Out"/>
+                <CommandBar.SecondaryCommands>
+                    <AppBarButton x:Name="textToSpeechToggle" Visibility="Collapsed" Label="Enable Text to Speech" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" Click="OnTextToSpeechToggleClick" ToolTipService.ToolTip="Toggle Text to Speech">
+                        <Grid>
+                            <Path x:Name="textToSpeechOnSymbol" Style="{StaticResource SpeakerIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Visible"/>
+                            <Path x:Name="textToSpeechOffSymbol" Style="{StaticResource SpeakerOffIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Collapsed"/>
+                        </Grid>
+                    </AppBarButton>
+                    <AppBarButton x:Name="oneHandButton" Visibility="Collapsed" Label="One Hand Mode" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="One Hand Mode">
+                        <FontIcon  FontSize="19" Glyph="&#xEBFC;" />
+                    </AppBarButton>
 
-                <AppBarSeparator  x:Name="readModeButtonSeparator" Background="Transparent" Visibility="{Binding Visibility, ElementName=readModeButton}"  Foreground="{Binding Foreground, ElementName=commandBar}"/>
-                <AppBarButton x:Name="readModeButton" Visibility="Visible" Label="Night" Click="ReadModeButtonClickHandler" Style="{StaticResource SecondaryAppButton}"  Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Read Mode">
-                    <Path x:Name="readModeButtonSymbol" Margin="0,-3,0,0" Style="{StaticResource MoonPathIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" />
-                </AppBarButton>
-            </CommandBar.SecondaryCommands>
-        </CommandBar>
-    </Page.TopAppBar>
+                    <AppBarSeparator  x:Name="zoomButtonsSeparator"  Visibility="{Binding Visibility, ElementName=zoomResetButton}" Foreground="{Binding Foreground, ElementName=commandBar}"/>
+                    <AppBarButton x:Name="zoomInButton" Visibility="Collapsed" Icon="ZoomIn" Label="Zoom+" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" Click="ZoomInButtonClickHandler" ToolTipService.ToolTip="Zoom In"/>
+                    <AppBarButton x:Name="zoomResetButton" Visibility="Collapsed" Icon="Zoom" Label="Default"  Style="{StaticResource SecondaryAppButton}" Click="ZoomResetButtonClickHandler"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Zoom Reset"/>
+                    <AppBarButton x:Name="zoomOutButton" Visibility="Collapsed" Icon="ZoomOut" Label="Zoom-"  Style="{StaticResource SecondaryAppButton}" Click="ZoomOutButtonClickHandler" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Zoom Out"/>
 
-    <Grid x:Name="mainGrid" Background="Transparent">
+                    <AppBarSeparator  x:Name="readModeButtonSeparator" Visibility="{Binding Visibility, ElementName=readModeButton}"  Foreground="{Binding Foreground, ElementName=commandBar}"/>
+                    <AppBarButton x:Name="readModeButton" Visibility="Visible" Label="Night" Click="ReadModeButtonClickHandler" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Read Mode">
+                        <Path x:Name="readModeButtonSymbol" Margin="0,-3,0,0" Style="{StaticResource MoonPathIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" />
+                    </AppBarButton>
+                </CommandBar.SecondaryCommands>
+            </CommandBar>
 
-        <SplitView x:Name="splitView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" DisplayMode="CompactOverlay"  
+        <Grid Grid.Row="1" x:Name="mainGrid">
+            <SplitView x:Name="splitView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" DisplayMode="CompactOverlay"  
                    Background="Transparent" PaneBackground="Transparent" 
                    IsPaneOpen="False"  CompactPaneLength="0" OpenPaneLength="200">
-            <SplitView.Pane >
-                <Grid   x:Name="splitViewPaneGrid" BorderThickness="0,1,1,0"  
-                       BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" >
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <SplitView.Pane >
+                    <Grid   x:Name="splitViewPaneGrid" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                    <Image x:Name="splitViewBackgroundImage" VerticalAlignment="Top" HorizontalAlignment="Left"
+                        <Image x:Name="splitViewBackgroundImage" VerticalAlignment="Top" HorizontalAlignment="Left"
                            Stretch="None" Grid.RowSpan="2" Visibility="Collapsed" />
-                    <Border Background="{Binding Background, ElementName=commandBar}"
+                        <Border Background="{StaticResource ButtonBackGroundNormal}"
                             Grid.RowSpan="2" x:Name="splitViewPaneBackgroundColor"  />
 
-                    <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto" 
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto" 
                                   HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Hidden">
-                        <StackPanel Background="Transparent">
-                            <Button 
+                            <StackPanel Background="Transparent">
+                                <Button 
                             Style="{Binding Style, ElementName=button, Mode=OneTime}"
                             HorizontalAlignment="Stretch" Margin="0,10,0,0"
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             HorizontalContentAlignment="Left"
                             Click="DownloadDeckButtonClick">
-                                <Grid >
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <SymbolIcon Symbol="Download"  Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Download Decks"/>
-                                </Grid>
-                            </Button>
+                                    <Grid >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <SymbolIcon Symbol="Download"  Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Download Decks"/>
+                                    </Grid>
+                                </Button>
 
-                            <Button x:Name="button" 
+                                <Button x:Name="button" 
                             Style="{StaticResource ButtonBlue}" 
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             HorizontalAlignment="Stretch" 
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             HorizontalContentAlignment="Left"
                             Click="SplitPanelImportButtonClickHandler">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Path Style="{StaticResource ImportIcon}" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="{Binding Foreground, ElementName=commandBar}"/>
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Import Decks"/>
-                                </Grid>
-                            </Button>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Path Style="{StaticResource ImportIcon}" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Fill="White"/>
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Import Decks"/>
+                                    </Grid>
+                                </Button>
 
-                            <Border BorderBrush="{Binding Foreground, ElementName=commandBar}" BorderThickness="0,0,0,1" Margin="5" />
+                                <Border BorderBrush="White" BorderThickness="0,0,0,1" Margin="5" />
 
-                            <Button 
+                                <Button 
                             Style="{Binding Style, ElementName=button, Mode=OneTime}"
                             HorizontalAlignment="Stretch" 
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             Name="exportAllButton"
                             HorizontalContentAlignment="Left"
                             Click="ExportAllButtonClick">
-                                <Grid >
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Path Style="{StaticResource ExportIcon}" Fill="{Binding Foreground, ElementName=commandBar}"  Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Export Collection"/>
-                                </Grid>
-                            </Button>
+                                    <Grid >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Path Style="{StaticResource ExportIcon}" Fill="White"  Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Export Collection"/>
+                                    </Grid>
+                                </Button>
 
-                            <Button 
+                                <Button 
                             Style="{Binding Style, ElementName=button, Mode=OneTime}"
                             HorizontalAlignment="Stretch" 
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             HorizontalContentAlignment="Left"
                             Click="StatsButtonClick">
-                                <Grid >
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Path Style="{StaticResource ChartIcon}" Fill="{Binding Foreground, ElementName=commandBar}" Stroke="Transparent" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock  Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Collection Statistics"/>
-                                </Grid>
-                            </Button>
+                                    <Grid >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Path Style="{StaticResource ChartIcon}" Fill="White" Stroke="Transparent" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock  Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Collection Statistics"/>
+                                    </Grid>
+                                </Button>
 
-                            <Button 
+                                <Button 
                             Style="{Binding Style, ElementName=button, Mode=OneTime}"
                             HorizontalAlignment="Stretch" 
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             HorizontalContentAlignment="Left"
                             Click="OptimizeButtonClickHandler">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <SymbolIcon Symbol="Repair" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Optimize Collection"/>
-                                </Grid>
-                            </Button>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <SymbolIcon Symbol="Repair" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Optimize Collection"/>
+                                    </Grid>
+                                </Button>
 
-                            <Button 
+                                <Button 
                             Style="{Binding Style, ElementName=button, Mode=OneTime}"
                             HorizontalAlignment="Stretch" 
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             HorizontalContentAlignment="Left"
                             Click="ManageNotetypeClickHandler">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <SymbolIcon Symbol="Library" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Manage Note Types"/>
-                                </Grid>
-                            </Button>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <SymbolIcon Symbol="Library" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Manage Note Types"/>
+                                    </Grid>
+                                </Button>
 
-                            <Border BorderBrush="{Binding Foreground, ElementName=commandBar}" BorderThickness="0,0,0,1" Margin="5" />
+                                <Border BorderBrush="White" BorderThickness="0,0,0,1" Margin="5" />
 
-                            <Button 
+                                <Button 
                             Style="{Binding Style, ElementName=button, Mode=OneTime}"
                             HorizontalAlignment="Stretch" 
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             HorizontalContentAlignment="Left"
                             Click="BackupMediaFolders">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <SymbolIcon Symbol="MoveToFolder" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Back up Media Files"/>
-                                </Grid>
-                            </Button>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <SymbolIcon Symbol="MoveToFolder" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Back up Media Files"/>
+                                    </Grid>
+                                </Button>
 
-                            <Button 
+                                <Button 
                             Style="{Binding Style, ElementName=button, Mode=OneTime}"
                             HorizontalAlignment="Stretch" 
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             HorizontalContentAlignment="Left"
                             Click="CheckMediaClickHandler">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <SymbolIcon Symbol="Page2" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <SymbolIcon Symbol="Accept" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Check Media Files"/>
-                                </Grid>
-                            </Button>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <SymbolIcon Symbol="Page2" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <SymbolIcon Symbol="Accept" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Check Media Files"/>
+                                    </Grid>
+                                </Button>
 
-                            <Button 
+                                <Button 
                             Style="{Binding Style, ElementName=button, Mode=OneTime}"
                             HorizontalAlignment="Stretch" 
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             HorizontalContentAlignment="Left"
                             Click="InsertMediaFilesClickHandler">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <SymbolIcon Symbol="OpenLocal" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Insert Media Files"/>
+                                    </Grid>
+                                </Button>
+
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <StackPanel Grid.Row="1" >
+                            <Border BorderThickness="0,2,0,0" Margin="3,0,3,0"  BorderBrush="White"/>
+                            <Button 
+                            Style="{Binding Style, ElementName=button}"
+                            HorizontalAlignment="Stretch"                                                         
+                            Background="Transparent"
+                            Foreground="White"
+                            VerticalAlignment="Center" 
+                            Padding="0"
+                            Height="40"
+                            Click="SendFeedBackClick"
+                            HorizontalContentAlignment="Left">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="30" />
                                         <ColumnDefinition Width="10" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <SymbolIcon Symbol="OpenLocal" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Insert Media Files"/>
+                                    <SymbolIcon Symbol="Mail" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Feedback" />
                                 </Grid>
                             </Button>
 
-                        </StackPanel>
-                    </ScrollViewer>
-
-                    <StackPanel Grid.Row="1" >
-                        <Border BorderThickness="0,2,0,0" Margin="3,0,3,0"  BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}"/>
-                        <Button 
+                            <Button 
                             Style="{Binding Style, ElementName=button}"
                             HorizontalAlignment="Stretch"                                                         
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
-                            VerticalAlignment="Center" 
-                            Padding="0"
-                            Height="40"
-                            Click="SendFeedBackClick"
-                            HorizontalContentAlignment="Left">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <SymbolIcon Symbol="Mail" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Feedback" />
-                            </Grid>
-                        </Button>
-
-                        <Button 
-                            Style="{Binding Style, ElementName=button}"
-                            HorizontalAlignment="Stretch"                                                         
-                            Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             Click="HelpButtonClick"
                             HorizontalContentAlignment="Left">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <SymbolIcon Symbol="Help" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Help" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <SymbolIcon Symbol="Help" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Help" />
 
-                            </Grid>
-                        </Button>
+                                </Grid>
+                            </Button>
 
-                        <Button 
+                            <Button 
                             Style="{Binding Style, ElementName=button}"
                             HorizontalAlignment="Stretch"                                                         
                             Background="Transparent"
-                            Foreground="{Binding Foreground, ElementName=commandBar}"
+                            Foreground="White"
                             VerticalAlignment="Center" 
                             Padding="0"
                             Height="40"
                             Click="SettingClickHandler"
                             HorizontalContentAlignment="Left">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <SymbolIcon Symbol="Setting" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Settings" />
-                            </Grid>
-                        </Button>
-                    </StackPanel>
-                </Grid>
-            </SplitView.Pane>
-            <SplitView.Content>
-                <Grid x:Name="splitViewContentGrid" Background="{Binding Background,ElementName=commandBar}">
-                    <Frame x:Name="contentFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                </Grid>
-            </SplitView.Content>
-        </SplitView>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <SymbolIcon Symbol="Setting" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Settings" />
+                                </Grid>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </SplitView.Pane>
+                <SplitView.Content>
+                    <Grid x:Name="splitViewContentGrid" Background="{Binding Background,ElementName=commandBar}">
+                        <Frame x:Name="contentFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    </Grid>
+                </SplitView.Content>
+            </SplitView>
 
-        <SplitView  x:Name="helpSplitView" 
+            <SplitView  x:Name="helpSplitView" 
                     VerticalAlignment="Stretch" 
                     HorizontalAlignment="Left" 
                     DisplayMode="CompactOverlay"  
@@ -569,22 +569,23 @@
                     IsHitTestVisible="False"
                     OpenPaneLength="210"
                     PaneClosed="HelpSplitViewPaneClosedHandler" RenderTransformOrigin="0.5,0.5" >
-            <SplitView.RenderTransform>
-                <CompositeTransform x:Name="helpSplitViewTransform" TranslateX="0"/>
-            </SplitView.RenderTransform>
-            <SplitView.Pane>
-                <Grid  BorderThickness="0,1,1,0" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}">
+                <SplitView.RenderTransform>
+                    <CompositeTransform x:Name="helpSplitViewTransform" TranslateX="0"/>
+                </SplitView.RenderTransform>
+                <SplitView.Pane>
+                    <Grid >
 
-                    <Border Background="{Binding Background, ElementName=commandBar}" Opacity="{Binding Opacity,ElementName=splitViewPaneBackgroundColor}"
+                        <Border Background="{StaticResource ButtonBackGroundDarkerNormal}" Opacity="{Binding Opacity,ElementName=splitViewPaneBackgroundColor}"
                             Grid.RowSpan="2" />
 
-                    <Grid x:Name="allHelpsRootGrid">
+                        <Grid x:Name="allHelpsRootGrid">
+
+                        </Grid>
 
                     </Grid>
-
-                </Grid>
-            </SplitView.Pane>
-        </SplitView>
+                </SplitView.Pane>
+            </SplitView>
+        </Grid>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="WindowSizeStates" CurrentStateChanged="AdaptiveTriggerCurrentStateChanged">

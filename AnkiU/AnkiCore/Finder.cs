@@ -786,7 +786,7 @@ namespace AnkiU.AnkiCore
                     new string[] { mid, csum });
             long nid = list[0].Id;
             string flds = list[0].Fields;
-            if (Utils.StripHTMLMedia(Utils.SplitFields(flds)[0]) == val)
+            if (Utils.StripHTMLKeepMediaName(Utils.SplitFields(flds)[0]) == val)
             {
                 nids.Add(nid);
             }
@@ -1070,7 +1070,7 @@ namespace AnkiU.AnkiCore
                     continue;
                 }
                 string val = flds[fields[mid]];
-                val = Utils.StripHTMLMedia(val);
+                val = Utils.StripHTMLKeepMediaName(val);
                 // empty does not count as duplicate
                 if (String.IsNullOrEmpty(val))
                 {

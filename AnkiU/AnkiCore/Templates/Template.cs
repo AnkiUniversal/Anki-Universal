@@ -149,7 +149,7 @@ namespace AnkiU.AnkiCore.Templates
                 string replacer = "";
                 if (!String.IsNullOrEmpty(it))
                 {
-                    it = Utils.StripHTMLMedia(it).Trim();
+                    it = Utils.StripHTMLKeepMediaName(it).Trim();
                 }
                 if (!String.IsNullOrEmpty(it))
                 {

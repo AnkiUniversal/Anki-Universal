@@ -267,10 +267,13 @@ namespace AnkiU.Anki
         {
             //Make sure all richeditor are removed so we won't have memory leak
             var task = RemoveAllEditor();
-            IsWebviewReady = false;            
-            webViewGrid.Children.Clear();            
+            IsWebviewReady = false;
+            webViewGrid.Children.Clear();
             webViewControl = null;
-            GC.Collect();
+
+            //Disable on "Creator Update" because this can cause system crashes
+            //Without this, GC will run when it needs to release memory, so it's not a big problem
+            //GC.Collect(); 
         }
 
         public async Task InitRichTextEditor()

@@ -177,17 +177,10 @@ namespace TestAnkiCore
 
                 //Create another deck
                 id = deck.Deck.AddOrResuedDeck("tmp");
-
-                //We can't rename it if it conflicts
-                try
-                {
-                    deck.Deck.Rename(deck.Deck.Get(id), "foo");
-                    Assert.Fail();
-                }
-                catch(DeckRenameException)
-                {
-
-                }
+                
+                //Conflict name
+                var name = deck.Deck.Rename(deck.Deck.Get(id), "foo");
+                Assert.AreEqual("foo_", name);
 
                 //When renaming, the children should be renamed too
                 deck.Deck.AddOrResuedDeck("one::two::three");

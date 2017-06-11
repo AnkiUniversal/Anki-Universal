@@ -50,6 +50,7 @@ namespace AnkiU.UserControls
         private double zoomLevel = 1;
 
         public bool IsLightDismissEnabled { get { return popUp.IsLightDismissEnabled; } set { popUp.IsLightDismissEnabled = value; } }
+        public bool IsOpen { get { return popUp.IsOpen; } }
 
         public CardViewPopup(Collection collection, long cardId)
         {

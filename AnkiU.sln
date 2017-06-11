@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnkiU", "AnkiU\AnkiU.csproj", "{B6EEC5A8-4B5A-4FD4-A25D-1D9D3574AEF1}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAnkiCore", "TestAnkiCore\TestAnkiCore.csproj", "{EA8E1957-32DD-45EE-9430-E1C84B151E97}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{9881BE9E-37D1-410A-A8E3-6F4E17F82064}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnkiBackgroundRuntimeComponent", "AnkiBackgroundRuntimeComponent\AnkiBackgroundRuntimeComponent.csproj", "{EB42171C-4D51-4815-A272-BD529F479174}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +90,22 @@ Global
 		{9881BE9E-37D1-410A-A8E3-6F4E17F82064}.Release|x64.Build.0 = Release|x64
 		{9881BE9E-37D1-410A-A8E3-6F4E17F82064}.Release|x86.ActiveCfg = Release|x86
 		{9881BE9E-37D1-410A-A8E3-6F4E17F82064}.Release|x86.Build.0 = Release|x86
+		{EB42171C-4D51-4815-A272-BD529F479174}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB42171C-4D51-4815-A272-BD529F479174}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB42171C-4D51-4815-A272-BD529F479174}.Debug|ARM.ActiveCfg = Debug|ARM
+		{EB42171C-4D51-4815-A272-BD529F479174}.Debug|ARM.Build.0 = Debug|ARM
+		{EB42171C-4D51-4815-A272-BD529F479174}.Debug|x64.ActiveCfg = Debug|x64
+		{EB42171C-4D51-4815-A272-BD529F479174}.Debug|x64.Build.0 = Debug|x64
+		{EB42171C-4D51-4815-A272-BD529F479174}.Debug|x86.ActiveCfg = Debug|x86
+		{EB42171C-4D51-4815-A272-BD529F479174}.Debug|x86.Build.0 = Debug|x86
+		{EB42171C-4D51-4815-A272-BD529F479174}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB42171C-4D51-4815-A272-BD529F479174}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB42171C-4D51-4815-A272-BD529F479174}.Release|ARM.ActiveCfg = Release|ARM
+		{EB42171C-4D51-4815-A272-BD529F479174}.Release|ARM.Build.0 = Release|ARM
+		{EB42171C-4D51-4815-A272-BD529F479174}.Release|x64.ActiveCfg = Release|x64
+		{EB42171C-4D51-4815-A272-BD529F479174}.Release|x64.Build.0 = Release|x64
+		{EB42171C-4D51-4815-A272-BD529F479174}.Release|x86.ActiveCfg = Release|x86
+		{EB42171C-4D51-4815-A272-BD529F479174}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

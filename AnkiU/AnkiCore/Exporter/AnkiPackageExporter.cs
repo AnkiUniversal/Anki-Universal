@@ -94,11 +94,11 @@ namespace AnkiU.AnkiCore.Exporter
 
                 StorageFile package = await tempExportPackageFolder.GetFileAsync(fileName);
                 await package.MoveAsync(destFolder, package.Name, NameCollisionOption.GenerateUniqueName);
-                ExportFinishedEvent("Successed");
+                ExportFinishedEvent?.Invoke("Successed");
             }
             catch(Exception e)
             {
-                ExportFinishedEvent(e.Message);
+                ExportFinishedEvent?.Invoke(e.Message);
             }
             finally
             {

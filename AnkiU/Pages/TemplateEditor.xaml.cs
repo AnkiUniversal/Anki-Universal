@@ -373,7 +373,12 @@ namespace AnkiU.Pages
             if (mainPage.WindowSizeState == WindowSizeState.narrow)            
                 mainPage.MoveZoomButtonToSecondary();
             mainPage.IsAutoSwitchZoomButtonToSecondary = true;
-            mainPage.SaveButton.Visibility = Visibility.Collapsed;            
+            mainPage.SaveButton.Visibility = Visibility.Collapsed;
+            //WARNING: Added on Creator Update
+            //After returning form SearchCardPage, command bar buttons 
+            //do not appear as intended. So we have to do this to ensure they are shown.         
+            mainPage.CommanBar.IsOpen = true;
+            mainPage.CommanBar.IsOpen = false;
         }
 
         private void HookAllMethods()

@@ -434,7 +434,7 @@ namespace AnkiU.AnkiCore
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static String StripHTMLMedia(String s)
+        public static String StripHTMLKeepMediaName(String s)
         {
             return StripHTML(imgPattern.Replace(s, " $1 "));
         }
@@ -479,7 +479,7 @@ namespace AnkiU.AnkiCore
 
         public static long FieldChecksum(string data)
         {
-            return Convert.ToInt64(Checksum(StripHTMLMedia(data)).Substring(0, 8), 16);
+            return Convert.ToInt64(Checksum(StripHTMLKeepMediaName(data)).Substring(0, 8), 16);
         }
 
         /// <summary>
@@ -682,39 +682,5 @@ namespace AnkiU.AnkiCore
             DeviceModel = eas.SystemProductName;
         }
     }
-
-    public sealed class TempFile : IDisposable
-    {
-        string path;
-        public TempFile() : this(System.IO.Path.GetTempFileName()) { }
-
-        public TempFile(string path)
-        {
-            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException("path");
-            this.path = path;
-        }
-        public string Path
-        {
-            get
-            {
-                if (path == null) throw new ObjectDisposedException(GetType().Name);
-                return path;
-            }
-        }
-        ~TempFile() { Dispose(false); }
-        public void Dispose() { Dispose(true); }
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                GC.SuppressFinalize(this);
-            }
-            if (path != null)
-            {
-                try { File.Delete(path); }
-                catch { } // best effort
-                path = null;
-            }
-        }
-    }
+   
 }

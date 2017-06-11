@@ -91,16 +91,33 @@
   <ItemGroup>
     <!--A reference to the entire .Net Framework and Windows SDK are automatically included-->
     <None Include="project.json" />
-    <Content Include="TestAssets\collection.anki2" />
-    <None Include="TestAssets\collection.apkg" />
-    <None Include="TestAssets\collection.media.db2" />
-    <Content Include="TestAssets\diffmodels2-1.apkg" />
-    <Content Include="TestAssets\diffmodels2-2.apkg" />
-    <Content Include="TestAssets\diffmodeltemplates-1.apkg" />
-    <Content Include="TestAssets\diffmodeltemplates-2.apkg" />
-    <Content Include="TestAssets\media.apkg" />
-    <Content Include="TestAssets\update1.apkg" />
-    <Content Include="TestAssets\update2.apkg" />
+    <Content Include="TestAssets\collection.anki2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestAssets\collection.media.db2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestAssets\diffmodels2-1.apkg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestAssets\diffmodels2-2.apkg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestAssets\diffmodeltemplates-1.apkg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestAssets\diffmodeltemplates-2.apkg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestAssets\media.apkg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestAssets\update1.apkg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestAssets\update2.apkg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
@@ -148,7 +165,9 @@
     <None Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <None Include="Assets\StoreLogo.png" />
     <None Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Content Include="TestAssets\fake.png" />
+    <Content Include="TestAssets\fake.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AnkiU\AnkiU.csproj">

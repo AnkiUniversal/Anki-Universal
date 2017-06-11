@@ -813,10 +813,17 @@ namespace AnkiU.AnkiCore
 
         private void ResetLearnCount()
         {
+            //WARNING Different with java and python ver
+            //we do this to avoid null reference exception
+            //It's unclear why ResetLearnCount and 
+            long maxTimeToGetDueCards = DateTimeOffset.Now.ToUnixTimeSeconds() + (long)collection.Conf.GetNamedNumber("collapseTime");
+            if (dayCutoff < maxTimeToGetDueCards)
+                maxTimeToGetDueCards = dayCutoff;
+
             // sub-day
             learnCount = collection.Database.QueryScalar<int>(
                     "SELECT sum(left / 1000) FROM (SELECT left FROM cards WHERE did IN " + DeckLimit()
-                    + " AND queue = 1 AND due < " + dayCutoff + " LIMIT " + reportLimit + ")");
+                    + " AND queue = 1 AND due < " + maxTimeToGetDueCards + " LIMIT " + reportLimit + ")");
 
             // day
             learnCount += collection.Database.QueryScalar<int>(
@@ -1717,7 +1724,9 @@ namespace AnkiU.AnkiCore
 
                 // Java and python ver use hook to notify the GUI
                 // Here we  use event     
-                bool isCanSuspend = (bool)NotifyLeechEvent?.Invoke("leech", card);
+                bool isCanSuspend = true;
+                if (NotifyLeechEvent != null)
+                    isCanSuspend = (bool)NotifyLeechEvent?.Invoke("leech", card);
 
                 if (conf.GetNamedNumber("leechAction") == 0 && isCanSuspend)
                 {
@@ -1865,8 +1874,10 @@ namespace AnkiU.AnkiCore
             int oldToday = today;
             // days since col created
             today = (int)((DateTimeOffset.Now.ToUnixTimeSeconds() - collection.Crt) / 86400);
+            
             // end of day cutoff
             dayCutoff = collection.Crt + ((today + 1) * 86400);
+
             if (oldToday != today)
             {
                 collection.Log(args: new object[] { today, dayCutoff });

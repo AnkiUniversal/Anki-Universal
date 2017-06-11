@@ -29,8 +29,9 @@ using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 using AnkiU.Interfaces;
 using AnkiU.UIUtilities;
-using AnkiU.Anki.Notifications;
+using Shared;
 using System.Diagnostics;
+using Windows.UI;
 
 namespace AnkiU.ViewModels
 {
@@ -136,7 +137,7 @@ namespace AnkiU.ViewModels
 
         public DeckInformation GetDeck(long deckId)
         {
-            return Decks.First((x) => { return x.Id == deckId; });
+            return Decks.FirstOrDefault((x) => { return x.Id == deckId; });
         }
 
         public void GetAllDeckInformation()
@@ -247,6 +248,8 @@ namespace AnkiU.ViewModels
                 deck.NewCards = deckCardCount.New;
                 deck.DueCards = deckCardCount.Due;
             }
+            UpdatePrimaryTile();
+            var task = UpdateAllSecondaryTilesIfHas();
         }
 
         public void UpdateCardCountMultiDecks(IEnumerable<long> deckIds)
@@ -272,6 +275,7 @@ namespace AnkiU.ViewModels
             deck.NewCards = deckCardCount.New;
             deck.DueCards = deckCardCount.Due;
 
+            UpdatePrimaryTile();
             var task = UpdateSecondaryTileIfHas(deck);
         }
 
@@ -307,11 +311,7 @@ namespace AnkiU.ViewModels
 
         public void UpdatePrimaryTile()
         {
-            try
-            {
-                TilesHelper.SendPrimaryTileNoficiation(TotalNewCards.ToString(), TotalDueCards.ToString());
-            }
-            catch { }
+            TilesHelper.UpdatePrimaryTile(TotalNewCards, TotalDueCards);                        
         }
 
         public async Task UpdateAllSecondaryTilesIfHas()
@@ -351,7 +351,8 @@ namespace AnkiU.ViewModels
         {
             try
             {
-                await TilesHelper.UpdateTile(deck.Id.ToString(), deck.NewCards.ToString(), deck.DueCards.ToString());
+                var color = GetColors(deck);
+                await TilesHelper.UpdateTile(deck.Id.ToString(), deck.NewCards.ToString(), deck.DueCards.ToString(), color);
 
             }
             catch (Exception e)

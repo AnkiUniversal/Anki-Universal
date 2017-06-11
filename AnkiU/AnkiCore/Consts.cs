@@ -112,8 +112,8 @@ namespace AnkiU.AnkiCore
     {
         public const int ZIP_SIZE = (int)(2.5 * 1024 * 1024);
         public const int ZIP_COUNT = 25;
-        public const string BASE = "https://ankiweb.net/";
-        public const string MEDIA_BASE = "https://msync.ankiweb.net/";
+        public const string BASE = "https://sync.ankiweb.net/";
+        public const string MEDIA_BASE = "https://sync.ankiweb.net/msync/";
         public const int VERSION = 8;
     }
 

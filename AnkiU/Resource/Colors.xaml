@@ -7,7 +7,7 @@
     <SolidColorBrush x:Key="ShadowMiddleLayer" Color="#FF6D6D6D"/>
     <SolidColorBrush x:Key="ShadowInnerLayer" Color="#FF3A3A3A"/>
 
-    <SolidColorBrush x:Key="BackgroundNormal" Color="#FFF0F0F0"/>
+    <SolidColorBrush x:Key="BackgroundNormal" Color="#FFE6E6E6"/>
     <SolidColorBrush x:Key="ForeGroundLight" Color="#FFF0F0F0"/>
 
     <SolidColorBrush x:Key="DeckListItemPointerOverBackground" Color="{ThemeResource SystemAccentColor}" Opacity="0.2" />
@@ -29,6 +29,7 @@
     <SolidColorBrush x:Key="ButtonBackGroundAnalogousRight" Color="#FF00BF4D" />
     
     <SolidColorBrush x:Key="ButtonBackGroundNormal" Color="#FF088DC7"/>
+    <SolidColorBrush x:Key="ButtonBackGroundDarkerNormal" Color="#FF027CB2"/>
     <SolidColorBrush x:Key="ButtonBackGroundHighlighted" Color="#FF3FABDA"/>
     <SolidColorBrush x:Key="ButtonBackGroundPressed" Color="{StaticResource ButtonBackGroundPressedColor}"/>
     <SolidColorBrush x:Key="ButtonForeGroundDissable" Color="LightGray"/>

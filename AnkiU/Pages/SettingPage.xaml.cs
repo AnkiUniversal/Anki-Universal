@@ -15,9 +15,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using AnkiU.Anki.Syncer;
 using AnkiU.AnkiCore;
 using AnkiU.Interfaces;
 using AnkiU.UIUtilities;
+using AnkiU.UserControls;
 using AnkiU.ViewModels;
 using AnkiU.Views;
 using System;
@@ -45,7 +47,10 @@ namespace AnkiU.Pages
     /// </summary>
     public sealed partial class SettingPage : Page, INightReadMode
     {
-        private bool isNightMode;
+        public const int SYNC_ONEDRIVE = 0;
+        public const int SYNC_ANKIWEB = 1;
+
+        private bool isNightMode;        
 
         private MainPage mainPage;        
 
@@ -84,6 +89,11 @@ namespace AnkiU.Pages
             syncMediaCheckBox.IsChecked = MainPage.UserPrefs.IsSyncMedia;
             if (!UIHelper.IsDeskTop())
                 openBackUpFolderButton.Visibility = Visibility.Collapsed;
+
+            syncServiceCombobox.SelectedIndex = MainPage.UserPrefs.SyncService;
+            if(MainPage.UserPrefs.SyncService == SYNC_ANKIWEB)
+                DisableMediaSync();
+            syncServiceCombobox.SelectionChanged += OnSyncServiceSelectionChanged; //Hook here to avoid start up problems            
             HookAllEvents();
         }
 
@@ -121,6 +131,7 @@ namespace AnkiU.Pages
             MainPage.UserPrefs.BackupsMinTime = backupTime.Number;
             MainPage.UserPrefs.IsSyncMedia = (bool)syncMediaCheckBox.IsChecked;
             MainPage.UserPrefs.IsSyncOnOpen = (bool)syncOnOpenCheckBox.IsChecked;
+            MainPage.UserPrefs.SyncService = syncServiceCombobox.SelectedIndex;
             mainPage.UpdateUserPreference();
         }
 
@@ -196,6 +207,29 @@ namespace AnkiU.Pages
             mainPage.Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
             mainPage.Collection.SetIsModified();
             Frame.GoBack();
+        }
+
+        private async void OnSyncServiceSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selected = syncServiceCombobox.SelectedIndex;            
+            if(selected == SYNC_ANKIWEB)
+            {
+                DisableMediaSync();
+                await UIHelper.ShowMessageDialog("Currently, Anki Universal does not support syncing MEDIA FILES with AnkiWeb.");
+                var isSuccess = await AnkiWebSync.TryGetHostKeyFromUsernameAndPassword();
+                if (!isSuccess)
+                    syncServiceCombobox.SelectedIndex = 0;
+            }
+            else
+            {
+                syncMediaCheckBox.IsEnabled = true;
+            }
+        }
+
+        private void DisableMediaSync()
+        {
+            syncMediaCheckBox.IsChecked = false;
+            syncMediaCheckBox.IsEnabled = false;
         }
     }
 }

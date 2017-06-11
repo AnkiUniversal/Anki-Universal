@@ -245,7 +245,7 @@ namespace AnkiU.ViewModels
             htmlString = Utils.BreakPattern.Replace(htmlString, "\n");
             htmlString = Utils.StartDivPattern.Replace(htmlString, "\n");
             htmlString = Utils.EndDivPattern.Replace(htmlString, "\n");
-            htmlString = Utils.StripHTMLMedia(htmlString);
+            htmlString = Utils.StripHTMLKeepMediaName(htmlString);
             var temp = htmlString.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
             htmlString = Utils.TrimAndJoinStringArray(temp);            
             return htmlString;

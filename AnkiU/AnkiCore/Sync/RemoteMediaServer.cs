@@ -21,8 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
-using System.Net;
-using System.Net.Http;
+using Windows.Web.Http;
 using System.IO;
 using System.IO.Compression;
 
@@ -78,7 +77,7 @@ namespace AnkiU.AnkiCore.Sync
                 resp = await Request("downloadFiles", stream);
                 String zipPath = collection.RelativePath.ReplaceFirst("collection.anki2", "tmpSyncFromServer.zip");
                 // retrieve contents and save to file on disk:
-                WriteToFile(await resp.Content.ReadAsStreamAsync(), zipPath);
+                WriteToFile((await resp.Content.ReadAsInputStreamAsync()).AsStreamForRead(), zipPath);
                 return new ZipArchive(new FileStream(zipPath, FileMode.Open), ZipArchiveMode.Update);
             }
         }

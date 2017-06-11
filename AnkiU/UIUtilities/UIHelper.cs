@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using AnkiU.Interfaces;
 using AnkiU.Models;
+using AnkiU.UserControls;
 using OxyPlot;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,8 @@ namespace AnkiU.UIUtilities
         private const int numberPadRangeMin = (int)Windows.System.VirtualKey.NumberPad0;
         private const int numberPadRangeMax = (int)Windows.System.VirtualKey.NumberPad9;
 
+        private static AutoCloseContentDialog autoCloseDialog;
+        
         public static readonly CoreCursor HandCursor = new CoreCursor(CoreCursorType.Hand, 1);
         public static readonly CoreCursor ArrowCursor = new CoreCursor(CoreCursorType.Arrow, 1);
 
@@ -185,6 +188,18 @@ namespace AnkiU.UIUtilities
         {
             MessageDialog dialog = new MessageDialog(content, title);
             await dialog.ShowAsync();
+        }
+
+        public static async Task ShowContentDialog(int duration, string content, string title = "")
+        {
+            if (autoCloseDialog == null)
+            {
+                autoCloseDialog = new AutoCloseContentDialog();                
+                autoCloseDialog.IsPrimaryButtonEnabled = false;
+                autoCloseDialog.IsSecondaryButtonEnabled = false;
+            }
+
+            await autoCloseDialog.Show(duration, content, title);            
         }
 
         public static async Task<bool> AskUserConfirmation(string content, string title = "")

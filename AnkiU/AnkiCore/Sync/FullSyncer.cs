@@ -20,8 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net;
-using System.Net.Http;
+using Windows.Web.Http;
 using System.IO;
 using Windows.Storage;
 
@@ -35,8 +34,7 @@ namespace AnkiU.AnkiCore.Sync
         {
             postVars = new Dictionary<string, object>();
             postVars.Add("k", hkey);
-            postVars.Add("v",
-                    String.Format(Media.locale, "anki,{0},{1}", Utils.APP_VERSION, Utils.platDesc()));
+            postVars.Add("v", String.Format("anki,{0},{1}", Utils.APP_VERSION, Utils.platDesc()));
             this.collection = collection;
         }
 
@@ -75,7 +73,7 @@ namespace AnkiU.AnkiCore.Sync
             }
 
             string tempRelativePath = relativePath + ".tmp";
-            WriteToFile(await content.ReadAsStreamAsync(), tempRelativePath);
+            WriteToFile((await content.ReadAsInputStreamAsync()).AsStreamForRead(), tempRelativePath);
             using (FileStream fis = new FileStream(tempRelativePath, FileMode.Open, FileAccess.Read))
             {
                 if (Stream2String(fis, 15).Equals("upgradeRequired"))
@@ -135,7 +133,7 @@ namespace AnkiU.AnkiCore.Sync
                     return null;
                 }
                 HttpStatusCode status = ret.StatusCode;
-                if (status != HttpStatusCode.OK)
+                if (status != HttpStatusCode.Ok)
                 {
                     return new object[] { "error", status, ret.ReasonPhrase };
                 }

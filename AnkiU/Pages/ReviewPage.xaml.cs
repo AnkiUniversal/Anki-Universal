@@ -347,7 +347,6 @@ namespace AnkiU.Pages
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            GC.Collect();
             base.OnNavigatedTo(e);
 
             mainPage = e.Parameter as MainPage;
@@ -1062,7 +1061,7 @@ namespace AnkiU.Pages
             if(MainPage.UserPrefs.IsAutoPlayTextSynth && MainPage.UserPrefs.IsHasTextSynthDeckPreference)
             {
                 if(!MainPage.DeckTextSynthPrefs.IsEmpty() && MainPage.DeckTextSynthPrefs.HasId(selectedDeckId))
-                {
+                {                    
                     await cardView.PlayTextToSpeech(text);
                 }
             }

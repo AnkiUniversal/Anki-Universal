@@ -173,7 +173,7 @@ namespace AnkiU.AnkiCore.Importer
         private void RenameDeckInSource(string sourceDeckName, string newName)
         {
             var deck = sourceCol.Deck.GetDeckByName(sourceDeckName);            
-            sourceCol.Deck.Rename(deck, newName);
+            sourceCol.Deck.Rename(deck, newName, false);
             sourceCol.Deck.Save(deck);
             sourceCol.SaveAndCommit();
         }
@@ -198,6 +198,8 @@ namespace AnkiU.AnkiCore.Importer
             }
             finally
             {
+                if(sourceCol != null)
+                    sourceCol.Close();
                 destCol.Database.Execute("vacuum");
                 destCol.Database.Execute("analyze");
             }
