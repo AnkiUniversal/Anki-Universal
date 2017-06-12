@@ -68,5 +68,16 @@ namespace AnkiU.UserControls
             IsUserCancel = true;
             this.Hide();
         }
+
+        private async void OnPasswordBoxKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    OnPrimaryButtonClick(null, null);
+                });
+            }
+        }
     }
 }

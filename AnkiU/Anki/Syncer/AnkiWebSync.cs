@@ -109,7 +109,7 @@ namespace AnkiU.Anki.Syncer
             isSyncStateDialogClose = false;
         }
 
-        private void SyncStateDialogClosed(ContentDialog sender, Windows.UI.Xaml.Controls.ContentDialogClosedEventArgs args)
+        private void SyncStateDialogClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             isSyncStateDialogClose = true;
         }
