@@ -34,7 +34,7 @@ namespace AnkiU.AnkiCore.Sync
         {
             postVars = new Dictionary<string, object>();
             postVars.Add("k", hkey);
-            postVars.Add("v", String.Format("anki,{0},{1}", Utils.APP_VERSION, Utils.platDesc()));
+            postVars.Add("v", String.Format("anki,{0},{1}", Utils.APP_VERSION, Utils.GetPlatDesc()));
             this.collection = collection;
         }
 
@@ -72,41 +72,47 @@ namespace AnkiU.AnkiCore.Sync
                 throw new Exception("Can not open collection!");
             }
 
-            string tempRelativePath = relativePath + ".tmp";
-            WriteToFile((await content.ReadAsInputStreamAsync()).AsStreamForRead(), tempRelativePath);
-            using (FileStream fis = new FileStream(tempRelativePath, FileMode.Open, FileAccess.Read))
-            {
-                if (Stream2String(fis, 15).Equals("upgradeRequired"))
-                {
-                    return new object[] { "upgradeRequired" };
-                }
-            }
-
             try
             {
+                string tempRelativePath = relativePath + ".tmp";                
+                WriteToFile((await content.ReadAsInputStreamAsync()).AsStreamForRead(), tempRelativePath);
+                string fullPath = Storage.AppLocalFolder.Path + "\\" + tempRelativePath;
+                using (FileStream fis = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                {
+                    if (Stream2String(fis, 15).Equals("upgradeRequired"))
+                    {
+                        return new object[] { "upgradeRequired" };
+                    }
+                }
+
                 // check the received file is ok
-                using (DB tempDb = new DB(collection.Folder.Path + "\\" + tempRelativePath))
+                using (DB tempDb = new DB(fullPath))
                 {
                     if (!tempDb.QueryScalar<string>("PRAGMA integrity_check").Equals("ok", StringComparison.OrdinalIgnoreCase))
                         return new object[] { "remoteDbError" };
                 }
-            }
-            catch(SQLite.Net.SQLiteException)
-            {
-                return new object[] { "remoteDbError" };
-            }
 
-            try
-            {
-                StorageFile newFile = await Storage.AppLocalFolder.GetFileAsync(tempRelativePath);
-                await newFile.RenameAsync(relativePath, NameCollisionOption.ReplaceExisting);
+                await OverWriteCollection(relativePath, tempRelativePath);
                 return new object[] { "success" };
             }
-            catch
+            catch (SQLite.Net.SQLiteException)
             {
-                return new object[] { "overwriteError" };
+                throw new Exception("The downloaded database is corrupted!" );
             }
-            
+            catch(FieldAccessException ex)
+            {
+                throw new Exception("Failed to overwrite collection: " + ex.Message);
+            }                        
+        }
+
+        private static async Task OverWriteCollection(string relativePath, string tempRelativePath)
+        {
+            StorageFile oldFile = await Storage.AppLocalFolder.GetFileAsync(relativePath);
+            if (oldFile != null)
+                await oldFile.DeleteAsync();
+
+            StorageFile newFile = await Storage.AppLocalFolder.GetFileAsync(tempRelativePath);
+            await newFile.RenameAsync(relativePath, NameCollisionOption.ReplaceExisting);
         }
 
         public override async Task<object[]> Upload()

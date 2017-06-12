@@ -84,8 +84,10 @@ namespace AnkiU.AnkiCore.Sync
                     var jObject = JsonObject.Parse(content);
                     return jObject.GetNamedString("key");
                 }
-                else
+                else if(respone.StatusCode == HttpStatusCode.Forbidden)
                     throw new Exception("Wrong AnkiWeb ID or Password!");
+                else
+                    throw new Exception("Unknown respone code!");
             }
         }
 
@@ -97,8 +99,7 @@ namespace AnkiU.AnkiCore.Sync
             JsonObject jo = new JsonObject();
             jo.Add("v", JsonValue.CreateNumberValue(Syncing.VERSION));
             jo.Add("cv", JsonValue.CreateStringValue(
-                         String.Format(Media.locale, 
-                         "ankiU,{0},{1}", Utils.APP_VERSION, Utils.platDesc())));
+                         String.Format("Anki Universal,{0},{1}", Utils.APP_VERSION, Utils.GetPlatDesc())));
             using (MemoryStream stream = GetInputStream(Utils.JsonToString(jo)))
             {
                 return await Request("meta", stream);

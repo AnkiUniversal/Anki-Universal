@@ -84,7 +84,54 @@ namespace AnkiU.Anki.Syncer
 
                 server = new RemoteServer(hostKey);
                 client = new AnkiCore.Sync.Syncer(mainPage.Collection, server);
-
+                var results = await client.Sync();
+                await CloseSyncStateDialog();
+                if (results == null)
+                {
+                    await UIHelper.ShowMessageDialog("No respone from the server! Either your connection or the server did not work properly.");
+                    return;
+                }
+                else if (results[0] == "badAuth") 
+                {
+                    //Include for completeness purpose.
+                    //We should not run into this, as the app only logins when user changed sync service                    
+                    await UIHelper.ShowMessageDialog("AnkiWeb ID or password was incorrect. Please try to log in again.");
+                    return;
+                }
+                else if(results[0] == "clockOff")
+                {
+                    await UIHelper.ShowMessageDialog("Syncing requires the clock on your computer to be set correctly. Please fix the clock and try again.");
+                    return;
+                }
+                else if (results[0] == "clockOff")
+                {
+                    await UIHelper.ShowMessageDialog("Syncing requires the clock on your computer to be set correctly. Please fix the clock and try again.");
+                    return;
+                }
+                else if(results[0] == "basicCheckFailed" || results[0] == "sanityCheckFailed")
+                {
+                    await UIHelper.ShowMessageDialog("Your collection is in an inconsistent state. Please run Tools Check Database in Anki Dekstop, then sync again.");
+                    return;
+                }
+                else if (results[0] == "fullSync")
+                {
+                    await ConfirmAndStartFullSync();
+                    return;
+                }
+                else if (results[0] == "noChanges" || results[0] == "success")
+                {
+                    await UIHelper.ShowMessageDialog("Finished.");
+                    return;
+                }
+                else if(results[0] == "serverAbort")
+                {
+                    await UIHelper.ShowMessageDialog("Server aborted.");
+                    return;
+                }
+                else
+                {
+                    await UIHelper.ShowMessageDialog("Unknown sync return code.");
+                }
             }
             catch (HttpSyncerException ex)
             {
@@ -102,6 +149,30 @@ namespace AnkiU.Anki.Syncer
             {
                 syncStateDialog.Close();
             }
+        }
+
+        private async Task ConfirmAndStartFullSync()
+        {
+            
+            var fullSyncclient = new FullSyncer(mainPage.Collection, hostKey);
+            ThreeOptionsDialog dialog = new ThreeOptionsDialog();
+            dialog.Title = "Full Sync Direction";
+            dialog.Message = "Your collection has been modified in a way that the app needs to override the whole collection.\n"                            
+                            + "\"Download\" will download the collection from the sever and replace your current one. Unsynced changes on your current collection will be lost.\n"
+                            + "\"Upload\" will upload your current collection to the server. Unsynced changes on OTHER devices will be lost.";
+            dialog.LeftButton.Content = "Download";
+            dialog.MiddleButton.Content = "Upload";
+            await dialog.ShowAsync();
+            await dialog.WaitForDialogClosed();
+            if (dialog.IsLeftButtonClick())
+            {
+                await fullSyncclient.Download();
+                mainPage.Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
+                await mainPage.NavigateToDeckSelectPage();
+                mainPage.ContentFrame.BackStack.RemoveAt(0);
+            }
+            else if (dialog.IsMiddleButtonClick())
+                await fullSyncclient.Upload();
         }
 
         private void SyncStateDialogOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -133,5 +204,6 @@ namespace AnkiU.Anki.Syncer
                 throw new PasswordVaulException("No hostkeys!");
             }
         }
+
     }
 }

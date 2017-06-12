@@ -209,7 +209,7 @@ namespace AnkiU.AnkiCore.Sync
             }
             finally
             {
-                collection.Database.Commit();
+                collection.Database.Commit();                
             }
 
             return result;

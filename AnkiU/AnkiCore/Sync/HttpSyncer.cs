@@ -24,6 +24,7 @@ using Windows.Data.Json;
 using System.IO;
 using System.IO.Compression;
 using Windows.Web.Http;
+using Windows.Web;
 
 namespace AnkiU.AnkiCore.Sync
 {
@@ -150,10 +151,10 @@ namespace AnkiU.AnkiCore.Sync
 
                     memoryStream.Position = 0;
                     Uri uri = new Uri(url);
-                    HttpRequestMessage httpPost = new HttpRequestMessage(HttpMethod.Post, uri);                    
+                    HttpRequestMessage httpPost = new HttpRequestMessage(HttpMethod.Post, uri);
                     HttpStreamContent streamContent = new HttpStreamContent(memoryStream.AsInputStream());
                     httpPost.Content = streamContent;
-             
+
                     httpPost.Content.Headers.Add("Content-type", "multipart/form-data; boundary=" + BOUNDARY);
                     using (HttpClient httpClient = new HttpClient())
                     {
@@ -166,25 +167,60 @@ namespace AnkiU.AnkiCore.Sync
                     }
                 }
             }
-            catch(UnknownHttpResponseException ex)
+            catch (UnknownHttpResponseException ex)
             {
-                throw ex;
-            }
-            catch(Exception ex)
+                string message = HttpRequestExceptionHandler((int)ex.ResponseCode, ex);
+                throw new HttpSyncerException(message);
+            }            
+            catch (Exception ex)
             {
-                throw new HttpSyncerException(ex.StackTrace);
+                string message = HttpRequestExceptionHandler(ex.HResult, ex);
+                throw new HttpSyncerException(message);
             }
+        }
+
+        public static string HttpRequestExceptionHandler(int code, Exception ex)
+        {
+            WebErrorStatus error = WebError.GetStatus(code);
+            if (error == WebErrorStatus.CannotConnect
+                  || error == WebErrorStatus.CertificateCommonNameIsIncorrect
+                  || error == WebErrorStatus.CertificateContainsErrors
+                  || error == WebErrorStatus.CertificateExpired
+                  || error == WebErrorStatus.CertificateIsInvalid
+                  || error == WebErrorStatus.CertificateRevoked)
+                return "Error establishing a secure connection. This is usually caused by antivirus, firewall or VPN software, or problems with your ISP.";
+            else if (error == WebErrorStatus.Timeout)
+                return "The connection to AnkiWeb timed out. Please check your network connection and try again.";
+            else if (error == WebErrorStatus.InternalServerError)
+                return "AnkiWeb encountered an error. Please try again in a few minutes, and if the problem persists, please file a bug report.";
+            else if (error == WebErrorStatus.NotImplemented)
+                return "Please upgrade to the latest version of Anki.";
+            else if (error == WebErrorStatus.BadGateway)
+                return  "AnkiWeb is under maintenance. Please try again in a few minutes.";
+            else if (error == WebErrorStatus.ServiceUnavailable)
+                return "AnkiWeb is too busy at the moment. Please try again in a few minutes.";
+            else if (error == WebErrorStatus.GatewayTimeout)
+                return  "504 gateway timeout error received. Please try temporarily disabling your antivirus.";
+            else if (error == WebErrorStatus.Conflict)
+                return "Only one client can access AnkiWeb at a time. If a previous sync failed, please try again in a few minutes.";
+            else if (error == WebErrorStatus.ProxyAuthenticationRequired)
+                return "Proxy authentication required.";
+            else if (error == WebErrorStatus.RequestEntityTooLarge)
+                return "Your collection or a media file is too large to sync.";
+            else
+                return String.Format("Error Code:{0:X}. {1}", ex.HResult, ex.Message);
         }
 
         public void WriteToFile(Stream source, string destination)
         {
+            string fullPath = Storage.AppLocalFolder.Path + "\\" + destination;
             try
             {
-                using (FileStream file = new FileStream(destination, FileMode.Create))
+                using (FileStream file = new FileStream(fullPath, FileMode.Create))
                 {
                     byte[] buf = new byte[Utils.CHUNK_SIZE];
                     int len;
-                    while ((len = source.Read(buf, 0, buf.Length)) >= 0)
+                    while ((len = source.Read(buf, 0, buf.Length)) > 0)
                     {
                         file.Write(buf, 0, len);
                     }
@@ -193,7 +229,7 @@ namespace AnkiU.AnkiCore.Sync
             catch (IOException e)
             {
                 // Don't keep the file if something went wrong. It'll be corrupt.
-                File.Delete(destination);
+                File.Delete(fullPath);
                 // Re-throw so we know what the error was.
                 throw e;
             }

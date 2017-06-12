@@ -142,7 +142,7 @@ namespace TestAnkiCore
                 Assert.AreEqual(4*num, col.Models.All().Count);
                 //The default deck and config have an id of 1, so always 1
                 Assert.AreEqual(1, col.Deck.All().Count);
-                Assert.AreEqual(1, col.Deck.DeckConf.Count);
+                Assert.AreEqual(5, col.Deck.DeckConf.Count);
                 Assert.AreEqual(num, col.Tags.All().Count);
             }
         }
