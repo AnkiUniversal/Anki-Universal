@@ -33,8 +33,8 @@ namespace AnkiU.AnkiCore.Sync
         public FullSyncer(Collection collection, string hkey) : base(hkey)
         {
             postVars = new Dictionary<string, object>();
-            postVars.Add("k", hkey);
-            postVars.Add("v", String.Format("anki,{0},{1}", Utils.APP_VERSION, Utils.GetPlatDesc()));
+            postVars["k"] = hkey;
+            postVars["v"] = String.Format("anki,{0},{1}", Utils.APP_VERSION, Utils.GetPlatDesc());
             this.collection = collection;
         }
 

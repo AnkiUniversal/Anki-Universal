@@ -86,7 +86,7 @@ namespace AnkiU.AnkiCore.Sync
                 {
                     string bdry = "--" + BOUNDARY;
                     // post vars
-                    postVars.Add("c", comp != 0 ? 1 : 0);
+                    postVars["c"] = comp != 0 ? 1 : 0;
                     foreach (string key in postVars.Keys)
                     {
                         buf.Write(bdry + "\r\n");

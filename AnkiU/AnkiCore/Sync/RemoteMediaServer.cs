@@ -50,7 +50,7 @@ namespace AnkiU.AnkiCore.Sync
         public async Task<JsonArray> MediaChanges(long lastUsn)
         {
             postVars = new Dictionary<string, object>();
-            postVars.Add("sk", JsonValue.CreateStringValue(sKey));
+            postVars["sk"] = JsonValue.CreateStringValue(sKey);
             JsonObject json = new JsonObject();
             json.Add("lastUsn", JsonValue.CreateNumberValue(lastUsn));
             using (MemoryStream stream = GetInputStream(Utils.JsonToString(json)))
@@ -109,9 +109,8 @@ namespace AnkiU.AnkiCore.Sync
         public async Task<JsonObject> Begin()
         {
             postVars = new Dictionary<string, object>();
-            postVars.Add("k", hKey);
-            postVars.Add("v",
-                    String.Format(Media.locale, "ankiU,{0},{1}", Utils.APP_VERSION, Utils.GetPlatDesc()));
+            postVars["k"] = hKey;
+            postVars["v"] = String.Format(Media.locale, "ankiU,{0},{1}", Utils.APP_VERSION, Utils.GetPlatDesc());
 
             using (MemoryStream stream = GetInputStream(Utils.JsonToString(new JsonObject())))
             {

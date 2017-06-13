@@ -79,13 +79,14 @@ namespace AnkiU.Anki.Syncer
         {
             try
             {
+                syncStateDialog.Label = "Sync collection to AnkiWeb..."
                 syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
                 GetHostKeyFromVault();
 
                 server = new RemoteServer(hostKey);
                 client = new AnkiCore.Sync.Syncer(mainPage.Collection, server);
                 var results = await client.Sync();
-                await CloseSyncStateDialog();
+                await WaitForCloseSyncStateDialog();
                 if (results == null)
                 {
                     await UIHelper.ShowMessageDialog("No respone from the server! Either your connection or the server did not work properly.");
@@ -120,10 +121,17 @@ namespace AnkiU.Anki.Syncer
                 }
                 else if (results[0] == "noChanges" || results[0] == "success")
                 {
-                    await UIHelper.ShowMessageDialog("Finished.");
+                    syncStateDialog.Label = "Finished.";
+                    syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
+                    if (results[0] == "success")                    
+                        await ReOpenAndNavigateToDeckSelectPage();
+                    else
+                        await Task.Delay(250);
+
+                    await WaitForCloseSyncStateDialog();
                     return;
-                }
-                else if(results[0] == "serverAbort")
+                }                
+                else if (results[0] == "serverAbort")
                 {
                     await UIHelper.ShowMessageDialog("Server aborted.");
                     return;
@@ -131,6 +139,7 @@ namespace AnkiU.Anki.Syncer
                 else
                 {
                     await UIHelper.ShowMessageDialog("Unknown sync return code.");
+                    return;
                 }
             }
             catch (HttpSyncerException ex)
@@ -166,13 +175,28 @@ namespace AnkiU.Anki.Syncer
             await dialog.WaitForDialogClosed();
             if (dialog.IsLeftButtonClick())
             {
+                syncStateDialog.Label = "Downloading full collection database...";
+                syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
                 await fullSyncclient.Download();
-                mainPage.Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
-                await mainPage.NavigateToDeckSelectPage();
-                mainPage.ContentFrame.BackStack.RemoveAt(0);
+                await ReOpenAndNavigateToDeckSelectPage();
             }
             else if (dialog.IsMiddleButtonClick())
+            {
+                syncStateDialog.Label = "Uploading full collection database...";
+                syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
                 await fullSyncclient.Upload();
+            }
+
+            syncStateDialog.Label = "Finished.";
+            await Task.Delay(250);
+            await WaitForCloseSyncStateDialog();
+        }
+
+        private async Task ReOpenAndNavigateToDeckSelectPage()
+        {
+            mainPage.Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
+            await mainPage.NavigateToDeckSelectPage();
+            mainPage.ContentFrame.BackStack.RemoveAt(0);
         }
 
         private void SyncStateDialogOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -185,7 +209,7 @@ namespace AnkiU.Anki.Syncer
             isSyncStateDialogClose = true;
         }
 
-        private async Task CloseSyncStateDialog()
+        private async Task WaitForCloseSyncStateDialog()
         {
             syncStateDialog.Close();
             while (!isSyncStateDialogClose)

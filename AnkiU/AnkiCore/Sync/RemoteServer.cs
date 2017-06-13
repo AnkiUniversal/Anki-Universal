@@ -94,8 +94,8 @@ namespace AnkiU.AnkiCore.Sync
         public async override Task<HttpResponseMessage> Meta()
         {
             postVars = new Dictionary<string, object>();
-            postVars.Add("k", hKey);
-            postVars.Add("s", sKey);
+            postVars["k"] = hKey;
+            postVars["s"] = sKey;
             JsonObject jo = new JsonObject();
             jo.Add("v", JsonValue.CreateNumberValue(Syncing.VERSION));
             jo.Add("cv", JsonValue.CreateStringValue(
