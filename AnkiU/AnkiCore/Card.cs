@@ -265,8 +265,9 @@ namespace AnkiU.AnkiCore
                 Note f = LoadNote(reload);
                 JsonObject m = GetModel();
                 JsonObject t = GetTemplate();
-                object[] data;
-                data = new object[] { id, f.Id, m.GetNamedNumber("id"), oDid != 0L ? oDid : deckId, ord,
+                object[] data;                
+
+                data = new object[] { id, f.Id, JsonHelper.GetNameNumber(m, "id"), oDid != 0L ? oDid : deckId, ord,
                     f.StringTags(), f.JoinedFields() };
 
                 if (browser)
@@ -324,7 +325,7 @@ namespace AnkiU.AnkiCore
         public JsonObject GetTemplate()
         {
             JsonObject m = GetModel();
-            if (m.GetNamedNumber("type") == (double)ModelType.STD)
+            if (JsonHelper.GetNameNumber(m,"type") == (double)ModelType.STD)
             {
                 try
                 {
@@ -354,12 +355,13 @@ namespace AnkiU.AnkiCore
         public int TimeLimit()
         {
             JsonObject conf = collection.Deck.ConfForDeckId(oDid == 0 ? deckId : oDid);
-            return (int)conf.GetNamedNumber("maxTaken") * 1000;
+            return (int)JsonHelper.GetNameNumber(conf,"maxTaken") * 1000;
         }
 
         public bool ShouldShowTimer()
-        {
-            return collection.Deck.ConfForDeckId(oDid == 0 ? deckId : oDid).GetNamedNumber("timer") != 0;
+        {            
+            var deck = collection.Deck.ConfForDeckId(oDid == 0 ? deckId : oDid);
+            return JsonHelper.GetNameNumber(deck,"timer") != 0;
         }
 
         /// <summary>

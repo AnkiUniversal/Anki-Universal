@@ -117,38 +117,45 @@ namespace AnkiU.AnkiCore.Sync
 
         public override async Task<object[]> Upload()
         {
-            // make sure it's ok before we try to uploa            
+            // make sure it's ok before we try to upload            
             if (!collection.Database.QueryScalar<string>("PRAGMA integrity_check")
                     .Equals("ok", StringComparison.OrdinalIgnoreCase))
             {
-                return new object[] { "dbError" };
+
+                throw new Exception("Local database error: Integrity check failed!");                
             }
             if (!collection.BasicCheck())
             {
-                return new object[] { "dbError" };
+                throw new Exception("Local database error: Basic check failed!");
             }
-            // apply some adjustments, then upload
-            collection.BeforeUpload();
-            string filePath = collection.RelativePath;
-            HttpResponseMessage ret;
-            using (FileStream stream = new FileStream(filePath, FileMode.Open))
+            try
             {
-                ret = await Request("upload", stream);
-                if (ret == null)
+                // apply some adjustments, then upload
+                collection.BeforeUpload();
+                string filePath = Storage.AppLocalFolder.Path + "\\" + collection.RelativePath;
+                HttpResponseMessage ret;
+                using (FileStream stream = new FileStream(filePath, FileMode.Open))
                 {
-                    return null;
-                }
-                HttpStatusCode status = ret.StatusCode;
-                if (status != HttpStatusCode.Ok)
-                {
-                    return new object[] { "error", status, ret.ReasonPhrase };
-                }
-                else
-                {
-                    return new object[] { await ret.Content.ReadAsStringAsync() };
+                    ret = await Request("upload", stream);
+                    if (ret == null)
+                    {
+                        throw new HttpSyncerException("No response from the server");
+                    }
+                    HttpStatusCode status = ret.StatusCode;
+                    if (status != HttpStatusCode.Ok)
+                    {
+                        throw new HttpSyncerException("Error: " + status.ToString() + "\n" + ret.ReasonPhrase);                        
+                    }
+                    else
+                    {
+                        return new object[] { await ret.Content.ReadAsStringAsync() };
+                    }
                 }
             }
-
+            finally
+            {
+                collection.ReOpen();
+            }
         }
 
     }

@@ -373,7 +373,7 @@ namespace AnkiU.UserControls
             var currentCustomDeck = collection.Deck.GetDeckByName(DEFAULT_DYN_DECKNAME);
             if (currentCustomDeck != null)
             {
-                deckId = (long)currentCustomDeck.GetNamedNumber("id");
+                deckId = (long)JsonHelper.GetNameNumber(currentCustomDeck,"id");
                 bool isDyn = collection.Deck.IsDyn(deckId);
                 if (!isDyn)
                 {

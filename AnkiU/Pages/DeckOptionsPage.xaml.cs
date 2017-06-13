@@ -93,9 +93,9 @@ namespace AnkiU.Pages
             collection.Database.SaveTransactionPoint();
             currentDeckId = deckSelectPage.SelectedDeckId;
             config = collection.Deck.GetConf(deckSelectPage.SelectedConfigId);
-            oldCardOrder = (int)config.GetNamedObject("new").GetNamedNumber("order");
-            oldCardOrderOfSelectedDeck = (int)collection.Deck.ConfForDeckId(currentDeckId)
-                                              .GetNamedObject("new").GetNamedNumber("order");
+            oldCardOrder = (int)JsonHelper.GetNameNumber(config.GetNamedObject("new"),"order");
+            var deckObj = collection.Deck.ConfForDeckId(currentDeckId).GetNamedObject("new");
+            oldCardOrderOfSelectedDeck = (int)JsonHelper.GetNameNumber(deckObj,"order");
 
             if (!deckSelectPage.IsCreatingNewConfig)
             {
@@ -236,7 +236,7 @@ namespace AnkiU.Pages
 
         private void ResortAllCardsOfDecksIfNeeded()
         {
-            var newOrder = (int)config.GetNamedObject("new").GetNamedNumber("order");
+            var newOrder = (int)JsonHelper.GetNameNumber(config.GetNamedObject("new"),"order");
             if (oldCardOrder != newOrder)
             {
                 //Resort all other decks using this conf first

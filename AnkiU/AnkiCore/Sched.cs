@@ -316,8 +316,8 @@ namespace AnkiU.AnkiCore
             JsonObject cur = collection.Deck.Current();
             List<JsonObject> decks = new List<JsonObject>();
             decks.Add(cur);
-            decks.AddRange(collection.Deck.Parents((long)cur.GetNamedNumber("id")));
-            foreach (long did in collection.Deck.Children((long)cur.GetNamedNumber("id")).Values)
+            decks.AddRange(collection.Deck.Parents((long)JsonHelper.GetNameNumber(cur,"id")));
+            foreach (long did in collection.Deck.Children((long)JsonHelper.GetNameNumber(cur,"id")).Values)
             {
                 decks.Add(collection.Deck.Get(did));
             }
@@ -349,7 +349,7 @@ namespace AnkiU.AnkiCore
                 foreach (JsonObject p in parents)
                 {
                     // add if missing
-                    long id = (long)p.GetNamedNumber("id");
+                    long id = (long)JsonHelper.GetNameNumber(p,"id");
                     if (!pcounts.ContainsKey(id))
                     {
                         pcounts.Add(id, GetIndividualDeckLimit(p));
@@ -362,7 +362,7 @@ namespace AnkiU.AnkiCore
                 // if non-zero, decrement from parents counts
                 foreach (JsonObject p in parents)
                 {
-                    long id = (long)p.GetNamedNumber("id");
+                    long id = (long)JsonHelper.GetNameNumber(p,"id");
                     pcounts[id] = pcounts[id] - cnt;
                 }
                 // we may also be a parent
@@ -390,7 +390,7 @@ namespace AnkiU.AnkiCore
                 // invalid duplicate and reload
                 if (lims.ContainsKey(deck.GetNamedString("name")))
                 {
-                    collection.Deck.Remove((long)deck.GetNamedNumber("id"), false, true);
+                    collection.Deck.Remove((long)JsonHelper.GetNameNumber(deck,"id"), false, true);
                     return DeckDueList();
                 }
                 string p;
@@ -413,23 +413,23 @@ namespace AnkiU.AnkiCore
                     if (!lims.ContainsKey(p))
                     {
                         // if parent was missing, this deck is invalid, and we need to reload the deck list
-                        collection.Deck.Remove((long)deck.GetNamedNumber("id"), false, true);
+                        collection.Deck.Remove((long)JsonHelper.GetNameNumber(deck,"id"), false, true);
                         return DeckDueList();
                     }
                     nlim = Math.Min(nlim, lims[p][0]);
                 }
-                int _new = NewCountForDeck((long)deck.GetNamedNumber("id"), nlim);
+                int _new = NewCountForDeck((long)JsonHelper.GetNameNumber(deck,"id"), nlim);
                 // learning
-                int lrn = LearnCountForDeck((long)deck.GetNamedNumber("id"));
+                int lrn = LearnCountForDeck((long)JsonHelper.GetNameNumber(deck,"id"));
                 // reviews
                 int rlim = DeckReviewLimitSingle(deck);
                 if (!String.IsNullOrEmpty(p))
                 {
                     rlim = Math.Min(rlim, lims[p][1]);
                 }
-                int rev = ReviewCountForDeck((long)deck.GetNamedNumber("id"), rlim);
+                int rev = ReviewCountForDeck((long)JsonHelper.GetNameNumber(deck,"id"), rlim);
                 // save to list
-                data.Add(new DeckDueNode(deck.GetNamedString("name"), (long)deck.GetNamedNumber("id"), rev, lrn, _new));
+                data.Add(new DeckDueNode(deck.GetNamedString("name"), (long)JsonHelper.GetNameNumber(deck,"id"), rev, lrn, _new));
                 // add deck as a parent
                 lims.Add(deck.GetNamedString("name"), new int[] { nlim, rlim });
             }
@@ -521,11 +521,11 @@ namespace AnkiU.AnkiCore
                     throw new Exception("Schedule.GroupChildrenMain Did is null");
                 JsonObject conf = collection.Deck.ConfForDeckId((long)did);
                 JsonObject deck = collection.Deck.Get(did);
-                if (conf.GetNamedNumber("dyn") == 0)
+                if (JsonHelper.GetNameNumber(conf,"dyn") == 0)
                 {
-                    rev = Math.Max(0, Math.Min(rev, (int)(conf.GetNamedObject("rev").GetNamedNumber("perDay")
+                    rev = Math.Max(0, Math.Min(rev, (int)(JsonHelper.GetNameNumber(conf.GetNamedObject("rev"),"perDay")
                                                     - deck.GetNamedArray("revToday").GetNumberAt(1))));
-                    _new = Math.Max(0, Math.Min(_new, (int)(conf.GetNamedObject("new").GetNamedNumber("perDay")
+                    _new = Math.Max(0, Math.Min(_new, (int)(JsonHelper.GetNameNumber(conf.GetNamedObject("new"),"perDay")
                                                     - deck.GetNamedArray("newToday").GetNumberAt(1))));
                 }
                 tree.Add(new DeckDueNode(head, (long)did, rev, lrn, _new, children));
@@ -656,7 +656,7 @@ namespace AnkiU.AnkiCore
 
         private void UpdateNewCardRatio()
         {
-            if (collection.Conf.GetNamedNumber("newSpread") == (double)ReviewType.DISTRIBUTE)
+            if (JsonHelper.GetNameNumber(collection.Conf,"newSpread") == (double)ReviewType.DISTRIBUTE)
             {
                 if (newCount != 0)
                 {
@@ -678,7 +678,7 @@ namespace AnkiU.AnkiCore
             {
                 return false;
             }
-            ReviewType spread = (ReviewType)collection.Conf.GetNamedNumber("newSpread");
+            ReviewType spread = (ReviewType)JsonHelper.GetNameNumber(collection.Conf,"newSpread");
 
             if (spread == ReviewType.LAST)
             {
@@ -731,12 +731,12 @@ namespace AnkiU.AnkiCore
         /// <returns></returns>
         public int DeckNewLimitSingle(JsonObject g)
         {
-            if (g.GetNamedNumber("dyn") != 0)
+            if (JsonHelper.GetNameNumber(g,"dyn") != 0)
             {
                 return reportLimit;
             }
-            JsonObject c = collection.Deck.ConfForDeckId((long)g.GetNamedNumber("id"));
-            return (int)Math.Max(0, c.GetNamedObject("new").GetNamedNumber("perDay")
+            JsonObject c = collection.Deck.ConfForDeckId((long)JsonHelper.GetNameNumber(g,"id"));
+            return (int)Math.Max(0, JsonHelper.GetNameNumber(c.GetNamedObject("new"),"perDay")
                                         - g.GetNamedArray("newToday").GetNumberAt(1));
         }
 
@@ -779,7 +779,7 @@ namespace AnkiU.AnkiCore
                     "SELECT sum(left / 1000) FROM (SELECT left FROM cards WHERE did = " + did
                             + " AND queue = 1 AND due < "
                             + (DateTimeOffset.Now.ToUnixTimeSeconds()
-                            + collection.Conf.GetNamedNumber("collapseTime"))
+                            + JsonHelper.GetNameNumber(collection.Conf,"collapseTime"))
                             + " LIMIT " + reportLimit + ")");
 
             return cnt + collection.Database.QueryScalar<int>(
@@ -816,7 +816,7 @@ namespace AnkiU.AnkiCore
             //WARNING Different with java and python ver
             //we do this to avoid null reference exception
             //It's unclear why ResetLearnCount and 
-            long maxTimeToGetDueCards = DateTimeOffset.Now.ToUnixTimeSeconds() + (long)collection.Conf.GetNamedNumber("collapseTime");
+            long maxTimeToGetDueCards = DateTimeOffset.Now.ToUnixTimeSeconds() + (long)JsonHelper.GetNameNumber(collection.Conf,"collapseTime");
             if (dayCutoff < maxTimeToGetDueCards)
                 maxTimeToGetDueCards = dayCutoff;
 
@@ -877,7 +877,7 @@ namespace AnkiU.AnkiCore
                 double cutoff = DateTimeOffset.Now.ToUnixTimeSeconds();
                 if (collapse)
                 {
-                    cutoff += collection.Conf.GetNamedNumber("collapseTime");
+                    cutoff += JsonHelper.GetNameNumber(collection.Conf,"collapseTime");
                 }
                 if (learnQueue.First()[0] < cutoff)
                 {
@@ -999,7 +999,7 @@ namespace AnkiU.AnkiCore
                     if (conf.ContainsKey("mult") && resched)
                     {
                         // review that's lapsed
-                        card.Interval = (Math.Max(Math.Max(1, (int)(card.Interval * conf.GetNamedNumber("mult"))), (int)conf.GetNamedNumber("minInt")));
+                        card.Interval = (Math.Max(Math.Max(1, (int)(card.Interval * JsonHelper.GetNameNumber(conf,"mult"))), (int)JsonHelper.GetNameNumber(conf,"minInt")));
                     }
                     if (resched && card.OriginalDeckId != 0)
                     {
@@ -1193,7 +1193,7 @@ namespace AnkiU.AnkiCore
         {
             card.Interval = GraduatingIvl(card, conf, early);
             card.Due = today + card.Interval;
-            card.Factor = (int)conf.GetNamedNumber("initialFactor");
+            card.Factor = (int)JsonHelper.GetNameNumber(conf,"initialFactor");
         }
 
         private void LogLearn(Card card, int ease, JsonObject conf, bool leaving, int type, int lastLeft)
@@ -1262,12 +1262,12 @@ namespace AnkiU.AnkiCore
 
         private int DeckReviewLimitSingle(JsonObject d)
         {
-            if (d.GetNamedNumber("dyn") != 0)
+            if (JsonHelper.GetNameNumber(d,"dyn") != 0)
             {
                 return reportLimit;
             }
-            JsonObject c = collection.Deck.ConfForDeckId((long)d.GetNamedNumber("id"));
-            return (int)Math.Max(0, c.GetNamedObject("rev").GetNamedNumber("perDay")
+            JsonObject c = collection.Deck.ConfForDeckId((long)JsonHelper.GetNameNumber(d,"id"));
+            return (int)Math.Max(0, JsonHelper.GetNameNumber(c.GetNamedObject("rev"),"perDay")
                         - d.GetNamedArray("revToday").GetNumberAt(1));
         }
 
@@ -1312,7 +1312,7 @@ namespace AnkiU.AnkiCore
                     if (reviewQueue.Count != 0)
                     {
                         // ordering
-                        if (collection.Deck.Get(did).GetNamedNumber("dyn") != 0)
+                        if (JsonHelper.GetNameNumber(collection.Deck.Get(did),"dyn") != 0)
                         {
                             // dynamic decks need due order preserved
                             // Note: python ver reverses mRevQueue and returns the last element in _getRevCard().
@@ -1429,7 +1429,7 @@ namespace AnkiU.AnkiCore
 
         private int NextLapseInterval(Card card, JsonObject conf)
         {
-            return Math.Max((int)conf.GetNamedNumber("minInt"), (int)(card.Interval * conf.GetNamedNumber("mult")));
+            return Math.Max((int)JsonHelper.GetNameNumber(conf,"minInt"), (int)(card.Interval * JsonHelper.GetNameNumber(conf,"mult")));
         }
 
         private void RescheduleReview(Card card, AnswerEase ease)
@@ -1469,7 +1469,7 @@ namespace AnkiU.AnkiCore
             double fct = card.Factor / 1000.0;
             int ivl2 = ConstrainedInterval((int)((card.Interval + delay / 4) * 1.2), conf, card.Interval);
             int ivl3 = ConstrainedInterval((int)((card.Interval + delay / 2) * fct), conf, ivl2);
-            int ivl4 = ConstrainedInterval((int)((card.Interval + delay) * fct * conf.GetNamedNumber("ease4")), conf, ivl3);
+            int ivl4 = ConstrainedInterval((int)((card.Interval + delay) * fct * JsonHelper.GetNameNumber(conf,"ease4")), conf, ivl3);
             if (ease == AnswerEase.Hard)
             {
                 interval = ivl2;
@@ -1483,7 +1483,7 @@ namespace AnkiU.AnkiCore
                 interval = ivl4;
             }
             // interval capped?
-            return Math.Min(interval, (int)conf.GetNamedNumber("maxIvl"));
+            return Math.Min(interval, (int)JsonHelper.GetNameNumber(conf,"maxIvl"));
         }
 
         private int FuzzedIvl(int ivl)
@@ -1562,7 +1562,7 @@ namespace AnkiU.AnkiCore
                 did = collection.Deck.Selected();
             }
             JsonObject deck = collection.Deck.Get(did);
-            if (deck.GetNamedNumber("dyn") == 0)
+            if (JsonHelper.GetNameNumber(deck,"dyn") == 0)
             {
                 return null;
             }
@@ -1599,8 +1599,8 @@ namespace AnkiU.AnkiCore
                 return ids;
             }
             // move the cards over
-            collection.Log(args: new object[] { deck.GetNamedNumber("id"), ids });
-            MoveToDyn((long)deck.GetNamedNumber("id"), ids);
+            collection.Log(args: new object[] { JsonHelper.GetNameNumber(deck,"id"), ids });
+            MoveToDyn((long)JsonHelper.GetNameNumber(deck,"id"), ids);
 
             return ids;
         }
@@ -1704,12 +1704,12 @@ namespace AnkiU.AnkiCore
             double factor = ((card.Factor / 1000.0) + 1.2) / 2.0;
             int ivl = Math.Max(1, Math.Max(card.Interval, (int)(elapsed * factor)));
             JsonObject conf = RevConf(card);
-            return Math.Min((int)conf.GetNamedNumber("maxIvl"), ivl);
+            return Math.Min((int)JsonHelper.GetNameNumber(conf,"maxIvl"), ivl);
         }
 
         private bool CheckLeech(Card card, JsonObject conf)
         {
-            int lf = (int)conf.GetNamedNumber("leechFails");
+            int lf = (int)JsonHelper.GetNameNumber(conf,"leechFails");
             if (lf == 0)
             {
                 return false;
@@ -1728,7 +1728,7 @@ namespace AnkiU.AnkiCore
                 if (NotifyLeechEvent != null)
                     isCanSuspend = (bool)NotifyLeechEvent?.Invoke("leech", card);
 
-                if (conf.GetNamedNumber("leechAction") == 0 && isCanSuspend)
+                if (JsonHelper.GetNameNumber(conf,"leechAction") == 0 && isCanSuspend)
                 {
                     // if it has an old due, remove it from cram/relearning
                     if (card.OriginalDue != 0)
@@ -1787,7 +1787,7 @@ namespace AnkiU.AnkiCore
             JsonObject dict = new JsonObject();
             // original deck
             dict.Add("ints", oconf.GetNamedObject("new").GetNamedArray("ints"));
-            dict.Add("initialFactor", JsonValue.CreateNumberValue(oconf.GetNamedObject("new").GetNamedNumber("initialFactor")));
+            dict.Add("initialFactor", JsonValue.CreateNumberValue(JsonHelper.GetNameNumber(oconf.GetNamedObject("new"),"initialFactor")));
             dict.Add("bury", JsonValue.CreateBooleanValue(oconf.GetNamedObject("new").GetNamedBoolean("bury", true)));
             // overrides
             dict.Add("delays", delays);
@@ -1830,10 +1830,10 @@ namespace AnkiU.AnkiCore
             }
             JsonObject dict = new JsonObject();
             // original deck
-            dict.Add("minInt", JsonValue.CreateNumberValue(oconf.GetNamedObject("lapse").GetNamedNumber("minInt")));
-            dict.Add("leechFails", JsonValue.CreateNumberValue(oconf.GetNamedObject("lapse").GetNamedNumber("leechFails")));
-            dict.Add("leechAction", JsonValue.CreateNumberValue(oconf.GetNamedObject("lapse").GetNamedNumber("leechAction")));
-            dict.Add("mult", JsonValue.CreateNumberValue(oconf.GetNamedObject("lapse").GetNamedNumber("mult")));
+            dict.Add("minInt", JsonValue.CreateNumberValue(JsonHelper.GetNameNumber(oconf.GetNamedObject("lapse"),"minInt")));
+            dict.Add("leechFails", JsonValue.CreateNumberValue(JsonHelper.GetNameNumber(oconf.GetNamedObject("lapse"),"leechFails")));
+            dict.Add("leechAction", JsonValue.CreateNumberValue(JsonHelper.GetNameNumber(oconf.GetNamedObject("lapse"),"leechAction")));
+            dict.Add("mult", JsonValue.CreateNumberValue(JsonHelper.GetNameNumber(oconf.GetNamedObject("lapse"),"mult")));
             // overrides
             dict.Add("delays", delays);
             dict.Add("resched", JsonValue.CreateBooleanValue(conf.GetNamedBoolean("resched")));
@@ -1860,7 +1860,7 @@ namespace AnkiU.AnkiCore
         private bool Resched(Card card)
         {
             JsonObject conf = CardConf(card);
-            if (conf.GetNamedNumber("dyn") == 0)
+            if (JsonHelper.GetNameNumber(conf,"dyn") == 0)
             {
                 return true;
             }
@@ -1958,7 +1958,7 @@ namespace AnkiU.AnkiCore
                 sb.Append("\n\n");
                 sb.Append("" + "Some related or buried cards were delayed until a later session." + now);
             }
-            if (haveCustomStudy && collection.Deck.Current().GetNamedNumber("dyn") == 0)
+            if (haveCustomStudy && JsonHelper.GetNameNumber(collection.Deck.Current(),"dyn") == 0)
             {
                 sb.Append("\n\n");
                 sb.Append("To study outside of the normal schedule, click the Custom Study button below.");
@@ -2004,7 +2004,7 @@ namespace AnkiU.AnkiCore
 
             string s = Utils.TimeQuantity(ivl);
             
-            if (ivl < collection.Conf.GetNamedNumber("collapseTime"))
+            if (ivl < JsonHelper.GetNameNumber(collection.Conf,"collapseTime"))
             {
                 s = "<" + s;
             }
@@ -2284,7 +2284,7 @@ namespace AnkiU.AnkiCore
             List<long> dids = collection.Deck.DeckIdsForConf(conf);
             foreach (long did in dids)
             {
-                if (conf.GetNamedObject("new").GetNamedNumber("order") == 0)
+                if (JsonHelper.GetNameNumber(conf.GetNamedObject("new"),"order") == 0)
                 {
                     RandomizeCards(did);
                 }
@@ -2303,7 +2303,7 @@ namespace AnkiU.AnkiCore
             }
             JsonObject conf = collection.Deck.ConfForDeckId((long)did);
             // in order due?
-            if (conf.GetNamedObject("new").GetNamedNumber("order") == (double)NewCardInsertOrder.RANDOM)
+            if (JsonHelper.GetNameNumber(conf.GetNamedObject("new"),"order") == (double)NewCardInsertOrder.RANDOM)
             {
                 RandomizeCards((long)did);
             }
@@ -2387,7 +2387,7 @@ namespace AnkiU.AnkiCore
         {
             JsonObject conf;
             conf = CardConf(card).GetNamedObject("lapse");
-            return conf.GetNamedNumber("leechAction") == 0;
+            return JsonHelper.GetNameNumber(conf,"leechAction") == 0;
         }
     }
 

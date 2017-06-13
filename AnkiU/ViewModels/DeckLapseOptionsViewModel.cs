@@ -72,10 +72,10 @@ namespace AnkiU.ViewModels
             try
             {
                 Options.Delays = Utils.JsonNumberArrayToString(Config.GetNamedArray("delays"));
-                Options.NewInterval = (int)(Config.GetNamedNumber("mult") * 100);
-                Options.MinInt = (int)Config.GetNamedNumber("minInt");
-                Options.LeechFailsThreshold = (int)Config.GetNamedNumber("leechFails");
-                Options.LeechAction = (int)Config.GetNamedNumber("leechAction");                
+                Options.NewInterval = (int)(JsonHelper.GetNameNumber(Config,"mult") * 100);
+                Options.MinInt = (int)JsonHelper.GetNameNumber(Config,"minInt");
+                Options.LeechFailsThreshold = (int)JsonHelper.GetNameNumber(Config,"leechFails");
+                Options.LeechAction = (int)JsonHelper.GetNameNumber(Config,"leechAction");                
             }
             catch //If any error happen we back to default
             {

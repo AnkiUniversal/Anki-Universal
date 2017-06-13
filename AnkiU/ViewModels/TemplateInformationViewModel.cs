@@ -15,6 +15,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using AnkiU.AnkiCore;
 using AnkiU.Models;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace AnkiU.ViewModels
             foreach (var template in TemplatesJson)
             {
                 string name = template.GetObject().GetNamedString("name");
-                uint ord = (uint)template.GetObject().GetNamedNumber("ord");
+                uint ord = (uint)JsonHelper.GetNameNumber(template.GetObject(),"ord");
                 TemplateInformation m = new TemplateInformation(name, ord);
                 temp.Add(m);
             }
@@ -60,7 +61,7 @@ namespace AnkiU.ViewModels
             Models.AddTemplate(CurrentModel, newTemplate);
             Models.Save(CurrentModel, true);            
             TemplatesJson = CurrentModel.GetNamedArray("tmpls");
-            Templates.Add(new TemplateInformation(name, (uint)newTemplate.GetNamedNumber("ord")));
+            Templates.Add(new TemplateInformation(name, (uint)JsonHelper.GetNameNumber(newTemplate,"ord")));
         }
 
         public void RenameTemplate(string name, uint ord)
@@ -85,7 +86,7 @@ namespace AnkiU.ViewModels
             TemplatesJson = CurrentModel.GetNamedArray("tmpls");
             foreach (var t in TemplatesJson)
             {
-                uint newOrd = (uint)t.GetObject().GetNamedNumber("ord");
+                uint newOrd = (uint)JsonHelper.GetNameNumber(t.GetObject(),"ord");
                 Templates.Add(new TemplateInformation(t.GetObject().GetNamedString("name"), newOrd));
             }
         }

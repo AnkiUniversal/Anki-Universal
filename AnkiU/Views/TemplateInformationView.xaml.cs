@@ -15,6 +15,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using AnkiU.AnkiCore;
 using AnkiU.Models;
 using AnkiU.UIUtilities;
 using AnkiU.UserControls;
@@ -72,7 +73,7 @@ namespace AnkiU.Views
 
         private void UpdateButtonState()
         {
-            if (viewModel.CurrentModel.GetNamedNumber("type") == (int)AnkiCore.ModelType.CLOZE)
+            if (JsonHelper.GetNameNumber(viewModel.CurrentModel,"type") == (int)AnkiCore.ModelType.CLOZE)
             {
                 addTemplateButton.Visibility = Visibility.Collapsed;                
                 deleteButton.Visibility = Visibility.Collapsed;

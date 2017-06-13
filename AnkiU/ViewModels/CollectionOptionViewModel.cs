@@ -15,6 +15,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using AnkiU.AnkiCore;
 using AnkiU.Models;
 using System;
 using System.Collections.Generic;
@@ -49,9 +50,9 @@ namespace AnkiU.ViewModels
             {
                 Options.IsShowDueCount = Config.GetNamedBoolean("dueCounts");
                 Options.IsShowEstTime = Config.GetNamedBoolean("estTimes");
-                Options.ReviewType = (int)Config.GetNamedNumber("newSpread");
+                Options.ReviewType = (int)JsonHelper.GetNameNumber(Config,"newSpread");
                 Options.IsTTSAutoplay = MainPage.UserPrefs.IsAutoPlayTextSynth;
-                Options.CollapseTime = (int)Config.GetNamedNumber("collapseTime") / COLLAPSE_CONVERT;
+                Options.CollapseTime = (int)JsonHelper.GetNameNumber(Config,"collapseTime") / COLLAPSE_CONVERT;
 
                 var settings = ApplicationData.Current.LocalSettings;
                 if (settings.Values.ContainsKey("IsEnableNotifciation"))

@@ -288,6 +288,7 @@
     <Compile Include="AnkiCore\Importer\NlpJdictImporter.cs" />
     <Compile Include="AnkiCore\Importer\NoteImporter.cs" />
     <Compile Include="AnkiCore\Importer\TextImporter.cs" />
+    <Compile Include="AnkiCore\JsonHelper.cs" />
     <Compile Include="AnkiCore\revlog.cs" />
     <Compile Include="AnkiCore\Sync\FullSyncer.cs" />
     <Compile Include="AnkiCore\Sync\HttpSyncer.cs" />

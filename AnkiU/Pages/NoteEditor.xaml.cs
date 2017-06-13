@@ -270,7 +270,7 @@ namespace AnkiU.Pages
             if (id == null)
             {
                 model = collection.Models.GetCurrent();
-                modelID = (long)model.GetNamedNumber("id");
+                modelID = (long)JsonHelper.GetNameNumber(model,"id");
             }
             else
             {
@@ -687,7 +687,7 @@ namespace AnkiU.Pages
 
         private async Task AddCloze()
         {
-            if((ModelType)currentNote.Model.GetNamedNumber("type") == ModelType.STD)
+            if((ModelType)JsonHelper.GetNameNumber(currentNote.Model,"type") == ModelType.STD)
             {
                 await UIHelper.ShowMessageDialog(UIConst.WARN_NOTCLOZETYPE);
                 return;

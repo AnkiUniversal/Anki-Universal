@@ -524,9 +524,9 @@ namespace AnkiU.AnkiCore.Importer
                 throw new Exception("Anki2Importer.Did Invalid ID!");
             long newID = (long)newidRef;
             // pull conf over            
-            if (g.ContainsKey("conf") && g.GetNamedNumber("conf") > (int)ConfigPresets.DueOnly)
+            if (g.ContainsKey("conf") && JsonHelper.GetNameNumber(g, "conf") > (int)ConfigPresets.DueOnly)
             {
-                JsonObject conf = sourceCol.Deck.GetConf((long)g.GetNamedNumber("conf"));
+                JsonObject conf = sourceCol.Deck.GetConf((long)JsonHelper.GetNameNumber(g, "conf"));
                 destCol.Deck.Save(conf);
                 destCol.Deck.UpdateConf(conf);
                 JsonObject g2 = destCol.Deck.Get(newID);

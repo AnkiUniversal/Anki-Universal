@@ -112,6 +112,7 @@
     <Compile Include="AnkiCore\Consts.cs" />
     <Compile Include="AnkiCore\DB.cs" />
     <Compile Include="AnkiCore\Deck.cs" />
+    <Compile Include="AnkiCore\JsonHelper.cs" />
     <Compile Include="AnkiCore\Sched.cs" />
     <Compile Include="AnkiCore\Storage.cs" />
     <Compile Include="AnkiCore\StringExtensionMethods.cs" />

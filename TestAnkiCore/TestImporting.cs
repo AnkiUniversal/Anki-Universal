@@ -70,7 +70,7 @@ namespace TestAnkiCore
                 //Add a note
                 Note n = col.NewNote();
                 n.SetItem("Front", "[sound:foo.mp3]");
-                mid = (long)n.Model.GetNamedNumber("id");
+                mid = (long)JsonHelper.GetNameNumber(n.Model,"id");
                 col.AddNote(n);                
                 var folder = await col.Media.MediaFolder.CreateFolderAsync(defaultDeckId);
                 //Add that sound to the media folder

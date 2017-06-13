@@ -590,13 +590,13 @@ namespace AnkiU.AnkiCore
         {
             List<JsonObject> ok = new List<JsonObject>();
             JsonArray tmpls;
-            if (model.GetNamedNumber("type") == (double)ModelType.STD)
+            if (JsonHelper.GetNameNumber(model,"type") == (double)ModelType.STD)
             {
                 tmpls = model.GetNamedArray("tmpls");
                 for (uint i = 0; i < tmpls.Count; i++)
                 {
                     JsonObject t = tmpls.GetObjectAt(i);
-                    if (avail.Contains((int)t.GetNamedNumber("ord")))
+                    if (avail.Contains((int)JsonHelper.GetNameNumber(t,"ord")))
                     {
                         ok.Add(t);
                     }
@@ -620,7 +620,7 @@ namespace AnkiU.AnkiCore
         {
             Card card = new Card(this);
             card.NoteId = note.Id;
-            card.Ord = (int)template.GetNamedNumber("ord");
+            card.Ord = (int)JsonHelper.GetNameNumber(template,"ord");
             // Use template did (deck override) if valid, otherwise model did
             long did = 0;
             JsonValue didValue = template.GetNamedValue("did", null);
@@ -639,14 +639,14 @@ namespace AnkiU.AnkiCore
             
             // if invalid did, use default instead
             JsonObject deck = decks.Get(card.DeckId);
-            if (deck.GetNamedNumber("dyn") == 1)
+            if (JsonHelper.GetNameNumber(deck,"dyn") == 1)
             {
                 // must not be a filtered deck
                 card.DeckId = 1;
             }
             else
             {
-                card.DeckId = (long)deck.GetNamedNumber("id");
+                card.DeckId = (long)JsonHelper.GetNameNumber(deck,"id");
             }
             card.Due = DueOfCardForDid(card.DeckId, due);
             if (flush)
@@ -659,8 +659,9 @@ namespace AnkiU.AnkiCore
         public int DueOfCardForDid(long did, int due)
         {
             JsonObject conf = decks.ConfForDeckId(did);
-            // in order due?
-            if (conf.GetNamedObject("new").GetNamedNumber("order") == (double)NewCardInsertOrder.DUE)
+            // in order due? 
+            var confNew = conf.GetNamedObject("new");
+            if (JsonHelper.GetNameNumber(confNew,"order") == (double)NewCardInsertOrder.DUE)
             {
                 return due;
             }
@@ -724,12 +725,12 @@ namespace AnkiU.AnkiCore
                 long did = dids[n.Id];
                 if (did == 0)
                 {
-                    did = (long)model.GetNamedNumber("did");
+                    did = (long)JsonHelper.GetNameNumber(model,"did");
                 }
                 // add any missing cards
                 foreach (JsonObject t in TmplsFromOrds(model, avail))
                 {
-                    int tord = (int)t.GetNamedNumber("ord");
+                    int tord = (int)JsonHelper.GetNameNumber(t,"ord");
                     bool doHave = have.ContainsKey(nid) && have[nid].ContainsKey(tord);
                     if (!doHave)
                     {
@@ -739,7 +740,7 @@ namespace AnkiU.AnkiCore
                         {
                             if (t.GetNamedValue("did").ValueType != JsonValueType.Null)
                             {
-                                ndid = (long)t.GetNamedNumber("did");
+                                ndid = (long)JsonHelper.GetNameNumber(t,"did");
                                 if (ndid != 0)
                                 {
                                     did = ndid;
@@ -755,7 +756,7 @@ namespace AnkiU.AnkiCore
                             did = 1;
                         }
                         // if the deck doesn't exist, use default instead
-                        did = (long)decks.Get(did).GetNamedNumber("id");
+                        did = (long)JsonHelper.GetNameNumber(decks.Get(did),"id");
                         // we'd like to use the same due# as sibling cards, but we can't retrieve that quickly, so we
                         // give it a new id instead
                         data.Add(new Object[] { ts, nid, did, tord, now, usn, NextID("pos") });
@@ -1016,7 +1017,7 @@ namespace AnkiU.AnkiCore
                                         StringSplitOptions.None);
                 fields["Subdeck"] = parents[parents.Length - 1];
                 JsonObject template;
-                if (model.GetNamedNumber("type") == (double)ModelType.STD)
+                if (JsonHelper.GetNameNumber(model,"type") == (double)ModelType.STD)
                 {
                     try
                     {
@@ -1067,7 +1068,7 @@ namespace AnkiU.AnkiCore
                     string html = new Templates.Template(format, fields).Render();
                     result.Add(type, (string)Hooks.Hooks.RunFilter("mungeQA", html, type, fields, model, data, this));
                     // empty cloze?
-                    if (type.Equals("q") && model.GetNamedNumber("type") == (double)ModelType.CLOZE)
+                    if (type.Equals("q") && JsonHelper.GetNameNumber(model,"type") == (double)ModelType.CLOZE)
                     {
                         var avail = Models.AvailableClozeOrds(model, (string)data[6], false);
                         if (avail.Count == 0)
@@ -1210,7 +1211,7 @@ namespace AnkiU.AnkiCore
 
         public long GetTimeLimit()
         {
-            return (long)conf.GetNamedNumber("timeLim");
+            return (long)JsonHelper.GetNameNumber(conf,"timeLim");
         }
 
         public void StartTimebox()
@@ -1221,15 +1222,15 @@ namespace AnkiU.AnkiCore
 
         public long[] TimeboxReached()
         {
-            if (conf.GetNamedNumber("timeLim") == 0)
+            if (JsonHelper.GetNameNumber(conf,"timeLim") == 0)
             {
                 // timeboxing disabled
                 return null;
             }
             double elapsed = DateTimeOffset.Now.ToUnixTimeMilliseconds() - startTime;
-            if (elapsed > conf.GetNamedNumber("timeLim"))
+            if (elapsed > JsonHelper.GetNameNumber(conf,"timeLim"))
             {
-                return new long[] { (long)conf.GetNamedNumber("timeLim"), (long)(sched.Reps - startReps) };
+                return new long[] { (long)JsonHelper.GetNameNumber(conf,"timeLim"), (long)(sched.Reps - startReps) };
             }
             return null;
         }
@@ -1375,7 +1376,7 @@ namespace AnkiU.AnkiCore
             foreach (JsonObject m in models.All())
             {
                 // ignore clozes
-                if (m.GetNamedNumber("type") != (double) ModelType.STD)
+                if (JsonHelper.GetNameNumber(m,"type") != (double) ModelType.STD)
                 {
                     continue;
                 }
@@ -1384,13 +1385,13 @@ namespace AnkiU.AnkiCore
                 int[] ords = new int[tmpls.Count];
                 for (uint t = 0; t < tmpls.Count; t++)
                 {
-                    ords[t] = (int)tmpls.GetObjectAt(t).GetNamedNumber("ord");
+                    ords[t] = (int)JsonHelper.GetNameNumber(tmpls.GetObjectAt(t),"ord");
                 }
 
                 bool badOrd = database.QueryScalar<int>(String.Format(Media.locale,
                         "select 1 from cards where ord not in {0} and nid in ( " +
                         "select id from notes where mid = {1}) limit 1",
-                        Utils.Ids2str(ords), m.GetNamedNumber("id"))) > 0;
+                        Utils.Ids2str(ords), JsonHelper.GetNameNumber(m,"id"))) > 0;
                 if (badOrd)
                 {
                     return false;
@@ -1430,20 +1431,21 @@ namespace AnkiU.AnkiCore
                    // for each model
                    foreach (JsonObject m in models.All())
                    {
+                       var modelId = JsonHelper.GetNameNumber(m, "id");
                        // cards with invalid ordinal
-                       if (m.GetNamedNumber("type") == (double)ModelType.STD)
+                       if (JsonHelper.GetNameNumber(m,"type") == (double)ModelType.STD)
                        {
                            List<int> ords = new List<int>();
                            JsonArray tmpls = m.GetNamedArray("tmpls");
                            for (uint t = 0; t < tmpls.Count; t++)
                            {
-                               ords.Add((int)tmpls.GetObjectAt(t).GetNamedNumber("ord"));
+                               ords.Add((int)JsonHelper.GetNameNumber(tmpls.GetObjectAt(t),"ord"));
                            }
                            //WARNING: Not sure if this query will only return card id or also note id
                            ids = (from s in database
                                 .QueryColumn<CardIdOnlyTable>("SELECT id FROM cards WHERE ord NOT IN "
                                 + Utils.Ids2str(ords.ToArray()) + " AND nid IN ( "
-                                + "SELECT id FROM notes WHERE mid = " + m.GetNamedNumber("id") + ")")
+                                + "SELECT id FROM notes WHERE mid = " + modelId + ")")
                                   select s.Id).ToList();
                            if (ids.Count > 0)
                            {
@@ -1454,8 +1456,7 @@ namespace AnkiU.AnkiCore
                        // notes with invalid field counts
                        ids.Clear();
 
-                       var listNotes = database.QueryColumn<NoteTable>("select id, flds from notes where mid = "
-                                                                   + m.GetNamedNumber("id"));
+                       var listNotes = database.QueryColumn<NoteTable>("select id, flds from notes where mid = " + modelId);
                        foreach (NoteTable n in listNotes)
                        {
                            String flds = n.Fields;

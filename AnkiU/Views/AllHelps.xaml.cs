@@ -665,7 +665,7 @@ namespace AnkiU.Views
                 {
                     collection.Deck.Select(id, false);                    
                     var model = collection.Models.GetCurrent();
-                    if (model.GetNamedNumber("type") == 0)
+                    if (JsonHelper.GetNameNumber(model, "type") == 0)
                     {
                         collection.Models.SetCurrent(model);
                         return true;

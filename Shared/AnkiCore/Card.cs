@@ -21,32 +21,33 @@ using System.Text;
 using System.Diagnostics;
 using Windows.Data.Json;
 using System.Reflection;
-/** Comment from java ver:
- A Card is the ultimate entity subject to review; it encapsulates the scheduling parameters (from which to derive
- the next interval), the note it is derived from (from which field data is retrieved), its own ownership (which deck it
- currently belongs to), and the retrieval of presentation elements (filled-in templates).
- 
- Card presentation has two components: the question (front) side and the answer (back) side. The presentation of the
- card is derived from the template of the card's Card Type. The Card Type is a component of the Note Type (see Models)
- that this card is derived from.
- 
- This class is responsible for:
- - Storing and retrieving database entries that map to Cards in the Collection
- - Providing the HTML representation of the Card's question and answer
- - Recording the results of review (answer chosen, time taken, etc)
 
- It does not:
- - Generate new cards (see Collection)
- - Store the templates or the style sheet (see Models)
- 
- WARNING: Unknown the function of Queue = 3 so we can't convert this to enum
- Queue: same as above, and:
-        -1=suspended, -2=user buried, -3=sched buried
- Due is used differently for different queues.
- - new queue: note id or random int
- - rev queue: integer day
- - lrn queue: integer timestamp
- */
+/** Comment from java ver:
+A Card is the ultimate entity subject to review; it encapsulates the scheduling parameters (from which to derive
+the next interval), the note it is derived from (from which field data is retrieved), its own ownership (which deck it
+currently belongs to), and the retrieval of presentation elements (filled-in templates).
+
+Card presentation has two components: the question (front) side and the answer (back) side. The presentation of the
+card is derived from the template of the card's Card Type. The Card Type is a component of the Note Type (see Models)
+that this card is derived from.
+
+This class is responsible for:
+- Storing and retrieving database entries that map to Cards in the Collection
+- Providing the HTML representation of the Card's question and answer
+- Recording the results of review (answer chosen, time taken, etc)
+
+It does not:
+- Generate new cards (see Collection)
+- Store the templates or the style sheet (see Models)
+
+WARNING: Unknown the function of Queue = 3 so we can't convert this to enum
+Queue: same as above, and:
+-1=suspended, -2=user buried, -3=sched buried
+Due is used differently for different queues.
+- new queue: note id or random int
+- rev queue: integer day
+- lrn queue: integer timestamp
+*/
 namespace Shared.AnkiCore
 {
     public enum CardType
@@ -182,12 +183,13 @@ namespace Shared.AnkiCore
         public int TimeLimit()
         {
             JsonObject conf = collection.Deck.ConfForDeckId(oDid == 0 ? deckId : oDid);
-            return (int)conf.GetNamedNumber("maxTaken") * 1000;
+            return (int)JsonHelper.GetNameNumber(conf,"maxTaken") * 1000;
         }
 
         public bool ShouldShowTimer()
         {
-            return collection.Deck.ConfForDeckId(oDid == 0 ? deckId : oDid).GetNamedNumber("timer") != 0;
+            JsonObject conf = collection.Deck.ConfForDeckId(oDid == 0 ? deckId : oDid);
+            return JsonHelper.GetNameNumber(conf,"timer") != 0;
         }
 
         /// <summary>

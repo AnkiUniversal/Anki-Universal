@@ -226,7 +226,7 @@ namespace AnkiU.Pages
 
         private async Task AddClozeButtonhandler()
         {
-            if((ModelType)templateInformationViewModel.CurrentModel.GetNamedNumber("type") != ModelType.CLOZE)
+            if((ModelType)JsonHelper.GetNameNumber(templateInformationViewModel.CurrentModel,"type") != ModelType.CLOZE)
             {
                 await UIHelper.ShowMessageDialog(UIConst.WARN_NOTCLOZETYPE);
                 return;

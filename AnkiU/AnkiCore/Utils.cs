@@ -500,11 +500,9 @@ namespace AnkiU.AnkiCore
         ///  No commas are present in the returned string.
         /// </summary>
         /// <returns></returns>
-        public static string platDesc()
+        public static string GetPlatDesc()
         {
-            return String.Format(Media.locale, "Device:{0}:{1}",
-                    DeviceInfoHelper.SystemFamily, 
-                    DeviceInfoHelper.SystemVersion);
+            return String.Format("Device:{0}:{1}", DeviceInfoHelper.SystemFamily,  DeviceInfoHelper.SystemVersion);
         }
 
         public static long[] JsonArrayToLongArray(JsonArray json)

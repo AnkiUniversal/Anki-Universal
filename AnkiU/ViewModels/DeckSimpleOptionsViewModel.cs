@@ -15,6 +15,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using AnkiU.AnkiCore;
 using AnkiU.Interfaces;
 using AnkiU.Models;
 using System;
@@ -75,18 +76,20 @@ namespace AnkiU.ViewModels
         {
             try
             {
-                Options.AutoPlay = config.GetNamedBoolean("autoplay");
+                Options.AutoPlay = config.GetNamedBoolean("autoplay"); 
+                var newObject = config.GetNamedObject("new");
+                Options.NewcardOrder = (int)JsonHelper.GetNameNumber(newObject,"order");
+                Options.NewCardPerDay = (int)JsonHelper.GetNameNumber(newObject, "perDay");
+                Options.BuryRelatedNewCard = newObject.GetNamedBoolean("bury", false);
 
-                Options.NewcardOrder = (int)config.GetNamedObject("new").GetNamedNumber("order");
-                Options.NewCardPerDay = (int)config.GetNamedObject("new").GetNamedNumber("perDay");
-                Options.BuryRelatedNewCard = config.GetNamedObject("new").GetNamedBoolean("bury", false);
+                var revObject = config.GetNamedObject("rev");
+                Options.ReviewCardPerDay = (int)JsonHelper.GetNameNumber(revObject,"perDay");
+                Options.IvlFct = (int)(JsonHelper.GetNameNumber(revObject, "ivlFct") * 100);
+                Options.BuryRelatedReviewCard = revObject.GetNamedBoolean("bury");
 
-                Options.ReviewCardPerDay = (int)config.GetNamedObject("rev").GetNamedNumber("perDay");
-                Options.IvlFct = (int)(config.GetNamedObject("rev").GetNamedNumber("ivlFct") * 100);
-                Options.BuryRelatedReviewCard = config.GetNamedObject("rev").GetNamedBoolean("bury");
-
-                Options.LeechFailsThreshold = (int)config.GetNamedObject("lapse").GetNamedNumber("leechFails");
-                Options.LeechAction = (int)config.GetNamedObject("lapse").GetNamedNumber("leechAction");
+                var lapseObject = config.GetNamedObject("lapse");
+                Options.LeechFailsThreshold = (int)JsonHelper.GetNameNumber(lapseObject,"leechFails");
+                Options.LeechAction = (int)JsonHelper.GetNameNumber(lapseObject,"leechAction");
             }
             catch //If any error happen we back to default
             {

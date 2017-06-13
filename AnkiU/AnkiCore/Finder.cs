@@ -544,17 +544,17 @@ namespace AnkiU.AnkiCore
                     JsonObject t = tmpls.GetObjectAt(ti);
                     if (t.GetNamedString("name").Equals(value, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (m.GetNamedNumber("type") == (double)ModelType.CLOZE)
+                        if (JsonHelper.GetNameNumber(m,"type") == (double)ModelType.CLOZE)
                         {
                             // if the user has asked for a cloze card, we want
                             // to give all ordinals, so we just limit to the
                             // model instead
-                            lims.Add("(n.mid = " + (long)m.GetNamedNumber("id") + ")");
+                            lims.Add("(n.mid = " + (long)JsonHelper.GetNameNumber(m,"id") + ")");
                         }
                         else
                         {
-                            lims.Add("(n.mid = " + (long)m.GetNamedNumber("id") + " and c.ord = " +
-                                    (int)t.GetNamedNumber("ord") + ")");
+                            lims.Add("(n.mid = " + (long)JsonHelper.GetNameNumber(m,"id") + " and c.ord = " +
+                                    (int)JsonHelper.GetNameNumber(t,"ord") + ")");
                         }
                     }
                 }
@@ -578,7 +578,7 @@ namespace AnkiU.AnkiCore
             // current deck?
             if (value.Equals("current", StringComparison.OrdinalIgnoreCase))
             {
-                ids = GetChildDeckIds((long)collection.Deck.Current().GetNamedNumber("id"));
+                ids = GetChildDeckIds((long)JsonHelper.GetNameNumber(collection.Deck.Current(),"id"));
             }
             else if (!value.Contains("*"))
             {
@@ -596,7 +596,7 @@ namespace AnkiU.AnkiCore
                     
                     if (Regex.IsMatch(d.GetNamedString("name"), "(?i)" + value))
                     {
-                        foreach (long id in GetChildDeckIds((long)d.GetNamedNumber("id")))
+                        foreach (long id in GetChildDeckIds((long)JsonHelper.GetNameNumber(d,"id")))
                         {
                             if (!ids.Contains(id))
                             {
@@ -662,7 +662,7 @@ namespace AnkiU.AnkiCore
             {
                 if (m.GetNamedString("name").Equals(value, StringComparison.OrdinalIgnoreCase))
                 {
-                    ids.AddLast((long)m.GetNamedNumber("id"));
+                    ids.AddLast((long)JsonHelper.GetNameNumber(m,"id"));
                 }
             }
             return "n.mid in " + Utils.Ids2str(ids.ToArray());
@@ -858,7 +858,7 @@ namespace AnkiU.AnkiCore
                     JsonObject f = flds.GetObjectAt(fi);
                     if (f.GetNamedString("name").Equals(field, StringComparison.OrdinalIgnoreCase))
                     {
-                        mods.Add((long)m.GetNamedNumber("id"), new object[] { m, f.GetNamedNumber("ord") });
+                        mods.Add((long)JsonHelper.GetNameNumber(m,"id"), new object[] { m, JsonHelper.GetNameNumber(f,"ord") });
                     }
                 }
             }
@@ -930,7 +930,7 @@ namespace AnkiU.AnkiCore
                         JsonObject f = flds.GetObjectAt(fi);
                         if (f.GetNamedString("name").Equals(field))
                         {
-                            mmap.Add((long)m.GetNamedNumber("id"), (int)f.GetNamedNumber("ord"));
+                            mmap.Add((long)JsonHelper.GetNameNumber(m,"id"), (int)JsonHelper.GetNameNumber(f,"ord"));
                         }
                     }
                 }

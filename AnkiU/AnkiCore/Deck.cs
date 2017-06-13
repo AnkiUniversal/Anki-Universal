@@ -309,7 +309,7 @@ namespace AnkiU.AnkiCore
         {
             // reselect current deck, or default if current has disappeared
             JsonObject c = Current();
-            Select((long)c.GetNamedNumber("id"));
+            Select((long)JsonHelper.GetNameNumber(c,"id"));
         }
 
         public JsonObject Current()
@@ -319,7 +319,7 @@ namespace AnkiU.AnkiCore
 
         public long Selected()
         {
-            return (long)collection.Conf.GetNamedNumber("curDeck");
+            return (long)JsonHelper.GetNameNumber(collection.Conf,"curDeck");
         }
 
         public void Select(long did, bool isSetchanged = true)
@@ -351,7 +351,7 @@ namespace AnkiU.AnkiCore
             {
                 string deckName = g.GetNamedString("name");
                 if (deckName.StartsWith(name + Constant.SUBDECK_SEPERATE))
-                    actv.Add(deckName, (long)g.GetNamedNumber("id"));
+                    actv.Add(deckName, (long)JsonHelper.GetNameNumber(g,"id"));
             }
             return actv;
         }
@@ -393,7 +393,7 @@ namespace AnkiU.AnkiCore
                 return;
 
             deck = Get(deckId);
-            if (deck.GetNamedNumber("dyn") != 0)
+            if (JsonHelper.GetNameNumber(deck,"dyn") != 0)
             {
                 // deleting a cramming deck returns cards to their previous deck
                 // rather than deleting the cards
@@ -464,7 +464,7 @@ namespace AnkiU.AnkiCore
             else
             {
                 foreach (JsonObject x in deckDict.Values)
-                    if (x.GetNamedNumber("dyn") == 0)
+                    if (JsonHelper.GetNameNumber(x,"dyn") == 0)
                         list.Add(x.GetNamedString("name"));
             }
             return list;
@@ -522,7 +522,7 @@ namespace AnkiU.AnkiCore
 
         public void Update(JsonObject jObj)
         {
-            deckDict[(long)jObj.GetNamedNumber("id")] = jObj;
+            deckDict[(long)JsonHelper.GetNameNumber(jObj,"id")] = jObj;
             MaybeAddToActive();
             Save();
         }
@@ -550,7 +550,7 @@ namespace AnkiU.AnkiCore
                 string[] subParts = new string[parts.Length - 1];
                 Array.Copy(parts, subParts, subParts.Length);
                 string newParent = String.Join(Constant.SUBDECK_SEPERATE, subParts);
-                if (GetDeckByName(newParent).GetNamedNumber("dyn") != 0)
+                if (JsonHelper.GetNameNumber(GetDeckByName(newParent),"dyn") != 0)
                     throw new DeckRenameException(DeckRenameException.ErrorCode.FILTERED_NOSUBDEKCS);
             }
 
@@ -707,7 +707,7 @@ namespace AnkiU.AnkiCore
 
             if (deck.ContainsKey("conf"))
             {
-                JsonObject conf = GetConf((long)deck.GetNamedNumber("conf"));
+                JsonObject conf = GetConf((long)JsonHelper.GetNameNumber(deck,"conf"));
                 conf["dyn"] = JsonValue.CreateNumberValue(0);
                 return conf;
             }
@@ -722,7 +722,7 @@ namespace AnkiU.AnkiCore
 
         public void UpdateConf(JsonObject jObj)
         {
-            deckConf[(long)jObj.GetNamedNumber("id")] = jObj;
+            deckConf[(long)JsonHelper.GetNameNumber(jObj,"id")] = jObj;
             Save();
         }
 
@@ -777,7 +777,7 @@ namespace AnkiU.AnkiCore
                 if (!g.ContainsKey("conf"))
                     continue;
                 
-                if (g.GetNamedNumber("conf") == id)
+                if (JsonHelper.GetNameNumber(g,"conf") == id)
                 {
                     g["conf"] = JsonValue.CreateNumberValue(1);
                     Save(g);
@@ -794,7 +794,7 @@ namespace AnkiU.AnkiCore
 
         public List<long> DeckIdsForConf(JsonObject conf)
         {
-            long confId = (long)conf.GetNamedNumber("id");
+            long confId = (long)JsonHelper.GetNameNumber(conf,"id");
             return DeckIdsForConf(confId);
         }
 
@@ -803,9 +803,9 @@ namespace AnkiU.AnkiCore
             List<long> dids = new List<long>();
             foreach (JsonObject deck in deckDict.Values)
             {
-                if (deck.ContainsKey("conf") && (deck.GetNamedNumber("conf") == confId))
+                if (deck.ContainsKey("conf") && (JsonHelper.GetNameNumber(deck,"conf") == confId))
                 {
-                    dids.Add((long)deck.GetNamedNumber("id"));
+                    dids.Add((long)JsonHelper.GetNameNumber(deck,"id"));
                 }
             }
             return dids;
@@ -813,11 +813,11 @@ namespace AnkiU.AnkiCore
 
         public void RestoreToDefault(JsonObject conf)
         {
-            int oldOrder = (int) conf.GetNamedObject("new").GetNamedNumber("order");
+            int oldOrder = (int)JsonHelper.GetNameNumber(conf.GetNamedObject("new"),"order");
             JsonObject temp = JsonObject.Parse(defaultConf);
             temp.Add("id", conf.GetNamedValue("id"));
             temp.Add("name", conf.GetNamedValue("name"));
-            deckConf.Add((long)conf.GetNamedNumber("id"), temp);
+            deckConf.Add((long)JsonHelper.GetNameNumber(conf, "id"), temp);
             Save(temp);
             // if it was previously randomized, resort
             if (oldOrder == 0)
@@ -924,7 +924,7 @@ namespace AnkiU.AnkiCore
 
         public bool IsDyn(long did)
         {
-            return Get(did).GetNamedNumber("dyn") != 0;
+            return JsonHelper.GetNameNumber(Get(did),"dyn") != 0;
         }
 
         //WARNING: Not in java and python ver

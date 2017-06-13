@@ -260,7 +260,7 @@ namespace AnkiU.AnkiCore
             {
                 List<long> ids = new List<long>();
                 foreach (JsonObject d in collection.Deck.All())                
-                   ids.Add((long)d.GetNamedNumber("id"));                    
+                   ids.Add((long)JsonHelper.GetNameNumber(d,"id"));                    
                 
                 return Utils.Ids2str(ids);
             }

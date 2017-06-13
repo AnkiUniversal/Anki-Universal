@@ -144,7 +144,7 @@ namespace AnkiU.Views
                 foreach (var f in currentNote.Model["flds"].GetArray())
                 {
                     string name = f.GetObject().GetNamedString("name");
-                    int ord = (int)f.GetObject().GetNamedNumber("ord");
+                    int ord = (int)JsonHelper.GetNameNumber(f.GetObject(),"ord");
                     string content = AddDivWrapIfNeeded(currentNote.GetItem(name));
 
                     fields.Add(name);

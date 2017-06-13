@@ -199,12 +199,12 @@ namespace TestAnkiCore
             await Task.Delay(TimeSpan.FromSeconds(1));
             colClient.Models.Save(cm);
             colClient.Save();
-            string str = colServer.Models.Get((long)cm.GetNamedNumber("id")).GetNamedString("name");
+            string str = colServer.Models.Get((long)JsonHelper.GetNameNumber(cm,"id")).GetNamedString("name");
             Assert.IsTrue(str.StartsWith("Basic"), "Not start with Basic");
 
             var result = await client.Sync();
             Assert.AreEqual("success", result[0]);
-            str = colServer.Models.Get((long)cm.GetNamedNumber("id")).GetNamedString("name");
+            str = colServer.Models.Get((long)JsonHelper.GetNameNumber(cm,"id")).GetNamedString("name");
             Assert.AreEqual("new", str);
 
             //Deleting triggers a full sync
@@ -341,12 +341,12 @@ namespace TestAnkiCore
             Assert.AreEqual(colClient.Deck.All().Count, colServer.Deck.All().Count);
             Assert.AreEqual(3, colClient.Deck.All().Count);
 
-            Assert.AreEqual(60, colClient.Deck.ConfForDeckId(1).GetNamedNumber("maxTaken"));
+            Assert.AreEqual(60, JsonHelper.GetNameNumber(colClient.Deck.ConfForDeckId(1),"maxTaken"));
             colServer.Deck.ConfForDeckId(1)["maxTaken"] = JsonValue.CreateNumberValue(30);
             colServer.Deck.Save(colServer.Deck.ConfForDeckId(1));
             colServer.Save();
             Assert.AreEqual("success", (await client.Sync())[0]);
-            Assert.AreEqual(30, colClient.Deck.ConfForDeckId(1).GetNamedNumber("maxTaken"));
+            Assert.AreEqual(30, JsonHelper.GetNameNumber(colClient.Deck.ConfForDeckId(1),"maxTaken"));
         }
 
         [TestMethod]

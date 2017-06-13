@@ -41,7 +41,7 @@ namespace AnkiU.ViewModels
 
             foreach (var deck in deckList)
             {
-                long did = (long)deck.GetNamedNumber("id");
+                long did = (long)JsonHelper.GetNameNumber(deck,"id");
                 if (did == Constant.DEFAULTDECK_ID)
                     continue;
                 string name = deck.GetNamedString("name");

@@ -74,9 +74,9 @@ namespace AnkiU.ViewModels
                 Options.Delays = Utils.JsonNumberArrayToString(Config.GetNamedArray("delays"));
                 Options.GraduatingInterval = (int)Config.GetNamedArray("ints").GetNumberAt(0);
                 Options.EasyInterval = (int)Config.GetNamedArray("ints").GetNumberAt(1);
-                Options.InitialFactor = (int)(Config.GetNamedNumber("initialFactor") / 10);
-                Options.Order = (int)Config.GetNamedNumber("order");
-                Options.PerDay = (int)Config.GetNamedNumber("perDay");
+                Options.InitialFactor = (int)(JsonHelper.GetNameNumber(Config,"initialFactor") / 10);
+                Options.Order = (int)JsonHelper.GetNameNumber(Config,"order");
+                Options.PerDay = (int)JsonHelper.GetNameNumber(Config,"perDay");
                 Options.Bury = Config.GetNamedBoolean("bury", false);                
             }
             catch //If any error happen we back to default

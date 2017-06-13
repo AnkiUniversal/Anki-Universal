@@ -223,6 +223,7 @@ namespace AnkiU.Pages
             else
             {
                 syncMediaCheckBox.IsEnabled = true;
+                MainPage.UserPrefs.IsFullSyncRequire = true;
             }
         }
 

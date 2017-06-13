@@ -41,14 +41,14 @@ namespace AnkiU.ViewModels
         {
             this.Collection = collection;
             selectedDeck = collection.Deck.Get(selectedDeckId);
-            var usedConfigId = selectedDeck.GetNamedNumber("conf");
+            var usedConfigId = JsonHelper.GetNameNumber(selectedDeck,"conf");
             var allConfig = collection.Deck.AllConf();
             List<DeckConfigName> list = new List<DeckConfigName>();
             foreach (var config in allConfig)
             {
                 DeckConfigName configName = new DeckConfigName();
 
-                configName.Id = (long)config.GetNamedNumber("id");
+                configName.Id = (long)JsonHelper.GetNameNumber(config,"id");
                 configName.Name = config.GetNamedString("name");
                 configName.IsUsedBySelectedDeck = (usedConfigId == configName.Id);
 
@@ -74,11 +74,11 @@ namespace AnkiU.ViewModels
         {
             var config = GetSelectedConfig();
 
-            var deckId = (long)selectedDeck.GetNamedNumber("id");
+            var deckId = (long)JsonHelper.GetNameNumber(selectedDeck,"id");
             var oldConfig = Collection.Deck.ConfForDeckId(deckId);
             var newConfig = Collection.Deck.GetConf(config.Id);
-            var oldOrder = (int)oldConfig.GetNamedObject("new").GetNamedNumber("order");
-            var newOrder = (int)newConfig.GetNamedObject("new").GetNamedNumber("order");            
+            var oldOrder = (int)JsonHelper.GetNameNumber(oldConfig.GetNamedObject("new"),"order");
+            var newOrder = (int)JsonHelper.GetNameNumber(newConfig.GetNamedObject("new"),"order");            
             if (oldOrder != newOrder)
             {                
                 if (newOrder == (int)NewCardInsertOrder.RANDOM)

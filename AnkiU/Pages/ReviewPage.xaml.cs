@@ -227,7 +227,7 @@ namespace AnkiU.Pages
         {
             bool isNotDyn = IsCardNotDynamicDeck(card);
             var deck = collection.Deck.Get(currentCardDeckId);
-            var isDefault = deck.GetNamedNumber("conf") == (int)ConfigPresets.Default;
+            var isDefault = JsonHelper.GetNameNumber(deck,"conf") == (int)ConfigPresets.Default;
 
             if (!MainPage.UserPrefs.IsShowLeechActionOnce && isNotDyn && isDefault)
             {                
@@ -240,7 +240,7 @@ namespace AnkiU.Pages
             }
             else
             {
-                if (collection.Sched.LapseConf(currentCard).GetNamedNumber("leechAction") == 0)
+                if (JsonHelper.GetNameNumber(collection.Sched.LapseConf(currentCard),"leechAction") == 0)
                     popup.ShowAsync(mainPage.CurrentDispatcher, "Leech threshold reached. Card was suspended", 1000);
                 else
                     popup.ShowAsync(mainPage.CurrentDispatcher, "Leech threshold reached.", 1000);
@@ -783,15 +783,23 @@ namespace AnkiU.Pages
 
         private async void CardViewLoadedHandler()
         {
-            cardView.ZoomLevel = MainPage.UserPrefs.ZoomLevel;
-            await cardView.ChangeZoomLevel(MainPage.UserPrefs.ZoomLevel);
+            try
+            {
+                cardView.ZoomLevel = MainPage.UserPrefs.ZoomLevel;
+                await cardView.ChangeZoomLevel(MainPage.UserPrefs.ZoomLevel);
 
-            PopNextCard();
-            currentCardDeckId = currentCard.DeckId;
-            currentCardModelId = currentCard.LoadNote().ModelId;
-            await ChangeHtmlheader();
-            IsAutoPlay();
-            await GetContentAndDisplayQuestion();
+                PopNextCard();
+                currentCardDeckId = currentCard.DeckId;
+                currentCardModelId = currentCard.LoadNote().ModelId;
+                await ChangeHtmlheader();
+                IsAutoPlay();
+                await GetContentAndDisplayQuestion();
+            }
+            catch(Exception ex)
+            {
+                await UIHelper.ShowMessageDialog("Error: " + ex.Message + ".\n" + ex.StackTrace);
+            }
+
         }
 
         private async Task ChangeHtmlheader()
@@ -936,7 +944,7 @@ namespace AnkiU.Pages
                         type.CorrectAnswer = ContentForCloze(type.CorrectAnswer, clozeIdx);
                     }
                     type.Font = f.GetObject().GetNamedString("font");
-                    type.Size = (int)f.GetObject().GetNamedNumber("size");
+                    type.Size = (int)JsonHelper.GetNameNumber(f.GetObject(),"size");
                     break;
                 }
             }

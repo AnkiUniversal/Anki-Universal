@@ -125,7 +125,7 @@ namespace AnkiU.AnkiCore.Sync
         {
             Task<JsonObject> task = Task<JsonObject>.Factory.StartNew(() =>
             {
-                return base.Start((int)data.GetNamedNumber("minUsn"), 
+                return base.Start((int)JsonHelper.GetNameNumber(data,"minUsn"), 
                                        data.GetNamedBoolean("lnewer"), 
                                        data.GetNamedObject("graves"));
             });

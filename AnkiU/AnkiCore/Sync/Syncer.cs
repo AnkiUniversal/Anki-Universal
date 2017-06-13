@@ -99,17 +99,17 @@ namespace AnkiU.AnkiCore.Sync
                     // don't abort, but ui should show messages after sync finishes
                     // and require confirmation if it's non-empty
                 }
-                long serverScm = (long)serverMeta.GetNamedNumber("scm");
-                int serverTs = (int)serverMeta.GetNamedNumber("ts");
-                serverModifiedTime = (long)serverMeta.GetNamedNumber("mod");
-                maxUsn = (int)serverMeta.GetNamedNumber("usn");
+                long serverScm = (long)JsonHelper.GetNameNumber(serverMeta,"scm");
+                int serverTs = (int)JsonHelper.GetNameNumber(serverMeta,"ts");
+                serverModifiedTime = (long)JsonHelper.GetNameNumber(serverMeta,"mod");
+                maxUsn = (int)JsonHelper.GetNameNumber(serverMeta,"usn");
                 // skip uname
                 JsonObject clientMeta = Meta();
                 collection.Log(args: new object[] { "lmeta", clientMeta });
-                clientModifiedTime = (long)clientMeta.GetNamedNumber("mod");
-                minUsn = (int)clientMeta.GetNamedNumber("usn");
-                long clientScm = (long)clientMeta.GetNamedNumber("scm");
-                int clientTs = (int)clientMeta.GetNamedNumber("ts");
+                clientModifiedTime = (long)JsonHelper.GetNameNumber(clientMeta,"mod");
+                minUsn = (int)JsonHelper.GetNameNumber(clientMeta,"usn");
+                long clientScm = (long)JsonHelper.GetNameNumber(clientMeta,"scm");
+                int clientTs = (int)JsonHelper.GetNameNumber(clientMeta,"ts");
 
                 long diff = Math.Abs(serverTs - clientTs);
                 if (diff > 300)
@@ -236,7 +236,7 @@ namespace AnkiU.AnkiCore.Sync
             {
                 foreach (JsonObject m in collection.Models.All())
                 {
-                    if (m.GetNamedNumber("usn") >= minUsn)
+                    if (JsonHelper.GetNameNumber(m,"usn") >= minUsn)
                     {
                         result.Add(m);
                     }
@@ -246,7 +246,7 @@ namespace AnkiU.AnkiCore.Sync
             {
                 foreach (JsonObject m in collection.Models.All())
                 {
-                    if (m.GetNamedNumber("usn") == -1)
+                    if (JsonHelper.GetNameNumber(m,"usn") == -1)
                     {
                         m["usn"] = JsonValue.CreateNumberValue(maxUsn);
                         result.Add(m);
@@ -265,7 +265,7 @@ namespace AnkiU.AnkiCore.Sync
                 JsonArray decks = new JsonArray();
                 foreach (JsonObject g in collection.Deck.All())
                 {
-                    if (g.GetNamedNumber("usn") >= minUsn)
+                    if (JsonHelper.GetNameNumber(g,"usn") >= minUsn)
                     {
                         decks.Add(g);
                     }
@@ -273,7 +273,7 @@ namespace AnkiU.AnkiCore.Sync
                 JsonArray dconfs = new JsonArray();
                 foreach (JsonObject g in collection.Deck.AllConf())
                 {
-                    if (g.GetNamedNumber("usn") >= minUsn)
+                    if (JsonHelper.GetNameNumber(g,"usn") >= minUsn)
                     {
                         dconfs.Add(g);
                     }
@@ -286,7 +286,7 @@ namespace AnkiU.AnkiCore.Sync
                 JsonArray decks = new JsonArray();
                 foreach (JsonObject g in collection.Deck.All())
                 {
-                    if (g.GetNamedNumber("usn") == -1)
+                    if (JsonHelper.GetNameNumber(g,"usn") == -1)
                     {
                         g["usn"] = JsonValue.CreateNumberValue(maxUsn);
                         decks.Add(g);
@@ -295,7 +295,7 @@ namespace AnkiU.AnkiCore.Sync
                 JsonArray dconfs = new JsonArray();
                 foreach (JsonObject g in collection.Deck.AllConf())
                 {
-                    if (g.GetNamedNumber("usn") == -1)
+                    if (JsonHelper.GetNameNumber(g,"usn") == -1)
                     {
                         g["usn"] = JsonValue.CreateNumberValue(maxUsn);
                         dconfs.Add(g);
@@ -370,7 +370,7 @@ namespace AnkiU.AnkiCore.Sync
             // this was left out of earlier betas
             if (rchg.ContainsKey("crt"))
             {
-                collection.Crt = (long)rchg.GetNamedNumber("crt");
+                collection.Crt = (long)JsonHelper.GetNameNumber(rchg,"crt");
             }
             PrepareToChunk();
         }
@@ -381,9 +381,9 @@ namespace AnkiU.AnkiCore.Sync
             {
                 JsonObject r = rchg.GetObjectAt(i);
                 JsonObject l;
-                l = collection.Models.Get((int)r.GetNamedNumber("id"));
+                l = collection.Models.Get((int)JsonHelper.GetNameNumber(r,"id"));
                 // if missing locally or server is newer, update
-                if (l == null || r.GetNamedNumber("mod") > l.GetNamedNumber("mod"))
+                if (l == null || JsonHelper.GetNameNumber(r,"mod") > JsonHelper.GetNameNumber(l,"mod"))
                 {
                     collection.Models.Update(r);
                 }
@@ -396,9 +396,9 @@ namespace AnkiU.AnkiCore.Sync
             for (uint i = 0; i < decks.Count; i++)
             {
                 JsonObject r = decks.GetObjectAt(i);
-                JsonObject l = collection.Deck.Get((int)r.GetNamedNumber("id"), false);
+                JsonObject l = collection.Deck.Get((int)JsonHelper.GetNameNumber(r,"id"), false);
                 // if missing locally or server is newer, update
-                if (l == null || r.GetNamedNumber("mod") > l.GetNamedNumber("mod"))
+                if (l == null || JsonHelper.GetNameNumber(r,"mod") > JsonHelper.GetNameNumber(l,"mod"))
                 {
                     collection.Deck.Update(r);
                 }
@@ -407,9 +407,9 @@ namespace AnkiU.AnkiCore.Sync
             for (uint i = 0; i < confs.Count; i++)
             {
                 JsonObject r = confs.GetObjectAt(i);
-                JsonObject l = collection.Deck.DeckConf[(int)r.GetNamedNumber("id")];
+                JsonObject l = collection.Deck.DeckConf[(int)JsonHelper.GetNameNumber(r,"id")];
                 // if missing locally or server is newer, update
-                if (l == null || r.GetNamedNumber("mod") > l.GetNamedNumber("mod"))
+                if (l == null || JsonHelper.GetNameNumber(r,"mod") > JsonHelper.GetNameNumber(l,"mod"))
                 {
                     collection.Deck.UpdateConf(r);
                 }
@@ -467,7 +467,7 @@ namespace AnkiU.AnkiCore.Sync
             }
             foreach (JsonObject g in collection.Deck.All())
             {
-                if (g.GetNamedNumber("usn") == -1)
+                if (JsonHelper.GetNameNumber(g,"usn") == -1)
                 {
                     result.Add("client", JsonValue.CreateStringValue("deck had usn = -1"));
                     return result;
@@ -487,7 +487,7 @@ namespace AnkiU.AnkiCore.Sync
                 if (collection.IsServer)
                 {
                     // the web upgrade was mistakenly setting usn
-                    if (m.GetNamedNumber("usn") < 0)
+                    if (JsonHelper.GetNameNumber(m,"usn") < 0)
                     {
                         m["usn"] = JsonValue.CreateNumberValue(0);
                         found = true;
@@ -495,7 +495,7 @@ namespace AnkiU.AnkiCore.Sync
                 }
                 else
                 {
-                    if (m.GetNamedNumber("usn") == -1)
+                    if (JsonHelper.GetNameNumber(m,"usn") == -1)
                     {
                         result.Add("client", JsonValue.CreateStringValue("model had usn = -1"));
                         return result;

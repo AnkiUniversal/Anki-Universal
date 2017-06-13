@@ -254,9 +254,9 @@ namespace AnkiU.AnkiCore
                 col.ModSchemaNoCheck();
                 foreach (JsonObject d in col.Deck.All())
                 {
-                    if (d.GetNamedNumber("dyn") != 0)
+                    if (JsonHelper.GetNameNumber(d,"dyn") != 0)
                     {
-                        int order = (int)d.GetNamedNumber("order");
+                        int order = (int)JsonHelper.GetNameNumber(d,"order");
                         // failed order was removed
                         if (order >= 5)
                         {

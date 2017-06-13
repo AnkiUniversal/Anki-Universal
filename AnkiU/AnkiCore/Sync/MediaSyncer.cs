@@ -55,7 +55,7 @@ namespace AnkiU.AnkiCore.Sync
             // begin session and check if in sync
             long lastUsn = collection.Media.GetLastUnixTimeSync();
             JsonObject ret = await server.Begin();
-            int srvUsn = (int)ret.GetNamedNumber("usn");
+            int srvUsn = (int)JsonHelper.GetNameNumber(ret,"usn");
             if ((lastUsn == srvUsn) && !(collection.Media.HaveDirty()))
             {
                 return "noChanges";

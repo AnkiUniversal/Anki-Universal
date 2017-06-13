@@ -15,6 +15,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using AnkiU.AnkiCore;
 using AnkiU.Models;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace AnkiU.ViewModels
                 {
                     var field = json.GetObject();
                     NoteField f = new NoteField();
-                    f.Order = (int)field.GetNamedNumber("ord");
+                    f.Order = (int)JsonHelper.GetNameNumber(field,"ord");
                     f.Name = field.GetNamedString("name");
                     temp[f] = true;
                 }                

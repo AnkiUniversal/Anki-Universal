@@ -47,7 +47,7 @@ namespace AnkiU.ViewModels
             {
                 var field = json.GetObject();
                 NoteField f = new NoteField();
-                f.Order = (int)field.GetNamedNumber("ord");
+                f.Order = (int)JsonHelper.GetNameNumber(field,"ord");
                 f.Name = field.GetNamedString("name");
                 temp.Add(f);
             }

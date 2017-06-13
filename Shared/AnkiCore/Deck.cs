@@ -270,7 +270,7 @@ namespace Shared.AnkiCore
         {
             // reselect current deck, or default if current has disappeared
             JsonObject c = Current();
-            Select((long)c.GetNamedNumber("id"));
+            Select((long)JsonHelper.GetNameNumber(c,"id"));
         }
 
         public JsonObject Current()
@@ -280,7 +280,7 @@ namespace Shared.AnkiCore
 
         public long Selected()
         {
-            return (long)collection.Conf.GetNamedNumber("curDeck");
+            return (long)JsonHelper.GetNameNumber(collection.Conf,"curDeck");
         }
 
         public void Select(long did, bool isSetchanged = true)
@@ -310,7 +310,7 @@ namespace Shared.AnkiCore
             {
                 string deckName = g.GetNamedString("name");
                 if (deckName.StartsWith(name + Constant.SUBDECK_SEPERATE))
-                    actv.Add(deckName, (long)g.GetNamedNumber("id"));
+                    actv.Add(deckName, (long)JsonHelper.GetNameNumber(g,"id"));
             }
             return actv;
         }
@@ -363,7 +363,7 @@ namespace Shared.AnkiCore
             else
             {
                 foreach (JsonObject x in deckDict.Values)
-                    if (x.GetNamedNumber("dyn") == 0)
+                    if (JsonHelper.GetNameNumber(x,"dyn") == 0)
                         list.Add(x.GetNamedString("name"));
             }
             return list;
@@ -507,7 +507,7 @@ namespace Shared.AnkiCore
 
             if (deck.ContainsKey("conf"))
             {
-                JsonObject conf = GetConf((long)deck.GetNamedNumber("conf"));
+                JsonObject conf = GetConf((long)JsonHelper.GetNameNumber(deck,"conf"));
                 conf["dyn"] = JsonValue.CreateNumberValue(0);
                 return conf;
             }
@@ -522,7 +522,7 @@ namespace Shared.AnkiCore
   
         public List<long> DeckIdsForConf(JsonObject conf)
         {
-            long confId = (long)conf.GetNamedNumber("id");
+            long confId = (long)JsonHelper.GetNameNumber(conf,"id");
             return DeckIdsForConf(confId);
         }
 
@@ -531,9 +531,9 @@ namespace Shared.AnkiCore
             List<long> dids = new List<long>();
             foreach (JsonObject deck in deckDict.Values)
             {
-                if (deck.ContainsKey("conf") && (deck.GetNamedNumber("conf") == confId))
+                if (deck.ContainsKey("conf") && (JsonHelper.GetNameNumber(deck,"conf") == confId))
                 {
-                    dids.Add((long)deck.GetNamedNumber("id"));
+                    dids.Add((long)JsonHelper.GetNameNumber(deck,"id"));
                 }
             }
             return dids;
@@ -616,7 +616,7 @@ namespace Shared.AnkiCore
                 return;
 
             deck = Get(deckId);
-            if (deck.GetNamedNumber("dyn") != 0)
+            if (JsonHelper.GetNameNumber(deck,"dyn") != 0)
             {
                 RemoveIfChildrenToo(deckId, childrenToo, cardsToo);
             }
@@ -649,7 +649,7 @@ namespace Shared.AnkiCore
 
         public bool IsDyn(long did)
         {
-            return Get(did).GetNamedNumber("dyn") != 0;
+            return JsonHelper.GetNameNumber(Get(did),"dyn") != 0;
         }
 
         //WARNING: Not in java and python ver

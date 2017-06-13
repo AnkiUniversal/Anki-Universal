@@ -15,36 +15,33 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using AnkiU.AnkiCore;
-using AnkiU.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 
-namespace AnkiU.ViewModels
+namespace AnkiU.AnkiCore
 {
-    public class AnkiModelInfomartionViewModel
+    public class JsonHelper
     {
-        public int CurrentModelIndex { get; set; }
-        public ObservableCollection<AnkiModelInformation> Models { get; set; }
-
-        public AnkiModelInfomartionViewModel(IEnumerable<JsonObject> models)
+        public static double GetNameNumber(JsonObject jobject, String name)
         {
-            List<AnkiModelInformation> temp = new List<AnkiModelInformation>();
-            foreach(var model in models)
+            var idValue = jobject.GetNamedValue(name);
+            double number;
+            if (idValue.ValueType == JsonValueType.Number)
+                number = idValue.GetNumber();
+            else if (idValue.ValueType == JsonValueType.String)
+                number = Convert.ToDouble(idValue.GetString());
+            else
             {
-                string name = model.GetNamedString("name");
-                long id = (long)JsonHelper.GetNameNumber(model,"id");                
-                AnkiModelInformation m = new AnkiModelInformation(name, id);
-                temp.Add(m);
+                if (idValue.GetBoolean())
+                    number = 1;
+                else
+                    number = 0;
             }
-            temp.Sort((x, y) => { return x.Name.CompareTo(y.Name); });
-            this.Models = new ObservableCollection<AnkiModelInformation>(temp);
+            return number;
         }
-        
     }
 }

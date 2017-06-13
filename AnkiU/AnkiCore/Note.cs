@@ -82,7 +82,7 @@ namespace AnkiU.AnkiCore
                 this.id = Utils.TimestampID(collection.Database, "notes");
                 guId = Utils.Guid64();
                 this.model = model;
-                this.modelId = (long)model.GetNamedNumber("id");
+                this.modelId = (long)JsonHelper.GetNameNumber(model,"id");
                 this.tags = new List<string>();
                 this.fields = new string[model.GetNamedArray("flds").Count];
                 for(int i = 0; i < fields.Length; i++)

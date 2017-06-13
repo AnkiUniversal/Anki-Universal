@@ -73,10 +73,10 @@ namespace AnkiU.ViewModels
         {
             try
             {                
-                Options.PerDay = (int)Config.GetNamedNumber("perDay");
-                Options.EasyBonus = (int)(Config.GetNamedNumber("ease4") * 100);
-                Options.IvlFct = (int)(Config.GetNamedNumber("ivlFct")*100);
-                Options.MaxIvl = (int)Config.GetNamedNumber("maxIvl");
+                Options.PerDay = (int)JsonHelper.GetNameNumber(Config,"perDay");
+                Options.EasyBonus = (int)(JsonHelper.GetNameNumber(Config,"ease4") * 100);
+                Options.IvlFct = (int)(JsonHelper.GetNameNumber(Config,"ivlFct")*100);
+                Options.MaxIvl = (int)JsonHelper.GetNameNumber(Config,"maxIvl");
                 Options.Bury = Config.GetNamedBoolean("bury");                
             }
             catch //If any error happen we back to default

@@ -158,7 +158,7 @@ namespace AnkiU.ViewModels
 
         public void AddNewDeck(JsonObject deck)
         {
-            long did = (long)deck.GetNamedNumber("id");
+            long did = (long)JsonHelper.GetNameNumber(deck,"id");
             if (did == Constant.DEFAULTDECK_ID)
                 return;
 

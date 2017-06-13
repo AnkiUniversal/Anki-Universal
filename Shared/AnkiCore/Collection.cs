@@ -219,7 +219,7 @@ namespace Shared.AnkiCore
         {
             JsonObject conf = decks.ConfForDeckId(did);
             // in order due?
-            if (conf.GetNamedObject("new").GetNamedNumber("order") == (double)NewCardInsertOrder.DUE)
+            if (JsonHelper.GetNameNumber(conf.GetNamedObject("new"),"order") == (double)NewCardInsertOrder.DUE)
             {
                 return due;
             }
@@ -297,7 +297,7 @@ namespace Shared.AnkiCore
 
         public long GetTimeLimit()
         {
-            return (long)conf.GetNamedNumber("timeLim");
+            return (long)JsonHelper.GetNameNumber(conf,"timeLim");
         }
 
         public void Dispose()

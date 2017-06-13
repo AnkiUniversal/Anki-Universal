@@ -391,7 +391,7 @@ namespace AnkiU.AnkiCore
             List<string> stringList = new List<string>();
             JsonObject model = collection.Models.Get(mid);
 
-            int type = (int)model.GetNamedNumber("type");
+            int type = (int)JsonHelper.GetNameNumber(model,"type");
             if ((type == (int)ModelType.CLOZE) && strIn.Contains("{{c"))
                 stringList = ExpandClozes(strIn);
             else

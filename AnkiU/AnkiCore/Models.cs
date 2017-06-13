@@ -110,7 +110,7 @@ namespace AnkiU.AnkiCore
                 m["mod"] =
                     JsonValue.CreateNumberValue(DateTimeOffset.Now.ToUnixTimeSeconds());
                 m["usn"] = JsonValue.CreateNumberValue(collection.Usn);
-                if (m.GetNamedNumber("id") != 0)
+                if (JsonHelper.GetNameNumber(m,"id") != 0)
                     UpdateRequired(m);
                 else
                     Debug.WriteLine("TODO: fix empty id problem on UpdateRequired(needed for model adding)");
@@ -123,7 +123,7 @@ namespace AnkiU.AnkiCore
 
         private void UpdateRequired(JsonObject m)
         {
-            if (m.GetNamedNumber("type") == (int)ModelType.CLOZE)
+            if (JsonHelper.GetNameNumber(m,"type") == (int)ModelType.CLOZE)
                 return;
 
             JsonArray req = new JsonArray();
@@ -138,7 +138,7 @@ namespace AnkiU.AnkiCore
                 JsonObject t = templates.GetObjectAt(i);
                 ReqTemplateStruct ret = RequestForTemplate(m, flds, t);
                 JsonArray r = new JsonArray();
-                r.Add(JsonValue.CreateNumberValue(t.GetNamedNumber("ord")));
+                r.Add(JsonValue.CreateNumberValue(JsonHelper.GetNameNumber(t,"ord")));
                 r.Add(JsonValue.CreateStringValue(ret.Type));
                 r.Add(ret.Request[0]);
                 req.Add(r);
@@ -168,10 +168,10 @@ namespace AnkiU.AnkiCore
                 a.Add("ankiflag");
                 b.Add("");
             }
-            object[] data = new object[] {1L, 1L, (long)m.GetNamedNumber("id"), 1L, (int)t.GetNamedNumber("ord"), "",
+            object[] data = new object[] {1L, 1L, (long)JsonHelper.GetNameNumber(m,"id"), 1L, (int)JsonHelper.GetNameNumber(t,"ord"), "",
                                 Utils.JoinFields(a.ToArray()) };
             string full = collection.RenderQA(data)["q"];
-            data = new object[] {1L, 1L, (long)m.GetNamedNumber("id"), 1L, (int)t.GetNamedNumber("ord"), "",
+            data = new object[] {1L, 1L, (long)JsonHelper.GetNameNumber(m,"id"), 1L, (int)JsonHelper.GetNameNumber(t,"ord"), "",
                                 Utils.JoinFields(b.ToArray()) };
             string empty = collection.RenderQA(data)["q"];
             // if full and empty are the same, the template is invalid and there is no way to satisfy it
@@ -222,7 +222,7 @@ namespace AnkiU.AnkiCore
         public List<long> GetNoteIds(JsonObject m)
         {
             var notes = collection.Database.QueryColumn<NoteTable>(
-                            "SELECT id FROM notes WHERE mid = " + (long)m.GetNamedNumber("id"));
+                            "SELECT id FROM notes WHERE mid = " + (long)JsonHelper.GetNameNumber(m,"id"));
             return (from s in notes select s.Id).ToList();
         }
 
@@ -398,8 +398,8 @@ namespace AnkiU.AnkiCore
         public void Remove(JsonObject m, bool forDeck = true)
         {
             collection.ModSchema(true);
-            double id = m.GetNamedNumber("id");
-            bool current = GetCurrent(forDeck).GetNamedNumber("id") == id;
+            double id = JsonHelper.GetNameNumber(m,"id");
+            bool current = JsonHelper.GetNameNumber(GetCurrent(forDeck),"id") == id;
             string idStr = id.ToString();
             var list = collection.Database.QueryColumn<CardIdOnlyTable>(
                 "SELECT id FROM cards WHERE nid IN(SELECT id FROM notes WHERE mid = " + idStr + ")");
@@ -429,7 +429,7 @@ namespace AnkiU.AnkiCore
             {
                 name = m.GetNamedString("name");
                 if ((name == model.GetNamedString("name")) &&
-                        m.GetNamedNumber("id") != model.GetNamedNumber("id"))
+                        JsonHelper.GetNameNumber(m,"id") != JsonHelper.GetNameNumber(model,"id"))
                 {
                     StringBuilder temp = new StringBuilder();
                     temp.Append(name + "-");
@@ -461,7 +461,7 @@ namespace AnkiU.AnkiCore
             //python ver has this line
             //but java ver does not
             //EnsureNameUnique(m);
-            var key = m.GetNamedNumber("id");
+            var key = JsonHelper.GetNameNumber(m,"id");
             models[key.ToString()] = m;
             Save();
         }
@@ -497,7 +497,7 @@ namespace AnkiU.AnkiCore
         /// <returns>The number of notes with that model</returns>
         public int NoteUseCount(JsonObject model)
         {
-            return collection.Database.QueryScalar<int>("select count() from notes where mid = " + model.GetNamedNumber("id"));
+            return collection.Database.QueryScalar<int>("select count() from notes where mid = " + JsonHelper.GetNameNumber(model,"id"));
         }
 
         /// <summary>
@@ -510,7 +510,7 @@ namespace AnkiU.AnkiCore
         {
             return collection.Database.QueryScalar<int>(
                 "select count() from cards, notes where cards.nid = notes.id and notes.mid = "
-                + model.GetNamedNumber("id") + " and cards.ord = " + ord);
+                + JsonHelper.GetNameNumber(model,"id") + " and cards.ord = " + ord);
         }
 
         /// <summary>
@@ -549,7 +549,7 @@ namespace AnkiU.AnkiCore
             {
                 JsonObject f = ja.GetObjectAt(i);
                 result.Add(f.GetNamedString("name"),
-                    new KeyValuePair<int, JsonObject>((int)f.GetNamedNumber("ord"), f));
+                    new KeyValuePair<int, JsonObject>((int)JsonHelper.GetNameNumber(f,"ord"), f));
             }
             return result;
         }
@@ -568,7 +568,7 @@ namespace AnkiU.AnkiCore
 
         public int SortIdx(JsonObject model)
         {
-            return (int)model.GetNamedNumber("sortf");
+            return (int)JsonHelper.GetNameNumber(model,"sortf");
         }
 
         public void SetSortIdx(JsonObject model, int idx)
@@ -582,7 +582,7 @@ namespace AnkiU.AnkiCore
         public void AddField(JsonObject model, JsonObject field)
         {
             // only mod schema if model isn't new
-            if (model.GetNamedNumber("id") != 0)
+            if (JsonHelper.GetNameNumber(model,"id") != 0)
                 collection.ModSchema(true);
 
             JsonArray ja = model.GetNamedArray("flds");
@@ -611,11 +611,11 @@ namespace AnkiU.AnkiCore
 
         public void TransformFields(JsonObject model, TransForm fn)
         {
-            if (model.GetNamedNumber("id") == 0)
+            if (JsonHelper.GetNameNumber(model,"id") == 0)
                 return;
 
             List<object[]> r = new List<object[]>();
-            var list = collection.Database.QueryColumn<NoteTable>("select id, flds from notes where mid = ?", model.GetNamedNumber("id"));
+            var list = collection.Database.QueryColumn<NoteTable>("select id, flds from notes where mid = ?", JsonHelper.GetNameNumber(model,"id"));
 
             foreach (NoteTable note in list)
             {
@@ -647,7 +647,7 @@ namespace AnkiU.AnkiCore
                 throw new ModelException("RemoveFiled: Can't find field to remove");
 
             model["flds"] = ja2;
-            int sortf = (int)model.GetNamedNumber("sortf");
+            int sortf = (int)JsonHelper.GetNameNumber(model,"sortf");
             if (sortf >= model.GetNamedArray("flds").Count)
             {
                 model["sortf"] = JsonValue.CreateNumberValue(sortf - 1);
@@ -731,7 +731,7 @@ namespace AnkiU.AnkiCore
                 throw new ModelException("MoveField: Can't find the specified field!");
 
             // remember old sort field
-            string sortf = Utils.JsonToString(m.GetNamedArray("flds").GetObjectAt((uint)m.GetNamedNumber("sortf")));
+            string sortf = Utils.JsonToString(m.GetNamedArray("flds").GetObjectAt((uint)JsonHelper.GetNameNumber(m,"sortf")));
 
             // move
             l.RemoveAt(oldidx);
@@ -775,7 +775,7 @@ namespace AnkiU.AnkiCore
         /// <param name="template"></param>
         public void AddTemplate(JsonObject m, JsonObject template) 
         {
-            if (m.GetNamedNumber("id") != 0)
+            if (JsonHelper.GetNameNumber(m,"id") != 0)
                 collection.ModSchema(true);
             
             JsonArray ja = m.GetNamedArray("tmpls");
@@ -820,7 +820,7 @@ namespace AnkiU.AnkiCore
                 throw new ModelException("RemTemplate: Not found ord!");
 
             string sql = "select c.id from cards c, notes f where c.nid=f.id and mid = " +
-                    model.GetNamedNumber("id") + " and ord = " + ord;
+                    JsonHelper.GetNameNumber(model,"id") + " and ord = " + ord;
             var cids = (from s in collection.Database.QueryColumn<CardIdOnlyTable>(sql) select s.Id).ToArray();
             // all notes with this template must have at least two cards, 
             // or we could end up creating orphaned notes
@@ -833,7 +833,7 @@ namespace AnkiU.AnkiCore
             collection.ModSchema(true);
             collection.RemoveCardsAndNoteIfNoCardsLeft(cids);
             sql = "update cards set ord = ord - 1, usn = ?, mod = ? where nid in (select id from notes where mid = ?) and ord > ?";
-            object[] arrayObject = new object[] { collection.Usn, DateTimeOffset.Now.ToUnixTimeSeconds(), (long)model.GetNamedNumber("id"), ord };
+            object[] arrayObject = new object[] { collection.Usn, DateTimeOffset.Now.ToUnixTimeSeconds(), (long)JsonHelper.GetNameNumber(model,"id"), ord };
             //Shift ordinals
             collection.Database.Execute(sql, arrayObject);
             JsonArray tmpls = model.GetNamedArray("tmpls");
@@ -869,7 +869,7 @@ namespace AnkiU.AnkiCore
                     }
                 }
                 JsonObject t = ja.GetObjectAt(i);
-                oldidxs.Add(t.GetHashCode(), (int)t.GetNamedNumber("ord"));
+                oldidxs.Add(t.GetHashCode(), (int)JsonHelper.GetNameNumber(t,"ord"));
                 l.Add(t);
             }
             l.RemoveAt(oldidx);
@@ -885,7 +885,7 @@ namespace AnkiU.AnkiCore
                 sb.Append("when ord = ");
                 sb.Append(oldidxs[t.GetHashCode()]);
                 sb.Append(" then ");
-                sb.Append(t.GetNamedNumber("ord"));
+                sb.Append(JsonHelper.GetNameNumber(t,"ord"));
                 if (i != ja.Count - 1)
                 {
                     sb.Append(" ");
@@ -895,7 +895,7 @@ namespace AnkiU.AnkiCore
             Save(m);
             collection.Database.Execute("update cards set ord = (case " + sb.ToString() +
                     " end),usn=?,mod=? where nid in (select id from notes where mid = ?)",
-                    new object[] { collection.Usn, DateTimeOffset.Now.ToUnixTimeSeconds(), m.GetNamedNumber("id") });
+                    new object[] { collection.Usn, DateTimeOffset.Now.ToUnixTimeSeconds(), JsonHelper.GetNameNumber(m,"id") });
         }
 
         /// <summary>
@@ -910,7 +910,7 @@ namespace AnkiU.AnkiCore
         {
             collection.ModSchema(true);
 
-            Debug.Assert(newModel.GetNamedNumber("id") == m.GetNamedNumber("id") 
+            Debug.Assert(JsonHelper.GetNameNumber(newModel,"id") == JsonHelper.GetNameNumber(m,"id") 
                 || (fmap != null && cmap != null));
             
             if (fmap != null)
@@ -928,7 +928,7 @@ namespace AnkiU.AnkiCore
         {
             List<object[]> objList = new List<object[]>();
             int nfields = newModel.GetNamedArray("flds").Count;
-            long mid = (long)newModel.GetNamedNumber("id");
+            long mid = (long)JsonHelper.GetNameNumber(newModel,"id");
 
             string sql = "select id, flds from notes where id in " + Utils.Ids2str(nids);
             var list = collection.Database.QueryColumn<NoteTable>(sql);
@@ -967,8 +967,8 @@ namespace AnkiU.AnkiCore
         {
             List<object[]> objList = new List<object[]>();
             List<long> deleted = new List<long>();
-            ModelType omType = (ModelType)oldModel.GetNamedNumber("type");
-            ModelType nmType = (ModelType)newModel.GetNamedNumber("type");
+            ModelType omType = (ModelType)JsonHelper.GetNameNumber(oldModel,"type");
+            ModelType nmType = (ModelType)JsonHelper.GetNameNumber(newModel,"type");
             int nflds = newModel.GetNamedArray("tmpls").Count;
             string sql = "select id, ord from cards where nid in " + Utils.Ids2str(nids);
             var list = collection.Database.QueryColumn<CardTable>(sql);
@@ -1042,7 +1042,7 @@ namespace AnkiU.AnkiCore
         public List<int> AvailableOrds(JsonObject m, string flds)
         {
             bool ok;
-            if (m.GetNamedNumber("type") == (double)ModelType.CLOZE)
+            if (JsonHelper.GetNameNumber(m,"type") == (double)ModelType.CLOZE)
             {
                 return AvailableClozeOrds(m, flds);
             }
@@ -1248,9 +1248,9 @@ namespace AnkiU.AnkiCore
                 for (uint i = 0; i < templates.Count; i++)
                 {
                     JsonObject t = templates.GetObjectAt(i);
-                    names.Add((int)t.GetNamedNumber("ord"), t.GetNamedString("name"));
+                    names.Add((int)JsonHelper.GetNameNumber(t,"ord"), t.GetNamedString("name"));
                 }
-                result.Add((long)m.GetNamedNumber("id"), names);
+                result.Add((long)JsonHelper.GetNameNumber(m,"id"), names);
             }
             return result;
         }

@@ -143,7 +143,7 @@ namespace AnkiU.Anki.Syncer
             }
             catch(Exception ex)
             {
-                await UIHelper.ShowMessageDialog(ex.StackTrace);
+                await UIHelper.ShowMessageDialog(ex.Message + "\n" + ex.StackTrace);
             }
             finally
             {

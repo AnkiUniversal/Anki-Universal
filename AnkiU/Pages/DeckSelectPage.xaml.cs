@@ -816,8 +816,9 @@ namespace AnkiU.Pages
         }
 
         private void ReorderCardsIfRandom(DeckConfigName config)
-        {
-            var order = (int)collection.Deck.GetConf(config.Id).GetNamedObject("new").GetNamedNumber("order");
+        {            
+            var newConf = collection.Deck.GetConf(config.Id).GetNamedObject("new");
+            var order = (int)JsonHelper.GetNameNumber(newConf,"order");
             if (order == (int)NewCardInsertOrder.RANDOM)
             {
                 var deckIds = collection.Deck.DeckIdsForConf(config.Id);
@@ -905,7 +906,7 @@ namespace AnkiU.Pages
             {
                 foreach (var deck in parents)
                 {
-                    long id = (long)deck.GetNamedNumber("id");
+                    long id = (long)JsonHelper.GetNameNumber(deck,"id");
                     deckListViewModel.UpdateCardCountForDeck(id);
                 }
             }

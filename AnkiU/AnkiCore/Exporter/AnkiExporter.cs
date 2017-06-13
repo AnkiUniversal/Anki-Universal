@@ -113,7 +113,7 @@ namespace AnkiU.AnkiCore.Exporter
             // models - start with zero
             foreach (JsonObject m in sourceCol.Models.All())
             {
-                if (mids.Contains((long)m.GetNamedNumber("id")))
+                if (mids.Contains((long)JsonHelper.GetNameNumber(m, "id")))
                 {
                     dst.Models.Update(m);
                 }
@@ -132,19 +132,19 @@ namespace AnkiU.AnkiCore.Exporter
             JsonObject dconfs = new JsonObject();
             foreach (JsonObject d in sourceCol.Deck.All())
             {
-                if (d.GetNamedNumber("id") == 1)
+                if (JsonHelper.GetNameNumber(d, "id") == 1)
                 {
                     continue;
                 }
-                if (deckId != null && !dids.Contains((long)d.GetNamedNumber("id")))
+                if (deckId != null && !dids.Contains((long)JsonHelper.GetNameNumber(d, "id")))
                 {
                     continue;
                 }
-                if (d.GetNamedNumber("dyn") != 1 && d.GetNamedNumber("conf") != 1)
+                if (JsonHelper.GetNameNumber(d,"dyn") != 1 && JsonHelper.GetNameNumber(d,"conf") != 1)
                 {
                     if (includeSched)
                     {
-                        dconfs[d.GetNamedNumber("conf").ToString()] = JsonValue.CreateBooleanValue(true);
+                        dconfs[JsonHelper.GetNameNumber(d,"conf").ToString()] = JsonValue.CreateBooleanValue(true);
                     }
                 }
                 if (!includeSched)
@@ -158,7 +158,7 @@ namespace AnkiU.AnkiCore.Exporter
             // copy used deck confs
             foreach (JsonObject dc in sourceCol.Deck.AllConf())
             {
-                if (dconfs.ContainsKey(dc.GetNamedNumber("id").ToString()))
+                if (dconfs.ContainsKey(JsonHelper.GetNameNumber(dc,"id").ToString()))
                 {
                     dst.Deck.UpdateConf(dc);
                 }

@@ -114,7 +114,7 @@ namespace AnkiU.Pages
 
             var model = collection.Models.GetCurrent(false);
             if (model != null)
-                modelInformationView.ChangeSelectedItem((long)model.GetNamedNumber("id"));
+                modelInformationView.ChangeSelectedItem((long)JsonHelper.GetNameNumber(model,"id"));
             else
             {
                 modelInformationView.ChangeSelectedIndex(0);
@@ -132,7 +132,7 @@ namespace AnkiU.Pages
             fieldListView.DataContext = fieldsViewModel.Fields;
             totalNoteTextBlock.Text = collection.Models.NoteUseCount(currentModel).ToString();
             totalTemplatsTextBlock.Text = templateViewModel.Templates.Count.ToString();
-            var type = (ModelType)currentModel.GetNamedNumber("type");
+            var type = (ModelType)JsonHelper.GetNameNumber(currentModel,"type");
             if (type == ModelType.CLOZE)
                 changeModelType.Text = CHANGE_TO_STD;
             else
@@ -352,7 +352,7 @@ namespace AnkiU.Pages
             if (!isContinue)
                 return;
 
-            if ((ModelType)currentModel.GetNamedNumber("type") == ModelType.STD)
+            if ((ModelType)JsonHelper.GetNameNumber(currentModel,"type") == ModelType.STD)
             {
                 if (templateViewModel.Templates.Count > 1)
                 {

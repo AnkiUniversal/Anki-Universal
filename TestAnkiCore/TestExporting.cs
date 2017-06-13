@@ -95,7 +95,7 @@ namespace TestAnkiCore
 
             //Exporting should not have changed conf for original deck
             conf = sourceCollection.Deck.ConfForDeckId(did);
-            Assert.AreEqual(1, conf.GetNamedNumber("id"));
+            Assert.AreEqual(1, JsonHelper.GetNameNumber(conf,"id"));
 
             //Connect to new deck
             var col2 = await Storage.OpenOrCreateCollection(tempExport, "ankitest.anki2");
@@ -105,11 +105,11 @@ namespace TestAnkiCore
             long? newDid = col2.Deck.AddOrResuedDeck("test", false);
             Assert.IsNotNull(newDid);
             var conf2 = col2.Deck.ConfForDeckId(did);
-            Assert.AreEqual(20, conf2.GetNamedObject("new").GetNamedNumber("perDay"));
+            Assert.AreEqual(20, JsonHelper.GetNameNumber(conf2.GetNamedObject("new"),"perDay"));
 
             //Conf should be 1
             dobj = col2.Deck.Get(did);
-            Assert.AreEqual(1, dobj.GetNamedNumber("conf"));
+            Assert.AreEqual(1, JsonHelper.GetNameNumber(dobj,"conf"));
 
 
             //Try again, limited to a deck
