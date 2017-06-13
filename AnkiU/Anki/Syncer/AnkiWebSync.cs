@@ -79,7 +79,7 @@ namespace AnkiU.Anki.Syncer
         {
             try
             {
-                syncStateDialog.Label = "Sync collection to AnkiWeb..."
+                syncStateDialog.Label = "Sync collection to AnkiWeb...";
                 syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
                 GetHostKeyFromVault();
 
