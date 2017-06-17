@@ -305,6 +305,8 @@ namespace AnkiU.Pages
                     ContinueNavigating();
                     return;
                 }
+                else
+                    return;
             }
             else
             {
