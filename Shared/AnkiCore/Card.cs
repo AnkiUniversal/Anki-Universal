@@ -231,7 +231,8 @@ namespace Shared.AnkiCore
 
         public bool ShowTimer()
         {
-            return collection.Deck.ConfForDeckId(oDid == 0 ? deckId : oDid).GetNamedNumber("timer", 1) != 0;
+            var conf = collection.Deck.ConfForDeckId(oDid == 0 ? deckId : oDid);
+            return JsonHelper.GetNameNumber(conf, "timer", 1) != 0;
         }
 
         public Card ShallowClone()

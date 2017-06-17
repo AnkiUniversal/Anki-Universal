@@ -219,6 +219,8 @@ namespace AnkiU.Pages
                 var isSuccess = await AnkiWebSync.TryGetHostKeyFromUsernameAndPassword();
                 if (!isSuccess)
                     syncServiceCombobox.SelectedIndex = 0;
+                else
+                    MainPage.UserPrefs.IsFullSyncRequire = false; //set this to false to warn when editing note types
             }
             else
             {

@@ -25,7 +25,7 @@
                 <CompositeTransform ScaleX="1.5" ScaleY="1.5"/>
             </SymbolIcon.RenderTransform>
         </SymbolIcon>
-        <TextBlock x:Name="progressLabel" Margin="5,15,5,5" FontSize="18"
+        <TextBlock x:Name="progressLabel" Margin="5,15,5,5" FontSize="18" TextWrapping="Wrap"
                    Text="Syncing..." VerticalAlignment="Bottom" HorizontalAlignment="Center" TextAlignment="Center"/>
     </StackPanel>
 </ContentDialog>

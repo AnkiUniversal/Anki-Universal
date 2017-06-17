@@ -65,8 +65,14 @@ namespace AnkiU.Views
             var deckId = collection.Deck.AllIds();
             foreach (var id in deckId)
             {
+                //Previously, AnkiU hide default deck in all cases.
+                //Since we start to support AnkiWeb, we'll have to show default deck if it has cards to review                
                 if (id == Constant.DEFAULTDECK_ID)
-                    continue;
+                {
+                    if (collection.CardCount(id) < 1)
+                        continue;
+                }
+
                 if (collection.Deck.IsDyn(id))
                     continue;
 

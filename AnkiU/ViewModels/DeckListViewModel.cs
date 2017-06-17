@@ -159,8 +159,14 @@ namespace AnkiU.ViewModels
         public void AddNewDeck(JsonObject deck)
         {
             long did = (long)JsonHelper.GetNameNumber(deck,"id");
+
+            //Previously, AnkiU hide default deck in all cases.
+            //Since we start to support AnkiWeb, we'll have to show default deck if it has cards to review                
             if (did == Constant.DEFAULTDECK_ID)
-                return;
+            {
+                if (Collection.CardCount(did) < 1)
+                    return;
+            }
 
             string name = deck.GetNamedString("name");
 
@@ -169,9 +175,14 @@ namespace AnkiU.ViewModels
 
         public void AddNewDeck(long deckId)
         {
+            //Previously, AnkiU hide default deck in all cases.
+            //Since we start to support AnkiWeb, we'll have to show default deck if it has cards to review                
             if (deckId == Constant.DEFAULTDECK_ID)
-                return;
-            
+            {
+                if (Collection.CardCount(deckId) < 1)
+                    return;
+            }
+
             string name = Collection.Deck.GetDeckName(deckId);
 
             AddNewDeckAndCardCount(deckId, name);

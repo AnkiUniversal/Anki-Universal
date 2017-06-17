@@ -74,7 +74,7 @@ namespace AnkiU.ViewModels
                 Options.MaxTaken = (int)JsonHelper.GetNameNumber(Config,"maxTaken");
 
                 //python ver use number instead of bool
-                var isTimer = Config.GetNamedNumber("timer", 0);
+                var isTimer = JsonHelper.GetNameNumber(Config,"timer", 0);
                 if (isTimer > 0)
                     Options.ShowTimer = true;
                 else

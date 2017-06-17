@@ -214,7 +214,7 @@ namespace TestAnkiCore
             // In java ver exception is throw to ask outer code to handle user's choice
             // of whether to do a full sync or not.
             // Here we use event 
-            colClient.ConfirmModSchemaEvent += () => { return; };
+            colClient.ConfirmModSchemaEvent += () => { return true; };
 
             colClient.Models.Remove(cm);
             colClient.Save();

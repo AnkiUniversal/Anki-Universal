@@ -115,7 +115,7 @@ namespace AnkiU.AnkiCore
         public long Ls { get { return ls; } set { ls = value; } }
         public JsonObject Conf { get { return conf; } set { conf = value; } }
 
-        public delegate void ConfirmModSchema();
+        public delegate bool ConfirmModSchema();
         public event ConfirmModSchema ConfirmModSchemaEvent;
 
         /// <summary>
@@ -421,7 +421,7 @@ namespace AnkiU.AnkiCore
         /// be safely ignored, and the outer code called again.
         /// </summary>
         /// <param name="check"></param>
-        public void ModSchema(bool check = true)
+        public bool ModSchema(bool check = true)
         {
             if (!IsSchemaChanged())
             {
@@ -433,11 +433,15 @@ namespace AnkiU.AnkiCore
                     if (ConfirmModSchemaEvent == null)
                         throw new ConfirmModSchemaException();
                     else
-                        ConfirmModSchemaEvent();
+                    {
+                        if (!ConfirmModSchemaEvent())
+                            return false;
+                    }
                 }
             }
             scm = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             SetIsModified();
+            return true;
         }
 
         public bool IsSchemaChanged()
@@ -469,7 +473,7 @@ namespace AnkiU.AnkiCore
         public int NextID(string type)
         {
             type = "next" + Char.ToUpper(type[0]) + type.Substring(1);
-            int id = (int)conf.GetNamedNumber(type, 1);
+            int id = (int)JsonHelper.GetNameNumber(conf, type, 1);
             conf[type] = JsonValue.CreateNumberValue(id + 1);
             return id;
         }
@@ -634,7 +638,7 @@ namespace AnkiU.AnkiCore
             }
             else
             {
-                card.DeckId = (long)note.Model.GetNamedNumber("did", 0);
+                card.DeckId = (long)JsonHelper.GetNameNumber(note.Model,"did", 0);
             }
             
             // if invalid did, use default instead

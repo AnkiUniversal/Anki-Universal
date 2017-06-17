@@ -768,8 +768,10 @@ namespace AnkiU.AnkiCore
         public void RemoveConfiguration(long id) 
         {
             Debug.Assert(id != 1);
-            
-            collection.ModSchema(true);
+
+            if (!(collection.ModSchema(true)))
+                return;
+
             deckConf.Remove(id);
             foreach (JsonObject g in All())
             {

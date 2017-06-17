@@ -394,11 +394,14 @@ namespace AnkiU.Pages
             if (deckIdValue.ValueType != JsonValueType.Null)
             {
                 var deckId = (long)deckIdValue.GetNumber();
-                if (deckId != Constant.DEFAULTDECK_ID && collection.Deck.HasDeckId(deckId))
+                if (collection.Deck.HasDeckId(deckId))
                 {
-                    var deckName = collection.Deck.GetDeckName(deckId);
-                    await UIHelper.ShowMessageDialog("Unable to delete. This note type is used by deck " + deckName + ".");
-                    return;
+                    if (deckId != Constant.DEFAULTDECK_ID || collection.CardCount(Constant.DEFAULTDECK_ID) > 0)
+                    {
+                        var deckName = collection.Deck.GetDeckName(deckId);
+                        await UIHelper.ShowMessageDialog("Unable to delete. This note type is currently used by deck " + deckName + ".");
+                        return;
+                    }
                 }
             }
 

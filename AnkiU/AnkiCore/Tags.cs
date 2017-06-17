@@ -320,7 +320,8 @@ namespace AnkiU.AnkiCore
 
         public void BeforeUpload()
         {
-            foreach (string k in this.tags.Keys)
+            var keys = this.tags.Keys.ToArray();
+            foreach (string k in keys)
             {
                 this.tags[k] = JsonValue.CreateNumberValue(0);
             }

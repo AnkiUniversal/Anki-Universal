@@ -26,9 +26,13 @@ namespace AnkiU.AnkiCore
 {
     public class JsonHelper
     {
-        public static double GetNameNumber(JsonObject jobject, String name)
+        public static double GetNameNumber(JsonObject jobject, String name, double? defaultValue = null)
         {
-            var idValue = jobject.GetNamedValue(name);
+            JsonValue idValue;
+            if(defaultValue == null)
+                idValue = jobject.GetNamedValue(name);
+            else
+                idValue = jobject.GetNamedValue(name, JsonValue.CreateNumberValue((double)defaultValue));
             double number;
             if (idValue.ValueType == JsonValueType.Number)
                 number = idValue.GetNumber();

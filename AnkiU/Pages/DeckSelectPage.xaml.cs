@@ -801,6 +801,10 @@ namespace AnkiU.Pages
 
         private async void ConfigureFlyoutDeleteButtonClick(object sender, RoutedEventArgs e)
         {
+            var isContinue = await MainPage.WarnFullSyncIfNeeded();
+            if (!isContinue)
+                return;
+
             string content = "Delete this preset will revert all decks using it to Default.\n" +
                              "Are you sure you want to continue?";
             bool isDelete = await ShowYesNoMessageDialog(content);

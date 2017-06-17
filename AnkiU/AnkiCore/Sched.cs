@@ -1530,7 +1530,7 @@ namespace AnkiU.AnkiCore
         private int ConstrainedInterval(int ivl, JsonObject conf, double prev)
         {
             double newIvl = ivl;
-            newIvl = ivl * conf.GetNamedNumber("ivlFct", 1.0);
+            newIvl = ivl * JsonHelper.GetNameNumber(conf, "ivlFct", 1.0);
             return (int)Math.Max(newIvl, prev + 1);
         }
 
@@ -1889,7 +1889,7 @@ namespace AnkiU.AnkiCore
                 Update(deck);
             }
             // unbury if the day has rolled over
-            int unburied = (int)collection.Conf.GetNamedNumber("lastUnburied", 0);
+            int unburied = (int)JsonHelper.GetNameNumber(collection.Conf,"lastUnburied", 0);
             if (unburied < today)
             {
                 UnburyCards();

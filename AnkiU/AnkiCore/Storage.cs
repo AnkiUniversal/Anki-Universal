@@ -287,7 +287,7 @@ namespace AnkiU.AnkiCore
                 foreach (JsonObject c in col.Deck.AllConf())
                 {
                     JsonObject r = c.GetNamedObject("rev");
-                    r["ivlFct"] = JsonValue.CreateNumberValue(r.GetNamedNumber("ivlFct", 1));
+                    r["ivlFct"] = JsonValue.CreateNumberValue(JsonHelper.GetNameNumber(r,"ivlFct", 1));
                     if (r.ContainsKey("ivlfct"))
                     {
                         r.Remove("ivlfct");

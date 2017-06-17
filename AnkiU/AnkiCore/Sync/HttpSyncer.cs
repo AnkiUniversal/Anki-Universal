@@ -169,17 +169,42 @@ namespace AnkiU.AnkiCore.Sync
             }
             catch (UnknownHttpResponseException ex)
             {
-                string message = HttpRequestExceptionHandler((int)ex.ResponseCode, ex);
+                string message = HttpRequestExceptionHandler(ex);
                 throw new HttpSyncerException(message);
             }            
             catch (Exception ex)
             {
-                string message = HttpRequestExceptionHandler(ex.HResult, ex);
+                string message = HttpClientExceptionHandler(ex.HResult, ex);
                 throw new HttpSyncerException(message);
             }
         }
 
-        public static string HttpRequestExceptionHandler(int code, Exception ex)
+        public static string HttpRequestExceptionHandler(UnknownHttpResponseException ex)
+        {
+            var error = ex.ResponseCode;            
+            if (error == HttpStatusCode.RequestTimeout)
+                return "The connection to AnkiWeb timed out. Please check your network connection and try again.";
+            else if (error == HttpStatusCode.InternalServerError)
+                return "AnkiWeb encountered an error. Please try again in a few minutes, and if the problem persists, please file a bug report.";
+            else if (error == HttpStatusCode.NotImplemented)
+                return "Please upgrade to the latest version of Anki.";
+            else if (error == HttpStatusCode.BadGateway)
+                return "AnkiWeb is under maintenance. Please try again in a few minutes.";
+            else if (error == HttpStatusCode.ServiceUnavailable)
+                return "AnkiWeb is too busy at the moment. Please try again in a few minutes.";
+            else if (error == HttpStatusCode.GatewayTimeout)
+                return "504 gateway timeout error received. Please try temporarily disabling your antivirus.";
+            else if (error == HttpStatusCode.Conflict)
+                return "Only one client can access AnkiWeb at a time. If a previous sync failed, please try again in a few minutes.";
+            else if (error == HttpStatusCode.ProxyAuthenticationRequired)
+                return "Proxy authentication required.";
+            else if (error == HttpStatusCode.RequestEntityTooLarge)
+                return "Your collection or a media file is too large to sync.";
+            else
+                return String.Format("Unknown Response Code: {0:X}! {1}", ex.ResponseCode, ex.Message);
+        }
+
+        public static string HttpClientExceptionHandler(int code, Exception ex)
         {
             WebErrorStatus error = WebError.GetStatus(code);
             if (error == WebErrorStatus.CannotConnect
@@ -208,7 +233,7 @@ namespace AnkiU.AnkiCore.Sync
             else if (error == WebErrorStatus.RequestEntityTooLarge)
                 return "Your collection or a media file is too large to sync.";
             else
-                return String.Format("Error Code:{0:X}. {1}", ex.HResult, ex.Message);
+                return String.Format("Error Code: {0:X}! {1}", ex.HResult, ex.Message);
         }
 
         public void WriteToFile(Stream source, string destination)

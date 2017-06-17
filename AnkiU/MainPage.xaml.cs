@@ -187,7 +187,21 @@ namespace AnkiU
         public const string UNDO_LIMIT_REACHED_STRING = "Undo Limit Reached.";
         private const string NLP_JDICT_PKG_NAME = "36558AnkiUniversal.NLPJapaneseDictionary_qh2hfqm01f5q4";
 
-        public Collection Collection { get; set; }
+        private Collection collection;
+        public Collection Collection
+        {
+            get
+            {
+                return collection;
+            }
+            set
+            {
+                collection = value;
+                //Make sure we notify users about full sync
+                collection.ConfirmModSchemaEvent -= OnCollectionConfirmModSchemaEvent;
+                collection.ConfirmModSchemaEvent += OnCollectionConfirmModSchemaEvent;
+            }
+        }
 
         public static DB UserPrefDatabase { get; set; }        
         public static GeneralPreference UserPrefs { get; set; }
@@ -2250,6 +2264,8 @@ namespace AnkiU
                 return true;
 
             var isContinue = await UIHelper.AskUserConfirmation(UIConst.WARN_FULLSYNC);
+            if(isContinue)
+                UserPrefs.IsFullSyncRequire = true;
             return isContinue;
         }
 
@@ -2513,6 +2529,14 @@ namespace AnkiU
             options.TargetApplicationPackageFamilyName = NLP_JDICT_PKG_NAME;
             Uri uri = new Uri("com.ankiuniversal.nlpjdict:");
             await Windows.System.Launcher.LaunchUriAsync(uri, options);
+        }
+
+        private bool OnCollectionConfirmModSchemaEvent()
+        {
+            if (UserPrefs.IsFullSyncRequire)
+                return true;
+
+            throw new Exception("Faild to notify full sync.");         
         }
     }   
 

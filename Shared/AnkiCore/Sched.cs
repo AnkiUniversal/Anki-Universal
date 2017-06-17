@@ -943,7 +943,7 @@ namespace Shared.AnkiCore
         private int ConstrainedInterval(int ivl, JsonObject conf, double prev)
         {
             double newIvl = ivl;
-            newIvl = ivl * conf.GetNamedNumber("ivlFct", 1.0);
+            newIvl = ivl * JsonHelper.GetNameNumber(conf, "ivlFct", 1.0);
             return (int)Math.Max(newIvl, prev + 1);
         }
 

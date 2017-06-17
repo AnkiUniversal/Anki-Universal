@@ -204,7 +204,7 @@ namespace Shared.AnkiCore
         public int NextID(string type)
         {
             type = "next" + Char.ToUpper(type[0]) + type.Substring(1);
-            int id = (int)conf.GetNamedNumber(type, 1);
+            int id = (int)JsonHelper.GetNameNumber(conf,type, 1);
             conf[type] = JsonValue.CreateNumberValue(id + 1);
             return id;
         }

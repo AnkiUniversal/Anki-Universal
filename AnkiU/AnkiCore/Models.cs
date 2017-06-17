@@ -303,7 +303,7 @@ namespace AnkiU.AnkiCore
         {
             //Since value is type long, -1 is used to mark as not found
             //We can not use null due to API restriction 
-            double mid = jObj.GetNamedNumber(name, -1);
+            double mid = JsonHelper.GetNameNumber(jObj,name, -1);
             if (mid != -1)
                 return Get((long)mid);
 
@@ -397,7 +397,8 @@ namespace AnkiU.AnkiCore
         /// <returns>Throw ConfirmModSchemaException.</returns>
         public void Remove(JsonObject m, bool forDeck = true)
         {
-            collection.ModSchema(true);
+            if (!(collection.ModSchema(true)))
+                return;
             double id = JsonHelper.GetNameNumber(m,"id");
             bool current = JsonHelper.GetNameNumber(GetCurrent(forDeck),"id") == id;
             string idStr = id.ToString();
@@ -573,7 +574,8 @@ namespace AnkiU.AnkiCore
 
         public void SetSortIdx(JsonObject model, int idx)
         {
-            collection.ModSchema(true);
+            if (!(collection.ModSchema(true)))
+                return;
             model["sortf"] = JsonValue.CreateNumberValue(idx);
             collection.UpdateFieldCache((NoteIds(model).ToArray()));
             Save(model);
@@ -582,8 +584,11 @@ namespace AnkiU.AnkiCore
         public void AddField(JsonObject model, JsonObject field)
         {
             // only mod schema if model isn't new
-            if (JsonHelper.GetNameNumber(model,"id") != 0)
-                collection.ModSchema(true);
+            if (JsonHelper.GetNameNumber(model, "id") != 0)
+            {
+                if (!(collection.ModSchema(true)))
+                    return;
+            }
 
             JsonArray ja = model.GetNamedArray("flds");
             ja.Add(field);
@@ -629,7 +634,8 @@ namespace AnkiU.AnkiCore
 
         public void RemoveField(JsonObject model, JsonObject field)
         {
-            collection.ModSchema(true);
+            if (!(collection.ModSchema(true)))
+                return;
             JsonArray ja = model.GetNamedArray("flds");
             JsonArray ja2 = new JsonArray();
             int idx = -1;
@@ -670,7 +676,8 @@ namespace AnkiU.AnkiCore
 
         public void RenameField(JsonObject model, JsonObject field, string newName)
         {
-            collection.ModSchema(true);
+            if (!(collection.ModSchema(true)))
+                return;
             string pattern = String.Format("\\{{\\{{([^{{}}]*)([:#^/]|[^:#/^}}][^:}}]*?:|){0}\\}}\\}}",
                                                 Regex.Escape(field.GetNamedString("name")));
 
@@ -713,7 +720,9 @@ namespace AnkiU.AnkiCore
 
         public void MoveField(JsonObject m, JsonObject field, int idx)
         {
-            collection.ModSchema(true);
+            if (!(collection.ModSchema(true)))
+                return;
+
             JsonArray ja = m.GetNamedArray("flds");
             List<JsonObject> l = new List<JsonObject>();
             int oldidx = -1;
@@ -775,9 +784,12 @@ namespace AnkiU.AnkiCore
         /// <param name="template"></param>
         public void AddTemplate(JsonObject m, JsonObject template) 
         {
-            if (JsonHelper.GetNameNumber(m,"id") != 0)
-                collection.ModSchema(true);
-            
+            if (JsonHelper.GetNameNumber(m, "id") != 0)
+            {
+                if (!(collection.ModSchema(true)))
+                    return;
+            }
+
             JsonArray ja = m.GetNamedArray("tmpls");
             ja.Add(template);
             m["tmpls"] = ja;
@@ -830,7 +842,9 @@ namespace AnkiU.AnkiCore
                 return false;
 
             // Ok to proceed; remove cards
-            collection.ModSchema(true);
+            if (!(collection.ModSchema(true)))
+                return false;
+
             collection.RemoveCardsAndNoteIfNoCardsLeft(cids);
             sql = "update cards set ord = ord - 1, usn = ?, mod = ? where nid in (select id from notes where mid = ?) and ord > ?";
             object[] arrayObject = new object[] { collection.Usn, DateTimeOffset.Now.ToUnixTimeSeconds(), (long)JsonHelper.GetNameNumber(model,"id"), ord };
@@ -908,7 +922,8 @@ namespace AnkiU.AnkiCore
         /// <param name="cmap">for switching cards. This is ord->ord and there should not be duplicate targets</param>
         public void Change(JsonObject m, long[] nids, JsonObject newModel, Dictionary<int, int?> fmap, Dictionary<int, int?> cmap)
         {
-            collection.ModSchema(true);
+            if (!(collection.ModSchema(true)))
+                return;
 
             Debug.Assert(JsonHelper.GetNameNumber(newModel,"id") == JsonHelper.GetNameNumber(m,"id") 
                 || (fmap != null && cmap != null));

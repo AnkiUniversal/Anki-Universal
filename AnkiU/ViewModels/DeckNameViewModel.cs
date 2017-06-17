@@ -42,14 +42,20 @@ namespace AnkiU.ViewModels
             foreach (var deck in deckList)
             {
                 long did = (long)JsonHelper.GetNameNumber(deck,"id");
+                //Previously, AnkiU hide default deck in all cases.
+                //Since we start to support AnkiWeb, we'll have to show default deck if it has cards to review                
                 if (did == Constant.DEFAULTDECK_ID)
-                    continue;
+                {
+                    if (collection.CardCount(did) < 1)
+                        continue;
+                }
+
                 string name = deck.GetNamedString("name");
 
                 bool isDynamic = collection.Deck.IsDyn(did);
                 if (!isIncludeDynamicDeck && isDynamic)
                     continue;
-
+                
                 temp.Add(new DeckInformation(name, 0, 0, did, isDynamic));
             }
             temp.Sort((a, b) =>

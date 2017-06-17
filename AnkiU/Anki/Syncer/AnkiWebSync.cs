@@ -117,17 +117,21 @@ namespace AnkiU.Anki.Syncer
                 else if (results[0] == "fullSync")
                 {
                     await ConfirmAndStartFullSync();
+                    MainPage.UserPrefs.IsFullSyncRequire = false;
                     return;
                 }
                 else if (results[0] == "noChanges" || results[0] == "success")
                 {
                     syncStateDialog.Label = "Finished.";
                     syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
-                    if (results[0] == "success")                    
+                    if (results[0] == "success")
+                    {                        
                         await ReOpenAndNavigateToDeckSelectPage();
+                    }
                     else
                         await Task.Delay(250);
 
+                    MainPage.UserPrefs.IsFullSyncRequire = false;
                     await WaitForCloseSyncStateDialog();
                     return;
                 }                
@@ -166,8 +170,8 @@ namespace AnkiU.Anki.Syncer
             var fullSyncclient = new FullSyncer(mainPage.Collection, hostKey);
             ThreeOptionsDialog dialog = new ThreeOptionsDialog();
             dialog.Title = "Full Sync Direction";
-            dialog.Message = "Your collection has been modified in a way that the app needs to override the whole collection.\n"                            
-                            + "\"Download\" will download the collection from the sever and replace your current one. Unsynced changes on your current collection will be lost.\n"
+            dialog.Message = "Your collection has been modified in a way that the app needs to override the whole collection.\n\n"                            
+                            + "\"Download\" will download the collection from the sever and replace your current one. Unsynced changes on your current collection will be lost.\n\n"
                             + "\"Upload\" will upload your current collection to the server. Unsynced changes on OTHER devices will be lost.";
             dialog.LeftButton.Content = "Download";
             dialog.MiddleButton.Content = "Upload";
@@ -175,14 +179,14 @@ namespace AnkiU.Anki.Syncer
             await dialog.WaitForDialogClosed();
             if (dialog.IsLeftButtonClick())
             {
-                syncStateDialog.Label = "Downloading full collection database...";
+                syncStateDialog.Label = "Downloading full database...";
                 syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
                 await fullSyncclient.Download();
                 await ReOpenAndNavigateToDeckSelectPage();
             }
             else if (dialog.IsMiddleButtonClick())
             {
-                syncStateDialog.Label = "Uploading full collection database...";
+                syncStateDialog.Label = "Uploading full database...";
                 syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
                 await fullSyncclient.Upload();
             }

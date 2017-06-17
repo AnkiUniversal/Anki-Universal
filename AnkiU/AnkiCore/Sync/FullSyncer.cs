@@ -128,11 +128,16 @@ namespace AnkiU.AnkiCore.Sync
             {
                 throw new Exception("Local database error: Basic check failed!");
             }
+
+            StorageFolder tempFolder = null;
             try
             {
                 // apply some adjustments, then upload
                 collection.BeforeUpload();
-                string filePath = Storage.AppLocalFolder.Path + "\\" + collection.RelativePath;
+                tempFolder = await Storage.AppLocalFolder.CreateFolderAsync("tempAnkiUpload");
+                var collectionFile = await Storage.AppLocalFolder.GetFileAsync(Constant.COLLECTION_NAME);
+                await collectionFile.CopyAsync(tempFolder, collectionFile.Name, NameCollisionOption.ReplaceExisting);
+                string filePath = tempFolder.Path + "\\" + collectionFile.Name;
                 HttpResponseMessage ret;
                 using (FileStream stream = new FileStream(filePath, FileMode.Open))
                 {
@@ -154,7 +159,12 @@ namespace AnkiU.AnkiCore.Sync
             }
             finally
             {
-                collection.ReOpen();
+                if (tempFolder != null)
+                {                    
+                    await tempFolder.DeleteAsync();
+                    tempFolder = null;
+                }
+                collection.ReOpen();                
             }
         }
 
