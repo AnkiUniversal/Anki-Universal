@@ -80,8 +80,7 @@ namespace AnkiU.AnkiCore.Sync
             {
                 return new string[] { "badAuth" };
             }
-
-            collection.Database.BeginTransaction();
+   
             string transactionSave = collection.Database.SaveTransactionPoint();
             try
             {
@@ -202,13 +201,18 @@ namespace AnkiU.AnkiCore.Sync
                 Finish(timeModified);
                 result = new string[] { "success" };
             }
+            catch(HttpSyncerException ex)
+            {
+                collection.Database.RollbackTo(transactionSave);
+                throw ex;
+            }
             catch(Exception e)
             {
                 collection.Database.RollbackTo(transactionSave);
                 throw new Exception("Sync failed!", e);
             }
             finally
-            {
+            {                
                 collection.Database.Commit();                
             }
 
@@ -406,12 +410,14 @@ namespace AnkiU.AnkiCore.Sync
             JsonArray confs = rchg.GetArrayAt(1);
             for (uint i = 0; i < confs.Count; i++)
             {
-                JsonObject r = confs.GetObjectAt(i);
-                JsonObject l = collection.Deck.DeckConf[(int)JsonHelper.GetNameNumber(r,"id")];
+                JsonObject rightConf = confs.GetObjectAt(i);
+                var confId = (int)JsonHelper.GetNameNumber(rightConf, "id");
+                JsonObject leftConf = null;
+                var isSuccess = collection.Deck.DeckConf.TryGetValue((int)JsonHelper.GetNameNumber(rightConf,"id"), out leftConf);
                 // if missing locally or server is newer, update
-                if (l == null || JsonHelper.GetNameNumber(r,"mod") > JsonHelper.GetNameNumber(l,"mod"))
+                if (!isSuccess || leftConf == null || JsonHelper.GetNameNumber(rightConf,"mod") > JsonHelper.GetNameNumber(leftConf,"mod"))
                 {
-                    collection.Deck.UpdateConf(r);
+                    collection.Deck.UpdateConf(rightConf);
                 }
             }
         }
