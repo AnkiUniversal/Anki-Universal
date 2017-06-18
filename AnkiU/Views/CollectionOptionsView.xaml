@@ -47,8 +47,8 @@
                     Background="Transparent"
                     Foreground="{Binding Foreground, ElementName=userControl}" SelectedIndex="{x:Bind Options.ReviewType, Mode=TwoWay}" >
             <TextBlock Text="Mix new and review cards" TextAlignment="Left"/>
-            <TextBlock Text="Show new cards before review cards" TextAlignment="Left"/>
             <TextBlock Text="Show new cards after review cards" TextAlignment="Left"/>
+            <TextBlock Text="Show new cards before review cards" TextAlignment="Left"/>
         </ComboBox>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Play TTS automatically" VerticalAlignment="Center" HorizontalAlignment="Right"/>

@@ -2364,14 +2364,15 @@ namespace AnkiU
             if (UserPrefs.SyncService == SettingPage.SYNC_ONEDRIVE)
             {
                 if (sync == null || !(sync is FullSync))
-                    sync = new FullSync(this, new OneDriveSync());                
+                    sync = new FullSync(this, new OneDriveSync());
+
+                await sync.StartSync();
             }
             else
-            {
-                if(sync == null || !(sync is AnkiWebSync))
-                    sync = new AnkiWebSync(this);                
-            }
-            await sync.StartSync();
+            {                
+                var ankiWebSync = new AnkiWebSync(this);
+                await ankiWebSync.StartSync();
+            }         
         }
 
         public void DeckImageChangedEventFire(StorageFile fileToChange, long deckId, long modifiedTime)

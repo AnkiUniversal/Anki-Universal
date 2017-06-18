@@ -83,9 +83,9 @@ namespace AnkiU.Models
                     case 1:
                         reviewType = AnkiCore.ReviewType.LAST;
                         break;
-                    case 2:
+                    case 2:                        
                         reviewType = AnkiCore.ReviewType.FIRST;
-                        break;                    
+                        break;
                     default:
                         reviewType = AnkiCore.ReviewType.DISTRIBUTE;
                         break;

@@ -56,25 +56,10 @@ namespace AnkiU.AnkiCore.Sync
             if (ret == null)
                 return null;
 
-            var content = ret.Content;
-            string relativePath;
-            if (collection != null)
-            {
-                // Usual case where collection is non-null
-                relativePath = collection.RelativePath;
-                collection.Close();
-                collection = null;
-            }
-            else
-            {
-                // Different with java ver we thrwo exception here
-                // instead of trying to access it
-                throw new Exception("Can not open collection!");
-            }
-
             try
             {
-                string tempRelativePath = relativePath + ".tmp";                
+                var content = ret.Content;
+                string tempRelativePath = collection.RelativePath + ".tmp";
                 WriteToFile((await content.ReadAsInputStreamAsync()).AsStreamForRead(), tempRelativePath);
                 string fullPath = Storage.AppLocalFolder.Path + "\\" + tempRelativePath;
                 using (FileStream fis = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
@@ -92,21 +77,31 @@ namespace AnkiU.AnkiCore.Sync
                         return new object[] { "remoteDbError" };
                 }
 
-                await OverWriteCollection(relativePath, tempRelativePath);
+                collection.Close(false);
+                await OverWriteCollection(collection.RelativePath, tempRelativePath);
                 return new object[] { "success" };
             }
             catch (SQLite.Net.SQLiteException)
             {
-                throw new Exception("The downloaded database is corrupted!" );
+                collection.ReOpen();
+                throw new Exception("The downloaded database is corrupted!");
             }
-            catch(FieldAccessException ex)
+            catch (FieldAccessException)
             {
-                throw new Exception("Failed to overwrite collection: " + ex.Message);
-            }                        
+                collection.ReOpen();
+                throw new FieldAccessException("Failed to overwrite collection! Please try closing then opening the app again to sync your data." );
+            }                       
+            catch(Exception ex)
+            {
+                collection.ReOpen();
+                throw ex;
+            }
         }
 
         private static async Task OverWriteCollection(string relativePath, string tempRelativePath)
         {
+            //Do a gabage collection here to realease all resource
+            GC.Collect();
             StorageFile oldFile = await Storage.AppLocalFolder.GetFileAsync(relativePath);
             if (oldFile != null)
                 await oldFile.DeleteAsync();

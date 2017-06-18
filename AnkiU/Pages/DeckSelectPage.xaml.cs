@@ -834,6 +834,12 @@ namespace AnkiU.Pages
         private async void MenuFlyoutDeleteClickHandler(object sender, RoutedEventArgs e)
         {
             var deckId = deckShowContextMenu.Id;
+            if(deckId == Constant.DEFAULTDECK_ID)
+            {
+                await UIHelper.ShowMessageDialog("Default deck cannot be deleted.");
+                return;
+            }
+
             var cardCount = collection.CardCount(deckId);
             string content;
             Dictionary<string, long> childs = null;
@@ -933,6 +939,12 @@ namespace AnkiU.Pages
             if (childs != null)
                 foreach (var deck in childs)
                 {
+                    if (deck.Value == Constant.DEFAULTDECK_ID)
+                    {
+                        var defaultDeck = deckListViewModel.GetDeck(Constant.DEFAULTDECK_ID);
+                        deckListViewModel.UpdateDeckName(defaultDeck);
+                        continue;
+                    }
                     await RemoveMediaAndView(deck.Value);
                     MainPage.RemoveDeckPrefsIfNeeded(deck.Value);
                 }

@@ -154,6 +154,10 @@ namespace AnkiU.Anki.Syncer
             {
                 await UIHelper.ShowMessageDialog(ex.Message);
             }
+            catch(FieldAccessException ex)
+            {
+                await UIHelper.ShowMessageDialog(ex.Message);
+            }
             catch(Exception ex)
             {
                 await UIHelper.ShowMessageDialog(ex.Message + "\n" + ex.StackTrace);
@@ -179,21 +183,32 @@ namespace AnkiU.Anki.Syncer
             await dialog.WaitForDialogClosed();
             if (dialog.IsLeftButtonClick())
             {
-                syncStateDialog.Label = "Downloading full database...";
-                syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
-                await fullSyncclient.Download();
-                await ReOpenAndNavigateToDeckSelectPage();
+                await MainPage.BackupDatabase();
+                await DownloadFullDatabase(fullSyncclient);
             }
             else if (dialog.IsMiddleButtonClick())
             {
-                syncStateDialog.Label = "Uploading full database...";
-                syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
-                await fullSyncclient.Upload();
+                await UploadFullDatabase(fullSyncclient);
             }
 
             syncStateDialog.Label = "Finished.";
             await Task.Delay(250);
             await WaitForCloseSyncStateDialog();
+        }
+
+        private async Task DownloadFullDatabase(FullSyncer fullSyncclient)
+        {            
+            syncStateDialog.Label = "Downloading full database...";
+            syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
+            await fullSyncclient.Download();
+            await ReOpenAndNavigateToDeckSelectPage();
+        }
+
+        private async Task UploadFullDatabase(FullSyncer fullSyncclient)
+        {
+            syncStateDialog.Label = "Uploading full database...";
+            syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
+            await fullSyncclient.Upload();
         }
 
         private async Task ReOpenAndNavigateToDeckSelectPage()
