@@ -389,22 +389,6 @@ namespace AnkiU.Pages
 
         private async void DeleteModelButtonClickHandler(object sender, RoutedEventArgs e)
         {
-            //python ver sometime uses null for no deck. So we have to take if it's null or not first
-            var deckIdValue = currentModel.GetNamedValue("did", JsonValue.CreateNullValue());
-            if (deckIdValue.ValueType != JsonValueType.Null)
-            {
-                var deckId = (long)deckIdValue.GetNumber();
-                if (collection.Deck.HasDeckId(deckId))
-                {
-                    if (deckId != Constant.DEFAULTDECK_ID || collection.CardCount(Constant.DEFAULTDECK_ID) > 0)
-                    {
-                        var deckName = collection.Deck.GetDeckName(deckId);
-                        await UIHelper.ShowMessageDialog("Unable to delete. This note type is currently used by deck " + deckName + ".");
-                        return;
-                    }
-                }
-            }
-
             var noteCounts = collection.Models.NoteUseCount(currentModel);
             if (noteCounts != 0)
             {
