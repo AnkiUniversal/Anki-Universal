@@ -366,8 +366,8 @@ namespace AnkiU.AnkiCore
                     if (database != null)
                     {
                         if (save)
-                        {
-                            database.RunInTransaction(() =>
+                        {                           
+                           database.RunInTransaction(() =>
                            {
                                Save();
                                // Both java and python differs with each other

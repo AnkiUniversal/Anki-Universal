@@ -38,7 +38,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Margin="1,0,0,3" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="NAME" FontSize="18" />
                         <TextBox Margin="10,0,15,2" Grid.Column="1" VerticalAlignment="Center" 
-                                 x:Name="currentNameSimpleView"
+                                 x:Name="currentNameSimpleView" IsSpellCheckEnabled="False"
                                  Foreground="{Binding Foreground, ElementName=userControl}"
                                  HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="18"                          
                                  Text="{x:Bind CurrentName, Mode=TwoWay}"/>
@@ -61,7 +61,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="tabTitle" Foreground="{Binding Foreground, ElementName=userControl}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="NAME" FontSize="18" />
                             <TextBox x:Name="currentNameExpertView" Margin="10,0,15,0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="18"  Foreground="{Binding Foreground, ElementName=userControl}"  
-                                Text="{x:Bind CurrentName, Mode=TwoWay}"/>
+                                Text="{x:Bind CurrentName, Mode=TwoWay}" IsSpellCheckEnabled="False"/>
                         </Grid>
                     </Pivot.Title>
                     <PivotItem x:Name="generalTab"  Background="{Binding Background, ElementName=simpleConfigView}" Padding="0" Margin="0" >

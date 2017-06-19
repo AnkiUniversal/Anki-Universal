@@ -26,7 +26,7 @@ using System.IO;
 using System.IO.Compression;
 
 namespace AnkiU.AnkiCore.Sync
-{
+{    
     public class RemoteMediaServer : HttpSyncer
     {
         private Collection collection;

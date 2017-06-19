@@ -15,11 +15,14 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using AnkiU.AnkiCore.Sync;
+using AnkiU.UIUtilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -34,50 +37,132 @@ namespace AnkiU.UserControls
 {
     public sealed partial class AnkiWebLogin : ContentDialog
     {
-        public string UserName { get; private set; } = null;
-        public string PassWord { get; private set; } = null;
+        public const string VAULT_RESOURCE = "AnkiUniversal";
+        public const string VAULT_USERNAME = "AnkiWeb";
 
-        public bool IsValidInput { get; private set; }
-        public bool IsUserCancel { get; private set; }
+        private string userName;
+        private string passWord;
+
+        private bool isLoginSuccess;
+        private bool isValidInput;
+        private bool isUserCancel;       
 
         public AnkiWebLogin()
         {
             this.InitializeComponent();
         }
 
-        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        public async Task<bool> TryGetHostKeyFromUsernameAndPassword()
         {
-            if(!String.IsNullOrWhiteSpace(ankiWebIdTextBox.Text))
-                UserName = ankiWebIdTextBox.Text;
+            while (true)
+            {
+                EnableInput();
+                await ShowAsync();
+                if (isLoginSuccess)
+                    return true;
+
+                if (isUserCancel)
+                    return false;
+            }            
+        }
+
+        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            try
+            {
+                DisableInput();
+                VerifyInput();
+                if (isValidInput)
+                {
+                    ShowProgressBar();                    
+                    var server = new RemoteServer(null);
+                    var hostKey = await server.HostKey(userName, passWord);
+                    if (hostKey != null)
+                    {
+                        var vault = new Windows.Security.Credentials.PasswordVault();
+                        vault.Add(new Windows.Security.Credentials.PasswordCredential(VAULT_RESOURCE, VAULT_USERNAME, hostKey));                        
+                        isLoginSuccess = true;
+                        Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isLoginSuccess = false;
+                Close();
+                await UIHelper.ShowMessageDialog(ex.Message);
+            }            
+        }
+
+        private void VerifyInput()
+        {
+            if (!String.IsNullOrWhiteSpace(ankiWebIdTextBox.Text))
+                userName = ankiWebIdTextBox.Text;
+            else
+                userName = null;
 
             if (!String.IsNullOrWhiteSpace(passwordBox.Password))
-                PassWord = passwordBox.Password;
-
-            if (UserName == null || PassWord == null)
-                IsValidInput = false;
+                passWord = passwordBox.Password;
             else
-                IsValidInput = true;
+                passWord = null;
 
-            IsUserCancel = false;
-            this.Hide();
+            if (userName == null || passWord == null)
+                isValidInput = false;
+            else
+                isValidInput = true;
+
+            isUserCancel = false;
+        }
+
+        private void ShowProgressBar()
+        {
+            progressBar.IsEnabled = true;
+            progressBar.IsIndeterminate = true;
+            progressBar.Visibility = Visibility.Visible;
+        }
+
+        private void DisableInput()
+        {
+            ankiWebIdTextBox.IsEnabled = false;
+            passwordBox.IsEnabled = false;
         }
 
         private void OnSecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            IsValidInput = false;
-            IsUserCancel = true;
-            this.Hide();
+            isValidInput = false;
+            isUserCancel = true;
+            Close();
         }
 
         private async void OnPasswordBoxKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
+                e.Handled = true;
                 await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
                     OnPrimaryButtonClick(null, null);
                 });
             }
+        }
+
+        private void Close()
+        {
+            HideProgressBar();
+            this.Hide();
+        }
+
+        private void EnableInput()
+        {
+            ankiWebIdTextBox.IsEnabled = true;
+            passwordBox.IsEnabled = true;
+        }
+
+        private void HideProgressBar()
+        {
+            progressBar.IsIndeterminate = false;
+            progressBar.IsEnabled = false;
+            progressBar.Visibility = Visibility.Collapsed;
         }
     }
 }

@@ -84,8 +84,14 @@ namespace AnkiU.AnkiCore.Sync
                     var jObject = JsonObject.Parse(content);
                     return jObject.GetNamedString("key");
                 }
-                else if(respone.StatusCode == HttpStatusCode.Forbidden)
-                    throw new Exception("Wrong AnkiWeb ID or Password!");
+                else if (respone.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    var str = await respone.Content.ReadAsStringAsync();
+                    if (str.Contains("Too many logins"))
+                        throw new Exception("Too many logins into your account! Please try again in an hour.");
+                    else
+                        throw new Exception("Wrong AnkiWeb ID or Password!");
+                }
                 else
                     throw new Exception("Unknown respone code!");
             }

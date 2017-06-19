@@ -5,6 +5,7 @@ using AnkiU.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +21,6 @@ namespace AnkiU.Anki.Syncer
 
     public class AnkiWebSync : ISync
     {
-        private const string VAULT_RESOURCE = "AnkiUniversal";
-        private const string VAULT_USERNAME = "AnkiWeb";
-
         private MainPage mainPage;
 
         private AnkiCore.Sync.Syncer client;
@@ -40,39 +38,6 @@ namespace AnkiU.Anki.Syncer
             syncStateDialog = new SyncDialog(mainPage.CurrentDispatcher);
             syncStateDialog.Opened += SyncStateDialogOpened;
             syncStateDialog.Closed += SyncStateDialogClosed;
-        }
-
-        public static async Task<bool> TryGetHostKeyFromUsernameAndPassword()
-        {
-            string hostKey = null;
-            var loginForm = new AnkiWebLogin();
-            while (hostKey == null)
-            {
-                try
-                {                    
-                    await loginForm.ShowAsync();
-                    if (loginForm.IsValidInput)
-                    {
-                        var server = new RemoteServer(null);
-                        hostKey = await server.HostKey(loginForm.UserName, loginForm.PassWord);
-                        if (hostKey != null)
-                        {
-                            var vault = new Windows.Security.Credentials.PasswordVault();
-                            vault.Add(new Windows.Security.Credentials.PasswordCredential(VAULT_RESOURCE, VAULT_USERNAME, hostKey));
-                            return true;
-                        }
-                    }
-
-                    if (loginForm.IsUserCancel)
-                        return false;
-
-                }
-                catch (Exception ex)
-                {
-                    await UIHelper.ShowMessageDialog(ex.Message);
-                }
-            }
-            return true;
         }
 
         public async Task StartSync()
@@ -154,7 +119,7 @@ namespace AnkiU.Anki.Syncer
             {
                 await UIHelper.ShowMessageDialog(ex.Message);
             }
-            catch(FieldAccessException ex)
+            catch(FileLoadException ex)
             {
                 await UIHelper.ShowMessageDialog(ex.Message);
             }
@@ -240,7 +205,7 @@ namespace AnkiU.Anki.Syncer
             try
             {
                 var vault = new Windows.Security.Credentials.PasswordVault();
-                hostKey = vault.Retrieve(VAULT_RESOURCE, VAULT_USERNAME).Password;
+                hostKey = vault.Retrieve(AnkiWebLogin.VAULT_RESOURCE, AnkiWebLogin.VAULT_USERNAME).Password;
             }
             catch
             {

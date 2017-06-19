@@ -216,7 +216,8 @@ namespace AnkiU.Pages
             {
                 DisableMediaSync();
                 await UIHelper.ShowMessageDialog("Currently, Anki Universal does not support syncing MEDIA FILES with AnkiWeb.");
-                var isSuccess = await AnkiWebSync.TryGetHostKeyFromUsernameAndPassword();
+                var ankiwebLogin = new AnkiWebLogin();
+                var isSuccess = await ankiwebLogin.TryGetHostKeyFromUsernameAndPassword();
                 if (!isSuccess)
                     syncServiceCombobox.SelectedIndex = 0;
                 else

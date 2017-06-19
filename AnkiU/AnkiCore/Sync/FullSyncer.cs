@@ -29,7 +29,6 @@ namespace AnkiU.AnkiCore.Sync
     public class FullSyncer : HttpSyncer
     {
         Collection collection;
-
         public FullSyncer(Collection collection, string hkey) : base(hkey)
         {
             postVars = new Dictionary<string, object>();
@@ -56,12 +55,13 @@ namespace AnkiU.AnkiCore.Sync
             if (ret == null)
                 return null;
 
+            string relativePath = collection.RelativePath;
+            string tempRelativePath = relativePath + ".tmp";
+            string fullPath = Storage.AppLocalFolder.Path + "\\" + tempRelativePath;
             try
             {
-                var content = ret.Content;
-                string tempRelativePath = collection.RelativePath + ".tmp";
+                var content = ret.Content;                
                 WriteToFile((await content.ReadAsInputStreamAsync()).AsStreamForRead(), tempRelativePath);
-                string fullPath = Storage.AppLocalFolder.Path + "\\" + tempRelativePath;
                 using (FileStream fis = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
                 {
                     if (Stream2String(fis, 15).Equals("upgradeRequired"))
@@ -77,8 +77,8 @@ namespace AnkiU.AnkiCore.Sync
                         return new object[] { "remoteDbError" };
                 }
 
-                collection.Close(false);
-                await OverWriteCollection(collection.RelativePath, tempRelativePath);
+                collection.Close();
+                await OverWriteCollection(relativePath, tempRelativePath);
                 return new object[] { "success" };
             }
             catch (SQLite.Net.SQLiteException)
@@ -86,25 +86,32 @@ namespace AnkiU.AnkiCore.Sync
                 collection.ReOpen();
                 throw new Exception("The downloaded database is corrupted!");
             }
-            catch (FieldAccessException)
+            catch (FileLoadException)
             {
                 collection.ReOpen();
-                throw new FieldAccessException("Failed to overwrite collection! Please try closing then opening the app again to sync your data." );
+                throw new FileLoadException("Failed to overwrite collection! Please try closing then opening the app again to sync your data." );
             }                       
             catch(Exception ex)
             {
                 collection.ReOpen();
                 throw ex;
             }
+            finally
+            {
+                if(File.Exists(fullPath))               
+                    File.Delete(fullPath);                              
+            }
         }
 
         private static async Task OverWriteCollection(string relativePath, string tempRelativePath)
         {
-            //Do a gabage collection here to realease all resource
-            GC.Collect();
-            StorageFile oldFile = await Storage.AppLocalFolder.GetFileAsync(relativePath);
-            if (oldFile != null)
-                await oldFile.DeleteAsync();
+            string fullPath = Storage.AppLocalFolder.Path + "\\" + relativePath;
+            if (File.Exists(fullPath))
+                File.Delete(fullPath);
+
+            //StorageFile oldFile = await Storage.AppLocalFolder.GetFileAsync(relativePath);
+            //if (oldFile != null)
+            //    await oldFile.DeleteAsync();
 
             StorageFile newFile = await Storage.AppLocalFolder.GetFileAsync(tempRelativePath);
             await newFile.RenameAsync(relativePath, NameCollisionOption.ReplaceExisting);
