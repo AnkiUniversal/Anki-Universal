@@ -83,17 +83,17 @@ namespace AnkiU.AnkiCore.Sync
             }
             catch (SQLite.Net.SQLiteException)
             {
-                collection.ReOpen();
+                await collection.ReOpen();
                 throw new Exception("The downloaded database is corrupted!");
             }
             catch (FileLoadException)
             {
-                collection.ReOpen();
+                await collection.ReOpen();
                 throw new FileLoadException("Failed to overwrite collection! Please try closing then opening the app again to sync your data." );
             }                       
             catch(Exception ex)
             {
-                collection.ReOpen();
+                await collection.ReOpen();
                 throw ex;
             }
             finally
@@ -105,13 +105,9 @@ namespace AnkiU.AnkiCore.Sync
 
         private static async Task OverWriteCollection(string relativePath, string tempRelativePath)
         {
-            string fullPath = Storage.AppLocalFolder.Path + "\\" + relativePath;
-            if (File.Exists(fullPath))
-                File.Delete(fullPath);
-
-            //StorageFile oldFile = await Storage.AppLocalFolder.GetFileAsync(relativePath);
-            //if (oldFile != null)
-            //    await oldFile.DeleteAsync();
+            StorageFile oldFile = await Storage.AppLocalFolder.GetFileAsync(relativePath);
+            if (oldFile != null)
+                await oldFile.DeleteAsync();
 
             StorageFile newFile = await Storage.AppLocalFolder.GetFileAsync(tempRelativePath);
             await newFile.RenameAsync(relativePath, NameCollisionOption.ReplaceExisting);
@@ -166,7 +162,7 @@ namespace AnkiU.AnkiCore.Sync
                     await tempFolder.DeleteAsync();
                     tempFolder = null;
                 }
-                collection.ReOpen();                
+                await collection.ReOpen();                
             }
         }
 

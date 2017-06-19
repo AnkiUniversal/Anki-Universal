@@ -64,11 +64,6 @@ namespace AnkiU.Anki.Syncer
                     await UIHelper.ShowMessageDialog("AnkiWeb ID or password was incorrect. Please try to log in again.");
                     return;
                 }
-                else if(results[0] == "clockOff")
-                {
-                    await UIHelper.ShowMessageDialog("Syncing requires the clock on your computer to be set correctly. Please fix the clock and try again.");
-                    return;
-                }
                 else if (results[0] == "clockOff")
                 {
                     await UIHelper.ShowMessageDialog("Syncing requires the clock on your computer to be set correctly. Please fix the clock and try again.");
@@ -91,7 +86,7 @@ namespace AnkiU.Anki.Syncer
                     syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
                     if (results[0] == "success")
                     {                        
-                        await ReOpenAndNavigateToDeckSelectPage();
+                        await NavigateToDeckSelectPage();
                     }
                     else
                         await Task.Delay(250);
@@ -179,6 +174,11 @@ namespace AnkiU.Anki.Syncer
         private async Task ReOpenAndNavigateToDeckSelectPage()
         {
             mainPage.Collection = await Storage.OpenOrCreateCollection(Storage.AppLocalFolder, Constant.COLLECTION_NAME);
+            await NavigateToDeckSelectPage();
+        }
+
+        private async Task NavigateToDeckSelectPage()
+        {
             await mainPage.NavigateToDeckSelectPage();
             mainPage.ContentFrame.BackStack.RemoveAt(0);
         }

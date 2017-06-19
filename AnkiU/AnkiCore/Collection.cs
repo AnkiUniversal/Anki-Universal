@@ -112,7 +112,7 @@ namespace AnkiU.AnkiCore
         public bool IsDirty { get { return isDirty; } }
         public string RelativePath { get { return relativePath; } }
         public long TimeModified { get { return timeModified; } }
-        public long Ls { get { return ls; } set { ls = value; } }
+        public long LastSync { get { return ls; } set { ls = value; } }
         public JsonObject Conf { get { return conf; } set { conf = value; } }
 
         public delegate bool ConfirmModSchema();
@@ -394,12 +394,12 @@ namespace AnkiU.AnkiCore
             }
         }
 
-        public void ReOpen()
+        public async Task ReOpen()
         {
             if (database == null)
             {
                 database = new DB(folder.Path + "\\" + RelativePath);
-                media.ConnectDatabaseInNewThread();
+                await  media.ConnectDatabaseAsync();
                 OpenLog();
             }
         }

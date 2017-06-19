@@ -1881,7 +1881,7 @@ namespace AnkiU
                 else
                     dialog = new MessageDialog(UIConst.EXPORT_FAILED, "Error!");
 
-                Collection.ReOpen();
+                await Collection.ReOpen();
                 IsCanNavigateBack = true;
                 await dialog.ShowAsync();                
             });

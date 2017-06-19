@@ -161,7 +161,7 @@ namespace TestAnkiCore
             //Last sync times and mod times should agree
             Assert.AreEqual(colClient.TimeModified, colServer.TimeModified);
             Assert.AreEqual(colClient.GetUsnForSync, colServer.GetUsnForSync);
-            Assert.AreEqual(colClient.TimeModified, colClient.Ls);
+            Assert.AreEqual(colClient.TimeModified, colClient.LastSync);
             Assert.AreNotEqual(origUsn, colClient.GetUsnForSync);
 
             //Because everything was created separately it will be merged in. in

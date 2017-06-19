@@ -213,7 +213,7 @@ namespace AnkiU.AnkiCore.Sync
             }
             finally
             {                
-                collection.Database.Commit();                
+                collection.Database.Commit();
             }
 
             return result;
@@ -565,7 +565,7 @@ namespace AnkiU.AnkiCore.Sync
                 // server side; we decide new mod time
                 mod = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             }
-            collection.Ls = mod;
+            collection.LastSync = mod;
             collection.SetUsnAfterSync = maxUsn + 1;
             // ensure we save the mod time even if no changes made
             collection.Database.IsModified = true;
