@@ -328,10 +328,19 @@ namespace AnkiU.AnkiCore.Importer
                         var deckIdList = mediaToDeckId.FindAll((x) => (x.Key == fname.Value));
                         foreach (var did in deckIdList)
                         {
-                            archive.GetEntry(fname.Key)
-                               .ExtractToFile(deckIdFolderMap[did.Value].Path + "\\" + fname.Value, true);
+                            try
+                            {
+                                archive.GetEntry(fname.Key)
+                                   .ExtractToFile(deckIdFolderMap[did.Value].Path + "\\" + fname.Value, true);
 
-                            destCol.Media.MarkFileAddIntoDatabase(fname.Value, did.Value);
+                                destCol.Media.MarkFileAddIntoDatabase(fname.Value, did.Value);
+                            }
+                            catch(DirectoryNotFoundException)
+                            {//File name contains illegal chars of Windows. 
+                             //We can not fix this as it requires a reverse update to all notes
+                             //so just ignore this file
+
+                            }
                         }
                     }
                 });
