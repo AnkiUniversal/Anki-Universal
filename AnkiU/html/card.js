@@ -58,7 +58,7 @@ function ChangeCardContent(htmlText, cardClass) {
     while (cardcontent.firstChild) {
         cardcontent.removeChild(cardcontent.firstChild);
     }
-    cardcontent.insertAdjacentHTML('afterbegin', htmlText);    
+    cardcontent.insertAdjacentHTML('afterbegin', htmlText); 
 
     if (cardClass != null)
         cardcontent.className = cardClass;

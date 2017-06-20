@@ -33,6 +33,7 @@ var tinymceInit = {
     selector: '.card',
     body_class: 'card',
     content_css: '/html/templateeditor.css',
+    extended_valid_elements: 'script[language|type|src]',
     theme: 'modern',
     plugins: [
       'advlist autolink lists charmap hr autoresize colorpicker',
