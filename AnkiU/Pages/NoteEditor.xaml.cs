@@ -532,6 +532,9 @@ namespace AnkiU.Pages
                         case ("microphone"):
                             await AudioRecorder();
                             break;
+                        case ("paste"):
+                            await TryPasteContentFromClipboard();
+                            break;
                         case ("cloze"):
                             await AddCloze();
                             break;

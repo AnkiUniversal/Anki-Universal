@@ -269,6 +269,12 @@ function KeyPress(e) {
             return false;
         }
 
+        //v
+        if (evtobj.keyCode == 86) {
+            NotifyButtonClick('paste');
+            return false;
+        }
+
         //shift & c
         if (evtobj.keyCode == 67 && evtobj.shiftKey) {
             NotifyButtonClick('cloze');
