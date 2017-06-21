@@ -33,9 +33,11 @@ var tinymceInit = {
     selector: '.card',
     body_class: 'card',
     content_css: '/html/templateeditor.css',    
-    extended_valid_elements: 'script[language|type|src],a[class|name|href|target|title|onclick|rel]',
-    allow_script_urls: true,
-    allow_html_in_named_anchor: true,
+    extended_valid_elements: 'script[language|type|src],a[class|name|href|target|title|onclick|rel],' 
+    + 'button[accesskey|class|dir<ltr?rtl|disabled<disabled|id|lang|name|onblur'
+    + '|onclick|ondblclick|onfocus|onkeydown|onkeypress|onkeyup|onmousedown'
+    + '|onmousemove|onmouseout|onmouseover|onmouseup|style|tabindex|title|type'
+    + '|value]',
     theme: 'modern',
     plugins: [
       'advlist autolink lists charmap hr autoresize colorpicker',
