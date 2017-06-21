@@ -32,8 +32,10 @@ var toolbarNarrowScreenWidthTouch = 'undo selectallbutton removeformat stylebutt
 var tinymceInit = {
     selector: '.card',
     body_class: 'card',
-    content_css: '/html/templateeditor.css',
-    extended_valid_elements: 'script[language|type|src]',
+    content_css: '/html/templateeditor.css',    
+    extended_valid_elements: 'script[language|type|src],a[class|name|href|target|title|onclick|rel]',
+    allow_script_urls: true,
+    allow_html_in_named_anchor: true,
     theme: 'modern',
     plugins: [
       'advlist autolink lists charmap hr autoresize colorpicker',
