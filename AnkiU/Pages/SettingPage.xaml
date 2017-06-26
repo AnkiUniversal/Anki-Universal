@@ -150,6 +150,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <TextBlock Text="Sync service" TextAlignment="Right" VerticalAlignment="Center" />
@@ -159,23 +160,29 @@
                                 <ComboBoxItem Content="OneDrive" />
                                 <ComboBoxItem Content="AnkiWeb" />
                             </ComboBox>
-                            <TextBlock Text="Automatically sync on startup"   Grid.Row="1" Margin="0,0,0,3"
+                            
+                            <Button HorizontalAlignment="Left" Grid.Row="1" Margin="0,5,0,5" x:Name="ankiWebLogoutButton"
+                                    Grid.Column="3" Padding="8,0,8,0" Height="35" Width="{Binding ActualWidth, ElementName=syncServiceCombobox, Mode=OneTime}" 
+                                    Click="OnAnkiWebLogoutButtonClick"
+                                    Content="Log out" Style="{StaticResource ButtonBlue}" Visibility="Collapsed" />
+
+                            <TextBlock Text="Automatically sync on startup"   Grid.Row="2" Margin="0,0,0,3"
                                        VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                            <CheckBox Grid.Row="1" Grid.Column="2"  x:Name="syncOnOpenCheckBox"
+                            <CheckBox Grid.Row="2" Grid.Column="2"  x:Name="syncOnOpenCheckBox"
                                       VerticalAlignment="Center" HorizontalAlignment="Left"
                                       Foreground="{Binding Foreground, ElementName=userControl}" 
                                       BorderBrush="{Binding Foreground, ElementName=userControl}"
                                       IsThreeState="False"/>
                             
-                            <TextBlock Grid.Row="2" Text="Also sync media files" Margin="0,0,0,3"
+                            <TextBlock Grid.Row="3" Text="Also sync media files" Margin="0,0,0,3"
                                        VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="syncMediaCheckBox"
+                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="syncMediaCheckBox"
                                       VerticalAlignment="Center" HorizontalAlignment="Left"
                                       IsThreeState="False"
                                       Foreground="{Binding Foreground, ElementName=userControl}" 
                                       BorderBrush="{Binding Foreground, ElementName=userControl}"
                                       />
-
+                            
                         </Grid>
                     </PivotItem>
                 </Pivot>

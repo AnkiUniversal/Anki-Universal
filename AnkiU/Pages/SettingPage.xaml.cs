@@ -91,8 +91,11 @@ namespace AnkiU.Pages
                 openBackUpFolderButton.Visibility = Visibility.Collapsed;
 
             syncServiceCombobox.SelectedIndex = MainPage.UserPrefs.SyncService;
-            if(MainPage.UserPrefs.SyncService == SYNC_ANKIWEB)
+            if (MainPage.UserPrefs.SyncService == SYNC_ANKIWEB)
+            {
                 DisableMediaSync();
+                ankiWebLogoutButton.Visibility = Visibility.Visible;
+            }
             syncServiceCombobox.SelectionChanged += OnSyncServiceSelectionChanged; //Hook here to avoid start up problems            
             HookAllEvents();
         }
@@ -221,12 +224,16 @@ namespace AnkiU.Pages
                 if (!isSuccess)
                     syncServiceCombobox.SelectedIndex = 0;
                 else
+                {
                     MainPage.UserPrefs.IsFullSyncRequire = false; //set this to false to warn when editing note types
+                    ankiWebLogoutButton.Visibility = Visibility.Visible;
+                }
             }
             else
             {
                 syncMediaCheckBox.IsEnabled = true;
                 MainPage.UserPrefs.IsFullSyncRequire = true;
+                ankiWebLogoutButton.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -234,6 +241,11 @@ namespace AnkiU.Pages
         {
             syncMediaCheckBox.IsChecked = false;
             syncMediaCheckBox.IsEnabled = false;
+        }
+
+        private void OnAnkiWebLogoutButtonClick(object sender, RoutedEventArgs e)
+        {
+            syncServiceCombobox.SelectedIndex = 0;
         }
     }
 }

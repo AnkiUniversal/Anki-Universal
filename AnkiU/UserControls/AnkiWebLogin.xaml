@@ -13,7 +13,7 @@
     PrimaryButtonClick="OnPrimaryButtonClick"
     SecondaryButtonClick="OnSecondaryButtonClick">
 
-    <Grid>
+    <Grid Margin="0,5,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="5" />
