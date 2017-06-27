@@ -231,16 +231,25 @@ namespace AnkiU.Pages
             }
             else
             {
-                syncMediaCheckBox.IsEnabled = true;
+                AllowMediaSyncCheck();
                 MainPage.UserPrefs.IsFullSyncRequire = true;
                 ankiWebLogoutButton.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void AllowMediaSyncCheck()
+        {
+            syncMediaCheckBox.IsEnabled = true;
+            syncMediaText.Text = "Also sync media files";
+            syncMediaCheckBox.Visibility = Visibility.Visible;
         }
 
         private void DisableMediaSync()
         {
             syncMediaCheckBox.IsChecked = false;
             syncMediaCheckBox.IsEnabled = false;
+            syncMediaCheckBox.Visibility = Visibility.Collapsed;
+            syncMediaText.Text = "Can't sync media files yet";
         }
 
         private void OnAnkiWebLogoutButtonClick(object sender, RoutedEventArgs e)

@@ -174,7 +174,7 @@
                                       BorderBrush="{Binding Foreground, ElementName=userControl}"
                                       IsThreeState="False"/>
                             
-                            <TextBlock Grid.Row="3" Text="Also sync media files" Margin="0,0,0,3"
+                            <TextBlock Grid.Row="3" x:Name="syncMediaText" Text="Also sync media files" Margin="0,0,0,3"
                                        VerticalAlignment="Center" HorizontalAlignment="Right"/>
                             <CheckBox Grid.Row="3" Grid.Column="2" x:Name="syncMediaCheckBox"
                                       VerticalAlignment="Center" HorizontalAlignment="Left"
