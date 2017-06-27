@@ -554,7 +554,7 @@ namespace AnkiU.Views
             helpPopup.BackEvent = StartDataSyncing;
             helpPopup.NextEvent = SecondDataSyncNext;
 
-            helpPopup.Title = "(Automatically) Media Syncing";
+            helpPopup.Title = "Media Syncing";
             helpPopup.Text = "To enable syncing media files on a device, please go to \"Settings\\Sync\" and " 
                              + "check \"Also sync media files\".\n"  
                              + "Only files changed from the last sync time will be uploaded or downloaded.";
@@ -567,35 +567,21 @@ namespace AnkiU.Views
             helpPopup.BackEvent = FirstDataSyncNext;
             helpPopup.NextEvent = ThirdDataSyncNext;
 
-            helpPopup.Title = "(Manually) Media Syncing";
-            helpPopup.Text = "You can also add media files manually by using \"Back up Media\" and \"Insert Media Files\" features.\n"
-                             + "We recommend you to do this when you need to download a large number of media files to your devices. Ex: first time syncing your phone.";
+            helpPopup.Title = "AnkiWeb";
+            helpPopup.Text = "To sync to AnkiWeb, please change your sync service in \"Settings\\Sync service\".\n"
+                             + "Currently, only your collection will be synced. Syncing media files is not supported yet.";
             helpPopup.ShowWithNextAndBack();
         }
 
         private void ThirdDataSyncNext()
         {
             helpPopup.BackEvent = SecondDataSyncNext;
-            helpPopup.NextEvent = FourhtDataSyncNext;
 
-
-            helpPopup.Title = "Example: Manually Syncing";
-            helpPopup.Text = "Assume you need to download 2000 media files uploaded from your laptop to your phone:\n"
-                             + "1. On your laptop, use \"Back up Media Files\", then copy the zip file(s) to your phone.\n" 
-                             + "2. On your phone, DISABLE media syncing, then sync your data.\n"
-                             + "3. Use \"Insert Media Files\" to add media. ENABLE media syncing and sync your phone again.\n";
-            helpPopup.ShowWithNextAndBack();
-        }
-
-        private void FourhtDataSyncNext()
-        {
-            helpPopup.BackEvent = ThirdDataSyncNext;
-
-            helpPopup.Title = "Example: Manually Syncing";
-            helpPopup.Text = "From now on, your media files will continue to be synced automatically without having to download 2000 files.\n" 
-                            + "Note that you can also download these files through normal syncing. However, it will take a long time to complete and if any connection errors happen then you will have to download all files again.";
+            helpPopup.Title = "AnkiWeb";
+            helpPopup.Text = "If you have any problems with AnkiWeb, please contact us through our email: ankiuniversal@gmail.com";
             helpPopup.ShowWithBackAndClose();
         }
+
         #endregion
 
         #region Sub Deck
