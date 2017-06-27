@@ -1,8 +1,0 @@
-Anki Universal does not collect, store, transmit, or disclose any users' personal information without their permission.
-All services except syncing do not need to access any sensitive information such as users' name, location, or email address. 
-
-If you use OneDrive syncing service, the app will need to access your Microsoft account. Your email address, name, IP address, location, or any sensitive information are not collected, stored, secured, or disclosed to other third-party services except those from Microsoft. When using OneDrive service, you automatically agree to Microsoft privacy policy: https://privacy.microsoft.com/en-us/privacystatement
-
-If you use AnkiWeb syncing service, the app will only collect your Anki email address and password to access AnkiWeb. Other personal information is not collected, stored, transmitted, or disclosed to other services. The app does not store your Anki email address and password and does not transmit or disclose them to other third-party services except AnkiWeb. When using AnkiWeb service, you automatically agree to their privacy policy: https://ankiweb.net/account/terms
-
-If you would like to report any violations of this policy, please contact us through our email: ankiuniversal@gmail.com
