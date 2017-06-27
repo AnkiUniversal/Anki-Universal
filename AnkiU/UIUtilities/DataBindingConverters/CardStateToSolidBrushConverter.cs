@@ -32,10 +32,12 @@ namespace AnkiU.UIUtilities.DataBindingConverters
         public object Convert(object value, Type targetType, object parameter, string language)
         {            
             var number = (int)value;
-            if (number < 0)
+            if (number >= 0)
+                return new SolidColorBrush(Windows.UI.Colors.Transparent); 
+            else if (number == -1)
                 return Application.Current.Resources["ButtonBackGroundCompliment"];
             else
-                return new SolidColorBrush(Windows.UI.Colors.Transparent);
+                return Application.Current.Resources["ButtonBackGroundAnalogousRight"];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
