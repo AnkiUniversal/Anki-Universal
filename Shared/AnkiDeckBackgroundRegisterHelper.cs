@@ -66,7 +66,7 @@ namespace Shared
             return false;
         }
 
-        public void UnRegisterTimeTriggeredBackgroundTasks()
+        public void UnRegisterBackgroundTasks()
         {
             BackgroundTasksHelper.UnregisterBackgroundTasks(SYSTEM_TRIGGERED_TASK_NAME);
             isSystemTaskRegistered = false;

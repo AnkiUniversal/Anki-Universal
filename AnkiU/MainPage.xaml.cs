@@ -84,6 +84,8 @@ namespace AnkiU
     /// </summary>
     public sealed partial class MainPage : Page, IInkToTextUIControl
     {
+        public const int APP_VER = 1;
+
         private const string WINSIZE_NARROW = "narrow";
         private const string WINSIZE_MEDIUM = "medium";
         private const string WINSIZE_WIDE = "wide";        
@@ -688,6 +690,11 @@ namespace AnkiU
                 Window.Current.VisibilityChanged += VisibilityChangedHandler;
 
                 BackgroundTaskHelper = new AnkiDeckBackgroundRegisterHelper();
+                if(MainPage.APP_VER != UserPrefs.LastAppVer)
+                {
+                    UserPrefs.LastAppVer = MainPage.APP_VER;
+                    BackgroundTaskHelper.UnRegisterBackgroundTasks();
+                }
                 await BackgroundTaskHelper.RegisterBackgroundTasks();
                 ToastHelper.MarkAlreadyShown();
             }

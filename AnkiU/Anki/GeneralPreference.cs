@@ -368,6 +368,21 @@ namespace AnkiU.Anki
             }
         }
 
+        private int lastAppVer;
+        [SQLite.Net.Attributes.Column("LastAppVer")]
+        public int LastAppVer
+        {
+            get { return lastAppVer; }
+            set
+            {
+                if (lastAppVer == value)
+                    return;
+
+                lastAppVer = value;
+                IsModified = true;
+            }
+        }
+
         public static GeneralPreference GetDefaultPreference()
         {
             GeneralPreference userPrefs = new GeneralPreference();
@@ -393,6 +408,9 @@ namespace AnkiU.Anki
 
             userPrefs.isOneHandMode = false;
             userPrefs.isLeftHand = false;
+
+            userPrefs.lastAppVer = MainPage.APP_VER;
+
             return userPrefs;
         }
 
