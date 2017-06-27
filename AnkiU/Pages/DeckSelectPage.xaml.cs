@@ -592,6 +592,12 @@ namespace AnkiU.Pages
                 if (String.IsNullOrWhiteSpace(baseName))
                     return;
 
+                if(baseName.Equals("Default", StringComparison.OrdinalIgnoreCase) && deckShowContextMenu.Id != Constant.DEFAULTDECK_ID)
+                {
+                    await UIHelper.ShowMessageDialog("You can't name a non-default deck \"Default\"");
+                    return;
+                }
+
                 var existingName = deckListViewModel.GetAllDeckBaseName();
                 if (existingName.Contains(baseName))
                 {

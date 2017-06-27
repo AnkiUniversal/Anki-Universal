@@ -165,6 +165,13 @@ namespace AnkiU.UserControls
                 return false;
             }
 
+            if(deckName == "Default")
+            {
+                await UIHelper.ShowMessageDialog("\"Default\" is not a valid name.");
+                addDeckFlyout.ShowAt(placeToShow);
+                return false;
+            }
+
             bool isValid = await CheckIfNameValid(deckName, collection.Deck.AllNames(),
                                                  "A deck with the same name already exists. Please enter a different one.");
             if (!isValid)
