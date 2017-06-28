@@ -245,3 +245,5 @@ ModelManifest.xml
 .fake/
 /AnkiU/Package.appxmanifest
 /AnkiU/Package.StoreAssociation.xml
+/AnkiU/_pkginfo.txt
+
