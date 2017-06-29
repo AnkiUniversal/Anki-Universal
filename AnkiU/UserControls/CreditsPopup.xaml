@@ -43,8 +43,9 @@
                         <LineBreak />
                         <Bold>(ankiuniversal@outlook.com)</Bold>
                         <LineBreak />
-                        <Hyperlink NavigateUri="https://github.com/AnkiUniversal/Anki-Universal">Source Code Page</Hyperlink>
+                        <Hyperlink NavigateUri="https://github.com/AnkiUniversal/Anki-Universal">Project Page</Hyperlink>
                         <LineBreak />
+                        <Hyperlink NavigateUri="https://github.com/AnkiUniversal/Anki-Universal/blob/master/Privacy%20Policy">Privacy Policy</Hyperlink>
                         <LineBreak />
                         This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.                        
                         <LineBreak />

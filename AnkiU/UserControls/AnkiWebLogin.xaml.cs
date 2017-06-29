@@ -125,6 +125,7 @@ namespace AnkiU.UserControls
         {
             ankiWebIdTextBox.IsEnabled = false;
             passwordBox.IsEnabled = false;
+            IsPrimaryButtonEnabled = false;            
         }
 
         private void OnSecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -156,6 +157,7 @@ namespace AnkiU.UserControls
         {
             ankiWebIdTextBox.IsEnabled = true;
             passwordBox.IsEnabled = true;
+            IsPrimaryButtonEnabled = true;
         }
 
         private void HideProgressBar()

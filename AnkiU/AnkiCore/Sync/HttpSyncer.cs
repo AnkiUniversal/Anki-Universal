@@ -43,6 +43,9 @@ namespace AnkiU.AnkiCore.Sync
         protected string sKey;
         protected Dictionary<string, object> postVars;
 
+        public delegate  void HttpProgressEvent(HttpProgress progress);
+        public event HttpProgressEvent OnHttpProgressEvent;
+
         public HttpSyncer(string hkey)
         {
             hKey = hkey;
@@ -110,7 +113,7 @@ namespace AnkiU.AnkiCore.Sync
                         if (comp != 0)
                         {
                             using (GZipStream gzipStream = new GZipStream(memoryStream, CompressionMode.Compress, true))
-                            {
+                            {                                
                                 while ((len = inputStream.Read(chunk, 0, chunk.Length)) > 0)
                                 {
                                     gzipStream.Write(chunk, 0, len);
@@ -159,7 +162,13 @@ namespace AnkiU.AnkiCore.Sync
                     using (HttpClient httpClient = new HttpClient())
                     {
                         httpClient.DefaultRequestHeaders.Add("user-agent", "Windows 10 (Anki Universal)");
-                        HttpResponseMessage httpResponse = await httpClient.SendRequestAsync(httpPost);
+                        var task = httpClient.SendRequestAsync(httpPost);
+                        task.Progress = (response, progress) => 
+                        {
+                            OnHttpProgressEvent?.Invoke(progress);
+                        };
+                        HttpResponseMessage httpResponse = await task;
+
                         // we assume badAuthRaises flag from Anki Desktop always False
                         // so just throw new RuntimeException if response code not 200 or 403
                         AssertOk(httpResponse);
@@ -178,6 +187,7 @@ namespace AnkiU.AnkiCore.Sync
                 throw new HttpSyncerException(message);
             }
         }
+
 
         public static string HttpRequestExceptionHandler(UnknownHttpResponseException ex)
         {

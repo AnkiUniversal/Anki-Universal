@@ -500,7 +500,7 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <SymbolIcon Symbol="Mail" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Feedback" />
+                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Support" />
                                 </Grid>
                             </Button>
 

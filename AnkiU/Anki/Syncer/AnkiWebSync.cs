@@ -21,6 +21,7 @@ namespace AnkiU.Anki.Syncer
 
     public class AnkiWebSync : ISync
     {
+        private const string SYNC_Progress = "Received: {0} KB. Sent: {1} KB";
         private MainPage mainPage;
 
         private AnkiCore.Sync.Syncer client;
@@ -30,6 +31,8 @@ namespace AnkiU.Anki.Syncer
 
         private SyncDialog syncStateDialog;
         private bool isSyncStateDialogClose;
+
+        private string label = null;
 
         public AnkiWebSync(MainPage mainPage)
         {
@@ -44,11 +47,12 @@ namespace AnkiU.Anki.Syncer
         {
             try
             {
-                syncStateDialog.Label = "Sync collection to AnkiWeb...";
+                SetSyncLabel("Sync collection to AnkiWeb...");
                 syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
                 GetHostKeyFromVault();
 
                 server = new RemoteServer(hostKey);
+                server.OnHttpProgressEvent += OnServerHttpProgressEvent;
                 client = new AnkiCore.Sync.Syncer(mainPage.Collection, server);
                 var results = await client.Sync();
                 await WaitForCloseSyncStateDialog();
@@ -57,7 +61,7 @@ namespace AnkiU.Anki.Syncer
                     await UIHelper.ShowMessageDialog("No respone from the server! Either your connection or the server did not work properly.");
                     return;
                 }
-                else if (results[0] == "badAuth") 
+                else if (results[0] == "badAuth")
                 {
                     //Include for completeness purpose.
                     //We should not run into this, as the app only logins when user changed sync service                    
@@ -69,7 +73,7 @@ namespace AnkiU.Anki.Syncer
                     await UIHelper.ShowMessageDialog("Syncing requires the clock on your computer to be set correctly. Please fix the clock and try again.");
                     return;
                 }
-                else if(results[0] == "basicCheckFailed" || results[0] == "sanityCheckFailed")
+                else if (results[0] == "basicCheckFailed" || results[0] == "sanityCheckFailed")
                 {
                     await UIHelper.ShowMessageDialog("Your collection is in an inconsistent state. Please run Tools Check Database in Anki Dekstop, then sync again.");
                     return;
@@ -82,10 +86,10 @@ namespace AnkiU.Anki.Syncer
                 }
                 else if (results[0] == "noChanges" || results[0] == "success")
                 {
-                    syncStateDialog.Label = "Finished.";
+                    SetSyncLabel("Finished.");                    
                     syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
                     if (results[0] == "success")
-                    {                        
+                    {
                         await NavigateToDeckSelectPage();
                     }
                     else
@@ -94,7 +98,7 @@ namespace AnkiU.Anki.Syncer
                     MainPage.UserPrefs.IsFullSyncRequire = false;
                     await WaitForCloseSyncStateDialog();
                     return;
-                }                
+                }
                 else if (results[0] == "serverAbort")
                 {
                     await UIHelper.ShowMessageDialog("Server aborted.");
@@ -128,10 +132,17 @@ namespace AnkiU.Anki.Syncer
             }
         }
 
+        private void SetSyncLabel(string message)
+        {
+            label = message;
+            syncStateDialog.Label = message;
+        }
+
         private async Task ConfirmAndStartFullSync()
         {
             
             var fullSyncclient = new FullSyncer(mainPage.Collection, hostKey);
+            fullSyncclient.OnHttpProgressEvent += OnServerHttpProgressEvent;
             ThreeOptionsDialog dialog = new ThreeOptionsDialog();
             dialog.Title = "Full Sync Direction";
             dialog.Message = "Your collection has been modified in a way that the app needs to override the whole collection.\n\n"                            
@@ -151,14 +162,14 @@ namespace AnkiU.Anki.Syncer
                 await UploadFullDatabase(fullSyncclient);
             }
 
-            syncStateDialog.Label = "Finished.";
+            SetSyncLabel("Finished.");            
             await Task.Delay(250);
             await WaitForCloseSyncStateDialog();
         }
 
         private async Task DownloadFullDatabase(FullSyncer fullSyncclient)
-        {            
-            syncStateDialog.Label = "Downloading full database...";
+        {
+            SetSyncLabel("Downloading full database...");            
             syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
             await fullSyncclient.Download();
             await ReOpenAndNavigateToDeckSelectPage();
@@ -166,7 +177,7 @@ namespace AnkiU.Anki.Syncer
 
         private async Task UploadFullDatabase(FullSyncer fullSyncclient)
         {
-            syncStateDialog.Label = "Uploading full database...";
+            SetSyncLabel("Uploading full database...");            
             syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
             await fullSyncclient.Upload();
         }
@@ -213,5 +224,14 @@ namespace AnkiU.Anki.Syncer
             }
         }
 
+        private async void OnServerHttpProgressEvent(Windows.Web.Http.HttpProgress progress)
+        {
+            await mainPage.CurrentDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                syncStateDialog.Label = label + "\n"
+                                        + String.Format(SYNC_Progress, progress.BytesReceived/1024 + "/" + progress.TotalBytesToReceive/1024,
+                                                                       progress.BytesSent/1024 + "/" + progress.TotalBytesToSend/1024);
+            });
+        }
     }
 }
