@@ -31,6 +31,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -160,6 +161,9 @@ namespace AnkiU.Pages
                     case "save":
                         mainPage.SaveButtonClickAnimateAsync();
                         await SaveTemplate();                        
+                        break;
+                    case ("paste"):
+                        await TryPasteContentFromClipboard();
                         break;
                     case "addField":
                         AddFieldButtonhandler();                        
@@ -586,6 +590,32 @@ namespace AnkiU.Pages
                              "If you wish to learn more about template, please view \"Template with Type Field\" tutorial.";
             MainPage.UserPrefs.SetHelpShown(AllHelps.HELP_NOTE_TYPE_AND_TEMPLATE, true);
             helpPopup.ShowWithBackAndClose();
+        }
+
+        private async Task TryPasteContentFromClipboard()
+        {
+            var dataPackageView = Clipboard.GetContent();
+            if (dataPackageView.Contains(StandardDataFormats.Html))
+            {
+                await PasteHtmlFormat(dataPackageView);
+            }
+            else if (dataPackageView.Contains(StandardDataFormats.Text))
+            {
+                await PastePlainText(dataPackageView);
+            }
+        }
+
+        private async Task PasteHtmlFormat(DataPackageView dataPackageView)
+        {
+            var html = await dataPackageView.GetHtmlFormatAsync();
+            var htmlFragment = HtmlFormatHelper.GetStaticFragment(html);
+            await templateView.HtmlEditor.InsertHtml(htmlFragment);
+        }
+
+        private async Task PastePlainText(DataPackageView dataPackageView)
+        {
+            var text = await dataPackageView.GetTextAsync();
+            await templateView.HtmlEditor.InsertHtml(text);
         }
     }
 }

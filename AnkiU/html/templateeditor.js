@@ -365,6 +365,12 @@ function KeyPress(e) {
             NotifyButtonClick('save');
             return false;
         }
+
+        //v
+        if (evtobj.keyCode == 86) {
+            NotifyButtonClick('paste');
+            return false;
+        }
     }
     return true;
 }

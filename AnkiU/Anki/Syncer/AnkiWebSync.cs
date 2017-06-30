@@ -228,9 +228,17 @@ namespace AnkiU.Anki.Syncer
         {
             await mainPage.CurrentDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
+                ulong totalToReceive = 0;
+                if (progress.TotalBytesToReceive != null)
+                    totalToReceive = (ulong)progress.TotalBytesToReceive / 1024;
+
+                ulong totalToSend = 0;
+                if (progress.TotalBytesToSend != null)
+                    totalToSend = (ulong)progress.TotalBytesToSend / 1024;
+
                 syncStateDialog.Label = label + "\n"
-                                        + String.Format(SYNC_Progress, progress.BytesReceived/1024 + "/" + progress.TotalBytesToReceive/1024,
-                                                                       progress.BytesSent/1024 + "/" + progress.TotalBytesToSend/1024);
+                                        + String.Format(SYNC_Progress, progress.BytesReceived/1024 + "/" + totalToReceive,
+                                                                       progress.BytesSent/1024 + "/" + totalToSend);
             });
         }
     }
