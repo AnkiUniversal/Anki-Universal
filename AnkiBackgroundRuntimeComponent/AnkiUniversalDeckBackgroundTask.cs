@@ -32,8 +32,11 @@ namespace AnkiBackgroundRuntimeComponent
                     deckListViewModel.GetAllDeckInformation();
                     await deckListViewModel.UpdateAllSecondaryTilesIfHas();
 
-                    if (deckListViewModel.TotalNewCards + deckListViewModel.TotalDueCards > 0)                        
-                        ShowToastIfNeeded(deckListViewModel);                        
+                    if (deckListViewModel.TotalNewCards + deckListViewModel.TotalDueCards > 0)
+                    {
+                        if(taskInstance.Task.Name.Equals(Shared.AnkiDeckBackgroundRegisterHelper.SYSTEM_TRIGGERED_TASK_NAME, StringComparison.OrdinalIgnoreCase))
+                            ShowToastIfNeeded(deckListViewModel);
+                    }
                 }
             }
             catch
