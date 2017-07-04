@@ -145,8 +145,8 @@ namespace AnkiU.Anki.Syncer
             fullSyncclient.OnHttpProgressEvent += OnServerHttpProgressEvent;
             ThreeOptionsDialog dialog = new ThreeOptionsDialog();
             dialog.Title = "Full Sync Direction";
-            dialog.Message = "Your collection has been modified in a way that the app needs to override the whole collection.\n\n"                            
-                            + "\"Download\" will download the collection from the sever and replace your current one. Unsynced changes on your current collection will be lost.\n\n"
+            dialog.Message = "Your collection has been modified in a way that a full sync is required.\n"                            
+                            + "\"Download\" will download the collection from the sever and replace your current one. Unsynced changes will be lost.\n"
                             + "\"Upload\" will upload your current collection to the server. Unsynced changes on OTHER devices will be lost.";
             dialog.LeftButton.Content = "Download";
             dialog.MiddleButton.Content = "Upload";
@@ -159,7 +159,9 @@ namespace AnkiU.Anki.Syncer
             }
             else if (dialog.IsMiddleButtonClick())
             {
-                await UploadFullDatabase(fullSyncclient);
+                var isContinue = await UIHelper.AskUserConfirmation("UPLOAD your collection to the server?");
+                if (isContinue)                    
+                    await UploadFullDatabase(fullSyncclient);
             }
 
             SetSyncLabel("Finished.");            
