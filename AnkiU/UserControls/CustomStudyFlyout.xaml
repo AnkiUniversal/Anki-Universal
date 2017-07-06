@@ -14,7 +14,7 @@
     d:DesignWidth="400">
 
     <Popup x:Name="customStudyFlyout" IsOpen="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="335" Height="500" >
-        <Grid x:Name="contentGrid"   Background="{Binding Background, ElementName=userControl}" BorderThickness="1" 
+        <Grid x:Name="contentGrid" MaxWidth="335"  Background="{Binding Background, ElementName=userControl}" BorderThickness="1" 
               VerticalAlignment="Center" HorizontalAlignment="Center"
                BorderBrush="{Binding Foreground, ElementName=userControl}" RenderTransformOrigin="0.5,0.5" >
             <Grid.RenderTransform>
@@ -112,7 +112,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <Border Grid.Row="1" BorderThickness="1" Margin="10,0,10,5"  BorderBrush="{StaticResource ButtonBackGroundCompliment}">
+                    <Border Grid.Row="1" BorderThickness="1" Margin="10,0,10,5" MaxWidth="310"  BorderBrush="{StaticResource ButtonBackGroundCompliment}">
                         <Grid Margin="5" >
                             <StackPanel Visibility="Visible" x:Name="standardOptionsRoot">
                                 <StackPanel Orientation="Horizontal">
@@ -139,14 +139,18 @@
                                     <local:NumbericTextBox x:Name="cramNumberBox" Padding="5,5,6,0" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}" />
                                 </StackPanel>
 
-                                <StackPanel Grid.Row="1" >
+                                <StackPanel Grid.Row="1" x:Name="includeTagStack">
                                     <TextBlock Text="Include tags:"  Foreground="{Binding Foreground, ElementName=userControl}"/>
-                                    <views:TagInformationView x:Name="includeTags" AddVisibility="Collapsed" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}"/>
+                                    <views:TagInformationView x:Name="includeTags" AddVisibility="Collapsed" 
+                                                              Background="{Binding Background, ElementName=userControl}"  
+                                                              Foreground="{Binding Foreground, ElementName=userControl}"/>
                                 </StackPanel>
 
-                                <StackPanel Grid.Row="2" Margin="0,5,0,0" >
+                                <StackPanel Grid.Row="2" Margin="0,5,0,0" x:Name="excludeTagStack" >
                                     <TextBlock Text="Exclude tags:"  Foreground="{Binding Foreground, ElementName=userControl}"/>
-                                    <views:TagInformationView x:Name="excludeTags" AddVisibility="Collapsed" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}"/>
+                                    <views:TagInformationView x:Name="excludeTags" AddVisibility="Collapsed" 
+                                                              Background="{Binding Background, ElementName=userControl}"  
+                                                              Foreground="{Binding Foreground, ElementName=userControl}"/>
                                 </StackPanel>
 
                                 <CheckBox Grid.Row="3" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=userControl}"

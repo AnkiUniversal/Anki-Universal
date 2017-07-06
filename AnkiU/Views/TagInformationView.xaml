@@ -113,6 +113,7 @@
                    Foreground="{Binding Foreground, ElementName=userControl}"
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Left"
+                   TextWrapping="NoWrap"
                    Grid.Column="1" Margin="10,0,30,0" 
                    IsDoubleTapEnabled="False"  
                    IsHoldingEnabled="False" IsRightTapEnabled="False" IsTapEnabled="False" IsHitTestVisible="False" />

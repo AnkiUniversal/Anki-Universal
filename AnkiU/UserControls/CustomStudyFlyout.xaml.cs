@@ -464,10 +464,9 @@ namespace AnkiU.UserControls
                     break;
 
                 case CustomStudyOption.CramMode:
-                    StringBuilder tags = new StringBuilder();
-                    AdvancedSearchPopup.AppendTags(tags, "tag:", includeTagsViewModel);
-                    AdvancedSearchPopup.AppendTags(tags, "-tag:", excludeTagsViewModel);
-
+                    StringBuilder tags = new StringBuilder();                    
+                    AppendIncludeTag(tags);
+                    AdvancedSearchPopup.AppendTags(tags, "-tag:", excludeTagsViewModel);                    
                     dynamicDeck["delays"] = JsonValue.CreateNullValue();
                     dynamicDeck.GetNamedArray("terms")[0] = CreateTermArray(
                                                             tags.ToString().Trim(),
@@ -485,6 +484,25 @@ namespace AnkiU.UserControls
             term = "deck:\"" + deck.GetNamedString("name") + "\" " + term;
             dynamicDeck.GetNamedArray("terms").GetArrayAt(0)[0] = JsonValue.CreateStringValue(term);
         }
+
+        private void AppendIncludeTag(StringBuilder tag)
+        {            
+            var tags = includeTagsViewModel.CurrentNote.Tags;
+            if (tags == null || tags.Count == 0)
+                return;
+
+            tag.Append("(tag:");
+            tag.Append(tags[0]);
+            tag.Append(" ");
+            for(int i = 1; i < tags.Count; i++)
+            {
+                tag.Append("OR tag:");
+                tag.Append(tags[i]);
+                tag.Append(" ");
+            }
+            tag.Append(") ");
+        }
+
 
         private void extendReview(JsonObject deck)
         {
