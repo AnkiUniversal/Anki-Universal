@@ -148,36 +148,44 @@
 
     <Grid x:Name="mainGrid" Background="{Binding Background, ElementName=userControl}" >
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="cardViewGrid" Height="90*"/>
-            <RowDefinition x:Name="buttonGrid" Height="10*" MinHeight="60" MaxHeight="100"/>
+            <RowDefinition Height="90*"/>
+            <RowDefinition Height="10*" MinHeight="60" MaxHeight="100"/>
         </Grid.RowDefinitions>
 
-        <Ellipse x:Name="customDueTimeShowPoint" Width="1" Height="1" Fill="Transparent" 
+        <Grid x:Name="cardViewRootGrid" Grid.Row="0">
+            <Ellipse x:Name="customDueTimeShowPoint" Width="1" Height="1" Fill="Transparent" 
                  Stroke="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-        <InkCanvas Canvas.ZIndex="0" x:Name="inkCanvas" 
-                   Visibility="Collapsed" x:DeferLoadStrategy="Lazy" Grid.Row="0"></InkCanvas>
+            <InkCanvas Canvas.ZIndex="0" x:Name="inkCanvas"
+                   Visibility="Collapsed" x:DeferLoadStrategy="Lazy" ></InkCanvas>
 
-        <controls:CardView Canvas.ZIndex="1"  Grid.Row="0" x:Name="cardView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
+            <controls:CardView Canvas.ZIndex="1" x:Name="cardView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
 
-        <controls:CardButtonView x:Name="showAnswerButton" Grid.Row="1" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+            <controls:NotificationPopup x:Name="popup" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                    Background="White"
+                                    Foreground="{Binding Foreground, ElementName=userControl}" />
+        </Grid>
+
+        <Grid x:Name="buttonRootGrid" Grid.Row="2">
+            <controls:CardButtonView x:Name="showAnswerButton" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                  Visibility="Collapsed" AutomationProperties.AccessibilityView="Content"/>
 
-        <StackPanel x:Name="answerButtonStack" Grid.Row="1" VerticalAlignment="Stretch" Orientation="Horizontal">
-            <controls:CardButtonView x:Name="againButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
+            <StackPanel x:Name="answerButtonStack" VerticalAlignment="Stretch" Orientation="Horizontal">
+                <controls:CardButtonView x:Name="againButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
 
-            <controls:CardButtonView x:Name="hardButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
+                <controls:CardButtonView x:Name="hardButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
 
-            <controls:CardButtonView x:Name="goodButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
+                <controls:CardButtonView x:Name="goodButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
 
-            <controls:CardButtonView x:Name="easyButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
-        </StackPanel>
+                <controls:CardButtonView x:Name="easyButton" Visibility="Collapsed" VerticalAlignment="Stretch" Height="{Binding ActualHeight, ElementName=answerButtonGrid, Mode=OneTime}"/>
+            </StackPanel>
 
-        <Button x:Name="oneHandModeAnswerButton" Style="{StaticResource ButtonGray}" BorderThickness="0" Opacity="0.5" Background="Transparent"
-                Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Collapsed" Tapped="OnOneHandAnswerButtonTapped"/>
+            <Button x:Name="oneHandModeAnswerButton" Style="{StaticResource ButtonGray}" BorderThickness="0" Opacity="0.5" Background="Transparent"
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Collapsed" Tapped="OnOneHandAnswerButtonTapped"/>
+        </Grid>
 
         <StackPanel x:Name="fanButtonsGrid" x:DeferLoadStrategy="Lazy" Visibility="Collapsed" 
-                    Grid.RowSpan="2" Canvas.ZIndex="2"           
+                    Grid.RowSpan="3" Canvas.ZIndex="2"           
                     VerticalAlignment="Bottom" HorizontalAlignment="Left" Orientation="Vertical" 
                     RenderTransformOrigin="0.5,0.5">
             <StackPanel.RenderTransform>
@@ -267,10 +275,7 @@
                        x:Name="buttonPopupText" Foreground="{StaticResource ButtonBackGroundNormal}" FontSize="19" FontWeight="SemiBold">
             </TextBlock>
         </Popup>
-
-        <controls:NotificationPopup Grid.Row="0" x:Name="popup" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                    Background="White"
-                                    Foreground="{Binding Foreground, ElementName=userControl}" />
+        
     </Grid>
 
 

@@ -119,6 +119,30 @@ namespace AnkiU.Models
             }
         }
 
+        private AnswerButtonPosition answerButtonPosition;
+        public int AnswerPosition
+        {
+            get
+            {
+                return (int)answerButtonPosition;
+            }
+            set
+            {
+                switch (value)
+                {
+                    case 0:
+                        answerButtonPosition = AnswerButtonPosition.Bottom;
+                        break;
+                    case 1:
+                        answerButtonPosition = AnswerButtonPosition.Top;
+                        break;
+                    default:
+                        answerButtonPosition = AnswerButtonPosition.Bottom;
+                        break;
+                }
+            }
+        }
+
         public CollectionOptions()
         {
             IsShowDueCount = true;
@@ -127,6 +151,7 @@ namespace AnkiU.Models
             IsTTSAutoplay = false;
             CollapseTime = 20;
             IsEnableNotification = true;
+            AnswerPosition = (int)AnswerButtonPosition.Bottom;
         }
 
         public override string ToString()
@@ -148,9 +173,17 @@ namespace AnkiU.Models
                 return false;
             if (compared.IsEnableNotification != IsEnableNotification)
                 return false;
+            if (compared.AnswerPosition != AnswerPosition)
+                return false;
 
             return true;
         }
 
+    }
+
+    public enum AnswerButtonPosition
+    {
+        Bottom = 0,
+        Top = 1
     }
 }

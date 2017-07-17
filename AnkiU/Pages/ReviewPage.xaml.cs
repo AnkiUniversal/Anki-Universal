@@ -43,6 +43,7 @@ using Windows.UI.Input.Inking.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Data;
+using AnkiU.Models;
 
 namespace AnkiU.Pages
 {
@@ -355,7 +356,7 @@ namespace AnkiU.Pages
 
             collection = mainPage.Collection;
             selectedDeckId = collection.Deck.Selected();
-            currentCardDeckId = selectedDeckId;
+            currentCardDeckId = selectedDeckId;            
 
             //WANRING: Run in transaction to ensure performance
             //remember to call commit before leaving
@@ -368,6 +369,12 @@ namespace AnkiU.Pages
             EnableInkIfNeeded();
             EnableTextToSpeechIfNeeded();
             EnableOneHandModeIfNeeded();
+        }
+
+        private void DisableOneHandMode()
+        {
+            MainPage.UserPrefs.IsOneHandMode = false;
+            mainPage.OneHandButton.Visibility = Visibility.Collapsed;
         }
 
         private void EnableInkIfNeeded()
@@ -561,6 +568,26 @@ namespace AnkiU.Pages
             if (!collection.UndoAvailable())
                 mainPage.UndoButton.IsEnabled = false;
             await UpdateInkButton();
+
+            SetupAnswerButtons();
+        }
+
+        private void SetupAnswerButtons()
+        {
+            if (MainPage.UserPrefs.AnswerButtonPosition == (int)AnswerButtonPosition.Bottom)
+                return;
+
+            DisableOneHandMode();
+
+            mainGrid.RowDefinitions[0].Height = new GridLength(10, GridUnitType.Star);
+            mainGrid.RowDefinitions[0].MinHeight = 60;
+            mainGrid.RowDefinitions[0].MaxHeight = 100;
+
+            mainGrid.RowDefinitions[1].Height = new GridLength(90, GridUnitType.Star);
+            mainGrid.RowDefinitions[1].MaxHeight = Double.PositiveInfinity;
+
+            Grid.SetRow(buttonRootGrid, 0);
+            Grid.SetRow(cardViewRootGrid, 1);
         }
 
         private void ShowOrHideButtonsHeader()
@@ -1318,7 +1345,8 @@ namespace AnkiU.Pages
 
         private void TouchTextPopupAnimation(CardButtonView button, int offsetMultiplier)
         {
-            if (UIHelper.IsHasPhysicalMouse())
+            if (UIHelper.IsHasPhysicalMouse() 
+                || MainPage.UserPrefs.AnswerButtonPosition == (int)AnswerButtonPosition.Top)
                 return;
 
             var task = mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>

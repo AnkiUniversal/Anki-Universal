@@ -383,6 +383,21 @@ namespace AnkiU.Anki
             }
         }
 
+        private int answerButtonPosition;
+        [SQLite.Net.Attributes.Column("AnswerButtonPosition")]
+        public int AnswerButtonPosition
+        {
+            get { return answerButtonPosition; }
+            set
+            {
+                if (answerButtonPosition == value)
+                    return;
+
+                answerButtonPosition = value;
+                IsModified = true;
+            }
+        }
+
         public static GeneralPreference GetDefaultPreference()
         {
             GeneralPreference userPrefs = new GeneralPreference();
@@ -408,6 +423,7 @@ namespace AnkiU.Anki
 
             userPrefs.isOneHandMode = false;
             userPrefs.isLeftHand = false;
+            userPrefs.answerButtonPosition = 0;
 
             userPrefs.lastAppVer = MainPage.APP_VER;
 

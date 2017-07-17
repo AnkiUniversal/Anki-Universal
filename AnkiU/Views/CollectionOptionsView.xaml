@@ -25,6 +25,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -70,9 +71,17 @@
             <TextBlock Grid.Column="1" Margin="5,-5,5,0"  VerticalAlignment="Center" TextAlignment="Left" Text="minute(s)"/>
         </Grid>
 
-        <TextBlock Grid.Row="5" Grid.Column="0" Text="Enable Notification" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Enable notification" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         <CheckBox Grid.Row="5" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left"
                     Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
                                   IsChecked="{x:Bind Options.IsEnableNotification, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
+
+        <TextBlock Grid.Row="6" Grid.Column="0" Margin="0,0,0,2" Text="Answer button" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <ComboBox Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Stretch" VerticalAlignment="Center" 
+                    Background="Transparent"
+                    Foreground="{Binding Foreground, ElementName=userControl}" SelectedIndex="{x:Bind Options.AnswerPosition, Mode=TwoWay}" >
+            <TextBlock Text="Bottom" TextAlignment="Left"/>
+            <TextBlock Text="Top" TextAlignment="Left"/>
+        </ComboBox>
     </Grid>
 </UserControl>

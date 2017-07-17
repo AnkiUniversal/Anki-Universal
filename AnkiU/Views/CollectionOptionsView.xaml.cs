@@ -54,6 +54,7 @@ namespace AnkiU.Views
             ViewModel.Options.IsTTSAutoplay = temp.IsTTSAutoplay;
             ViewModel.Options.CollapseTime = temp.CollapseTime;
             ViewModel.Options.IsEnableNotification = temp.IsEnableNotification;
+            ViewModel.Options.AnswerPosition = temp.AnswerPosition;
         }
     }
 }

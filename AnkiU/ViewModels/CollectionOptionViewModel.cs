@@ -50,24 +50,30 @@ namespace AnkiU.ViewModels
             {
                 Options.IsShowDueCount = Config.GetNamedBoolean("dueCounts");
                 Options.IsShowEstTime = Config.GetNamedBoolean("estTimes");
-                Options.ReviewType = (int)JsonHelper.GetNameNumber(Config,"newSpread");
+                Options.ReviewType = (int)JsonHelper.GetNameNumber(Config, "newSpread");
                 Options.IsTTSAutoplay = MainPage.UserPrefs.IsAutoPlayTextSynth;
-                Options.CollapseTime = (int)JsonHelper.GetNameNumber(Config,"collapseTime") / COLLAPSE_CONVERT;
+                Options.CollapseTime = (int)JsonHelper.GetNameNumber(Config, "collapseTime") / COLLAPSE_CONVERT;
+                Options.AnswerPosition = MainPage.UserPrefs.AnswerButtonPosition;
 
-                var settings = ApplicationData.Current.LocalSettings;
-                if (settings.Values.ContainsKey("IsEnableNotifciation"))
-                    Options.IsEnableNotification = (bool)settings.Values["IsEnableNotifciation"];
-                else
-                {
-                    Options.IsEnableNotification = true;
-                    settings.Values["IsEnableNotifciation"] = true;
-                }
+                GetNotificationSettings();
 
                 CopyOptions(Options, oldOptions);
             }
             catch //If any error happen we back to default
             {
                 Options = new CollectionOptions();
+            }
+        }
+
+        private void GetNotificationSettings()
+        {
+            var settings = ApplicationData.Current.LocalSettings;
+            if (settings.Values.ContainsKey("IsEnableNotifciation"))
+                Options.IsEnableNotification = (bool)settings.Values["IsEnableNotifciation"];
+            else
+            {
+                Options.IsEnableNotification = true;
+                settings.Values["IsEnableNotifciation"] = true;
             }
         }
 
@@ -79,6 +85,7 @@ namespace AnkiU.ViewModels
             dest.IsTTSAutoplay = source.IsTTSAutoplay;
             dest.CollapseTime = source.CollapseTime;
             dest.IsEnableNotification = source.IsEnableNotification;
+            dest.AnswerPosition = source.AnswerPosition;
         }        
 
         public void SaveOptions()
@@ -88,11 +95,8 @@ namespace AnkiU.ViewModels
             Config["newSpread"] = JsonValue.CreateNumberValue(Options.ReviewType);
             Config["collapseTime"] = JsonValue.CreateNumberValue(Options.CollapseTime * COLLAPSE_CONVERT);
             MainPage.UserPrefs.IsAutoPlayTextSynth = Options.IsTTSAutoplay;
-            if (Options.IsEnableNotification)
-                ApplicationData.Current.LocalSettings.Values["IsEnableNotifciation"] = true;
-            else
-                ApplicationData.Current.LocalSettings.Values["IsEnableNotifciation"] = false;
-
+            MainPage.UserPrefs.AnswerButtonPosition = Options.AnswerPosition;
+            ApplicationData.Current.LocalSettings.Values["IsEnableNotifciation"] = Options.IsEnableNotification;            
             CopyOptions(Options, oldOptions);
         }
 
