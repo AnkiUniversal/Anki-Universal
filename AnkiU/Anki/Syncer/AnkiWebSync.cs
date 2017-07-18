@@ -73,9 +73,10 @@ namespace AnkiU.Anki.Syncer
                     await UIHelper.ShowMessageDialog("Syncing requires the clock on your computer to be set correctly. Please fix the clock and try again.");
                     return;
                 }
-                else if (results[0] == "basicCheckFailed" || results[0] == "sanityCheckFailed")
+                else if (results[0] == "basicCheckFailed" || results[0] == "sanityCheckFailed" || results[0] == "sanityCheckError")
                 {
-                    await UIHelper.ShowMessageDialog("Your collection is in an inconsistent state. Please run Tools Check Database in Anki Dekstop, then sync again.");
+                    await UIHelper.ShowMessageDialog("Your collection is in an inconsistent state.\n" + 
+                                                    "Please run \"Check Collection\" or \"Force Full Sync\", then try again.");
                     return;
                 }
                 else if (results[0] == "fullSync")

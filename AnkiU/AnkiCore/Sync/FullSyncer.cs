@@ -132,7 +132,7 @@ namespace AnkiU.AnkiCore.Sync
             {
                 // apply some adjustments, then upload
                 collection.BeforeUpload();
-                tempFolder = await Storage.AppLocalFolder.CreateFolderAsync("tempAnkiUpload");
+                tempFolder = await Storage.AppLocalFolder.CreateFolderAsync("tempAnkiUpload", CreationCollisionOption.ReplaceExisting);
                 var collectionFile = await Storage.AppLocalFolder.GetFileAsync(Constant.COLLECTION_NAME);
                 await collectionFile.CopyAsync(tempFolder, collectionFile.Name, NameCollisionOption.ReplaceExisting);
                 string filePath = tempFolder.Path + "\\" + collectionFile.Name;

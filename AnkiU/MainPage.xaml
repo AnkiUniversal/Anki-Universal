@@ -387,7 +387,7 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <SymbolIcon Symbol="Repair" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Optimize Collection"/>
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Check Collection"/>
                                     </Grid>
                                 </Button>
 
