@@ -94,7 +94,7 @@ namespace AnkiU.Pages
             if (MainPage.UserPrefs.SyncService == SYNC_ANKIWEB)
             {
                 DisableMediaSync();
-                ankiWebLogoutButton.Visibility = Visibility.Visible;
+                ChangeAnkiWebButtonVisibility(Visibility.Visible);                
             }
             syncServiceCombobox.SelectionChanged += OnSyncServiceSelectionChanged; //Hook here to avoid start up problems            
             HookAllEvents();
@@ -226,14 +226,14 @@ namespace AnkiU.Pages
                 else
                 {
                     MainPage.UserPrefs.IsFullSyncRequire = false; //set this to false to warn when editing note types
-                    ankiWebLogoutButton.Visibility = Visibility.Visible;
+                    ChangeAnkiWebButtonVisibility(Visibility.Visible);
                 }
             }
             else
             {
                 AllowMediaSyncCheck();
-                MainPage.UserPrefs.IsFullSyncRequire = true;
-                ankiWebLogoutButton.Visibility = Visibility.Collapsed;
+                MainPage.UserPrefs.IsFullSyncRequire = true;                
+                ChangeAnkiWebButtonVisibility(Visibility.Collapsed);
             }
         }
 
@@ -252,9 +252,23 @@ namespace AnkiU.Pages
             syncMediaText.Text = "Can't sync media files yet";
         }
 
+        private void ChangeAnkiWebButtonVisibility(Visibility visibility)
+        {
+            ankiWebLogoutButton.Visibility = visibility;
+            forceFullSyncButton.Visibility = visibility;
+        }
+
         private void OnAnkiWebLogoutButtonClick(object sender, RoutedEventArgs e)
         {
             syncServiceCombobox.SelectedIndex = 0;
         }
+
+        private async void OnForceFullSyncButtonClick(object sender, RoutedEventArgs e)
+        {
+            bool isContinue = await UIHelper.AskUserConfirmation("On next sync, your collection will either be \"Uploaded\" or \"Downloaded\". Continue?");
+            if(isContinue)
+                mainPage.Collection.ModSchemaNoCheck();
+        }
+        
     }
 }
