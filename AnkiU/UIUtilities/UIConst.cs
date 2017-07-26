@@ -51,10 +51,15 @@ namespace AnkiU.UIUtilities
         public const string HELP_DUE_ONLY = "Deck will only show cards you have learned.\n" +
                                             "You can switch back to Default once you want to learn new cards.";
 
-        public const string LEECH_CARD_DETECTED = "A leech card is a review card that was marked as \"AGAIN\" too many times (default is 8).\n" +
+        public const string LEECH_CARD_SUSPEND_CONFIRM = "A leech card is a review card that was marked as \"AGAIN\" too many times (default is 8).\n" +
                                                   "It is best to suspend and forget it, then relearn it in the future.\n" +
                                                   "Do you want suspending to be set as the default action for leech cards of this deck?\n" + 
                                                   "(This message will not be shown again. You can change the default action anytime in deck option)";
+
+        public const string LEECH_CARD_SUSPEND_NOTIFY = "This card is a leech card. It has been marked as \"AGAIN\" too many times (default is 8).\n" +
+                                                        "Thus, it will be suspended and removed from your review schedule.\n" +
+                                                        "If you want to review it again please choose unsuspend in \"Search Cards\".\n" +
+                                                        "If you do not want to suspend leech cards, please change the default behavior in your deck options.";
 
         public const string NOT_SUSPEND_ACTION_CHOOSE = "All leech cards of this deck will now only be tagged as \"Leech\".\n" +
                                                         "Note that the default action of other decks is still suspending.";        

@@ -715,6 +715,11 @@ namespace AnkiU.AnkiCore
             return deck;
         }
 
+        public bool HasConf(long confId)
+        {
+            return deckConf.ContainsKey(confId);
+        }
+
         public JsonObject GetConf(long confId)
         {
             return deckConf[confId];

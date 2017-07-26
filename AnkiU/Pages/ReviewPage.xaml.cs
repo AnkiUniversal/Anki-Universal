@@ -229,8 +229,9 @@ namespace AnkiU.Pages
             bool isNotDyn = IsCardNotDynamicDeck(card);
             var deck = collection.Deck.Get(currentCardDeckId);
             var isDefault = JsonHelper.GetNameNumber(deck,"conf") == (int)ConfigPresets.Default;
+            bool isSuspend = JsonHelper.GetNameNumber(collection.Sched.LapseConf(currentCard), "leechAction") == 0;
 
-            if (!MainPage.UserPrefs.IsShowLeechActionOnce && isNotDyn && isDefault)
+            if (!MainPage.UserPrefs.IsShowLeechActionOnce && isNotDyn && isDefault && isSuspend)
             {                
                 isCanGoBack = false;
                 var task = mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
@@ -241,7 +242,7 @@ namespace AnkiU.Pages
             }
             else
             {
-                if (JsonHelper.GetNameNumber(collection.Sched.LapseConf(currentCard),"leechAction") == 0)
+                if (isSuspend)
                     popup.ShowAsync(mainPage.CurrentDispatcher, "Leech threshold reached. Card was suspended", 1000);
                 else
                     popup.ShowAsync(mainPage.CurrentDispatcher, "Leech threshold reached.", 1000);
@@ -252,7 +253,13 @@ namespace AnkiU.Pages
 
         private async Task LeechCardExplainAndGetDefaultAction(Card card, JsonObject deck)
         {
-            var isSuspend = await UIHelper.AskUserConfirmation(UIConst.LEECH_CARD_DETECTED, "Leech card detected!");
+            bool isHavePresetConfig = collection.Deck.HasConf((int)ConfigPresets.TagOnLeech);
+            bool isSuspend = true;
+            if (isHavePresetConfig)
+                isSuspend = await UIHelper.AskUserConfirmation(UIConst.LEECH_CARD_SUSPEND_CONFIRM, "Leech card detected!");
+            else
+                await UIHelper.ShowMessageDialog(UIConst.LEECH_CARD_SUSPEND_NOTIFY);
+
             if (!isSuspend)
             {
                 await UIHelper.ShowMessageDialog(UIConst.NOT_SUSPEND_ACTION_CHOOSE);
@@ -265,7 +272,7 @@ namespace AnkiU.Pages
                 collection.Sched.SuspendCards(card.Id);
                 collection.Sched.Reset();
                 updateNumberOfCardFirstLeech();
-            }
+            }                        
 
             MainPage.UserPrefs.IsShowLeechActionOnce = true;
             mainPage.UpdateUserPreference();
