@@ -753,7 +753,12 @@ namespace AnkiU.Pages
         private async Task TryPasteContentFromClipboard()
         {
             var dataPackageView = Clipboard.GetContent();
-            if (dataPackageView.Contains(StandardDataFormats.StorageItems))
+
+            if (dataPackageView.Contains(StandardDataFormats.Text))
+            {
+                await PastePlainText(dataPackageView);
+            }
+            else if (dataPackageView.Contains(StandardDataFormats.StorageItems))
             {
                 await PasteStorageFiles(dataPackageView);
             }
@@ -768,10 +773,6 @@ namespace AnkiU.Pages
             else if (dataPackageView.Contains(StandardDataFormats.WebLink))
             {
                 await PasteAndAutoLinkUri(dataPackageView);
-            }
-            else if (dataPackageView.Contains(StandardDataFormats.Text))
-            {
-                await PastePlainText(dataPackageView);
             }
         }
 
