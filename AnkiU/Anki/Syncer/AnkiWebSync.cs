@@ -113,19 +113,19 @@ namespace AnkiU.Anki.Syncer
             }
             catch (HttpSyncerException ex)
             {
-                await UIHelper.ShowMessageDialog(ex.Message);
+                await UIHelper.ShowMessageDialog("AnkiWeb Sync: " + ex.Message);
             }            
             catch(PasswordVaulException ex)
             {
-                await UIHelper.ShowMessageDialog(ex.Message);
+                await UIHelper.ShowMessageDialog("AnkiWeb Sync: " + ex.Message);
             }
             catch(FileLoadException ex)
             {
-                await UIHelper.ShowMessageDialog(ex.Message);
+                await UIHelper.ShowMessageDialog("AnkiWeb Sync: " + ex.Message);
             }
             catch(Exception ex)
             {
-                await UIHelper.ShowMessageDialog(ex.Message + "\n" + ex.StackTrace);
+                await UIHelper.ShowMessageDialog("AnkiWeb Sync: " + ex.Message + "\n" + ex.StackTrace);
             }
             finally
             {

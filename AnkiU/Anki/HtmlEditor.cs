@@ -40,8 +40,8 @@ namespace AnkiU.Anki
         private ButtonPassingWebToWinRT buttonEventNotify;
         private EditableFieldPassWebToWinRT editableFieldNotify;
 
-        private ColorPicker foreColorPicker = null;
-        private ColorPicker backColorPicker = null;
+        private UserControls.ColorPicker foreColorPicker = null;
+        private UserControls.ColorPicker backColorPicker = null;
 
         private WebView webViewControl;
         public WebView WebViewControl { get { return webViewControl; } }
@@ -489,7 +489,7 @@ namespace AnkiU.Anki
         {
             if (foreColorPicker == null)
             {
-                foreColorPicker = new ColorPicker();
+                foreColorPicker = new UserControls.ColorPicker();
                 foreColorPicker.ColorChoose += OnForeColorChoose;
             }
             foreColorPicker.ShowFlyout(target, placement);
@@ -506,7 +506,7 @@ namespace AnkiU.Anki
         {
             if (backColorPicker == null)
             {
-                backColorPicker = new ColorPicker();
+                backColorPicker = new UserControls.ColorPicker();
                 backColorPicker.ColorChoose += OnBackColorChoose;
             }
             backColorPicker.ShowFlyout(target, placement);

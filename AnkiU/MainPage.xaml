@@ -274,7 +274,8 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-
+    
+                        
                         <Image x:Name="splitViewBackgroundImage" VerticalAlignment="Top" HorizontalAlignment="Left"
                            Stretch="None" Grid.RowSpan="2" Visibility="Collapsed" />
                         <Border Background="{StaticResource ButtonBackGroundNormal}"
