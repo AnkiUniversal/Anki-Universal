@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (C) 2016 Anki Universal Team <ankiuniversal@outlook.com>
+Copyright (C) 2016-2017 Anki Universal Team <ankiuniversal@outlook.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
@@ -34,8 +34,8 @@ namespace AnkiU.UserControls
 {
     public sealed partial class CreditsPopup : UserControl
     {
-        private const int WIDTH_MARGIN = 10;
-        private const int HEIGHT_MARGIN = 30;
+        private const int WIDTH_MARGIN = 0;
+        private const int HEIGHT_MARGIN = 0;
 
         private Grid rootGrid;
 
@@ -71,7 +71,7 @@ namespace AnkiU.UserControls
             if (newWidth > creditRoot.MaxWidth)
                 creditPopup.HorizontalOffset = (rootGrid.ActualWidth / 2) - creditRoot.ActualWidth / 2;
             else
-                creditPopup.HorizontalOffset = 5;
+                creditPopup.HorizontalOffset = 0;
 
             creditPopup.VerticalOffset = -HEIGHT_MARGIN/3;
         }
@@ -81,20 +81,6 @@ namespace AnkiU.UserControls
             creditPopup.IsOpen = false;
             creditPopup.Visibility = Visibility.Collapsed;
             userControl.Visibility = Visibility.Collapsed;
-        }
-
-        public void ChangeReadMode(bool isNightMode)
-        {
-            if (isNightMode)
-            {
-                userControl.Background = new SolidColorBrush(Windows.UI.Colors.Black);
-                userControl.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
-            }
-            else
-            {
-                userControl.Foreground = new SolidColorBrush(Windows.UI.Colors.Black);
-                userControl.Background = new SolidColorBrush(Windows.UI.Colors.White);
-            }
         }
 
         private void CreditClose(object sender, RoutedEventArgs e)

@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" 
     x:Name="userControl"
-    Background="White"
+    Background="Transparent"
     Foreground="Black"
     d:DesignHeight="300"
     d:DesignWidth="200">
@@ -19,19 +19,15 @@
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto" 
                                   HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Hidden">
-            <StackPanel Margin="5">
-                <TextBlock Margin="0,10"
-                        Text="Tutorials" Foreground="White" 
-                       FontSize="22" HorizontalAlignment="Center"
-                       FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" />
-
-                <Border BorderThickness="0,1,0,0" BorderBrush="White" Margin="0,0,0,5"/>
-
-                <Button Style="{StaticResource ButtonBlue}" 
-                    BorderThickness="0"       
+            <StackPanel Margin="0">
+                <TextBlock Text="Tutorials" Margin="0,20,0,15" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontSize="20" Foreground="Black"/>
+                
+                <Button Style="{StaticResource ButtonRevealStyle}"   
                     x:Name="button"
+                    BorderThickness="0,1,0,1"                        
                     Background="Transparent"
-                    Foreground="White"
+                    Foreground="Black"
                     Height="35"
                     Padding="5"
                     HorizontalAlignment="Stretch"
@@ -43,12 +39,13 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
-                    BorderThickness="0"          
+                <Button Style="{StaticResource ButtonRevealStyle}"            
                     Background="Transparent"
+                    BorderThickness="0,1,0,1"
+                    Margin="0,-1,0,0"
                     Height="35"
                     Padding="5"
-                    Foreground="White"
+                    Foreground="Black"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="NoteTypeAndTemplateClick">
@@ -58,12 +55,13 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
-                    BorderThickness="0"          
+                <Button Style="{StaticResource ButtonRevealStyle}"           
                     Background="Transparent" 
                     Height="35"
                     Padding="5"
-                    Foreground="White"
+                    Foreground="Black"
+                    BorderThickness="0,1,0,1"
+                    Margin="0,-1,0,0"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Visibility="Collapsed"
@@ -75,14 +73,15 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
-                    BorderThickness="0"          
+                <Button Style="{StaticResource ButtonRevealStyle}"           
                     Background="Transparent" 
                     Height="35"
                     Padding="5"
-                        x:Name="templateWithClozeField"
+                    BorderThickness="0,1,0,1"
+                    Margin="0,-1,0,0"
+                    x:Name="templateWithClozeField"
                     Visibility="{Binding Visibility,ElementName=templateWithTypeField}"
-                    Foreground="White"
+                    Foreground="Black"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"                                   
                     Click="TemplateWithClozeFieldClick">
@@ -92,12 +91,13 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
-                    BorderThickness="0"          
+                <Button Style="{StaticResource ButtonRevealStyle}"            
                     Background="Transparent"
                     Height="35"
                     Padding="5"
-                    Foreground="White"
+                    Foreground="Black"
+                    BorderThickness="0,1,0,1"
+                    Margin="0,-1,0,0"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="CustomStudy">
@@ -107,14 +107,15 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
-                    BorderThickness="0"          
+                <Button Style="{StaticResource ButtonRevealStyle}"          
                     Background="Transparent" 
                     Height="35"
                     Padding="5"
+                    BorderThickness="0,1,0,1"
+                    Margin="0,-1,0,0"
                     x:Name="DataSyncing"
                     Visibility="Visible"
-                    Foreground="White"
+                    Foreground="Black"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"                                   
                     Click="DataSyncingClick">
@@ -124,14 +125,15 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
-                    BorderThickness="0"          
+                <Button Style="{StaticResource ButtonRevealStyle}"           
                     Background="Transparent" 
                     Height="35"
                     Padding="5"
                     x:Name="DeckOption"
                     Visibility="Collapsed"
-                    Foreground="White"
+                    BorderThickness="0,1,0,1"
+                    Margin="0,-1,0,0"
+                    Foreground="Black"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"                                   
                     Click="ShowDeckOptionHelp">
@@ -144,10 +146,9 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="1">
-            <Border  BorderBrush="White" BorderThickness="0,2,0,0" Margin="3,0,3,0" />
-            <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
-                    BorderThickness="0"        
-                    Margin="2"
+            <Button Style="{StaticResource ButtonRevealStyle}"           
+                    Margin="0"
+                    BorderThickness="0,1,0,1"
                     Background="Transparent"
                     Height="35"
                     Padding="5,0,0,0"
@@ -156,14 +157,14 @@
                     HorizontalContentAlignment="Left"
                     Click="UserManualClick">
                 <StackPanel Orientation="Horizontal">
-                    <Path Style="{StaticResource BookIcon}" Margin="0,0,5,0" Fill="White" />
-                    <TextBlock FontSize="16" Text="User Manual (Online)" />
+                    <Path Style="{StaticResource BookIcon}" Margin="0,0,5,0" Fill="Black" />
+                    <TextBlock FontSize="16" Text="User Manual (Online)" Foreground="Black"/>
                 </StackPanel>
             </Button>
 
-            <Button Style="{Binding Style, ElementName=button, Mode=OneTime}" 
-                    BorderThickness="0"        
-                    Margin="2,3,2,3"
+            <Button Style="{StaticResource ButtonRevealStyle}"     
+                    BorderThickness="0,1,0,1"
+                    Margin="0,-1,0,10"
                     Background="Transparent"
                     Height="35"
                     Padding="5,0,0,0"
@@ -172,8 +173,8 @@
                     HorizontalContentAlignment="Left"
                     Click="CreditClick">
                 <StackPanel Orientation="Horizontal">
-                    <Path Style="{StaticResource InfoIcon}" Margin="0,0,5,0" Fill="White" />
-                    <TextBlock FontSize="16" Text="About" />
+                    <Path Style="{StaticResource InfoIcon}" Margin="0,0,5,0" Fill="Black" />
+                    <TextBlock FontSize="16" Text="About" Foreground="Black"/>
                 </StackPanel>
             </Button>
             

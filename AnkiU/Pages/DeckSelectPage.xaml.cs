@@ -292,10 +292,9 @@ namespace AnkiU.Pages
         private void ShowAllButtonOfThisPage()
         {            
             mainPage.DragAndDropButton.Visibility = Visibility.Visible;
-            mainPage.RootSplitView.Pane.Visibility = Visibility.Visible;
+            mainPage.RootSplitView.IsPaneToggleButtonVisible = true;            
             mainPage.HelpSplitView.Visibility = Visibility.Visible;
             mainPage.AddButton.Visibility = Visibility.Visible;            
-            mainPage.SplitViewToggleButton.Visibility = Visibility.Visible;
             mainPage.SyncButton.Visibility = Visibility.Visible;                
 
             if (MainPage.UserPrefs.IsDeckListView)
@@ -318,10 +317,9 @@ namespace AnkiU.Pages
         private void HideAllButtonOfThisPage()
         {
             mainPage.DragAndDropButton.Visibility = Visibility.Collapsed;
-            mainPage.RootSplitView.Pane.Visibility = Visibility.Collapsed;
+            mainPage.RootSplitView.IsPaneToggleButtonVisible = false;
             mainPage.HelpSplitView.Visibility = Visibility.Collapsed;
             mainPage.AddButton.Visibility = Visibility.Collapsed;
-            mainPage.SplitViewToggleButton.Visibility = Visibility.Collapsed;
             mainPage.SyncButton.Visibility = Visibility.Collapsed;
             if (MainPage.UserPrefs.IsDeckListView)
                 mainPage.GridViewButton.Visibility = Visibility.Collapsed;
@@ -1106,36 +1104,20 @@ namespace AnkiU.Pages
         }
 
         private void SharedDeckTutorialSetup()
-        {
-            mainPage.SplitViewToggleButton.Click += TutorialSplitViewToggleButtonClick;
+        {            
             helpPopup = new HelpPopup();
             UIHelper.AddToGridInFull(mainGrid, helpPopup);
             helpPopup.Title = "Shared Decks";
-            helpPopup.SubTitle = "(Sharing is caring)";
+            helpPopup.SubtitleVisibility = Visibility.Collapsed;
             helpPopup.Text = "To download and import decks created by others, please press on the button at the top-left corner.\n"
                              + "(we are not responsible for these contents.)";
             helpPopup.SetOffSet(0, DEFAULT_HELP_POPUP_VERTICAL_OFFSET);
-            mainPage.NoticeMe.Stop();
-            UIHelper.SetStoryBoardTarget(mainPage.BlinkingBlue, mainPage.SplitViewToggleButton.Name);
-            mainPage.NoticeMe.Begin();
-            helpPopup.Show();
-        }         
-
-        private void TutorialSplitViewToggleButtonClick(object sender, RoutedEventArgs e)
-        {
-            helpPopup.Hide();            
-            mainPage.SplitViewToggleButton.Click -= TutorialSplitViewToggleButtonClick;
-            mainPage.NoticeMe.Stop();
-            
-            helpPopup.Title = "Finished";
-            helpPopup.SubtitleVisibility = Visibility.Collapsed;
-            helpPopup.Text = "This concludes \"Add Decks & Notes\" tutorial. You can try out other note types to see how they work.\n"
-                             + "When you are ready (and in a good mood), please view \"Note Types & Templates\" tutorial.";
+            mainPage.NoticeMe.Stop();            
             helpPopup.ShowWithClose();
 
             AllHelps.Tutorial = AllHelps.TutorialState.NotShow;
             MainPage.UserPrefs.SetHelpShown(AllHelps.HELP_DECK_NOTE, true);
-        }
+        }         
 
         private void TutorialNewDeckCreatedEvent(long deckId)
         {

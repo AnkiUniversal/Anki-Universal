@@ -107,6 +107,10 @@
     </Style>
     <x:String x:Key="OpenFolderIconData">M 30,6l-10,0 C 18.896,6, 18,6.896, 18,8c0,0-0.26,1.834-2,2L 2,10 C 0.896,10,0,10.864,0,11.968L0,30 c0,1.104, 0.896,2, 2,2l 28,0 c 1.104,0, 2-0.896, 2-2L 32,14 L 32,11.968 L 32,8 C 32,6.896, 31.104,6, 30,6z</x:String>
 
+    <Style x:Key="ImportPathIcon" TargetType="PathIcon">
+        <Setter Property="Data" Value="{StaticResource ImportIconData}"/>
+    </Style>
+    
     <Style x:Key="ImportIcon" TargetType="Path">
         <Setter Property="Stretch" Value="Fill"/>
         <Setter Property="Fill" Value="Black"/>
@@ -117,6 +121,9 @@
     </Style>
     <x:String x:Key="ImportIconData">M16.5469,23.2095 C15.8458,23.2095 15.2681,24.1776 15.0409,24.6112 L6.23738,54.8142 C6.24725,54.8353 6.28675,54.8142 6.28675,54.8437 C6.28675,56.0055 7.43225,56.9484 8.795,56.9484 C8.79994,56.9484 8.79994,56.9526 8.80487,56.9526 L10.375,56.9526 L27.6562,56.9526 C29.019,56.9526 30.125,57.8955 30.125,59.0574 L30.125,63.1995 C30.125,64.3613 31.231,65.3042 32.5938,65.3042 C32.6431,65.3042 32.6431,65.3589 32.6777,65.3716 L47.2581,65.3716 C47.3075,65.3589 47.3569,65.3042 47.4062,65.3042 C48.769,65.3042 49.875,64.3613 49.875,63.1995 L49.875,59.0574 C49.875,57.8955 50.981,56.9526 52.3438,56.9526 L64.6875,56.9526 L71.1951,56.9526 C71.2001,56.9526 71.2001,56.9484 71.205,56.9484 C72.5677,56.9484 73.6738,56.0055 73.6738,54.8437 C73.6738,54.8353 73.6886,54.8437 73.6886,54.8353 L64.9936,24.708 C64.4456,23.803 63.6654,23.2095 62.989,23.2095 L46.9,23.2095 L46.9,28.8636 L56.5,28.8636 L40.5,52.5 L24.5,28.8636 L34.1576,28.8636 L34.1461,23.2095 z M34.1,0.5 L46.9,0.5 L46.9,23.125 L48.5833,23.125 L48.5,19 L62.989,19 C65.7194,19 68.2376,20.5785 69.625,23.2095 L79.4358,56.9526 L79.5,57.1463 L79.5,59.0574 L79.5,61.1621 L79.5,63.2163 L79.5,63.2837 L79.5,75.8953 C79.5,77.0571 78.394,78 77.0312,78 L2.96875,78 C1.606,78 0.5,77.0571 0.5,75.8953 L0.5,63.4857 L0.5,63.4184 L0.5,61.1621 L0.5,59.0574 L0.5,56.9526 L0.5,56.8853 L10.375,23.2095 C11.6094,20.5785 13.8214,19 16.5469,19 L32.5,19 L32.5,23.125 L34.146,23.125 z</x:String>
 
+    <Style x:Key="ExportPathIcon" TargetType="PathIcon">
+        <Setter Property="Data" Value="{StaticResource ExportIconData}"/>
+    </Style>
     <Style x:Key="ExportIcon" TargetType="Path">
         <Setter Property="Stretch" Value="Fill"/>
         <Setter Property="Fill" Value="Black"/>
@@ -267,6 +274,9 @@
     </Style>
     <x:String x:Key="TriangleDownIconData">M0,15 L15,30 30,15 0,15z</x:String>
 
+    <Style x:Key="ChartPathIcon" TargetType="PathIcon">
+        <Setter Property="Data" Value="{StaticResource ChartIconData}"/>
+    </Style>
     <Style x:Key="ChartIcon" TargetType="Path">
         <Setter Property="Stretch" Value="Fill"/>
         <Setter Property="Fill" Value="Black"/>

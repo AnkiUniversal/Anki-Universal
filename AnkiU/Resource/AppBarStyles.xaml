@@ -5,6 +5,7 @@
 
     <x:Double x:Key="PrimarybuttonWidth">43</x:Double>
     
+    
     <Style TargetType="AppBarButton" >
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="IsEnabled" Value="True" />
@@ -154,7 +155,6 @@
               Visibility="Collapsed"/>
         </Grid>
     </ControlTemplate>
-
 
     <Style TargetType="AppBarButton" x:Key="SecondaryAppButton">
         <Setter Property="Background" Value="Transparent"/>

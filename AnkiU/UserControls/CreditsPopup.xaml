@@ -11,10 +11,10 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Popup  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  x:Name="creditPopup" VerticalOffset="30">
-        <Grid x:Name="creditRoot" VerticalAlignment="Center" HorizontalAlignment="Center"
-                  Background="{Binding Background, ElementName=userControl}" MaxWidth="600"
-                  BorderBrush="{Binding Foreground, ElementName=userControl}" BorderThickness="1">
+    <Popup  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  x:Name="creditPopup" VerticalOffset="0" HorizontalOffset="0">
+        <Grid x:Name="creditRoot" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                  Background="{StaticResource DefaultAcrylicBrush}" 
+                  BorderBrush="Blue" BorderThickness="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -39,7 +39,7 @@
                     </Paragraph>
                     
                     <Paragraph >
-                        <Bold FontSize="22">Copyright (C) 2016 Anki Universal Team</Bold>
+                        <Bold FontSize="22">Copyright (C) 2016-2017 Anki Universal Team</Bold>
                         <LineBreak />
                         <Bold>(ankiuniversal@outlook.com)</Bold>
                         <LineBreak />

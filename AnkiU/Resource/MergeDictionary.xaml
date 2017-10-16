@@ -20,6 +20,7 @@
         <ResourceDictionary Source="RadioButtonStyles.xaml"/>
         <ResourceDictionary Source="HubStyles.xaml"/>
         <ResourceDictionary Source="SplitViewStyles.xaml"/>
+        <ResourceDictionary Source="NavigationViewStyle.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

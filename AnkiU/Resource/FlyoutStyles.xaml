@@ -7,9 +7,9 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="IsTabStop" Value="False"/>
-        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundChromeHighBrush}"/>
-        <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}"/>
+        <Setter Property="Background" Value="{StaticResource DefaultAcrylicBrush}"/>
+        <Setter Property="BorderBrush" Value="Blue"/>
+        <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="MinWidth" Value="{ThemeResource FlyoutThemeMinWidth}"/>
         <Setter Property="MinHeight" Value="{ThemeResource FlyoutThemeMinHeight}"/>
@@ -32,4 +32,15 @@
         </Setter>
     </Style>
 
+    <Style TargetType="FlyoutPresenter" x:Key="DefaultFlyoutPresenterStyle">
+        <Setter Property="Background" Value="{StaticResource DefaultAcrylicBrush}"/>
+        <Setter Property="Opacity" Value="1" />
+        <Setter Property="BorderBrush" Value="Blue" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MinWidth" Value="50" />
+        <Setter Property="MinHeight" Value="50" />
+        <Setter Property="Padding" Value="15" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+    
 </ResourceDictionary>

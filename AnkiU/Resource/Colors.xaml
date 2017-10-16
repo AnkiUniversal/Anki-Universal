@@ -3,8 +3,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AnkiU.Assets.Resource">
 
-    <AcrylicBrush x:Key="DefaultAcrylicBrush" BackgroundSource="HostBackdrop" 
-                  TintColor="#FF3FABDA" TintOpacity="0.8" FallbackColor="#FF088DC7"/>
+    <AcrylicBrush x:Key="DefaultAcrylicBrush" BackgroundSource="Backdrop" 
+                  TintColor="LightGray" TintOpacity="0.6" FallbackColor="LightGray"/>
+    
+    <AcrylicBrush x:Key="DefaultAcrylicDarkBrush" BackgroundSource="Backdrop" 
+                  TintColor="#FF606060" TintOpacity="0.6" FallbackColor="#FF606060"/>
+
+    <AcrylicBrush x:Key="CommandBarAcrylicLightBrush" BackgroundSource="Backdrop" 
+                  TintColor="#FFE6E6E6" TintOpacity="0.5" FallbackColor="#FFE6E6E6"/>
+    <AcrylicBrush x:Key="CommandBarAcrylicDarkBrush" BackgroundSource="Backdrop" 
+                  TintColor="#FF3A3A3A" TintOpacity="0.5" FallbackColor="#FF3A3A3A"/>
 
     <SolidColorBrush x:Key="ShadowOuterlayer" Color="#FF979796"/>
     <SolidColorBrush x:Key="ShadowMiddleLayer" Color="#FF6D6D6D"/>

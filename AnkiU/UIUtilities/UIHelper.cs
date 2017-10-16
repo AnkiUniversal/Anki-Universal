@@ -80,7 +80,12 @@ namespace AnkiU.UIUtilities
                        = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 32, 32, 32));
         public static SolidColorBrush Transparent = new SolidColorBrush(Windows.UI.Colors.Transparent);
         public static SolidColorBrush IndioBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 8, 141, 199));
-        
+
+        public static AcrylicBrush CommandBarAcrylicLightBrush { get; private set; }
+                     = Application.Current.Resources["CommandBarAcrylicLightBrush"] as AcrylicBrush;
+        public static AcrylicBrush CommandBarAcrylicDarkBrush { get; private set; }
+                = Application.Current.Resources["CommandBarAcrylicDarkBrush"] as AcrylicBrush;
+
         public static Windows.UI.Color ContentNightModeColor { get { return ContentNightModeBrush.Color; } }
         private static Windows.UI.Color defaultInkColorDay = Windows.UI.Color.FromArgb(255, 11, 96, 181);
         public static Windows.UI.Color DefaultInkColorDay { get { return defaultInkColorDay; } }
@@ -206,19 +211,11 @@ namespace AnkiU.UIUtilities
         {
             try
             {
-                MessageDialog dialog = new MessageDialog(content, title);
-                bool isContinue = false;
-                dialog.Commands.Add(new UICommand("Yes", (command) =>
-                {
-                    isContinue = true;
-                }));
-                dialog.Commands.Add(new UICommand("No", (command) =>
-                {
-                    isContinue = false;
-                }));
-                dialog.DefaultCommandIndex = 1;
-                await dialog.ShowAsync();
-                return isContinue;
+                ConfirmDialog diaglog = new ConfirmDialog();
+                diaglog.Message = content;
+                diaglog.Title = title;
+                await diaglog.ShowAsync();
+                return diaglog.IsContinue;
             }
             catch(Exception ex)
             {

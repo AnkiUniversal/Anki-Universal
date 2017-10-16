@@ -685,21 +685,6 @@ namespace AnkiU.Views
             return new BitmapImage(new Uri("ms-appx:///Assets/" + imageName));
         }
 
-        public void ChangeReadMode(bool isNightMode)
-        {
-            this.isNightMode = isNightMode;
-            if(isNightMode)           
-                userControl.Foreground = new SolidColorBrush(Windows.UI.Colors.White);            
-            else            
-                userControl.Foreground = new SolidColorBrush(Windows.UI.Colors.Black);                         
-
-            if (helpPopup != null)            
-                helpPopup.ChangeReadMode(isNightMode);
-
-            if (creditPopup != null)
-                creditPopup.ChangeReadMode(isNightMode);
-        }
-
         private void HelpPopupCloseHandler()
         {
             try
@@ -720,7 +705,6 @@ namespace AnkiU.Views
                 creditPopup = new CreditsPopup(MainPage.MainGrid);
                 UIHelper.AddToGridInFull(MainPage.MainGrid, creditPopup);
             }
-            creditPopup.ChangeReadMode(isNightMode);
             creditPopup.Show();
         }        
     }
