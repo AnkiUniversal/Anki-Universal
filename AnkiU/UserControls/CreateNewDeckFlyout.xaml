@@ -11,13 +11,13 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Flyout x:Name="addDeckFlyout" x:Key="NewDeckFlyoutTemplate">
+        <Flyout x:Name="addDeckFlyout" x:Key="NewDeckFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
             <ContentPresenter>
                 <StackPanel Width="300">
                     
                     <TextBox x:Name="deckNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2" Margin="5,5,0,5" PlaceholderText="Deck name" IsSpellCheckEnabled="False"/>
 
-                    <TextBox x:Name="noteTypeNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2"  Margin="5,5,0,5" PlaceholderText="Note type name" IsSpellCheckEnabled="False"/>
+                    <TextBox x:Name="noteTypeNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2"  Margin="5,5,0,5" PlaceholderText="(Optional) Note type name" IsSpellCheckEnabled="False"/>
 
                     <TextBlock Grid.Row="1" Text="Based on note type: " FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
                     <views:AnkiModeInformationView x:Name="modelView" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,5,0,5"/>

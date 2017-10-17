@@ -5,6 +5,7 @@
     xmlns:local="using:AnkiU.UserControls"    
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{StaticResource DefaultAcrylicBrush}"
     x:Name="userControl"
     mc:Ignorable="d">
 
@@ -16,7 +17,7 @@
         </Storyboard>
     </ContentDialog.Resources>
 
-    <StackPanel VerticalAlignment="Center" Margin="0,20,0,0" HorizontalAlignment="Stretch" MaxWidth="300">
+    <StackPanel Background="Transparent" VerticalAlignment="Center" Margin="0,20,0,0" HorizontalAlignment="Stretch" MaxWidth="300">
         <TextBlock Text="Please do not close the program to avoid corrupting your files." TextWrapping="Wrap" 
                    FontSize="18"
                    TextAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5,5,5,15"/>

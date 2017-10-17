@@ -42,7 +42,6 @@ namespace AnkiU.Views
     public sealed partial class AllHelps : UserControl
     {
         private Collection collection;
-        private bool isNightMode = false;
         private HelpPopup helpPopup;
         private CreditsPopup creditPopup;
 
@@ -133,7 +132,7 @@ namespace AnkiU.Views
             if (MainPage.UserPrefs.IsHelpAlreadyShown(HELP_DECK_NOTE))
             {
                 InitHelpPopupIfNeeded();
-                StartAddECkAndNotehelp();
+                StartAddDeckAndNotehelp();
             }
             else
             {
@@ -145,7 +144,7 @@ namespace AnkiU.Views
             }
         }
 
-        private void StartAddECkAndNotehelp()
+        private void StartAddDeckAndNotehelp()
         {
             helpPopup.Title = "Deck";
             helpPopup.SubtitleVisibility = Visibility.Collapsed;
@@ -156,7 +155,7 @@ namespace AnkiU.Views
 
         private void FirstAddDeckAndNoteNext()
         {
-            helpPopup.BackEvent = StartAddECkAndNotehelp;
+            helpPopup.BackEvent = StartAddDeckAndNotehelp;
             helpPopup.NextEvent = SecondAddDeckAndNoteNext;
 
             helpPopup.Title = "Deck";            
@@ -180,7 +179,7 @@ namespace AnkiU.Views
             helpPopup.NextEvent -= SecondAddDeckAndNoteNext;
 
             helpPopup.Title = "Note";
-            helpPopup.Text = "To change how your cards will display contents from notes, please view \"Note Types & Templates\". To extract sub-decks please view \"Custom Study\".";
+            helpPopup.Text = "To resue an old note type for a new deck, please leave note type name blank. To change how your cards will display contents from notes, please view \"Note Types & Templates\". To extract sub-decks please view \"Custom Study\".";
             helpPopup.ShowWithBackAndClose();
         }
         #endregion
@@ -635,7 +634,6 @@ namespace AnkiU.Views
                 UIHelper.AddToGridInFull(MainPage.MainGrid, helpPopup);
                 helpPopup.CloseXVisibility = Visibility.Visible;      
             }
-            helpPopup.ChangeReadMode(isNightMode);
         }
 
         private bool MakeSureUsedModelWithExistingNote()

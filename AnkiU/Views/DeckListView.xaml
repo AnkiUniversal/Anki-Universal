@@ -34,14 +34,18 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock   Foreground="{Binding Foreground,ElementName=userControl}" Grid.Column="0" Grid.ColumnSpan="2" Text="Decks" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+            <TextBlock   Foreground="{Binding Foreground,ElementName=userControl}" 
+                         Grid.Column="0" Grid.ColumnSpan="2" 
+                         Text="Decks" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
             <Grid Grid.Column="2" Padding="0">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock   Foreground="{Binding Foreground,ElementName=userControl}" Grid.Column="0" Margin="-15,0,0,0"  Text="New"  HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
                 <TextBlock   Foreground="{Binding Foreground,ElementName=userControl}" Grid.Column="1" Margin="-20,0,0,0" Text="Due" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+                <TextBlock   Foreground="{Binding Foreground,ElementName=userControl}" Grid.Column="2" Margin="-20,0,0,0" Text="Menu" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
             </Grid>
         </Grid>
 
@@ -60,27 +64,16 @@
                   CanDragItems="False"                         
                   DragItemsStarting="OnDragItemsStarting"                     
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  
+                  ItemContainerStyle="{StaticResource DeckListViewItemRevealStyle}"
                   ItemClick="ListViewItemClickHandler">
             <ListView.Transitions>
                 <TransitionCollection>
                     <EntranceThemeTransition/>
                 </TransitionCollection>
             </ListView.Transitions>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="AllowDrop" Value="True" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="BorderBrush" Value="{StaticResource DeckListItemColorBrush}" />
-                    <Setter Property="BorderThickness" Value="0,0,0,1" />
-                    <Setter Property="Visibility" Value="Visible" />
-                    <Setter Property="Template" Value="{StaticResource DeckItemListViewType}"/>
-                    <Setter Property="RenderTransformOrigin" Value="0.5, 0.5" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="data:DeckInformation">
-                    <Grid x:Name="GridDeckList" Margin="0,5,0,5"
+                    <Grid x:Name="GridDeckList" Margin="0,5,0,5" HorizontalAlignment="Stretch"
                           DataContextChanged="OnGridDeckListDataContextChanged" 
                           Drop="OnDrop" DragEnter="OnDragEnter" DragLeave="OnDragLeave"  AllowDrop="True"  >
                         <Grid.ColumnDefinitions>
@@ -117,6 +110,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="NewCards"
             			Text="{x:Bind NewCards, Mode=OneWay}" Grid.Column="0" 
@@ -127,6 +121,19 @@
             			Text="{x:Bind DueCards, Mode=OneWay}" Grid.Column="1" 
                         Foreground="{x:Bind DueCards, Converter={StaticResource NumberOfCardToSolidBrushConverter},  Mode=OneWay}" 
             			HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                            <Button Grid.Column="2" 
+                                    Margin="0,-10,0,-10"
+                                    Style="{StaticResource ButtonContentOcpacity}" 
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Padding="0"
+                                    Background="Transparent"                                    
+                                    Click="OnContextMenuButtonClick">
+                                <Path Style="{StaticResource ChevronDoubleDownIcon}" 
+                                      Stroke="{StaticResource ButtonBackGroundNormal}" 
+                                      Fill="{StaticResource ButtonBackGroundNormal}" />
+                            </Button>
                         </Grid>
                     </Grid>
                 </DataTemplate>

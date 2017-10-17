@@ -6,7 +6,7 @@
     <AcrylicBrush x:Key="NavigationViewDefaultPaneBackground"
               BackgroundSource="Backdrop" TintColor="#FF3FABDA" TintOpacity=".4" FallbackColor="#FF3FABDA"/>
     <AcrylicBrush x:Key="NavigationViewExpandedPaneBackground"
-              BackgroundSource="Backdrop" TintColor="#FF3FABDA" TintOpacity=".4" FallbackColor="#FF3FABDA"/>
+              BackgroundSource="HostBackdrop" TintColor="#FF3FABDA" TintOpacity=".7" FallbackColor="#FF3FABDA"/>
 
     <Style x:Key="PaneToggleButtonCustomStyle" TargetType="Button">
         <Setter Property="FontSize" Value="16" />

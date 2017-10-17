@@ -1,5 +1,5 @@
 ﻿<ContentDialog
-    x:Class="AnkiU.UserControls.ConfirmDialog"
+    x:Class="AnkiU.UserControls.ContentMessageDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AnkiU.UserControls"
@@ -8,12 +8,10 @@
     mc:Ignorable="d"
     Title="TITLE"
     Background="{StaticResource DefaultAcrylicBrush}"    
-    PrimaryButtonText="Yes"
-    SecondaryButtonText="No"
-    PrimaryButtonClick="OnYesClick"
-    SecondaryButtonClick="OnNoClick">
+    SecondaryButtonText="OK"
+    SecondaryButtonClick="OnOkClick">
 
-    <Grid >
-        <TextBlock x:Name="message"  Foreground="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextAlignment="Left" TextWrapping="Wrap"/>
+    <Grid>
+        <TextBlock x:Name="message" TextWrapping="Wrap" Foreground="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextAlignment="Left"/>
     </Grid>
 </ContentDialog>

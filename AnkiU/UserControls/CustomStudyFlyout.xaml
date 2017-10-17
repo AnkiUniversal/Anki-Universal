@@ -14,9 +14,8 @@
     d:DesignWidth="400">
 
     <Popup x:Name="customStudyFlyout" IsOpen="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="335" Height="500" >
-        <Grid x:Name="contentGrid" MaxWidth="335"  Background="{Binding Background, ElementName=userControl}" BorderThickness="1" 
-              VerticalAlignment="Center" HorizontalAlignment="Center"
-               BorderBrush="{Binding Foreground, ElementName=userControl}" RenderTransformOrigin="0.5,0.5" >
+        <Grid x:Name="contentGrid" MaxWidth="335"  Background="{Binding Background, ElementName=userControl}" BorderThickness="1" BorderBrush="Blue"
+              VerticalAlignment="Center" HorizontalAlignment="Center" RenderTransformOrigin="0.5,0.5" >
             <Grid.RenderTransform>
                 <CompositeTransform x:Name="contentScale" ScaleX="1" ScaleY="1"/>
             </Grid.RenderTransform>
@@ -136,7 +135,7 @@
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                     <TextBlock Text="Number of cards:" VerticalAlignment="Center" Margin="0,0,5,2" Foreground="{Binding Foreground, ElementName=userControl}" />
-                                    <local:NumbericTextBox x:Name="cramNumberBox" Padding="5,5,6,0" Background="{Binding Background, ElementName=userControl}"  Foreground="{Binding Foreground, ElementName=userControl}" />
+                                    <local:NumbericTextBox x:Name="cramNumberBox" Padding="5,5,6,0" Background="Transparent"  Foreground="{Binding Foreground, ElementName=userControl}" />
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="1" x:Name="includeTagStack">
@@ -153,7 +152,7 @@
                                                               Foreground="{Binding Foreground, ElementName=userControl}"/>
                                 </StackPanel>
 
-                                <CheckBox Grid.Row="3" Foreground="{Binding Foreground, ElementName=userControl}" Background="{Binding Background, ElementName=userControl}"
+                                <CheckBox Grid.Row="3" Foreground="{Binding Foreground, ElementName=userControl}" Background="Transparent"
                                           Content="Reschedule cards based on my answer" x:Name="rescheduleCheckBox" IsThreeState="False"/>
                             </Grid>
                         </Grid>

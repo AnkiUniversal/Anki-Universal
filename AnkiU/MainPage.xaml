@@ -131,7 +131,7 @@
         
     </Page.Resources>
 
-    <Grid  x:Name="mainGrid">
+    <Grid  x:Name="mainGrid" >
         <NavigationView  x:Name="splitView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AlwaysShowHeader="True"                        
                          Style="{StaticResource NavigationViewCustomStyle}" IsPaneToggleButtonVisible="True"                          
                          CompactModeThresholdWidth="1080" ExpandedModeThresholdWidth="1920" IsSettingsVisible="True" 

@@ -86,6 +86,11 @@ namespace AnkiU.UIUtilities
         public static AcrylicBrush CommandBarAcrylicDarkBrush { get; private set; }
                 = Application.Current.Resources["CommandBarAcrylicDarkBrush"] as AcrylicBrush;
 
+        public static AcrylicBrush BackgroundAcrylicLightBrush { get; private set; }
+              = Application.Current.Resources["DefaultBackgroundAcrylicLightBrush"] as AcrylicBrush;
+        public static AcrylicBrush BackgroundAcrylicDarkBrush { get; private set; }
+           = Application.Current.Resources["DefaultBackgroundAcrylicDarkBrush"] as AcrylicBrush;
+
         public static Windows.UI.Color ContentNightModeColor { get { return ContentNightModeBrush.Color; } }
         private static Windows.UI.Color defaultInkColorDay = Windows.UI.Color.FromArgb(255, 11, 96, 181);
         public static Windows.UI.Color DefaultInkColorDay { get { return defaultInkColorDay; } }
@@ -191,7 +196,7 @@ namespace AnkiU.UIUtilities
 
         public static async Task ShowMessageDialog(string content, string title = "")
         {
-            MessageDialog dialog = new MessageDialog(content, title);
+            ContentMessageDialog dialog = new ContentMessageDialog(title, content);
             await dialog.ShowAsync();
         }
 

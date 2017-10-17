@@ -106,8 +106,10 @@
     </ControlTemplate>
 
     <Style x:Key="TabsStylePivotStyle" TargetType="Pivot">
-        <Setter Property="Foreground" Value="Black" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="{StaticResource ButtonBackGroundNormal}" />
+        <Setter Property="BorderThickness" Value="0,0,0,2" />
+        <Setter Property="BorderBrush" Value="{StaticResource ButtonBackGroundAnalogousRight}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Pivot">
@@ -203,11 +205,13 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Border Background="{TemplateBinding Background}" HorizontalAlignment="Stretch" BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundCompliment}">
+                        <Border Background="{TemplateBinding Background}" HorizontalAlignment="Stretch" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                BorderBrush="{TemplateBinding BorderBrush}">
                             <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                     Foreground="{TemplateBinding Foreground}"
-                                    x:Name="TitleContentControl"
-                                    Margin="{StaticResource PivotPortraitThemePadding}"
+                                    x:Name="TitleContentControl"                                    
+                                    Margin="12,5,0,5"
                                     Content="{TemplateBinding Title}"
                                     ContentTemplate="{TemplateBinding TitleTemplate}"
                                     IsTabStop="False"                                
@@ -341,7 +345,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Black" />
         <Setter Property="Padding" Value="0" />
-        <Setter Property="Height" Value="48" />
+        <Setter Property="Height" Value="40" />
         <Setter Property="Width" Value="80" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="IsTabStop" Value="False" />
@@ -404,7 +408,7 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid"
                                                Storyboard.TargetProperty="BorderBrush" >
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonBackGroundNormal}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="White" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -420,7 +424,7 @@
                                         </ObjectAnimationUsingKeyFrames>-->
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid"
                                                Storyboard.TargetProperty="BorderBrush" >
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonBackGroundNormal}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="LightGray" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -428,7 +432,7 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid"
                                                Storyboard.TargetProperty="BorderBrush" >
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonBackGroundAnalogousLeft}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="White" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -444,7 +448,7 @@
                                         </ObjectAnimationUsingKeyFrames>-->
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid"
                                                Storyboard.TargetProperty="BorderBrush" >
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonBackGroundPressed}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="LightGray" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -452,7 +456,7 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid"
                                                Storyboard.TargetProperty="BorderBrush" >
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonBackGroundAnalogousLeft}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="LightGray" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>

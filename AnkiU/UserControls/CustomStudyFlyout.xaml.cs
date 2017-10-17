@@ -196,14 +196,14 @@ namespace AnkiU.UserControls
 
         public void ChangeToDayMode()
         {
-            userControl.Background = new SolidColorBrush(Windows.UI.Colors.White);
-            userControl.Foreground = new SolidColorBrush(Windows.UI.Colors.Black);
+            userControl.Background = UIHelper.CommandBarAcrylicLightBrush;
+            userControl.Foreground = UIHelper.DarkerBrush;
         }
 
         public void ChangeToNightMode()
         {
-            userControl.Background = new SolidColorBrush(Windows.UI.Colors.Black);
-            userControl.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
+            userControl.Background = UIHelper.CommandBarAcrylicDarkBrush; ;
+            userControl.Foreground = UIHelper.ForeGroundLight;
         }
 
         public void Show()

@@ -10,7 +10,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Flyout x:Name="nameFlyout" x:Key="RenameFlyoutTemplate" >
+        <Flyout x:Name="nameFlyout" x:Key="RenameFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
             <ContentPresenter >
                 <Grid Width="300" >
                     <Grid.RowDefinitions>

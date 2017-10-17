@@ -9,6 +9,11 @@
     <AcrylicBrush x:Key="DefaultAcrylicDarkBrush" BackgroundSource="Backdrop" 
                   TintColor="#FF606060" TintOpacity="0.6" FallbackColor="#FF606060"/>
 
+    <AcrylicBrush x:Key="DefaultBackgroundAcrylicLightBrush" BackgroundSource="HostBackdrop" 
+                  TintColor="White" TintOpacity="0.8" FallbackColor="White"/>
+    <AcrylicBrush x:Key="DefaultBackgroundAcrylicDarkBrush" BackgroundSource="HostBackdrop" 
+                  TintColor="#FF3A3A3A" TintOpacity="0.8" FallbackColor="#FF3A3A3A"/>
+    
     <AcrylicBrush x:Key="CommandBarAcrylicLightBrush" BackgroundSource="Backdrop" 
                   TintColor="#FFE6E6E6" TintOpacity="0.5" FallbackColor="#FFE6E6E6"/>
     <AcrylicBrush x:Key="CommandBarAcrylicDarkBrush" BackgroundSource="Backdrop" 
@@ -23,7 +28,7 @@
 
     <SolidColorBrush x:Key="DeckListItemPointerOverBackground" Color="{ThemeResource SystemAccentColor}" Opacity="0.2" />
     <SolidColorBrush x:Key="DeckListItemColorBrush" Color="#FF088DC7"/>
-    <SolidColorBrush x:Key="DeckListBorderColorBrush" Color="#FFE4E4F3"/>
+    <SolidColorBrush x:Key="DeckListBorderColorBrush" Color="#FF088DC7"/>
 
     <SolidColorBrush x:Key="AppDefaultTileBackgroundBrush" Color="#FF17A1E5"/>
     <SolidColorBrush x:Key="DeckWithNewOrDueCards" Color="#FFFF8700"/>

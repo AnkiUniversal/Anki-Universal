@@ -48,7 +48,7 @@ namespace AnkiU.Anki.Syncer
             try
             {
                 SetSyncLabel("Sync collection to AnkiWeb...");
-                syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
+                syncStateDialog.Show();
                 GetHostKeyFromVault();
 
                 server = new RemoteServer(hostKey);
@@ -87,8 +87,8 @@ namespace AnkiU.Anki.Syncer
                 }
                 else if (results[0] == "noChanges" || results[0] == "success")
                 {
-                    SetSyncLabel("Finished.");                    
-                    syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
+                    SetSyncLabel("Finished.");
+                    syncStateDialog.Show();
                     if (results[0] == "success")
                     {
                         await NavigateToDeckSelectPage();
@@ -172,16 +172,16 @@ namespace AnkiU.Anki.Syncer
 
         private async Task DownloadFullDatabase(FullSyncer fullSyncclient)
         {
-            SetSyncLabel("Downloading full database...");            
-            syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
+            SetSyncLabel("Downloading full database...");
+            syncStateDialog.Show();
             await fullSyncclient.Download();
             await ReOpenAndNavigateToDeckSelectPage();
         }
 
         private async Task UploadFullDatabase(FullSyncer fullSyncclient)
         {
-            SetSyncLabel("Uploading full database...");            
-            syncStateDialog.Show(MainPage.UserPrefs.IsReadNightMode);
+            SetSyncLabel("Uploading full database...");
+            syncStateDialog.Show();
             await fullSyncclient.Upload();
         }
 

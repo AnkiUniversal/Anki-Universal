@@ -11,7 +11,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Flyout x:Name="databaseBackupFlyout" x:Key="DatabaseBackupFlyoutTemplate" >
+        <Flyout x:Name="databaseBackupFlyout" x:Key="DatabaseBackupFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
             <ContentPresenter>
                 <Grid MinWidth="300" >
                     <Grid.RowDefinitions>
@@ -47,7 +47,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
-                    <Button x:Name="cancelButton" Margin="0,0,5,0"  Grid.Row="2" HorizontalAlignment="Stretch" Content="Cancel" Style="{StaticResource ButtonGray}" Click="CancelButtonClickHandler" BorderBrush="Black" BorderThickness="1"/>
+                    <Button x:Name="cancelButton" Margin="0,0,5,0"  Grid.Row="2" HorizontalAlignment="Stretch" Content="Cancel" Style="{StaticResource ButtonRevealStyle}" Click="CancelButtonClickHandler"/>
                 </Grid>
             </ContentPresenter>
         </Flyout>

@@ -37,6 +37,7 @@ namespace AnkiU.Interfaces
         event DeckItemClickEventHandler DeckItemClickEvent;
         event DeckDragAnDropEventHandler DragAnDropEvent;
         event ExpandChildrenClickEventHandler ExpandChildrenClickEvent;
+        event RoutedEventHandler ContextMenuClickEvent;
 
         void EnableDragAndDropMode();
         void DisableDragAndDropMode();

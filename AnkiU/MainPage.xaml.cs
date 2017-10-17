@@ -1905,7 +1905,7 @@ namespace AnkiU
         {
             if (UserPrefs.IsReadNightMode)
             {
-                ChangeTitleBarToNightMode();                
+                ChangeTitleBarToNightMode();
                 ChangeStatusBarToNightMode();
                 commandBar.Background = UIHelper.CommandBarAcrylicDarkBrush;
                 commandBar.Foreground = UIHelper.ForeGroundLight;
@@ -1924,10 +1924,10 @@ namespace AnkiU
         private void ChangeTitleBarToDayMode()
         {
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
-            {
+            {                
                 var titleBar = ApplicationView.GetForCurrentView().TitleBar;
                 if (titleBar != null)
-                {
+                {                    
                     titleBar.BackgroundColor = Colors.White;
                     titleBar.ForegroundColor = Colors.Black;
                     titleBar.ButtonBackgroundColor = Colors.White;

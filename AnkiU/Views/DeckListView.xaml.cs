@@ -47,6 +47,7 @@ namespace AnkiU.Views
         public event DeckItemClickEventHandler DeckItemClickEvent;
         public event DeckDragAnDropEventHandler DragAnDropEvent;
         public event ExpandChildrenClickEventHandler ExpandChildrenClickEvent;
+        public event RoutedEventHandler ContextMenuClickEvent;
 
         private DeckInformation draggedDeck;
         
@@ -169,6 +170,11 @@ namespace AnkiU.Views
                 return;
 
             item.Visibility = deckInfor.Visibility;
+        }
+
+        private void OnContextMenuButtonClick(object sender, RoutedEventArgs e)
+        {
+            ContextMenuClickEvent?.Invoke(sender, e);
         }
     }
 }

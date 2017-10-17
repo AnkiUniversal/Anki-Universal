@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     MinWidth="350"
+    Background="{StaticResource DefaultAcrylicBrush}"
     Title="AnkiWeb Login"
     PrimaryButtonText="OK"
     SecondaryButtonText="Cancel"
@@ -27,9 +28,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Text="AnkiWeb ID:" VerticalAlignment="Center" />
-        <TextBlock Grid.Row="2" Text="Password:" VerticalAlignment="Center" />
-        <TextBox x:Name="ankiWebIdTextBox" Grid.Column="2" Style="{StaticResource OldTextBoxStyle}"  KeyDown="OnPasswordBoxKeyDown" IsSpellCheckEnabled="False"/>
+        <TextBlock Text="AnkiWeb ID:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+        <TextBlock Grid.Row="2" Text="Password:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+        <TextBox x:Name="ankiWebIdTextBox" Grid.Column="2"  KeyDown="OnPasswordBoxKeyDown" IsSpellCheckEnabled="False"/>
         <PasswordBox x:Name="passwordBox" Grid.Row="2" Grid.Column="2"  InputScope="Password" PasswordRevealMode="Hidden" KeyDown="OnPasswordBoxKeyDown" />
         <ProgressBar x:Name="progressBar" Background="Transparent" Height="13" Grid.Row="3" Grid.ColumnSpan="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" IsIndeterminate="False" IsEnabled="False" Visibility="Collapsed" />
         <TextBlock Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Right" VerticalAlignment="Bottom">

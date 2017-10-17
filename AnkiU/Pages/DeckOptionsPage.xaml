@@ -19,7 +19,7 @@
         <ScrollViewer ZoomMode="Disabled"  HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch"
                       VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto" HorizontalScrollBarVisibility="Disabled" >
 
-            <Grid x:Name="rootGrid"  Background="{Binding Background, ElementName=userControl}">
+            <Grid x:Name="rootGrid"  Background="{StaticResource ButtonBackGroundNormal}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -27,7 +27,7 @@
 
                 <Grid x:Name="simpleViewRootGrid" Visibility="Visible" >
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="70"/>
+                        <RowDefinition Height="60"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
@@ -36,14 +36,15 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Margin="1,0,0,3" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="NAME" FontSize="18" />
+                        <TextBlock Margin="1,0,0,3" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="White" 
+                                   HorizontalAlignment="Left" Text="NAME" FontSize="18" />
                         <TextBox Margin="10,0,15,2" Grid.Column="1" VerticalAlignment="Center" 
                                  x:Name="currentNameSimpleView" IsSpellCheckEnabled="False"
-                                 Foreground="{Binding Foreground, ElementName=userControl}"
+                                 BorderBrush="White"
+                                 Foreground="White"
                                  HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="18"                          
                                  Text="{x:Bind CurrentName, Mode=TwoWay}"/>
                     </Grid>
-                    <Border BorderBrush="{StaticResource ButtonBackGroundCompliment}" BorderThickness="0,0,0,1" />
 
                     <Border Background="{Binding Background, ElementName=simpleConfigView}" Grid.Row="1"/>
                     <views:DeckSImpleOptionsView HorizontalAlignment="Stretch" Background="White" 
@@ -51,16 +52,22 @@
                                                  x:Name="simpleConfigView" Grid.Row="1" Margin="10,10,15,10"/>
                 </Grid>
 
-                <Pivot x:Name="rootTab" Visibility="Collapsed" Foreground="{Binding Foreground, ElementName=userControl}"  Background="{Binding Background, ElementName=userControl}"      
-                   Style="{StaticResource TabsStylePivotStyle}" Grid.Row="0" x:DeferLoadStrategy="Lazy">
-                    <Pivot.Title>
-                        <Grid MaxWidth="500" HorizontalAlignment="Left" MinWidth="310"  >
+                <Pivot x:Name="rootTab" Visibility="Collapsed"    
+                       Style="{StaticResource TabsStylePivotStyle}" 
+                       Grid.Row="0" 
+                       x:DeferLoadStrategy="Lazy">
+                    <Pivot.Title >
+                        <Grid MaxWidth="500" HorizontalAlignment="Left" MinWidth="310" >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="tabTitle" Foreground="{Binding Foreground, ElementName=userControl}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Text="NAME" FontSize="18" />
-                            <TextBox x:Name="currentNameExpertView" Margin="10,0,15,0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="18"  Foreground="{Binding Foreground, ElementName=userControl}"  
+                            <TextBlock x:Name="tabTitle" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center" 
+                                       HorizontalAlignment="Left" Text="NAME" FontSize="18" />
+                            <TextBox x:Name="currentNameExpertView" Margin="10,0,15,0" Grid.Column="1" 
+                                     VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Left" 
+                                     FontSize="18"  Foreground="White"
+                                     BorderBrush="White"
                                 Text="{x:Bind CurrentName, Mode=TwoWay}" IsSpellCheckEnabled="False"/>
                         </Grid>
                     </Pivot.Title>
@@ -70,7 +77,7 @@
                             FontFamily="Segoe UI" 
                             FontSize="16"                            
                             FontWeight="SemiBold"
-                            Foreground="{Binding Foreground, ElementName=userControl}"
+                            Foreground="White"
                             Margin="5"                                                
                             Style="{StaticResource CaptionTextBlockStyle}"    
                             IsTextScaleFactorEnabled="False"
@@ -87,7 +94,7 @@
                             FontSize="16"
                             FontWeight="SemiBold"                            
                             Margin="5"
-                            Foreground="{Binding Foreground, ElementName=userControl}" 
+                            Foreground="White" 
                             Style="{StaticResource CaptionTextBlockStyle}"                            
                             IsTextScaleFactorEnabled="False"
                             TextAlignment="Center"
@@ -103,7 +110,7 @@
                             FontSize="16"
                             FontWeight="SemiBold"                            
                             Margin="5"
-                            Foreground="{Binding Foreground, ElementName=userControl}"
+                            Foreground="White"
                             Style="{StaticResource CaptionTextBlockStyle}"                            
                             IsTextScaleFactorEnabled="False"
                             TextAlignment="Center"
@@ -119,7 +126,7 @@
                             FontWeight="SemiBold"
                             FontSize="16"
                             Margin="5"                    
-                            Foreground="{Binding Foreground, ElementName=userControl}" 
+                            Foreground="White" 
                             Style="{StaticResource CaptionTextBlockStyle}"                            
                             IsTextScaleFactorEnabled="False"
                             TextAlignment="Center"
