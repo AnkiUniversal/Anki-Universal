@@ -110,7 +110,7 @@ namespace AnkiU.UserControls
         }
 
         private async void OkButtonClick(object sender, RoutedEventArgs e)
-        {            
+        {
             string deckName = Utils.GetValidName(deckNameTextBox.Text);
             string noteName = Utils.GetValidName(noteTypeNameTextBox.Text);
 
@@ -124,25 +124,31 @@ namespace AnkiU.UserControls
             long? deckId = collection.Deck.AddOrResuedDeck(deckName, true);
             if (deckId == null)
             {
-                await UIHelper.ShowMessageDialog("Unexpected error!");                
+                await UIHelper.ShowMessageDialog("Unexpected error!");
                 return;
             }
 
-            long modelCopyFromID = modelView.GetSelectedModelId();            
+            long modelCopyFromID = modelView.GetSelectedModelId();
             ProgressDialog dialog = new ProgressDialog();
             dialog.ProgressBarLabel = "";
-            dialog.ShowInDeterminateStateNoStopAsync("Add new deck");            
+            dialog.ShowInDeterminateStateNoStopAsync("Add new deck");
 
             var task = Task.Run(async () =>
             {
-                var modelCloneFrom = collection.Models.Get(modelCopyFromID);
-                var model = collection.Models.Copy(modelCloneFrom);
-                model["name"] = JsonValue.CreateStringValue(noteName);
-
                 var deckJson = collection.Deck.Get(deckId);
+                JsonObject model;
+                if (!String.IsNullOrWhiteSpace(noteName))
+                {
+                    var modelCloneFrom = collection.Models.Get(modelCopyFromID);
+                    model = collection.Models.Copy(modelCloneFrom);
+                    model["name"] = JsonValue.CreateStringValue(noteName);
+                }
+                else
+                {
+                    model = collection.Models.Get(modelCopyFromID);
+                }
                 deckJson["mid"] = model["id"];
                 model["did"] = JsonValue.CreateNumberValue((long)deckId);
-
                 collection.Models.Save(model);
                 collection.Deck.Save(deckJson);
                 collection.SaveAndCommit();
@@ -165,7 +171,7 @@ namespace AnkiU.UserControls
                 return false;
             }
 
-            if(deckName == "Default")
+            if (deckName == "Default")
             {
                 await UIHelper.ShowMessageDialog("\"Default\" is not a valid name.");
                 addDeckFlyout.ShowAt(placeToShow);
@@ -176,19 +182,14 @@ namespace AnkiU.UserControls
                                                  "A deck with the same name already exists. Please enter a different one.");
             if (!isValid)
                 return false;
-            
-            if (string.IsNullOrWhiteSpace(noteName))
-            {
-                isError = true;
-                await UIHelper.ShowMessageDialog("Please enter a valid note type name.");
-                addDeckFlyout.ShowAt(placeToShow);
-                return false;
-            }
-            isValid = await CheckIfNameValid(noteName, collection.Models.AllNames(),
-                                     "A note type with the same name already exists. Please enter a different one.");
-            if (!isValid)
-                return false;
 
+            if (!string.IsNullOrWhiteSpace(noteName))
+            {
+                isValid = await CheckIfNameValid(noteName, collection.Models.AllNames(),
+                                         "A note type with the same name already exists. Please enter a different one.");
+                if (!isValid)
+                    return false;
+            }
             return true;
         }
 
