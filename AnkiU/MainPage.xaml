@@ -135,7 +135,8 @@
         <NavigationView  x:Name="splitView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AlwaysShowHeader="True"                        
                          Style="{StaticResource NavigationViewCustomStyle}" IsPaneToggleButtonVisible="True"                          
                          CompactModeThresholdWidth="1080" ExpandedModeThresholdWidth="1920" IsSettingsVisible="True" 
-                         IsPaneOpen="False"  CompactPaneLength="0" OpenPaneLength="200" ItemInvoked="OnNavigationViewItemInvoked" >
+                         IsPaneOpen="False"  CompactPaneLength="0" OpenPaneLength="200" ItemInvoked="OnNavigationViewItemInvoked" 
+                         >
             <NavigationView.MenuItems>
 
                 <NavigationViewItem Content="Download Decks" Tag="download" >
@@ -217,7 +218,8 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <CommandBar x:Name="commandBar" Foreground="Black" Background="{StaticResource CommandBarAcrylicLightBrush}" IsDynamicOverflowEnabled="False">
+                <Border x:Name="commandBarBindBackground" Visibility="Collapsed" Background="{StaticResource CommandBarAcrylicLightBrush}"/>
+                <CommandBar x:Name="commandBar" Foreground="Black" Background="LightGray" IsDynamicOverflowEnabled="False">
                     <CommandBar.CommandBarOverflowPresenterStyle>
                         <Style TargetType="CommandBarOverflowPresenter">
                             <Setter Property="Background" Value="Transparent" />
@@ -232,9 +234,8 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="CommandBarOverflowPresenter">
                                         <Grid x:Name="secondaryCommanBarGrid"                                         
-                                      Background="{Binding Background, ElementName=commandBar}" 
-                                      
-                                      Padding="{TemplateBinding Padding}">
+                                              Background="{Binding Background, ElementName=commandBarBindBackground}" 
+                                              Padding="{TemplateBinding Padding}">
                                             <ScrollViewer AutomationProperties.AccessibilityView="Raw" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" 
                                                   VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}">
                                                 <ItemsPresenter x:Name="ItemsPresenter" Margin="0"/>
@@ -363,7 +364,7 @@
                     Visibility="Visible"
                     CompactPaneLength="0" 
                     IsHitTestVisible="False"
-                    OpenPaneLength="210"
+                    OpenPaneLength="230"
                     PaneClosed="HelpSplitViewPaneClosedHandler" RenderTransformOrigin="0.5,0.5" >
             <SplitView.RenderTransform>
                 <CompositeTransform x:Name="helpSplitViewTransform" TranslateX="0"/>

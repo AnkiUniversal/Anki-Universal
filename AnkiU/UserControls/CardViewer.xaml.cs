@@ -182,7 +182,7 @@ namespace AnkiU.UserControls
             isWebViewReady = false;
             webViewGrid.Children.Clear();
             webViewControl = null;
-            //GC.Collect(); //Disable in Creator Update
+            GC.Collect(); //Enable again in Fall Creator Update
         }
 
         private void ClearSpeechSynthIfNeeded()

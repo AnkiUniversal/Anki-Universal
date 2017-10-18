@@ -11,7 +11,7 @@
     d:DesignHeight="400"
     xmlns:DataBindingConverters="using:AnkiU.UIUtilities.DataBindingConverters" x:Name="userControl"
     d:DesignWidth="320"
-    Background="{StaticResource BackgroundNormal}"
+    Background="White"
     Foreground="Black">
 
     <UserControl.Resources>
@@ -99,6 +99,7 @@
             <TextBlock Text="Tag only" TextAlignment="Left"/>
         </ComboBox>
 
-        <Button Grid.Column="2" Style="{StaticResource ButtonGray}" Foreground="{Binding Foreground, ElementName=userControl}" Background="Transparent" BorderThickness="1" BorderBrush="{Binding Foreground, ElementName=userControl}" Grid.ColumnSpan="2" Margin="0,15,0,0"  HorizontalAlignment="Right"  Grid.Row="9" x:Name="restoreButton"   Content="Default" Width="80" Click="RestoreButtonClickHandler"/>
+        <Button Grid.Column="2" Style="{StaticResource ButtonGray}" BorderThickness="0" Background="Gray" Foreground="White" 
+                Grid.ColumnSpan="2" Margin="0,15,0,0"  HorizontalAlignment="Right"  Grid.Row="9" x:Name="restoreButton"   Content="Default" Width="80" Click="RestoreButtonClickHandler"/>
     </Grid>
 </UserControl>

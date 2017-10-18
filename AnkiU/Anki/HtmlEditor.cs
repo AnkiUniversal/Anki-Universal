@@ -271,9 +271,10 @@ namespace AnkiU.Anki
             webViewGrid.Children.Clear();
             webViewControl = null;
 
+            //Update: Enable this again on "Fall Creator Update"
             //Disable on "Creator Update" because this can cause system crashes
             //Without this, GC will run when it needs to release memory, so it's not a big problem
-            //GC.Collect(); 
+            GC.Collect();
         }
 
         public async Task InitRichTextEditor()

@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -453,6 +454,22 @@ namespace AnkiU.Pages
         {
             editModelButton.Click -= EditModelButtonClickHandler;
             NoticeMe.Stop();
+        }
+
+        private void OnAddNoteTypeClick(object sender, RoutedEventArgs e)
+        {
+            CreateNewNoteTypeFlyout newNoteTypeFlyout = new CreateNewNoteTypeFlyout(collection, mainPage.CurrentDispatcher);
+            newNoteTypeFlyout.ShowFlyout(editModelButton, FlyoutPlacementMode.Bottom);
+            newNoteTypeFlyout.NewNoteTypeCreatedEvent += OnNewNoteTypeCreatedEvent;            
+        }
+
+        private async void OnNewNoteTypeCreatedEvent(string name, long id)
+        {
+            await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                modelViewModel.Models.Add(new AnkiModelInformation(name, id));
+                modelInformationView.ChangeSelectedItem(id);
+            });
         }
     }
 }

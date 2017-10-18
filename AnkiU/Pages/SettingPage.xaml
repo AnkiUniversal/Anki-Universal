@@ -162,13 +162,13 @@
                                 <ComboBoxItem Content="AnkiWeb" />
                             </ComboBox>
 
-                            <Button HorizontalAlignment="Left" Grid.Row="1" Margin="0,5,0,5" x:Name="ankiWebLogoutButton"  Foreground="{Binding Foreground, ElementName=userControl}" 
+                            <Button HorizontalAlignment="Left" Grid.Row="1" Margin="0,5,0,5" x:Name="ankiWebLogoutButton"  Foreground="White" 
                                     Grid.Column="2" Padding="8,0,8,0" Height="35" Width="{Binding ActualWidth, ElementName=syncServiceCombobox, Mode=OneTime}" 
                                     Click="OnAnkiWebLogoutButtonClick"
                                     Content="Log out" Style="{StaticResource ButtonBlue}" Visibility="Collapsed" />
 
                             <Button HorizontalAlignment="Left" Grid.Row="2" Margin="0,5,0,5"
-                                    Visibility="Collapsed"  Foreground="{Binding Foreground, ElementName=userControl}" 
+                                    Visibility="Collapsed"  Foreground="White" 
                                     Grid.Column="2" Padding="8,0,8,0" Height="35" 
                                     x:Name="forceFullSyncButton"
                                     Click="OnForceFullSyncButtonClick"                                    

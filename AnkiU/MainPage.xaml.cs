@@ -1881,7 +1881,7 @@ namespace AnkiU
             var defaultBrush = Application.Current.Resources["ButtonBackGroundNormal"] as SolidColorBrush;
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
-                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;                
                 var titleBar = ApplicationView.GetForCurrentView().TitleBar;                
                 if (titleBar != null)
                 {
@@ -1907,7 +1907,8 @@ namespace AnkiU
             {
                 ChangeTitleBarToNightMode();
                 ChangeStatusBarToNightMode();
-                commandBar.Background = UIHelper.CommandBarAcrylicDarkBrush;
+                commandBarBindBackground.Background = UIHelper.CommandBarAcrylicDarkBrush;
+                commandBar.Background = UIHelper.DarkerBrush;
                 commandBar.Foreground = UIHelper.ForeGroundLight;
                 RootSplitView.Foreground = UIHelper.ForeGroundLight;
             }
@@ -1915,7 +1916,8 @@ namespace AnkiU
             {
                 ChangeTitleBarToDayMode();
                 ChangeStatusBarToDayMode();
-                commandBar.Background = UIHelper.CommandBarAcrylicLightBrush;
+                commandBarBindBackground.Background = UIHelper.CommandBarAcrylicLightBrush;
+                commandBar.Background = new SolidColorBrush(Colors.LightGray);
                 commandBar.Foreground = new SolidColorBrush(Colors.Black);
                 RootSplitView.Foreground = new SolidColorBrush(Colors.Black);
             }
@@ -1928,9 +1930,9 @@ namespace AnkiU
                 var titleBar = ApplicationView.GetForCurrentView().TitleBar;
                 if (titleBar != null)
                 {                    
-                    titleBar.BackgroundColor = Colors.White;
+                    titleBar.BackgroundColor = Colors.LightGray;
                     titleBar.ForegroundColor = Colors.Black;
-                    titleBar.ButtonBackgroundColor = Colors.White;
+                    titleBar.ButtonBackgroundColor = Colors.LightGray;
                     titleBar.ButtonForegroundColor = Colors.Black;
                 }
             }
@@ -1943,10 +1945,10 @@ namespace AnkiU
                 var titleBar = ApplicationView.GetForCurrentView().TitleBar;
                 if (titleBar != null)
                 {
-                    titleBar.BackgroundColor = Colors.Black;
+                    titleBar.BackgroundColor = UIHelper.DarkerBrush.Color;
                     titleBar.ForegroundColor = Colors.White;
-                    titleBar.ButtonBackgroundColor = Colors.Black;
-                    titleBar.ButtonForegroundColor = Colors.White;
+                    titleBar.ButtonBackgroundColor = UIHelper.DarkerBrush.Color;
+                    titleBar.ButtonForegroundColor = Colors.White;                    
                 }
             }
         }

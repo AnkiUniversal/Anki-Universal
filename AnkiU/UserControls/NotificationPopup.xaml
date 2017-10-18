@@ -14,7 +14,7 @@
                 VerticalOffset="10" HorizontalOffset="0" MaxWidth="300" >
         <Grid                
                 BorderBrush="{Binding Foreground, ElementName=userControl}" HorizontalAlignment="Center"
-                Background="{Binding Background, ElementName=userControl}" VerticalAlignment="Center"
+                Background="{StaticResource DefaultAcrylicBrush}" VerticalAlignment="Center"
                 BorderThickness="2" MaxWidth="300" MaxHeight="300">
             <TextBlock Margin="10" x:Name="textBlock" TextWrapping="Wrap"  TextAlignment="Center"
                        FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>

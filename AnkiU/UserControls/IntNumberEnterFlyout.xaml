@@ -11,7 +11,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Flyout x:Name="numberFlyout" x:Key="NumberFlyoutTemplate" >
+        <Flyout x:Name="numberFlyout" x:Key="NumberFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
             <ContentPresenter >
                 <Grid Width="300" >
                     <Grid.RowDefinitions>

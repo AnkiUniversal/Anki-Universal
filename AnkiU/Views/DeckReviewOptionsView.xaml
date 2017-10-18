@@ -65,6 +65,11 @@
                     Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
                                   IsChecked="{x:Bind Options.Bury, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
 
-        <Button Grid.Column="2"   Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}" Style="{StaticResource ButtonGray}" Background="Transparent" BorderThickness="1"  Grid.ColumnSpan="2" Margin="0,20,0,0"  HorizontalAlignment="Right"  Grid.Row="5" x:Name="restoreButton"  Content="Default" Width="80" Click="RestoreButtonClickHandler"/>
+        <Button Grid.Column="2"     
+                Background="Gray"  
+                Foreground="White"  
+                BorderThickness="0"   
+                Style="{StaticResource ButtonGray}"
+                Grid.ColumnSpan="2" Margin="0,20,0,0"  HorizontalAlignment="Right"  Grid.Row="5" x:Name="restoreButton"  Content="Default" Width="80" Click="RestoreButtonClickHandler"/>
     </Grid>
 </UserControl>

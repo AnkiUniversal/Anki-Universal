@@ -14,7 +14,7 @@
     d:DesignWidth="350">
 
     <UserControl.Resources>
-        <MenuFlyout x:Key="EditMenuFlyout">
+        <MenuFlyout x:Key="EditMenuFlyout" MenuFlyoutPresenterStyle="{StaticResource DefaultMenuFlyoutPresenterStyle}">
             <MenuFlyoutItem Text="Switch Front and Back" Click="FliptMenuFlyoutItemClickHandler"/>
             <MenuFlyoutItem Text="Rename" Click="RenameMenuFlyoutItemClickHandler"/>
             <MenuFlyoutItem Text="Reposition" Click="RepositionMenuFlyoutItemClickHandler"/>
@@ -47,6 +47,7 @@
                   VerticalAlignment="Stretch"                  
                   Background="Transparent" Height="30"                  
                   Foreground="{Binding Foreground, ElementName=userControl}"
+                  BorderBrush="{Binding Foreground, ElementName=userControl}"
                   HorizontalAlignment="Stretch" SelectionChanged="ComboBoxSelectionChangedHandler">
             <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="data:TemplateInformation">
@@ -59,7 +60,7 @@
             <Button x:Name="addTemplateButton" Width="40" Height="40" Padding="0"
                 Style="{StaticResource ButtonContentOcpacity}" 
                 Background="Transparent"                   
-                Foreground="{StaticResource ButtonBackGroundNormal}"
+                Foreground="{Binding Foreground, ElementName=userControl}"
                 Click="AddButtonClickHandler" >
                 <SymbolIcon Symbol="Add" />
             </Button>
@@ -67,7 +68,7 @@
             <Button x:Name="editButton" Width="40" Height="40" Padding="0"
                 Style="{StaticResource ButtonContentOcpacity}" 
                 Background="Transparent"                 
-                Foreground="{StaticResource ButtonBackGroundNormal}"
+                Foreground="{Binding Foreground, ElementName=userControl}"
                 Click="EditButtonClickHandler" >
                 <SymbolIcon Symbol="Edit" />
             </Button>
@@ -75,7 +76,7 @@
             <Button x:Name="deleteButton" Width="40" Height="40" Padding="0"
                 Style="{StaticResource ButtonContentOcpacity}" 
                 Background="Transparent"                 
-                Foreground="{StaticResource ButtonBackGroundNormal}"
+                Foreground="{Binding Foreground, ElementName=userControl}"
                 Click="DeleteButtonClickHandler" >
                 <SymbolIcon Symbol="Delete" />
             </Button>

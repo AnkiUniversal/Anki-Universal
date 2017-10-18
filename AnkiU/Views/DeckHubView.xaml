@@ -49,8 +49,8 @@
 
 
         <GridView  AutomationProperties.AutomationId="GroupGridView"
-                   x:Name="deckGridView"
-                    VerticalAlignment="Stretch" HorizontalAlignment="Center"
+                   x:Name="deckGridView"                 
+                   VerticalAlignment="Stretch" HorizontalAlignment="Center"                   
                    VerticalContentAlignment="Stretch" HorizontalContentAlignment="Center"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     ScrollViewer.HorizontalScrollMode="Disabled"
@@ -84,10 +84,12 @@
                     <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                     <Setter Property="TabNavigation" Value="Local"/>
                     <Setter Property="IsHoldingEnabled" Value="True"/>
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
                     <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
-                    <Setter Property="Margin" Value="0,0,15,15"/>
+                    <Setter Property="Margin" Value="0,0,10,10"/>
                     <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}"/>
                     <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}"/>
                     <Setter Property="Template" Value="{StaticResource DeckGridViewStyle}" />
@@ -95,7 +97,7 @@
             </GridView.ItemContainerStyle>
             <GridView.ItemTemplate>
                 <DataTemplate  x:DataType="data:DeckInformation">
-                    <Grid  Width="180" 
+                    <Grid  Width="150" 
                         BorderThickness="2" Padding="0" 
                         BorderBrush="{StaticResource ButtonBackGroundNormal}"
                         AutomationProperties.Name="ItemRootGrid" x:Name="rootGrid"
@@ -129,7 +131,7 @@
                                                AutomationProperties.Name="{x:Bind Name, Mode=OneWay}" HorizontalAlignment="Center"/>
                             </Border>
 
-                            <Border VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="20" Opacity="0.9" Background="{StaticResource DefaultAcrylicDarkBrush}"
+                            <Border VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="20" Opacity="0.5" Background="Black"
                                     Visibility="{x:Bind ChildLevel, Converter={StaticResource ChildLevelToVisibilityConverter},  Mode=OneWay}" >
                             </Border>
                             <TextBlock Margin="2,0,0,2" Text="{x:Bind ParentName, Mode=OneWay}"  VerticalAlignment="Bottom" HorizontalAlignment="Stretch" 

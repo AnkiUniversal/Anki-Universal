@@ -35,6 +35,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Margin="1,0,0,3" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="White" 
                                    HorizontalAlignment="Left" Text="NAME" FontSize="18" />
@@ -44,9 +45,22 @@
                                  Foreground="White"
                                  HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="18"                          
                                  Text="{x:Bind CurrentName, Mode=TwoWay}"/>
+                        <Button Grid.Column="2" Style="{StaticResource ButtonBlue}"                                
+                                Background="{StaticResource ButtonBackGroundAnalogousLeft}"
+                                BorderBrush="White" BorderThickness="0"
+                                VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                Margin="5,0,0,0" Width="120" 
+                                Height="35"
+                                Padding="5"                                
+                                Click="ViewModeButtonClickHandler">
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="View" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" />
+                                <TextBlock Text="To Expert" Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </Button>
                     </Grid>
 
-                    <Border Background="{Binding Background, ElementName=simpleConfigView}" Grid.Row="1"/>
+                    <Border Background="{Binding Background, ElementName=simpleConfigView}" Grid.Row="1" />
                     <views:DeckSImpleOptionsView HorizontalAlignment="Stretch" Background="White" 
                                                  Foreground="{Binding Foreground, ElementName=userControl}" 
                                                  x:Name="simpleConfigView" Grid.Row="1" Margin="10,10,15,10"/>
@@ -61,6 +75,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="tabTitle" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center" 
                                        HorizontalAlignment="Left" Text="NAME" FontSize="18" />
@@ -69,6 +84,19 @@
                                      FontSize="18"  Foreground="White"
                                      BorderBrush="White"
                                 Text="{x:Bind CurrentName, Mode=TwoWay}" IsSpellCheckEnabled="False"/>
+                            <Button Grid.Column="2" Style="{StaticResource ButtonBlue}"
+                                Background="{StaticResource ButtonBackGroundAnalogousLeft}"
+                                BorderThickness="0"
+                                VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                Height="35"
+                                Margin="5,0,0,0" Width="120" 
+                                Padding="5"                                
+                                Click="ViewModeButtonClickHandler">
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="View" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" />
+                                    <TextBlock Text="To Simple" Margin="5,0,0,0"/>
+                                </StackPanel>
+                            </Button>
                         </Grid>
                     </Pivot.Title>
                     <PivotItem x:Name="generalTab"  Background="{Binding Background, ElementName=simpleConfigView}" Padding="0" Margin="0" >
@@ -136,8 +164,7 @@
                     </PivotItem>
                 </Pivot>
 
-                <Border x:Name="otherContentBorder" Grid.Row="1" Background="White" BorderBrush="{StaticResource ButtonBackGroundCompliment}" BorderThickness="0,1,0,0"/>
-                <Button Grid.Row="1" x:Name="viewModeButton" Style="{StaticResource ButtonBlue}"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,13,0,0" Content="Expert Mode" Width="120" Click="ViewModeButtonClickHandler" />
+                <Border x:Name="otherContentBorder" Grid.Row="1" Background="White" BorderThickness="0" Margin="0,-5,0,0"/>
             </Grid>
         </ScrollViewer>
     </Grid>

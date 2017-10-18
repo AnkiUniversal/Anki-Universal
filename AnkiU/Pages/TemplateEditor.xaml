@@ -13,7 +13,7 @@
     x:Name="userControl">
 
     <Grid x:Name="mainGrid">
-        <RelativePanel Background="{Binding Background, ElementName=userControl}" >
+        <RelativePanel Background="{StaticResource ButtonBackGroundNormal}" >
 
             <Grid x:Name="modelNameGrid"   Visibility="Collapsed"
             RelativePanel.AlignLeftWithPanel="True"
@@ -27,8 +27,8 @@
 
             <views:TemplateInformationView x:Name="templateInformationView"
                   Margin="5,0,5,3" MaxWidth="600"
-                  Foreground="{Binding Foreground, ElementName=userControl}"
-                  Background="{Binding Background, ElementName=userControl}"
+                  Foreground="White"
+                  Background="{StaticResource ButtonBackGroundNormal}"
                   RelativePanel.AlignLeftWithPanel="True"
                   RelativePanel.AlignRightWithPanel="True"
                   RelativePanel.Below="modelNameGrid" />

@@ -66,6 +66,9 @@ namespace AnkiU.UIUtilities
         public static readonly CoreCursor HandCursor = new CoreCursor(CoreCursorType.Hand, 1);
         public static readonly CoreCursor ArrowCursor = new CoreCursor(CoreCursorType.Arrow, 1);
 
+        public static SolidColorBrush ButtonBackGroundNormal { get; private set; }
+                     = Application.Current.Resources["ButtonBackGroundNormal"] as SolidColorBrush;
+
         public static SolidColorBrush DeckWithNewOrDueCardsBrush { get; private set; }
                        = Application.Current.Resources["DeckWithNewOrDueCards"] as SolidColorBrush;
         public static SolidColorBrush AppDefaultTileBackgroundBrush { get; private set; }

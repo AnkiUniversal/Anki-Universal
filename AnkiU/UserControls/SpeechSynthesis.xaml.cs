@@ -141,7 +141,7 @@ namespace AnkiU.UserControls
             {
                 textToSynth = text;
                 SynthesisStreamDispose();
-                //GC.Collect(); //Disable in Creator Update
+                GC.Collect(); //Enable again in Fall Creator Update
 
                 synthesisStream = await synthesizer.SynthesizeTextToStreamAsync(text);                
                 media.SetSource(synthesisStream, synthesisStream.ContentType);
@@ -244,7 +244,7 @@ namespace AnkiU.UserControls
             MediaDispose();
             SynthesizerDispose();
             SynthesisStreamDispose();            
-            //GC.Collect(); //Disable in Creator Update
+            GC.Collect(); //Enable again Fall Creator Update
         }
 
         private void MediaDispose()

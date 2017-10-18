@@ -1,26 +1,42 @@
 ﻿@import "/html/globalstyles.css";
 
-body{	
-    margin: 10px 15px 130px 5px !important;    
+body {
+    margin: 10px 15px 130px 5px !important;
+    padding: 10px 0 0 0 !important;
+    background-color: #E6E6E6 !important;
 }
 
-.editable {    
-    font-family: 'Fira Sans', sans-serif;   
-    color:black;
-    background-color:white; 
+.night {
+    background-color: black !important;
+}
+
+.outline {
+    background-color: white;
+    margin: 0px -15px 20px -5px;
+    padding: 2px 15px 20px 5px;
+    box-shadow: 0px 0px 10px 1px rgba(135,132,135,1);
+}
+
+.night .outline {
+    background-color: #444444;
+}
+
+.editable {
+    font-family: 'Fira Sans', sans-serif;
+    color: black;
+    background-color: transparent;
     height: auto;
-    font-size: 18px;        
+    font-size: 18px;
     border-color: #FF8700;
     border-style: solid none solid none;
-    border-radius: 7.5px;
-    border-width: 1.5px;    
+    border-radius: 0px;
+    border-width: 1.5px;
     padding: 2.5px 15px 2.5px 2.5px;
-    word-wrap: break-word; 
+    word-wrap: break-word;
 }
 
-.night .editable {      
+.night .editable {
     color: white;
-    background-color: #202020; 
 }
 
 h2 {

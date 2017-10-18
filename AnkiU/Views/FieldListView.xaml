@@ -11,7 +11,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Flyout x:Name="fieldFlyout" x:Key="FieldFlyoutTemplate" Placement="Bottom">
+        <Flyout x:Name="fieldFlyout" x:Key="FieldFlyoutTemplate" Placement="Bottom" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
             <ContentPresenter>
                 <Grid Width="250" >
                     <Grid.RowDefinitions>
@@ -25,7 +25,7 @@
                                />
 
                     <ItemsControl ItemsSource="{Binding}"    Grid.Row="1"
-                                      x:Name="fieldListView"
+                                  x:Name="fieldListView"
                                   HorizontalAlignment="Stretch"
                                   Padding="0" >
                         <ItemsControl.ItemsPanel>
@@ -35,9 +35,9 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="data:NoteField">
-                                <Button Style="{StaticResource FieldButton}" Background="Transparent" MinHeight="35" VerticalAlignment="Center" 
-                                            BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundCompliment}" 
-                                            Foreground="{StaticResource ButtonBackGroundNormal}"
+                                <Button Style="{StaticResource DefaultButtonRevealStyle}" Background="Transparent" MinHeight="35" VerticalAlignment="Center" 
+                                            BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundNormal}" 
+                                            Foreground="Black"
                                             Click="FieldFlyoutButtonClickHandler"
                                             HorizontalContentAlignment="Stretch"  HorizontalAlignment="Stretch">
                                     <TextBlock TextAlignment="Left" FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap" Text="{x:Bind Name, Mode=OneWay}"/>

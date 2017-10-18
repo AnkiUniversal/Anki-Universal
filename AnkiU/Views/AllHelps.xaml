@@ -8,9 +8,9 @@
     mc:Ignorable="d" 
     x:Name="userControl"
     Background="Transparent"
-    Foreground="Black"
+    Foreground="White"
     d:DesignHeight="300"
-    d:DesignWidth="200">
+    d:DesignWidth="230">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -19,47 +19,47 @@
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto" 
                                   HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Hidden">
-            <StackPanel Margin="0">
-                <TextBlock Text="Tutorials" Margin="0,20,0,15" VerticalAlignment="Center" HorizontalAlignment="Center"
-                           FontSize="20" Foreground="Black"/>
-                
-                <Button Style="{StaticResource ButtonRevealStyle}"   
+            <StackPanel Margin="0,0,0,0">
+                <TextBlock Text="Tutorials" Margin="0,20,0,15" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontSize="20" />
+
+                <Button Style="{StaticResource DefaultButtonRevealStyle}"   
+                    Foreground="White"
                     x:Name="button"
+                    Padding="15,0,0,0"
                     BorderThickness="0,1,0,1"                        
                     Background="Transparent"
-                    Foreground="Black"
-                    Height="35"
-                    Padding="5"
+                    Height="35"                    
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="AddDeckAndNoteClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0" x:Name="DecksAndNotesFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,15,0" x:Name="DecksAndNotesFlag"/>
                         <TextBlock Text="Decks &amp; Notes" />
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ButtonRevealStyle}"            
+                <Button Style="{StaticResource DefaultButtonRevealStyle}"    
+                    Foreground="White"
                     Background="Transparent"
                     BorderThickness="0,1,0,1"
                     Margin="0,-1,0,0"
                     Height="35"
-                    Padding="5"
-                    Foreground="Black"
+                    Padding="15,0,0,0"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="NoteTypeAndTemplateClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="NoteTypeAndTemplateFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,15,0"  x:Name="NoteTypeAndTemplateFlag"/>
                         <TextBlock Text="Note Types &amp; Templates" />
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ButtonRevealStyle}"           
+                <Button Style="{StaticResource DefaultButtonRevealStyle}"    
+                    Foreground="White"
                     Background="Transparent" 
                     Height="35"
-                    Padding="5"
-                    Foreground="Black"
+                    Padding="15,0,0,0"
                     BorderThickness="0,1,0,1"
                     Margin="0,-1,0,0"
                     HorizontalAlignment="Stretch"
@@ -68,113 +68,113 @@
                         x:Name="templateWithTypeField"
                     Click="TemplateWithTypeFieldClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="TypeFieldFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,15,0"  x:Name="TypeFieldFlag"/>
                         <TextBlock Text="Template with Type Field" />
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ButtonRevealStyle}"           
+                <Button Style="{StaticResource DefaultButtonRevealStyle}"       
+                    Foreground="White"
                     Background="Transparent" 
                     Height="35"
-                    Padding="5"
+                    Padding="15,0,0,0"
                     BorderThickness="0,1,0,1"
                     Margin="0,-1,0,0"
                     x:Name="templateWithClozeField"
                     Visibility="{Binding Visibility,ElementName=templateWithTypeField}"
-                    Foreground="Black"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"                                   
                     Click="TemplateWithClozeFieldClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="ClozeFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,15,0"  x:Name="ClozeFlag"/>
                         <TextBlock Text="Template with Cloze Field" />
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ButtonRevealStyle}"            
+                <Button Style="{StaticResource DefaultButtonRevealStyle}"      
+                    Foreground="White"
                     Background="Transparent"
                     Height="35"
-                    Padding="5"
-                    Foreground="Black"
+                    Padding="15,0,0,0"
                     BorderThickness="0,1,0,1"
                     Margin="0,-1,0,0"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="CustomStudy">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="CustomStudyFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,15,0"  x:Name="CustomStudyFlag"/>
                         <TextBlock Text="Custom Study" />
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ButtonRevealStyle}"          
+                <Button Style="{StaticResource DefaultButtonRevealStyle}" 
+                    Foreground="White"
                     Background="Transparent" 
                     Height="35"
-                    Padding="5"
+                    Padding="15,0,0,0"
                     BorderThickness="0,1,0,1"
                     Margin="0,-1,0,0"
                     x:Name="DataSyncing"
                     Visibility="Visible"
-                    Foreground="Black"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"                                   
                     Click="DataSyncingClick">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="DataSyncingFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,15,0"  x:Name="DataSyncingFlag"/>
                         <TextBlock Text="Data Syncing" />
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource ButtonRevealStyle}"           
+                <Button Style="{StaticResource DefaultButtonRevealStyle}"    
+                    Foreground="White"
                     Background="Transparent" 
                     Height="35"
-                    Padding="5"
+                    Padding="15,0,0,0"
                     x:Name="DeckOption"
                     Visibility="Collapsed"
                     BorderThickness="0,1,0,1"
                     Margin="0,-1,0,0"
-                    Foreground="Black"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"                                   
                     Click="ShowDeckOptionHelp">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Flag" Margin="0,0,5,0"  x:Name="DeckOptionFlag"/>
+                        <SymbolIcon Symbol="Flag" Margin="0,0,15,0"  x:Name="DeckOptionFlag"/>
                         <TextBlock Text="Deck Options" />
                     </StackPanel>
                 </Button>
             </StackPanel>
         </ScrollViewer>
 
-        <StackPanel Grid.Row="1">
-            <Button Style="{StaticResource ButtonRevealStyle}"           
+        <StackPanel Grid.Row="1" Margin="0,0,0,0">
+            <Button Style="{StaticResource DefaultButtonRevealStyle}"       
+                    Foreground="White"
                     Margin="0"
                     BorderThickness="0,1,0,1"
                     Background="Transparent"
                     Height="35"
-                    Padding="5,0,0,0"
-                    Foreground="White"
+                    Padding="15,0,0,0"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="UserManualClick">
                 <StackPanel Orientation="Horizontal">
-                    <Path Style="{StaticResource BookIcon}" Margin="0,0,5,0" Fill="Black" />
-                    <TextBlock FontSize="16" Text="User Manual (Online)" Foreground="Black"/>
+                    <Path Style="{StaticResource BookIcon}" Margin="0,0,15,0" Fill="White" />
+                    <TextBlock FontSize="16" Text="User Manual (Online)" Foreground="White"/>
                 </StackPanel>
             </Button>
 
-            <Button Style="{StaticResource ButtonRevealStyle}"     
+            <Button Style="{StaticResource DefaultButtonRevealStyle}"     
+                    Foreground="White"
                     BorderThickness="0,1,0,1"
                     Margin="0,-1,0,10"
                     Background="Transparent"
                     Height="35"
-                    Padding="5,0,0,0"
-                    Foreground="White"
+                    Padding="15,0,0,0"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     Click="CreditClick">
                 <StackPanel Orientation="Horizontal">
-                    <Path Style="{StaticResource InfoIcon}" Margin="0,0,5,0" Fill="Black" />
-                    <TextBlock FontSize="16" Text="About" Foreground="Black"/>
+                    <Path Style="{StaticResource InfoIcon}" Margin="0,0,15,0" Fill="White" />
+                    <TextBlock FontSize="16" Text="About" Foreground="White"/>
                 </StackPanel>
             </Button>
             

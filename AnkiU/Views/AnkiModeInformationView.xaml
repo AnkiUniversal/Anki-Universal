@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:AnkiU.Models"
+    BorderBrush="{StaticResource ButtonBackGroundNormal}"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -24,6 +25,7 @@
         <ComboBox x:Name="comboBox" ItemsSource="{Binding}"  Grid.Column="2"
                   Background="Transparent"
                   VerticalAlignment="Stretch" 
+                  BorderBrush="{Binding BorderBrush,ElementName=userControl}"
                   Foreground="{Binding TextForeGround, ElementName=userControl}"
                   HorizontalAlignment="Stretch" SelectionChanged="ComboBoxSelectionChangedHandler">
             <ComboBox.ItemTemplate>

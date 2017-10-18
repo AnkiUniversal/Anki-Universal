@@ -443,6 +443,9 @@
     <Compile Include="UserControls\CreateNewDeckFlyout.xaml.cs">
       <DependentUpon>CreateNewDeckFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\CreateNewNoteTypeFlyout.xaml.cs">
+      <DependentUpon>CreateNewNoteTypeFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\CreditsPopup.xaml.cs">
       <DependentUpon>CreditsPopup.xaml</DependentUpon>
     </Compile>
@@ -786,6 +789,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\CreateNewDeckFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CreateNewNoteTypeFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -48,9 +48,10 @@
                                   IsChecked="{x:Bind Options.AutoPlay, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
 
         <Button Grid.Column="2" Style="{StaticResource ButtonGray}" 
-                Background="Transparent" BorderThickness="1" 
-                Foreground="{Binding Foreground, ElementName=userControl}"  
-                BorderBrush="{Binding Foreground, ElementName=userControl}"  Grid.ColumnSpan="2" Grid.Row="3" 
+                Background="Gray"  
+                Foreground="White"  
+                BorderThickness="0"  
+                Grid.ColumnSpan="2" Grid.Row="3" 
                 Margin="0,20,0,0" HorizontalAlignment="Right" x:Name="restoreButton"  
                 Content="Default" Width="80" Click="RestoreButtonClickHandler"/>
     </Grid>

@@ -108,8 +108,8 @@
     <Style x:Key="TabsStylePivotStyle" TargetType="Pivot">
         <Setter Property="Foreground" Value="White" />
         <Setter Property="Background" Value="{StaticResource ButtonBackGroundNormal}" />
-        <Setter Property="BorderThickness" Value="0,0,0,2" />
-        <Setter Property="BorderBrush" Value="{StaticResource ButtonBackGroundAnalogousRight}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="{StaticResource ButtonBackGroundCompliment}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Pivot">
@@ -208,7 +208,10 @@
                         <Border Background="{TemplateBinding Background}" HorizontalAlignment="Stretch" 
                                 BorderThickness="{TemplateBinding BorderThickness}" 
                                 BorderBrush="{TemplateBinding BorderBrush}">
-                            <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                            <Grid>
+                                <Border VerticalAlignment="Stretch" BorderThickness="0" 
+                                        HorizontalAlignment="Stretch" Opacity="0.1" Background="Black" />
+                                <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                     Foreground="{TemplateBinding Foreground}"
                                     x:Name="TitleContentControl"                                    
                                     Margin="12,5,0,5"
@@ -217,6 +220,7 @@
                                     IsTabStop="False"                                
                                     Style="{StaticResource TitleContentControlStyle}"
                                     Visibility="Collapsed" />
+                            </Grid>
                         </Border>
                         <Grid Grid.Row="1">
                             <ScrollViewer

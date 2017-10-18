@@ -8,12 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"    
     Padding="0"
+    BorderBrush="{StaticResource ButtonBackGroundNormal}"
+    Tag="{StaticResource ButtonBackGroundNormal}"
     d:DesignHeight="35"
     d:DesignWidth="400">
 
     <UserControl.Resources>
 
-        <Flyout x:Name="newTagFlyout" x:Key="NewTagFlyoutTemplate" >
+        <Flyout x:Name="newTagFlyout" x:Key="NewTagFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
             <ContentPresenter>
                 <Grid Width="300" >
                     <Grid.RowDefinitions>
@@ -32,7 +34,7 @@
         <Flyout x:Name="tagsViewFlyout" Placement="Top" x:Key="TagsViewFlyoutTemplate"  
                 FlyoutPresenterStyle="{StaticResource TagFlyoutPresenterStyle}"
                 Closed="TagsViewFlyoutClosedHandler">
-            <FlyoutPresenter x:Name="tagsFlyoutcontentPresenter" BorderBrush="Transparent" BorderThickness="0" >
+            <FlyoutPresenter x:Name="tagsFlyoutcontentPresenter" BorderBrush="Transparent" BorderThickness="0" Background="Transparent">
                 <Grid x:Name="tagsNameGrid"  MaxWidth="400"
                      ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <Grid.RowDefinitions>
@@ -95,11 +97,10 @@
                    Foreground="{Binding Foreground, ElementName=userControl}"
                    VerticalAlignment="Center" Margin="5"/>
 
-        <Button x:Name="expandTagButton" Style="{StaticResource ButtonGray}"                 
+        <Button x:Name="expandTagButton" Style="{StaticResource TagButton}"                 
                 Background="Transparent"
-                BorderBrush="{StaticResource ButtonBackGroundNormal}"
-                BorderThickness ="0,0,0,2"               
-                Foreground="{StaticResource ButtonBackGroundNormal}"
+                BorderBrush="{Binding BorderBrush, ElementName=userControl}"             
+                Foreground="{Binding Tag, ElementName=userControl}"
                 Click="ExpandTagButtonClickHandler"
                 Grid.Column="1" VerticalAlignment="Stretch" 
                 HorizontalAlignment="Stretch" MinHeight="30"
@@ -124,7 +125,7 @@
                             Style="{StaticResource ButtonContentOcpacity}"
                             Background="Transparent"
                             BorderThickness="0" Visibility="{Binding AddVisibility, ElementName=userControl, Mode=OneWay}"                 
-                            Foreground="{StaticResource ButtonBackGroundNormal}"
+                            Foreground="{Binding Tag, ElementName=userControl}"
                             Click="NewTagButtonClickHandler" >
             <SymbolIcon Symbol="Add" />
         </Button>

@@ -67,6 +67,8 @@
             <TextBlock Text="Tag only" TextAlignment="Left"/>
         </ComboBox>
 
-        <Button Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"  Grid.Column="2"  Grid.ColumnSpan="2" Style="{StaticResource ButtonGray}" Background="Transparent" BorderThickness="1" Margin="0,20,0,0"  HorizontalAlignment="Right" Grid.Row="5" x:Name="restoreButton"  Content="Default" Width="80" Click="RestoreButtonClickHandler"/>
+        <Button Background="Gray"  
+                Foreground="White"  
+                BorderThickness="0"   Grid.Column="2"  Grid.ColumnSpan="2" Style="{StaticResource ButtonGray}" Margin="0,20,0,0"  HorizontalAlignment="Right" Grid.Row="5" x:Name="restoreButton"  Content="Default" Width="80" Click="RestoreButtonClickHandler"/>
     </Grid>
 </UserControl>

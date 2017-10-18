@@ -158,7 +158,6 @@ namespace AnkiU.Views
 
         private async Task HtmlEditorFieldPopulateFinishEventHandler()
         {
-            await InsertAfterField(FRONT, "<br> <br> <hr>");
             InitCompleted?.Invoke();
         }
 

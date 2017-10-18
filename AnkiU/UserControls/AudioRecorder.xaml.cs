@@ -257,7 +257,7 @@ namespace AnkiU.UserControls
                 playback.Stop();
                 StopTimerCount();
                 playback = null;
-                //GC.Collect(); //Disable in "Creator Update"
+                GC.Collect(); //Enable again in "Fall Creator Update"
 
                 playButton.Visibility = Visibility.Visible;
                 stopPlayButton.Visibility = Visibility.Collapsed;
@@ -351,7 +351,7 @@ namespace AnkiU.UserControls
                 stopwatch.Stop();
                 stopwatch = null;
             }
-            //GC.Collect(); //Disable in "Creator Update"
+            GC.Collect(); //Enable again in "Creator Update"
         }
 
         public void Dispose()

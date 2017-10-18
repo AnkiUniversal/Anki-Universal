@@ -1,7 +1,12 @@
 ﻿@import "/html/globalstyles.css";
 
-body{	
-    margin: 20px 15px 50px 5px !important;    
+body {
+    margin: 20px 15px 50px 5px !important;
+    background-color: #E6E6E6 !important;
+}
+
+.night {
+    background-color: black !important;
 }
 
 #typeAns {
@@ -38,19 +43,30 @@ body{
   background-color: gray;
 }
 
-.card {    
-    height: auto;       
+.outline {
+    background-color: white;
+    margin: 0px -15px 20px -5px;
+    padding: 1px 15px 30px 5px;
+    box-shadow: 0px 0px 10px 1px rgba(135,132,135,1);
+}
+
+.night .outline {
+    background-color: #444444;
+}
+
+.card {
+    height: auto;
+    background-color: transparent;
     border-color: #FF8700;
     border-style: solid none solid none;
-    border-radius: 7.5px;
-    border-width: 1.5px;    
+    border-radius: 0px;
+    border-width: 1.5px;
     padding: 10px 15px 10px 5px;
     word-wrap: break-word;
 }
 
 .night .card {      
-    color: white;
-    background-color: #202020; 
+    color: white;    
 }
 
 h2 {

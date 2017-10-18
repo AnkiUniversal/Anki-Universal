@@ -12,8 +12,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Flyout x:Name="undoFlyout" x:Key="UndoFlyoutTemplate">
-            <ContentPresenter x:Name="undoFlyoutContentPresenter" x:DeferLoadStrategy="Lazy">
+        <Flyout x:Name="undoFlyout" x:Key="UndoFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
+            <ContentPresenter x:Name="undoFlyoutContentPresenter">
                 <Grid Width="250" >
                     <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" 
                                   HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
@@ -51,7 +51,7 @@
 
     </Page.Resources>
 
-    <Grid x:Name="mainGrid" Background="{Binding Background, ElementName=userControl}" >
+    <Grid x:Name="mainGrid" Background="{StaticResource ButtonBackGroundNormal}" >
         <Grid.RowDefinitions>
             <RowDefinition Height="0"/>
             <RowDefinition Height="Auto"/>
@@ -60,16 +60,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="1" Background="{StaticResource ButtonBackGroundAnalogousLeft}"  />
-        <TextBlock Grid.Column="0" Margin="5" VerticalAlignment="Center" Grid.ColumnSpan="3" MaxHeight="30" Grid.Row="1"
+        <Border Grid.Row="1" Background="{StaticResource ButtonBackGroundNormal}"  />
+        <TextBlock Margin="5" VerticalAlignment="Center" Grid.ColumnSpan="3" MaxHeight="30" Grid.Row="1"
                    HorizontalAlignment="Stretch" TextWrapping="Wrap" Foreground="White" Visibility="Collapsed"
                    TextAlignment="Center" Text="{x:Bind deckName}" FontSize="20" />
 
-
-        <Border Grid.Row="2" BorderThickness="0,0,0,0" 
-                BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" />
-        <Grid Grid.Row="2" Margin="5" Background="Transparent"
-              Visibility="Visible" x:DeferLoadStrategy="Lazy"              
+        <Grid Grid.Row="2" Margin="5" 
               VerticalAlignment="Center" 
               MaxWidth="600" x:Name="noteTypeGrid" >
             <Grid.ColumnDefinitions>
@@ -78,19 +74,20 @@
             </Grid.ColumnDefinitions>
             
             <views:AnkiModeInformationView x:Name="modelInformationView"                                      
-                                       Grid.Column="0" TextForeGround="{Binding Foreground, ElementName=userControl}"
-                                       Background="Transparent"                                       
+                                       Grid.Column="0" TextForeGround="White"
+                                       Background="Transparent"               
+                                       BorderBrush="White"
                                        VerticalAlignment="Center" 
                                        HorizontalAlignment="Stretch" />
 
             <Button HorizontalAlignment="Left" Width="40" Height="40"   
                     Padding="0" x:Name="editModelButton"
-                    Grid.Column="1" Foreground="{StaticResource ButtonBackGroundNormal}"
+                    Grid.Column="1" Foreground="White"
                     VerticalAlignment="Center"
                     Style="{StaticResource ButtonContentOcpacity}" Background="Transparent" >
                 <SymbolIcon Symbol="Edit" />
                 <Button.Flyout>
-                    <MenuFlyout >
+                    <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultMenuFlyoutPresenterStyle}">
                         <MenuFlyoutItem Text="Rename Note Type" Click="RenameNoteTypeMenuFlyoutItemClickHandler" />
                         <MenuFlyoutSeparator/>
                         <MenuFlyoutItem Text="Edit Templates" Click="EditTemplatesMenuClickHandler"/>
@@ -111,11 +108,10 @@
 
         <ProgressRing x:Name="progessRing" Width="80" Height="80" Foreground="{StaticResource ButtonBackGroundNormal}" Grid.Row="3" VerticalAlignment="Center" 
                       HorizontalAlignment="Center" Visibility="Collapsed" IsActive="False"/>
-
-        <Border BorderThickness="0,1,0,0" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" Grid.Row="4"/>
-        <views:TagInformationView   Foreground="{Binding Foreground, ElementName=userControl}"         
+     
+        <views:TagInformationView   Foreground="White"         
             Background="Transparent" Margin="0,2,0,0" Padding="0,0,0,3"
-            x:Name="tagsView" Grid.Row="4" 
+            x:Name="tagsView" Grid.Row="4" Tag="White" BorderBrush="White"
             HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="33" />
 
 

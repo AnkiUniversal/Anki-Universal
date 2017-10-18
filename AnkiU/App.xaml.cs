@@ -44,7 +44,7 @@ namespace AnkiU
                 Microsoft.ApplicationInsights.WindowsCollectors.Metadata |
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            this.Suspending += OnSuspending; 
         }
 
         /// <summary>
@@ -61,7 +61,19 @@ namespace AnkiU
                 this.DebugSettings.EnableFrameRateCounter = false;
             }
 #endif
-
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
+            {
+                Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+                var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
+                    titleBar.ButtonInactiveBackgroundColor = Windows.UI.Colors.Transparent;
+                    titleBar.ButtonHoverBackgroundColor = UIUtilities.UIHelper.ButtonBackGroundNormal.Color;
+                    titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.White;
+                }
+            }
+            
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
