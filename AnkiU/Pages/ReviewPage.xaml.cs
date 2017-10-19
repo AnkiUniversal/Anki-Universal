@@ -571,7 +571,8 @@ namespace AnkiU.Pages
             mainPage.EditButton.Visibility = Visibility.Visible;
             mainPage.UndoButton.Visibility = Visibility.Visible;
             mainPage.TextToSpeechToggleButton.Visibility = Visibility.Visible;
-            mainPage.OneHandButton.Visibility = Visibility.Visible;
+            if(UIHelper.IsMobileDevice())
+                mainPage.OneHandButton.Visibility = Visibility.Visible;
             if (!collection.UndoAvailable())
                 mainPage.UndoButton.IsEnabled = false;
             await UpdateInkButton();

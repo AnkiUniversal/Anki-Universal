@@ -328,8 +328,8 @@ namespace AnkiU.UIUtilities
             ChartModel.SubtitleColor = OxyColors.White;
             ChartModel.PlotAreaBorderColor = OxyColors.White;
 
-            ChartModel.PlotAreaBackground = OxyColors.Black;            
-            ChartModel.Background = OxyColors.Black;
+            ChartModel.PlotAreaBackground = OxyColor.FromRgb(68, 68, 68);            
+            ChartModel.Background = OxyColor.FromRgb(68, 68, 68);
         }
 
         public static void ChangePlotModelToDay(PlotModel ChartModel)

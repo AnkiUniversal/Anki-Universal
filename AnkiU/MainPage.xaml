@@ -86,15 +86,12 @@
                 FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
      
             <ContentPresenter x:Name="inkToTextResultContentPresenter" x:DeferLoadStrategy="Lazy">
-                <Grid MaxWidth="300"  BorderBrush="{StaticResource ButtonBackGroundCompliment}" BorderThickness="2" >
+                <Grid MaxWidth="300" >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Border Grid.Row="0" Canvas.ZIndex="1" Margin="0,-12,0,0" Width="60" Height="20" HorizontalAlignment="Center" VerticalAlignment="Top" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
-                        <TextBlock Text="Results" VerticalAlignment="Center"  HorizontalAlignment="Center" TextAlignment="Center"/>
-                    </Border>
                     <Grid Grid.Row="1" x:Name="textRecognizeResultView" 
                               Margin="0,0,5,5"
                               HorizontalAlignment="Stretch" 

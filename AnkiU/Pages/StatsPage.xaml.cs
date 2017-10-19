@@ -41,6 +41,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI;
 
 namespace AnkiU.Pages
 { 
@@ -379,13 +380,15 @@ namespace AnkiU.Pages
             {
                 foreach (var model in plotModels)
                     UIHelper.ChangePlotModelToNight(model.ChartModel);
-                mainGrid.Background = new SolidColorBrush(Windows.UI.Colors.Black);
+                statsTextRoot.Background = Application.Current.Resources["NightGray"] as SolidColorBrush;
+                mainGrid.Background = new SolidColorBrush(Colors.Black);
             }
             else
             {
                 foreach (var model in plotModels)
                     UIHelper.ChangePlotModelToDay(model.ChartModel);
-                mainGrid.Background = new SolidColorBrush(Windows.UI.Colors.White);
+                statsTextRoot.Background = new SolidColorBrush(Colors.White);
+                mainGrid.Background = new SolidColorBrush(Colors.LightGray);
             }
             InvalidatePlotViews();
         }

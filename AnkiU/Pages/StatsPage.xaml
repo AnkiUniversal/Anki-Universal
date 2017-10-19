@@ -13,10 +13,37 @@
 
     <Grid x:Name="mainGrid" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto" ZoomMode="Enabled" MaxZoomFactor="5" MinZoomFactor="1"
+   
+        <Border Grid.Row="0" Background="{StaticResource ButtonBackGroundNormal}"/>
+        <Grid  Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="1000" Padding="5,0,5,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*" MaxWidth="100"/>
+                <ColumnDefinition Width="*" MaxWidth="100"/>
+                <ColumnDefinition Width="*" MaxWidth="100"/>
+            </Grid.ColumnDefinitions>
+            <views:DeckNameView Margin="0,5,5,5" Tag="White"
+                                MinWidth="120"  HorizontalAlignment="Stretch" x:Name="deckNameView" Height="30" 
+                                Foreground="White" Background="Transparent" />
+
+            <RadioButton Style="{StaticResource TimeRadioBoxButton}" Grid.Column="1" BorderBrush="White"
+                         Tag="5,0,0,5" Content="1 month"  MinWidth="65" IsChecked="True" Height="30" BorderThickness="1"
+                         x:Name="monthRadioButton" Foreground="White"/>
+
+            <RadioButton x:Name="yearRadioButton" Style="{StaticResource TimeRadioBoxButton}"  Grid.Column="2" BorderBrush="White"
+                         Content="1 year" MinWidth="65" Checked="OneYearCheckedHandler" BorderThickness="0,1,1,1"  Height="30"
+                         Foreground="White"/>
+
+            <RadioButton Content="Life"  Height="30" BorderThickness="0,1,1,1" Tag="0,5,5,0"   Grid.Column="3" BorderBrush="White"
+                         MinWidth="65" Checked="LifeCheckedHandler" Style="{StaticResource TimeRadioBoxButton}"
+                         Foreground="White"/>
+            
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto" ZoomMode="Enabled" MaxZoomFactor="5" MinZoomFactor="1"
                       HorizontalScrollBarVisibility="Hidden" HorizontalScrollMode="Auto">
             <Grid x:Name="chartsRoot">
                 <Grid.RowDefinitions>
@@ -27,18 +54,24 @@
                     <RowDefinition Height="0" />
                 </Grid.RowDefinitions>
 
-                <StackPanel BorderBrush="{StaticResource ButtonBackGroundCompliment}" BorderThickness="0,0,0,2">
+                <StackPanel x:Name="statsTextRoot" Background="White" Margin="0,30,0,0" Padding="0,10,0,10">
                     <TextBlock  VerticalAlignment="Top" HorizontalAlignment="Stretch" 
-                           TextAlignment="Center" Text="TODAY"
+                           TextAlignment="Center" Text="TODAY" 
                            TextWrapping="Wrap" FontSize="22" FontWeight="Bold" />
                     <TextBlock x:Name="todayStatsTextBlock" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
-                           TextAlignment="Center"
+                           TextAlignment="Center" 
                            TextWrapping="Wrap" Margin="0,0,0,10"/>
                 </StackPanel>
 
-                <oxy:PlotView Grid.Row="1" x:Name="foreCastPlotView" Height="300" MinHeight="300" Visibility="Visible"/>
+                <oxy:PlotView Grid.Row="1" 
+                              x:Name="foreCastPlotView" 
+                              Background="{Binding Background, ElementName=statsTextRoot}" 
+                              Margin="0,30,0,0"
+                              Height="300" MinHeight="300" Visibility="Visible"/>
 
-                <Grid Grid.Row="2" Background="Transparent" x:Name="reviewPlotRoot" >
+                <Grid Grid.Row="2" x:Name="reviewPlotRoot" 
+                      Background="{Binding Background, ElementName=statsTextRoot}" 
+                      Margin="0,30,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
@@ -67,40 +100,14 @@
                     </Grid>
                 </Grid>
 
-                <oxy:PlotView Grid.Row="3" x:Name="cardTypePlotView" Height="300" MinHeight="300"  />
+                <oxy:PlotView Grid.Row="3" 
+                              Background="{Binding Background, ElementName=statsTextRoot}" 
+                              Margin="0,30,0,0"
+                              x:Name="cardTypePlotView" Height="300" MinHeight="300"  />
             </Grid>
         </ScrollViewer>
 
-        <Border Grid.Row="1" 
-                BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,1,0,0" Background="{Binding Background, ElementName=page}"/>
-        
-        <Grid  Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="1000" Padding="5,0,5,0" 
-               BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,1,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="*" MaxWidth="100"/>
-                <ColumnDefinition Width="*" MaxWidth="100"/>
-                <ColumnDefinition Width="*" MaxWidth="100"/>
-            </Grid.ColumnDefinitions>
-            <views:DeckNameView Margin="0,5,5,5" 
-                                MinWidth="120"  HorizontalAlignment="Stretch" x:Name="deckNameView" Height="30" 
-                                Foreground="{Binding Foreground, ElementName=page}" Background="{Binding Background, ElementName=page}" />
-
-            <RadioButton Style="{StaticResource RadioBoxButton}" Grid.Column="1"
-                         Tag="5,0,0,5" Content="1 month"  MinWidth="65" IsChecked="True" Height="30" BorderThickness="1"
-                         x:Name="monthRadioButton" Foreground="{Binding Foreground, ElementName=page}"/>
-
-            <RadioButton x:Name="yearRadioButton" Style="{StaticResource RadioBoxButton}"  Grid.Column="2"
-                         Content="1 year" MinWidth="65" Checked="OneYearCheckedHandler" BorderThickness="0,1,1,1"  Height="30"
-                         Foreground="{Binding Foreground, ElementName=page}"/>
-
-            <RadioButton Content="Life"  Height="30" BorderThickness="0,1,1,1" Tag="0,5,5,0"   Grid.Column="3"
-                         MinWidth="65" Checked="LifeCheckedHandler" Style="{StaticResource RadioBoxButton}"
-                         Foreground="{Binding Foreground, ElementName=page}"/>
-            
-        </Grid>
-
-        <ProgressRing x:Name="progressRing" Visibility="Collapsed" Grid.Row="0" Width="80" Height="80" />
+        <ProgressRing x:Name="progressRing" Visibility="Collapsed" Grid.Row="1" Width="80" Height="80" />
 
     </Grid>
 </Page>

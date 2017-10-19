@@ -51,6 +51,7 @@
     <SolidColorBrush x:Key="ButtonForeGroundDissable" Color="LightGray"/>
     <SolidColorBrush x:Key="CardButtonBackgroundColor" Color="#FFF7F7F7"/>
 
+    <SolidColorBrush x:Key="NightGray" Color="#FF444444"/>
     <SolidColorBrush x:Key="DarkerGray" Color="#FF3A3A3A"/>
     <SolidColorBrush x:Key="DarkerGrayHighlighted" Color="#FF4C4C4C"/>
     <SolidColorBrush x:Key="DarkerGrayPressed" Color="#FF606060"/>

@@ -20,7 +20,7 @@
     <Page.Resources>
         <converters:SizeConverter x:Key="SizeConverter"/>
 
-        <Flyout x:Name="editFlyout" x:Key="editFlyoutTemplate">
+        <Flyout x:Name="editFlyout" x:Key="editFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
             <ContentPresenter Padding="0">
                 <StackPanel Width="180">
 
@@ -84,7 +84,7 @@
             </ContentPresenter>
         </Flyout>
 
-        <Flyout x:Name="rescheduleFlyout" x:Key="rescheduleFlyoutTemplate">
+        <Flyout x:Name="rescheduleFlyout" x:Key="rescheduleFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
             <ContentPresenter>
                 <Grid Width="300">
                     <Grid.RowDefinitions>
@@ -115,7 +115,7 @@
             </ContentPresenter>
         </Flyout>
 
-        <Flyout x:Name="oneHandFlyout" x:Key="oneHandFlyoutTemplate" Placement="Bottom">
+        <Flyout x:Name="oneHandFlyout" x:Key="oneHandFlyoutTemplate" Placement="Bottom" >
             <ContentPresenter Padding="0">
                 <StackPanel MaxWidth="300">
 

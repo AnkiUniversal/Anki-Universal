@@ -18,8 +18,8 @@
         <converters:SliderPlaybackRateThumbToolTipValueConverter x:Key="SliderPlaybackRateThumbToolTipValueConverter"/>
     </UserControl.Resources>
 
-    <Grid Background="{Binding Background, ElementName=userControl}" Height="55" Padding="0" MaxWidth="1000"
-          BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="{Binding BorderThickness, ElementName=userControl}">
+    <Grid Background="{StaticResource ButtonBackGroundNormal}" Height="55" Padding="0" MaxWidth="1000"
+          BorderThickness="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" x:Name="playBackGridColumn"/>
@@ -34,13 +34,13 @@
 
         <Button Click="OnPlayButtonClick" Margin="0,5,5,5" x:Name="playButton" Height="35" Width="40" 
                     Padding="0" VerticalAlignment="Center" 
-                    BorderThickness="0" Style="{StaticResource ButtonContentOcpacity}"
-                    BorderBrush="{Binding Foreground, ElementName=userControl}"
-                    Foreground="{Binding Foreground, ElementName=userControl}"
-                    Background="{Binding Background, ElementName=userControl}">
+                    BorderThickness="0" 
+                    Style="{StaticResource ButtonContentOcpacity}"                    
+                    Foreground="White"
+                    Background="Transparent">
             <Grid>
                 <Path x:Name="playButtonSymbol" Style="{StaticResource TriangleUpIcon}" Width="20" Height="18"
-                  Fill="{Binding Foreground, ElementName=playBackRateSlider}"
+                  Fill="White"
                   RenderTransformOrigin="0.5,0.5" Visibility="Visible" >
                     <Path.RenderTransform>
                         <CompositeTransform Rotation="90"/>
@@ -48,22 +48,25 @@
                 </Path>
 
                 <Path x:Name="pauseButtonSymbol" Style="{StaticResource PauseIcon}" Width="14" Height="16" Visibility="Collapsed"
-                  Fill="{Binding Foreground, ElementName=playBackRateSlider}" Stroke="Transparent" />
+                  Fill="White" Stroke="Transparent" />
             </Grid>
         </Button>
 
         <Slider x:Name="playBackRateSlider" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8.75,5,5"
+                Foreground="White"
                 SmallChange="0.25" Maximum="2" Minimum="0" LargeChange="0.5" StepFrequency="0.25" Value="1" Visibility="Collapsed"
                 ValueChanged="OnPlaybackRateSliderValueChanged" ThumbToolTipValueConverter="{StaticResource SliderPlaybackRateThumbToolTipValueConverter}" />
 
-        <TextBlock Foreground="{Binding Foreground, ElementName=userControl}" x:Name="playBackSliderLabel" MinWidth="35" FontWeight="SemiBold"
+        <TextBlock Foreground="White" x:Name="playBackSliderLabel" MinWidth="35" FontWeight="SemiBold"
                    Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Visibility="Collapsed"
                    Text="1x" FontSize="15"  Margin="0,5,0,7"/>
 
         <ComboBox x:Name="playBackRateChooser" Grid.Column="1" Height="35" Width="80" VerticalAlignment="Center" Visibility="Visible"
                   HorizontalAlignment="Stretch"  Margin="0,5,5,5"
-                  Foreground="{Binding Foreground, ElementName=userControl}"                   
-                  Background="{Binding Background, ElementName=userControl}" SelectionChanged="OnPlayBackRateChanged"
+                  Background="Transparent"
+                  Foreground="White"
+                  BorderBrush="White"
+                  SelectionChanged="OnPlayBackRateChanged"
                   SelectedIndex="3" >
             <ComboBoxItem Content="0.25x" Tag="0.25"/>
             <ComboBoxItem Content="0.5x" Tag="0.5"/>
@@ -76,12 +79,14 @@
         </ComboBox>
 
         <ComboBox x:Name="listboxVoiceChooser" Grid.Column="3" Grid.ColumnSpan="2" Height="35" VerticalAlignment="Center" 
-                  HorizontalAlignment="Stretch" Margin="5,5,5,5"
-                  Foreground="{Binding Foreground, ElementName=userControl}"                   
-                  Background="{Binding Background, ElementName=userControl}"
+                  HorizontalAlignment="Stretch" Margin="5,5,5,5" Foreground="White"  
+                  BorderBrush="White"
+                  Background="Transparent"
                   SelectionChanged="OnListboxVoiceChooserSelectionChanged"/>
 
-        <Button Margin="0,5,5,5" Style="{StaticResource ButtonHelp}" Grid.Column="5" Width="22" Height="22" VerticalAlignment="Center">
+        <Button Margin="0,5,5,5" Style="{StaticResource ButtonHelp}" 
+                Foreground="White"
+                Grid.Column="5" Width="22" Height="22" VerticalAlignment="Center">
             <Button.Flyout>
                 <Flyout>
                     <ContentPresenter FontSize="15" FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" >
