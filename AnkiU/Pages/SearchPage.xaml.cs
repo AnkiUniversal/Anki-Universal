@@ -93,13 +93,13 @@ namespace AnkiU.Pages
             UIHelper.ToggleNightLight(isNightMode, this);
             if (isNightMode)
             {
-                cardInformationView.Background = new SolidColorBrush(UIHelper.ContentNightModeColor);
-                searchTextBox.Background = new SolidColorBrush(Windows.UI.Colors.Black);
+                cardInformationView.Background = UIHelper.ContentNightModeBrush;   
+                cardInformationView.BorderBrush = new SolidColorBrush(Windows.UI.Colors.Black);
             }
             else
             {
                 cardInformationView.Background = new SolidColorBrush(Windows.UI.Colors.White);
-                searchTextBox.Background = cardInformationView.Background;
+                cardInformationView.BorderBrush = new SolidColorBrush(Windows.UI.Colors.LightGray);
             }
         }
 

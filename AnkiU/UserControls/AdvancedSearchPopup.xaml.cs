@@ -104,12 +104,12 @@ namespace AnkiU.UserControls
         {            
             if(isNightMode)
             {
-                userControl.Background = Application.Current.Resources["DarkerGray"] as SolidColorBrush;
+                userControl.Background = UIHelper.BackgroundAcrylicDarkBrush;
                 userControl.Foreground = Application.Current.Resources["ForeGroundLight"] as SolidColorBrush;
             }
             else
             {
-                userControl.Background = new SolidColorBrush(Windows.UI.Colors.White);
+                userControl.Background = UIHelper.BackgroundAcrylicLightBrush;
                 userControl.Foreground = new SolidColorBrush(Windows.UI.Colors.Black);
             }
         }
@@ -410,7 +410,7 @@ namespace AnkiU.UserControls
             ShowCommandCheckClick?.Invoke(sender, e);
         }
 
-        private async void FieldListViewButtonClick(object sender, RoutedEventArgs e)
+        private async void OnFieldListViewButtonClick(object sender, RoutedEventArgs e)
         {
             if (!(await InitFieldFlyoutIfNeeded()))
                 return;

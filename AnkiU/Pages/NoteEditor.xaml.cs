@@ -198,6 +198,9 @@ namespace AnkiU.Pages
 
         private void SetupNewNoteView()
         {
+            FindName("noteTypeGrid");
+            FindName("undoFlyoutContentPresenter");
+
             noteTypeGrid.Visibility = Visibility.Visible;
             mainPage.UndoButton.Visibility = Visibility.Visible;
             mainPage.UndoButton.Click += UndoButtonClickHandler;            

@@ -13,7 +13,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <MenuFlyout Placement="Bottom" x:Key="CardListViewContextMenu" >
+        <MenuFlyout Placement="Bottom" x:Key="CardListViewContextMenu" MenuFlyoutPresenterStyle="{StaticResource DefaultMenuFlyoutPresenterStyle}" >
             <MenuFlyoutItem Text="Select All" Style="{StaticResource IconMenuFlyoutItem}" Tag="SelectAll" Click="SelectAllMenuFlyoutItemClick"/>
             <MenuFlyoutItem Text="Unselect All" Style="{StaticResource IconMenuFlyoutItem}" Tag="ClearSelection" Click="UnselectAllMenuFlyoutItemClick"/>
             <MenuFlyoutSeparator />
@@ -43,7 +43,7 @@
         <ProgressRing x:Name="progressRing" Grid.Row="1"
                       Width="80" Height="80" Canvas.ZIndex="1" Visibility="Collapsed" />
 
-        <Grid x:Name="searchTextBoxRoot"  BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}"              
+        <Grid x:Name="searchTextBoxRoot"  Background="{StaticResource ButtonBackGroundNormal}"
               Padding="0,3,5,3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -54,25 +54,22 @@
 
             <Button Style="{StaticResource ButtonContentOcpacity}" BorderThickness="0" x:Name="searchButton"
                     Background="Transparent" Width="35" Height="35"
-                    Foreground="{StaticResource ButtonBackGroundNormal}" 
+                    Foreground="White" 
                     Padding="0" VerticalAlignment="Stretch" Click="SearchButtonClickHandler">
                 <FontIcon FontWeight="Bold" FontSize="20" Glyph="&#xE721;" />
             </Button>
-            <TextBox Grid.Column="1"  PlaceholderText="Search..." x:Name="searchTextBox"
-                     GotFocus="SearchTextBoxGotFocus" LostFocus="SearchTextBoxLostFocus"
+            <TextBox Grid.Column="1"  
+                     PlaceholderText="Search..." 
+                     x:Name="searchTextBox"
+                     GotFocus="SearchTextBoxGotFocus" 
+                     Background="Transparent"
+                     LostFocus="SearchTextBoxLostFocus"
                      KeyUp="SearchTextBoxKeyUp"
-                     Foreground="{Binding Foreground, ElementName=userControl}"          
-                                 BorderThickness="2,2,2,2"
-                                 VerticalAlignment="Center" Style="{StaticResource SearchTextBox}"                 
-                                 HorizontalAlignment="Stretch" TextWrapping="NoWrap"
-                                 TextAlignment="Left" IsSpellCheckEnabled="False" >
-                <TextBox.InputScope>
-                    <InputScope>
-                        <InputScope.Names>
-                            <InputScopeName NameValue="Search"/>
-                        </InputScope.Names>
-                    </InputScope>
-                </TextBox.InputScope>
+                     Foreground="White"                               
+                     VerticalAlignment="Center" 
+                     BorderBrush="White"
+                     HorizontalAlignment="Stretch" TextWrapping="NoWrap"
+                     TextAlignment="Left" IsSpellCheckEnabled="False" >
             </TextBox>
 
             <Button Style="{StaticResource ButtonContentOcpacity}"                     
@@ -92,7 +89,7 @@
                     <CompositeTransform x:Name="expandButtonTransform" TranslateX="0"/>
                 </Button.RenderTransform>
                 <Path Style="{StaticResource TriangleUpIcon}" Width="12" Height="10"
-                          Fill="{StaticResource ButtonBackGroundNormal}" 
+                          Fill="White" 
                           Margin="0" RenderTransformOrigin="0.5,0.5">
                     <Path.RenderTransform>
                         <CompositeTransform Rotation="180"/>
@@ -100,7 +97,7 @@
                 </Path>
             </Button>
 
-            <Button Margin="5,0,3,0" Style="{StaticResource ButtonHelp}" Grid.Column="3" Width="22" Height="23" >
+            <Button Margin="5,0,3,0" Style="{StaticResource ButtonHelp}" Foreground="White" Grid.Column="3" Width="22" Height="23" >
                 <Button.Flyout>
                     <Flyout>
                         <ContentPresenter FontSize="15" FontFamily="ms-appx:/Assets/Fonts/fira-sans/FiraSans-Book.otf#Fira Sans Book" >
@@ -173,7 +170,7 @@
                        Text="Page" />
                 </Grid>
                 <Button.Flyout>
-                    <Flyout Placement="Top" x:Name="pageFlyout">
+                    <Flyout Placement="Top" x:Name="pageFlyout" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
                         <StackPanel Orientation="Vertical" Width="130">
                             <Button Style="{StaticResource ButtonGray}" Background="Transparent" 
                                     Padding="0" Height="35"

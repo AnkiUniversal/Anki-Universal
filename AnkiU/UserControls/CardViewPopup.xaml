@@ -13,11 +13,9 @@
 
     <Popup x:Name="popUp" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
         <Grid   Background="{Binding Background, ElementName=userControl}" x:Name="mainGrid"
-                VerticalAlignment="Center" HorizontalAlignment="Center" 
-                BorderThickness="1" 
-                BorderBrush="{Binding Foreground, ElementName=userControl}">
+                VerticalAlignment="Center" HorizontalAlignment="Center" >
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -28,22 +26,22 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <Button Style="{StaticResource ButtonBlue}" BorderThickness="0" Click="ZoomInButtonClickHandler" Margin="5,0,5,0">
+                    <Button Style="{StaticResource ButtonBlue}" VerticalAlignment="Stretch" BorderThickness="0" Click="ZoomInButtonClickHandler" Margin="5,0,5,0">
                         <SymbolIcon Symbol="ZoomIn" RenderTransformOrigin="0.5,0.5" >
                         </SymbolIcon>
                     </Button>
-                    <Button Style="{StaticResource ButtonBlue}" BorderThickness="0" Click="ZoomResetButtonClickHandler" Margin="5,0,5,0">
+                    <Button Style="{StaticResource ButtonBlue}" VerticalAlignment="Stretch" BorderThickness="0" Click="ZoomResetButtonClickHandler" Margin="5,0,5,0">
                         <SymbolIcon Symbol="Zoom" RenderTransformOrigin="0.5,0.5" >
                         </SymbolIcon>
                     </Button>
-                    <Button Style="{StaticResource ButtonBlue}" BorderThickness="0" Margin="5,0,5,0"
+                    <Button Style="{StaticResource ButtonBlue}" VerticalAlignment="Stretch" BorderThickness="0" Margin="5,0,5,0"
                         Click="ZoomOutButtonClickHandler"> 
                         <SymbolIcon Symbol="ZoomOut" RenderTransformOrigin="0.5,0.5" >
                         </SymbolIcon>
                     </Button>
                     
                     <Rectangle Width="2" Fill="White" Margin="0,3,5,3"/>
-                    <Button x:Name="textToSpeechToggle" Style="{StaticResource ButtonBlue}" BorderThickness="0" Margin="0,0,5,0" Click="OnTextToSpeechToggleClick" ToolTipService.ToolTip="Toggle Text to Speech">
+                    <Button x:Name="textToSpeechToggle" Style="{StaticResource ButtonBlue}" VerticalAlignment="Stretch" BorderThickness="0" Margin="0,0,5,0" Click="OnTextToSpeechToggleClick" ToolTipService.ToolTip="Toggle Text to Speech">
                         <Grid>
                             <Path x:Name="textToSpeechOnSymbol" Style="{StaticResource SpeakerIcon}"  Fill="White"  Stroke="White" Visibility="Visible"/>
                             <Path x:Name="textToSpeechOffSymbol" Style="{StaticResource SpeakerOffIcon}"  Fill="White"  Stroke="White" Visibility="Collapsed"/>

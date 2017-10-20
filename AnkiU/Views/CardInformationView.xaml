@@ -8,6 +8,7 @@
     xmlns:DataBindingConverters1="using:AnkiU.UIUtilities.DataBindingConverters"
     x:Class="AnkiU.Views.CardInformationView"
     mc:Ignorable="d"
+    BorderBrush="LightGray"
     d:DesignHeight="300"
     d:DesignWidth="400"
     x:Name="userControl"
@@ -18,12 +19,12 @@
         <DataBindingConverters1:CardStateToSolidBrushConverter x:Key="CardStateToSolidBrushConverter"/>
         <DataBindingConverters:SlelectionToVisibilityConverter x:Key="SlelectionToVisibilityConverter"/>
 
-        <MenuFlyout Placement="Bottom" x:Key="LeftColumnContextMenu">
+        <MenuFlyout Placement="Bottom" x:Key="LeftColumnContextMenu" MenuFlyoutPresenterStyle="{StaticResource DefaultMenuFlyoutPresenterStyle}">
             <MenuFlyoutItem Text="Question" Click="QuestionSortMenuClick"/>
             <MenuFlyoutItem Text="Sort Field" Click="SortFieldMenuFlyoutItemClickHandler"/>
         </MenuFlyout>
 
-        <MenuFlyout Placement="Bottom" x:Key="RightColumnContextMenu">
+        <MenuFlyout Placement="Bottom" x:Key="RightColumnContextMenu" MenuFlyoutPresenterStyle="{StaticResource DefaultMenuFlyoutPresenterStyle}">
             <MenuFlyoutItem Text="Answer" Click="OnAnswerMenuFlyoutItemClickHandler"/>
             <MenuFlyoutItem Text="Due &amp; Relearn (Lapses)" Click="OnDueAndRelearnMenuFlyoutItemClickHandler"/>
             <MenuFlyoutItem Text="Created &amp; Modified" Click="OnCreatedAndModifiedFlyoutClick"/>
@@ -43,11 +44,11 @@
 
         <Border Grid.Row="0" Grid.ColumnSpan="3" Canvas.ZIndex="1" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,0,1" />
         <Border x:Name="currentSortBorder" Grid.Column="0" Canvas.ZIndex="1" BorderThickness="0,0,0,4" BorderBrush="{StaticResource ButtonBackGroundNormal}" />
-        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Canvas.ZIndex="1"
+        <Border Grid.Row="0" Grid.Column="0" Canvas.ZIndex="1"
 			BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,1,0" />
-        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Canvas.ZIndex="1" Visibility="{Binding Visibility, ElementName=lapsesLabel, Mode=OneWay}"
+        <Border Grid.Row="0" Grid.Column="1" Canvas.ZIndex="1" Visibility="{Binding Visibility, ElementName=lapsesLabel, Mode=OneWay}"
 			BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,1,0" />
-        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Canvas.ZIndex="1" Visibility="{Binding Visibility, ElementName=timeCreatedLabel, Mode=OneWay}"
+        <Border Grid.Row="0" Grid.Column="1" Canvas.ZIndex="1" Visibility="{Binding Visibility, ElementName=timeCreatedLabel, Mode=OneWay}"
 			BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,1,0" />
 
         <Button HorizontalAlignment="Stretch" 
@@ -205,10 +206,9 @@
         <Ellipse x:Name="pointToShowFlyout" Grid.RowSpan="3" Width="0" Height="0" Grid.ColumnSpan="3" Stroke="Transparent" Fill="Transparent" 
                  VerticalAlignment="Top" HorizontalAlignment="Left" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False" 
                  IsTapEnabled="False" IsHitTestVisible="False"/>
-        
+
         <ListView x:Name="cardListView" 
-			HorizontalAlignment="Stretch"  
-			Canvas.ZIndex="0"
+			HorizontalAlignment="Stretch"  			
 			VerticalAlignment="Stretch" 
 			Grid.Row="1" Grid.ColumnSpan="3"
 			Foreground="{Binding Foreground, ElementName=userControl}"
@@ -226,26 +226,27 @@
 			Holding="CardListHoldingHandler"
             DoubleTapped="OnItemDoubleTapped" 
 			Padding="0"
+            ItemContainerStyle="{StaticResource CardViewItemRevealStyle}"
 			ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="BorderThickness" Value="0,0,0,1" />
-                    <Setter Property="BorderBrush" Value="{StaticResource ButtonBackGroundAnalogousLeft}" />
-                    <Setter Property="Padding" Value="0,5,0,5" />
-                    <Setter Property="Template" Value="{StaticResource CardItemListViewType}"/>
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="CardListViewTemplate" x:DataType="data:CardInformation">
-                    <Grid x:Name="GridDeckList"  Margin="0" BorderThickness="4,0,0,0" 
+                    <Grid x:Name="GridDeckList"  
+                          Margin="-8,-8,-8,-30" 
+                          Padding="13,13,13,0" 
+                          BorderThickness="4,0,0,0" 
                           BorderBrush="{x:Bind Queue, Converter={StaticResource CardStateToSolidBrushConverter}, Mode=OneWay}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
+                        <Border Grid.ColumnSpan="3" Margin="-100,10,-100,0" Grid.Row="1" Height="30" 
+                                Background="{Binding BorderBrush, ElementName=userControl}" BorderThickness="0" />
 
                         <TextBlock Margin="5,0,5,0" Grid.Column="0"  Text="{x:Bind Question, Mode=OneWay}" 
 							TextAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"

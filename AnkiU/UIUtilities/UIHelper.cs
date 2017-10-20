@@ -80,7 +80,7 @@ namespace AnkiU.UIUtilities
         public static SolidColorBrush DarkerBrush { get; private set; } 
                        = Application.Current.Resources["DarkerGray"] as SolidColorBrush;        
         public static SolidColorBrush ContentNightModeBrush { get; private set; } 
-                       = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 32, 32, 32));
+                       = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 68, 68, 68));
         public static SolidColorBrush Transparent = new SolidColorBrush(Windows.UI.Colors.Transparent);
         public static SolidColorBrush IndioBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 8, 141, 199));
 
@@ -328,8 +328,8 @@ namespace AnkiU.UIUtilities
             ChartModel.SubtitleColor = OxyColors.White;
             ChartModel.PlotAreaBorderColor = OxyColors.White;
 
-            ChartModel.PlotAreaBackground = OxyColor.FromRgb(68, 68, 68);            
-            ChartModel.Background = OxyColor.FromRgb(68, 68, 68);
+            ChartModel.PlotAreaBackground = OxyColor.FromRgb(ContentNightModeColor.R, ContentNightModeColor.G, ContentNightModeColor.B);            
+            ChartModel.Background = OxyColor.FromRgb(ContentNightModeColor.R, ContentNightModeColor.G, ContentNightModeColor.B);
         }
 
         public static void ChangePlotModelToDay(PlotModel ChartModel)

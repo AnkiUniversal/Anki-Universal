@@ -12,8 +12,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Flyout x:Name="undoFlyout" x:Key="UndoFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
-            <ContentPresenter x:Name="undoFlyoutContentPresenter">
+        <Flyout x:Name="undoFlyout" x:Key="UndoFlyoutTemplate"  FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
+            <ContentPresenter x:Name="undoFlyoutContentPresenter" x:DeferLoadStrategy="Lazy">
                 <Grid Width="250" >
                     <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" 
                                   HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
@@ -67,7 +67,7 @@
 
         <Grid Grid.Row="2" Margin="5" 
               VerticalAlignment="Center" 
-              MaxWidth="600" x:Name="noteTypeGrid" >
+              MaxWidth="600" x:Name="noteTypeGrid" x:DeferLoadStrategy="Lazy">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto"/>

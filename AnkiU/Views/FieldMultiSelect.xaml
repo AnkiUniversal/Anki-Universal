@@ -11,7 +11,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Flyout x:Name="flyout" x:Key="FieldMultiSelectFlyoutTemplate" Closed="FlyoutClosedEvent">
+        <Flyout x:Name="flyout" x:Key="FieldMultiSelectFlyoutTemplate" Closed="FlyoutClosedEvent" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
             <ContentPresenter>
                 <Grid x:Name="rootGrid" MaxWidth="250">
                     <ItemsControl ItemsSource="{Binding}"   
