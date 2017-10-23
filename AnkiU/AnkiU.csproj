@@ -369,6 +369,9 @@
     <Compile Include="Pages\ModelEditor.xaml.cs">
       <DependentUpon>ModelEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\TagManager.xaml.cs">
+      <DependentUpon>TagManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\TemplateEditor.xaml.cs">
       <DependentUpon>TemplateEditor.xaml</DependentUpon>
     </Compile>
@@ -624,6 +627,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\ModelEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\TagManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

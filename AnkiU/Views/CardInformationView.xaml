@@ -42,8 +42,13 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" Grid.ColumnSpan="3" Canvas.ZIndex="1" BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,0,1" />
-        <Border x:Name="currentSortBorder" Grid.Column="0" Canvas.ZIndex="1" BorderThickness="0,0,0,4" BorderBrush="{StaticResource ButtonBackGroundNormal}" />
+        <Border Grid.Row="0" Grid.ColumnSpan="3"
+                BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" 
+                BorderThickness="0,0,0,1" 
+                Background="{Binding Background,ElementName=cardListView}"/>
+        
+        <Border x:Name="currentSortBorder" Grid.Column="0" Canvas.ZIndex="1" 
+                BorderThickness="0,0,0,4" BorderBrush="{StaticResource ButtonBackGroundNormal}" />
         <Border Grid.Row="0" Grid.Column="0" Canvas.ZIndex="1"
 			BorderBrush="{StaticResource ButtonBackGroundAnalogousLeft}" BorderThickness="0,0,1,0" />
         <Border Grid.Row="0" Grid.Column="1" Canvas.ZIndex="1" Visibility="{Binding Visibility, ElementName=lapsesLabel, Mode=OneWay}"
@@ -209,10 +214,10 @@
 
         <ListView x:Name="cardListView" 
 			HorizontalAlignment="Stretch"  			
-			VerticalAlignment="Stretch" 
+			VerticalAlignment="Top" 
 			Grid.Row="1" Grid.ColumnSpan="3"
 			Foreground="{Binding Foreground, ElementName=userControl}"
-			Background="{Binding Background, ElementName=userControl}"                    
+			Background="White"                    
 			AutomationProperties.AutomationId="ListGridView"
 			AutomationProperties.Name="List Items"
 			IsSwipeEnabled="False"
@@ -233,8 +238,7 @@
                     <Grid x:Name="GridDeckList"  
                           Margin="-8,-8,-8,-30" 
                           Padding="13,13,13,0" 
-                          BorderThickness="4,0,0,0" 
-                          BorderBrush="{x:Bind Queue, Converter={StaticResource CardStateToSolidBrushConverter}, Mode=OneWay}">
+                          BorderThickness="0" >
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
@@ -245,8 +249,12 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.ColumnSpan="3" Margin="-100,10,-100,0" Grid.Row="1" Height="30" 
-                                Background="{Binding BorderBrush, ElementName=userControl}" BorderThickness="0" />
+                        <Border Grid.RowSpan="2" Margin="-2,-5,0,0" 
+                                Background="Transparent" BorderThickness="4,0,0,0" 
+                                BorderBrush="{x:Bind Queue, Converter={StaticResource CardStateToSolidBrushConverter}, Mode=OneWay}"/>
+                        
+                        <Border Grid.ColumnSpan="3" Margin="-100,10,-100,0" Grid.Row="1" Height="30"
+                                Background="{Binding Background, ElementName=userControl}" BorderThickness="0" />
 
                         <TextBlock Margin="5,0,5,0" Grid.Column="0"  Text="{x:Bind Question, Mode=OneWay}" 
 							TextAlignment="Left" Foreground="{Binding Foreground, ElementName=userControl}"

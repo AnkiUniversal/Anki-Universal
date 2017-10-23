@@ -71,6 +71,10 @@ function ChangeCardContent(htmlText, cardClass) {
             textBox.value = "";
         }
     }
+    else {
+        cardcontent.focus();
+        cardcontent.click();
+    }
 }
 
 function ChangeReadMode(readMode) {

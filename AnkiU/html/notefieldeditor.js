@@ -303,13 +303,14 @@ function AddField(name) {
 
 function RemoveField(name) {
 
-    var header = GetNameHeaderField(name);
-    header.parentNode.removeChild(header); 
+    var divField = GetNameHeaderField(name).parentNode;    
 
     var id = EDITABLE_FIELD_PREFIX + name;
     RemoveEditor(id);
     var field = document.getElementById(id);
     field.parentNode.removeChild(field);
+
+    divField.parentNode.removeChild(divField); 
 }
 
 function RenameField(oldName, newName) {    
@@ -334,22 +335,17 @@ function RemoveEditor(id) {
 
 function MoveField(name, newOrder) {    
 
-    var header = GetNameHeaderField(name);
-    header.parentNode.removeChild(header);
+    var divField = GetNameHeaderField(name).parentNode;
+    divField.parentNode.removeChild(divField);
 
-    var id = EDITABLE_FIELD_PREFIX + name;
-    var field = document.getElementById(id);
-    field.parentNode.removeChild(field);
-       
     if (newOrder == 0) {
-        document.body.insertAdjacentElement('afterbegin', header);        
+        document.body.insertAdjacentElement('afterbegin', divField);        
     }
     else {
         var fields = document.getElementsByClassName('editable');
-        fields[newOrder - 1].insertAdjacentElement('afterEnd', header);
+        fields[newOrder - 1].parentNode.insertAdjacentElement('afterEnd', divField);
     }
 
-    header.insertAdjacentElement('afterEnd', field);
 }
 
 function ShowPopup(name) {    

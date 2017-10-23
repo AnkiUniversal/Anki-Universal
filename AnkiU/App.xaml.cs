@@ -61,19 +61,8 @@ namespace AnkiU
                 this.DebugSettings.EnableFrameRateCounter = false;
             }
 #endif
-            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
-            {
-                Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
-                var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
-                if (titleBar != null)
-                {
-                    titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
-                    titleBar.ButtonInactiveBackgroundColor = Windows.UI.Colors.Transparent;
-                    titleBar.ButtonHoverBackgroundColor = UIUtilities.UIHelper.ButtonBackGroundNormal.Color;
-                    titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.White;
-                }
-            }
-            
+            InitTitleBar();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -103,7 +92,7 @@ namespace AnkiU
             }
 
             long id;
-            if(long.TryParse(e.TileId, out id))
+            if (long.TryParse(e.TileId, out id))
             {
                 TileId = id;
                 AppLaunchFromtTile?.Invoke(this, null);
@@ -117,6 +106,22 @@ namespace AnkiU
             Window.Current.Activate();
         }
 
+        private static void InitTitleBar()
+        {
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
+            {
+                Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+                var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
+                    titleBar.ButtonInactiveBackgroundColor = Windows.UI.Colors.Transparent;
+                    titleBar.ButtonHoverBackgroundColor = UIUtilities.UIHelper.ButtonBackGroundNormal.Color;
+                    titleBar.ButtonHoverForegroundColor = Windows.UI.Colors.White;
+                }
+            }
+        }
+
         public void FireAppLaunchFromtTileIfNeeded()
         {
             if(TileId != null)
@@ -125,6 +130,8 @@ namespace AnkiU
 
         protected override void OnActivated(IActivatedEventArgs e)
         {
+            InitTitleBar();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

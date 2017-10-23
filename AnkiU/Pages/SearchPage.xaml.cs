@@ -91,16 +91,7 @@ namespace AnkiU.Pages
         private void ChangeBackgroundColor()
         {
             UIHelper.ToggleNightLight(isNightMode, this);
-            if (isNightMode)
-            {
-                cardInformationView.Background = UIHelper.ContentNightModeBrush;   
-                cardInformationView.BorderBrush = new SolidColorBrush(Windows.UI.Colors.Black);
-            }
-            else
-            {
-                cardInformationView.Background = new SolidColorBrush(Windows.UI.Colors.White);
-                cardInformationView.BorderBrush = new SolidColorBrush(Windows.UI.Colors.LightGray);
-            }
+            cardInformationView.ChangeReadMode(isNightMode);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

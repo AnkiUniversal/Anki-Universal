@@ -65,13 +65,12 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
-
+                   
                     <TextBox Grid.Row="1" PlaceholderText="Search..." x:Name="searchTextBox"
-                                 VerticalAlignment="Center"         
-                                 Style="{StaticResource OldTextBoxStyle}"
-                                 HorizontalAlignment="Stretch" TextWrapping="Wrap"
-                                 TextAlignment="Left" IsSpellCheckEnabled="False"
-                                 TextChanged="SearchTextBoxTextChangedHandler" >
+                             VerticalAlignment="Center"         
+                             HorizontalAlignment="Stretch" TextWrapping="Wrap"
+                             TextAlignment="Left" IsSpellCheckEnabled="False"
+                             TextChanged="SearchTextBoxTextChangedHandler" >
                         <TextBox.InputScope>
                             <InputScope>
                                 <InputScope.Names>

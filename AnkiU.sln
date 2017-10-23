@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnkiU", "AnkiU\AnkiU.csproj", "{B6EEC5A8-4B5A-4FD4-A25D-1D9D3574AEF1}"
 EndProject
@@ -67,7 +67,6 @@ Global
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Debug|ARM.ActiveCfg = Debug|ARM
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Debug|x64.ActiveCfg = Debug|x64
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Debug|x64.Build.0 = Debug|x64
-		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Debug|x64.Deploy.0 = Debug|x64
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Debug|x86.ActiveCfg = Debug|x86
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Debug|x86.Build.0 = Debug|x86
 		{EA8E1957-32DD-45EE-9430-E1C84B151E97}.Release|Any CPU.ActiveCfg = Release|x86
@@ -109,5 +108,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6DD228B-F908-44C2-9B6A-73F9EC7B32BA}
 	EndGlobalSection
 EndGlobal

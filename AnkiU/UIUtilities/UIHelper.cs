@@ -199,7 +199,7 @@ namespace AnkiU.UIUtilities
 
         public static async Task ShowMessageDialog(string content, string title = "")
         {
-            ContentMessageDialog dialog = new ContentMessageDialog(title, content);
+            MessageDialog dialog = new MessageDialog(content, title);
             await dialog.ShowAsync();
         }
 

@@ -2302,6 +2302,10 @@ namespace AnkiU
                         OnManageNotetypeClickHandler();
                         break;
 
+                    case "Manage Tags":
+                        OnManageTagsClickHandler();
+                        break;
+
                     case "Back up Media Files":
                         OnBackupMediaClick();
                         break;
@@ -2380,6 +2384,12 @@ namespace AnkiU
         {
             splitView.IsPaneOpen = false;
             contentFrame.Navigate(typeof(ModelEditor), this);
+        }
+
+        private void OnManageTagsClickHandler()
+        {
+            splitView.IsPaneOpen = false;
+            contentFrame.Navigate(typeof(TagManager), this);
         }
 
         private void OnBackupMediaClick()
@@ -2502,6 +2512,8 @@ namespace AnkiU
                             + "We'll reply to your email in one business day.\n";
             await UIHelper.LaunchEmailApp("ankiuniversal@gmail.com", message);
         }
+
+
     }   
 
 }

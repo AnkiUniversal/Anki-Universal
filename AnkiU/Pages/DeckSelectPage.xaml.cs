@@ -450,17 +450,18 @@ namespace AnkiU.Pages
             UIHelper.AddToGridInFull(mainGrid, customStudyFlyout);
         }
 
-        private void CustomStudyCreateEventHandler(CustomStudyFlyout.CustomStudyOption studyOption, long deckId)
+        private void CustomStudyCreateEventHandler(CustomStudyFlyout.CustomStudyOption studyOption, long originalDeckID, long dynamicDeckId)
         {
             if (studyOption == CustomStudyFlyout.CustomStudyOption.IncreaseNewToDay ||
                 studyOption == CustomStudyFlyout.CustomStudyOption.IncreaseReviewToDay)
             {
-                deckListViewModel.UpdateCardCountForDeck(deckId);
+                deckListViewModel.UpdateCardCountForDeck(originalDeckID);
             }
             else
             {
-                deckListViewModel.AddOrUpdateDeckCardCount(deckId);
-                var deckInfor = deckListViewModel.GetDeck(deckId);
+                deckListViewModel.UpdateCardCountForDeck(originalDeckID);
+                deckListViewModel.AddOrUpdateDeckCardCount(dynamicDeckId);
+                var deckInfor = deckListViewModel.GetDeck(dynamicDeckId);
                 deckListViewModel.ResortNonSubdeck(deckInfor);
             }
         }

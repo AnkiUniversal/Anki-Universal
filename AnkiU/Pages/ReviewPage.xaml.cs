@@ -375,7 +375,7 @@ namespace AnkiU.Pages
 
             EnableInkIfNeeded();
             EnableTextToSpeechIfNeeded();
-            EnableOneHandModeIfNeeded();
+            EnableOneHandModeIfNeeded();            
         }
 
         private void DisableOneHandMode()
@@ -1115,7 +1115,7 @@ namespace AnkiU.Pages
         {
             KeyDownHandler(e.VirtualKey);
         }
-        private async void KeyDownHandler(Windows.System.VirtualKey e)
+        private async void KeyDownHandler(Windows.System.VirtualKey keyPress)
         {
             if (isInProcessing)
                 return;
@@ -1129,7 +1129,7 @@ namespace AnkiU.Pages
                 var control = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
                 if (control.HasFlag(CoreVirtualKeyStates.Down))
                 {
-                    switch (e)
+                    switch (keyPress)
                     {
                         case VirtualKey.E:
                             if (currentCard != null) 
@@ -1151,46 +1151,46 @@ namespace AnkiU.Pages
                             break;
                     }
                 }
-                else if (e == VirtualKey.T)
+                else if (keyPress == VirtualKey.T)
                 {
                     await cardView.TogglePlayTextToSpeech();
                 }
-                else if (e == VirtualKey.R)
+                else if (keyPress == VirtualKey.R)
                 {
                     await cardView.PlayAllMedia();                    
                 }
                 else if(isCustomDueTimeFlyoutOpen)
                 {
-                    if(e == VirtualKey.Enter)                   
+                    if(keyPress == VirtualKey.Enter)                   
                         await SaveRescheduleAndShowNextQuestion();                    
                 }
                 else if (showAnswerButton.Visibility == Visibility.Visible)
                 {
-                    if (e == VirtualKey.Enter || e == VirtualKey.Space)                    
+                    if (keyPress == VirtualKey.Enter || keyPress == VirtualKey.Space)                    
                         await DisplayAnswer();                    
                 }
                 else
                 {
-                    if (e == VirtualKey.Number1 ||
-                       e == VirtualKey.NumberPad1)
+                    if (keyPress == VirtualKey.Number1 ||
+                       keyPress == VirtualKey.NumberPad1)
                     {
                         await CardButtonClickAnimateAsync(againButton);
                         await ShowNextCardAndSaveAnswer(Sched.AnswerEase.Again);                        
                     }
-                    else if (e == VirtualKey.Number2 ||
-                        e == VirtualKey.NumberPad2)
+                    else if (keyPress == VirtualKey.Number2 ||
+                        keyPress == VirtualKey.NumberPad2)
                     {
                         await CardButtonClickAnimateAsync(hardButton);
                         await ShowNextCardAndSaveAnswer(Sched.AnswerEase.Hard);                        
                     }
                     else if ((goodButton.Visibility == Visibility.Visible) && 
-                        (e == VirtualKey.Number3 || e == VirtualKey.NumberPad3))
+                        (keyPress == VirtualKey.Number3 || keyPress == VirtualKey.NumberPad3))
                     {
                         await CardButtonClickAnimateAsync(goodButton);
                         await ShowNextCardAndSaveAnswer(Sched.AnswerEase.Good);
                     }
                     else if ((easyButton.Visibility == Visibility.Visible) && 
-                       (e == VirtualKey.Number4 || e == VirtualKey.NumberPad4))
+                       (keyPress == VirtualKey.Number4 || keyPress == VirtualKey.NumberPad4))
                     {
                         await CardButtonClickAnimateAsync(easyButton);
                         await ShowNextCardAndSaveAnswer(Sched.AnswerEase.Easy);                        
@@ -1630,6 +1630,7 @@ namespace AnkiU.Pages
             UpdateScheduleWithoutAnswering();
             collection.RemoveCardsAndNoteIfNoCardsLeft(new long[] { currentCard.Id });
             RemoveDuplicateInUndoQueueIfHas(currentCard.Id);
+            editFlyout.Hide();
             await GotoNextQuestionWithoutAnswering();
         }
 
@@ -1654,6 +1655,7 @@ namespace AnkiU.Pages
             UpdateScheduleWithoutAnswering();
             collection.Sched.SuspendCards(currentCard.Id);
             RemoveDuplicateInUndoQueueIfHas(currentCard.Id);
+            editFlyout.Hide();
             await GotoNextQuestionWithoutAnswering();
         }
 

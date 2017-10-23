@@ -131,7 +131,7 @@
     <Grid  x:Name="mainGrid" >
         <NavigationView  x:Name="splitView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AlwaysShowHeader="True"                        
                          Style="{StaticResource NavigationViewCustomStyle}" IsPaneToggleButtonVisible="True"                          
-                         CompactModeThresholdWidth="1080" ExpandedModeThresholdWidth="1920" IsSettingsVisible="True" 
+                         CompactModeThresholdWidth="99999999" ExpandedModeThresholdWidth="99999999" IsSettingsVisible="True" 
                          IsPaneOpen="False"  CompactPaneLength="0" OpenPaneLength="200" ItemInvoked="OnNavigationViewItemInvoked" 
                          >
             <NavigationView.MenuItems>
@@ -174,6 +174,12 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
+                <NavigationViewItem Content="Manage Tags" Tag="tags">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Tag" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                
                 <NavigationViewItemSeparator/>
 
                 <NavigationViewItem Content="Back up Media Files" Tag="backupMedia">
@@ -216,7 +222,7 @@
                 </Grid.RowDefinitions>
 
                 <Border x:Name="commandBarBindBackground" Visibility="Collapsed" Background="{StaticResource CommandBarAcrylicLightBrush}"/>
-                <CommandBar x:Name="commandBar" Foreground="Black" Background="LightGray" IsDynamicOverflowEnabled="False">
+                <CommandBar x:Name="commandBar" Foreground="Black" Background="LightGray" IsDynamicOverflowEnabled="False" AllowFocusOnInteraction="True">
                     <CommandBar.CommandBarOverflowPresenterStyle>
                         <Style TargetType="CommandBarOverflowPresenter">
                             <Setter Property="Background" Value="Transparent" />
@@ -245,16 +251,18 @@
                         </Style>
                     </CommandBar.CommandBarOverflowPresenterStyle>
 
-                    <CommandBar.PrimaryCommands>
+                    <CommandBar.PrimaryCommands >
                         <AppBarButton x:Name="undoButton" Visibility="Collapsed" Icon="Undo" Label="Undo" ToolTipService.ToolTip="Ctrl + Z"
-                              Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}"/>
+                              Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" AllowFocusOnInteraction="True"/>
                         <AppBarButton x:Name="saveButton" Visibility="Collapsed" Icon="Save" Label="Save"  ToolTipService.ToolTip="Ctrl + S"
-                              Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}"/>
-                        <AppBarButton x:Name="editButton" Visibility="Collapsed" Icon="Edit" Label="Edit" AllowFocusOnInteraction="True"
+                              Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" AllowFocusOnInteraction="True"/>
+                        <AppBarButton x:Name="editButton" Visibility="Collapsed" Icon="Edit" Label="Edit" AllowFocusOnInteraction="False"
                               Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Edit"/>
 
                         <AppBarSeparator x:Name="inkSeparator" Background="Transparent" Visibility="{Binding Visibility, ElementName=inkOnOffButton}" Foreground="{Binding Foreground, ElementName=commandBar}"/>
-                        <AppBarButton x:Name="inkOnOffButton" Visibility="Collapsed" Label="Ink On" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Turn Ink On/Off" >
+                        <AppBarButton x:Name="inkOnOffButton" Visibility="Collapsed" Label="Ink On" Background="Transparent" 
+                                      Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Turn Ink On/Off" 
+                                      AllowFocusOnInteraction="True">
                             <Grid >
                                 <Path x:Name="inkOnSymbol" Style="{StaticResource InkInputIcon}" Canvas.ZIndex="0" Stroke="Transparent" Fill="{Binding Foreground, ElementName=commandBar}"/>
                                 <Path x:Name="inkOffSymbol" Width="23" Height="17" 
@@ -265,9 +273,9 @@
                             </Grid>
                         </AppBarButton>
 
-                        <AppBarButton x:Name="inkRecognizeButton" AllowFocusOnInteraction="True" Visibility="Collapsed" Icon="Character" Label="Ink to Text" Click="InkRecognizeButtonClickHandler" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Ink To Text"/>
+                        <AppBarButton x:Name="inkRecognizeButton" Visibility="Collapsed" Icon="Character" Label="Ink to Text" Click="InkRecognizeButtonClickHandler" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Ink To Text" AllowFocusOnInteraction="True"/>
 
-                        <AppBarButton x:Name="inkHideToggleButton"  Click="InkHideToggleButtonClickHandler" Visibility="Collapsed"  Label="Hide Ink" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Ink Toggle">
+                        <AppBarButton x:Name="inkHideToggleButton"  Click="InkHideToggleButtonClickHandler" Visibility="Collapsed"  Label="Hide Ink" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Ink Toggle" AllowFocusOnInteraction="True">
                             <Grid >
                                 <Path  x:Name="inkHideSymbol" Visibility="Visible" 
                               Style="{StaticResource InkHideIcon}" Fill="{Binding Foreground, ElementName=commandBar}" Stroke="Transparent" RenderTransformOrigin="0.5,0.5" >
@@ -280,7 +288,7 @@
                                 </Path>
                             </Grid>
                         </AppBarButton>
-                        <AppBarButton x:Name="inkClearButton"  Visibility="Collapsed" Label="Clear"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Clear Ink">
+                        <AppBarButton x:Name="inkClearButton"  Visibility="Collapsed" Label="Clear"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Clear Ink" AllowFocusOnInteraction="True">
                             <Grid >
                                 <Path Width="20" Height="20" UseLayoutRounding="True"
                               Style="{StaticResource EraseAllIcon}"
@@ -289,7 +297,7 @@
                                 </Path>
                             </Grid>
                         </AppBarButton>
-                        <AppBarButton x:Name="inkEraserToggleButton"  Visibility="Collapsed" Label="Eraser" Click="InkEraserToggleButtonClickHandler" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Eraser Toggle">
+                        <AppBarButton x:Name="inkEraserToggleButton"  Visibility="Collapsed" Label="Eraser" Click="InkEraserToggleButtonClickHandler" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Eraser Toggle" AllowFocusOnInteraction="True">
                             <Grid>
                                 <Path x:Name="inkEraserToggleButtonPenSymbol" Style="{StaticResource PenIcon}" Visibility="Collapsed" StrokeThickness="1.25" Fill="Transparent" Stroke="{Binding Foreground, ElementName=commandBar}" />
                                 <Path x:Name="inkEraserToggleButtonEraserSymbol" Width="18" Height="12" Visibility="Visible" 
@@ -303,37 +311,37 @@
                             </Grid>
                         </AppBarButton>
 
-                        <AppBarButton x:Name="addButton" AllowFocusOnInteraction="True" Icon="Add" Label="Add Deck" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Add Deck" />
-                        <AppBarButton x:Name="dragAndHoldButton" Label="Drag Deck" Click="OnDragAndHoldButtonClick" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Drag Decks">
+                        <AppBarButton x:Name="addButton" Icon="Add" Label="Add Deck" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Add Deck" AllowFocusOnInteraction="True" />
+                        <AppBarButton x:Name="dragAndHoldButton" Label="Drag Deck" Click="OnDragAndHoldButtonClick" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Drag Decks" AllowFocusOnInteraction="True">
                             <SymbolIcon Symbol="Pictures" RenderTransformOrigin="0.5,0.5" >
                                 <SymbolIcon.RenderTransform>
                                     <CompositeTransform ScaleX="0.9" ScaleY="1.4"/>
                                 </SymbolIcon.RenderTransform>
                             </SymbolIcon>
                         </AppBarButton>
-                        <AppBarButton x:Name="listViewButton" Icon="List" Label="List" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="List View"/>
-                        <AppBarButton x:Name="gridViewButton" Visibility="Collapsed" Icon="ViewAll" Label="Panel" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Panel View"/>
-                        <AppBarButton x:Name="syncButton" Visibility="Visible" Icon="Sync" Label="Sync" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Sync"/>
+                        <AppBarButton x:Name="listViewButton" Icon="List" Label="List" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="List View" AllowFocusOnInteraction="True"/>
+                        <AppBarButton x:Name="gridViewButton" Visibility="Collapsed" Icon="ViewAll" Label="Panel" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Panel View" AllowFocusOnInteraction="True"/>
+                        <AppBarButton x:Name="syncButton" Visibility="Visible" Icon="Sync" Label="Sync" Background="Transparent" Foreground="{Binding Foreground, ElementName=commandBar}" Opacity="{Binding Opacity, ElementName=commandBar}" Style="{StaticResource PrimaryAppButton}" ToolTipService.ToolTip="Sync" AllowFocusOnInteraction="True"/>
                     </CommandBar.PrimaryCommands>
 
                     <CommandBar.SecondaryCommands>
-                        <AppBarButton x:Name="textToSpeechToggle" Visibility="Collapsed" Label="Enable Text to Speech" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" Click="OnTextToSpeechToggleClick" ToolTipService.ToolTip="Toggle Text to Speech">
+                        <AppBarButton x:Name="textToSpeechToggle" Visibility="Collapsed" Label="Enable Text to Speech" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" Click="OnTextToSpeechToggleClick" ToolTipService.ToolTip="Toggle Text to Speech" AllowFocusOnInteraction="True">
                             <Grid>
                                 <Path x:Name="textToSpeechOnSymbol" Style="{StaticResource SpeakerIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Visible"/>
                                 <Path x:Name="textToSpeechOffSymbol" Style="{StaticResource SpeakerOffIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" Visibility="Collapsed"/>
                             </Grid>
                         </AppBarButton>
-                        <AppBarButton x:Name="oneHandButton" Visibility="Collapsed" Label="One Hand Mode" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="One Hand Mode">
+                        <AppBarButton x:Name="oneHandButton" Visibility="Collapsed" Label="One Hand Mode" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="One Hand Mode" AllowFocusOnInteraction="True">
                             <FontIcon  FontSize="19" Glyph="&#xEBFC;" />
                         </AppBarButton>
 
                         <AppBarSeparator  x:Name="zoomButtonsSeparator"  Visibility="{Binding Visibility, ElementName=zoomResetButton}" Foreground="{Binding Foreground, ElementName=commandBar}"/>
-                        <AppBarButton x:Name="zoomInButton" Visibility="Collapsed" Icon="ZoomIn" Label="Zoom+" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" Click="ZoomInButtonClickHandler" ToolTipService.ToolTip="Zoom In"/>
-                        <AppBarButton x:Name="zoomResetButton" Visibility="Collapsed" Icon="Zoom" Label="Default"  Style="{StaticResource SecondaryAppButton}" Click="ZoomResetButtonClickHandler"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Zoom Reset"/>
-                        <AppBarButton x:Name="zoomOutButton" Visibility="Collapsed" Icon="ZoomOut" Label="Zoom-"  Style="{StaticResource SecondaryAppButton}" Click="ZoomOutButtonClickHandler" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Zoom Out"/>
+                        <AppBarButton x:Name="zoomInButton" Visibility="Collapsed" Icon="ZoomIn" Label="Zoom+" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" Click="ZoomInButtonClickHandler" ToolTipService.ToolTip="Zoom In" AllowFocusOnInteraction="True"/>
+                        <AppBarButton x:Name="zoomResetButton" Visibility="Collapsed" Icon="Zoom" Label="Default"  Style="{StaticResource SecondaryAppButton}" Click="ZoomResetButtonClickHandler"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Zoom Reset" AllowFocusOnInteraction="True"/>
+                        <AppBarButton x:Name="zoomOutButton" Visibility="Collapsed" Icon="ZoomOut" Label="Zoom-"  Style="{StaticResource SecondaryAppButton}" Click="ZoomOutButtonClickHandler" Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Zoom Out" AllowFocusOnInteraction="True"/>
 
                         <AppBarSeparator  x:Name="readModeButtonSeparator" Visibility="{Binding Visibility, ElementName=readModeButton}"  Foreground="{Binding Foreground, ElementName=commandBar}"/>
-                        <AppBarButton x:Name="readModeButton" Visibility="Visible" Label="Night" Click="ReadModeButtonClickHandler" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Read Mode">
+                        <AppBarButton x:Name="readModeButton" Visibility="Visible" Label="Night" Click="ReadModeButtonClickHandler" Style="{StaticResource SecondaryAppButton}"  Foreground="{Binding Foreground, ElementName=commandBar}" ToolTipService.ToolTip="Read Mode" AllowFocusOnInteraction="True">
                             <Path x:Name="readModeButtonSymbol" Margin="0,-3,0,0" Style="{StaticResource MoonPathIcon}"  Fill="{Binding Foreground, ElementName=commandBar}"  Stroke="{Binding Foreground, ElementName=commandBar}" />
                         </AppBarButton>
                     </CommandBar.SecondaryCommands>

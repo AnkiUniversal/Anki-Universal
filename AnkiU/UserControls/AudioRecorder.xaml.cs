@@ -103,7 +103,7 @@ namespace AnkiU.UserControls
                     }
                 }
                 catch
-                {
+                {                    
                     await UnableToStartRecording();
                 }
             });

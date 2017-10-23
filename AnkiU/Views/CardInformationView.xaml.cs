@@ -420,6 +420,19 @@ namespace AnkiU.Views
             tappedCard = e.ClickedItem as CardInformation;            
         }
 
+        public void ChangeReadMode(bool isNightMode)
+        {
+            if (isNightMode)
+            {
+                cardListView.Background = UIHelper.ContentNightModeBrush;
+                userControl.Background = new SolidColorBrush(Windows.UI.Colors.Black);                
+            }
+            else
+            {
+                cardListView.Background = new SolidColorBrush(Windows.UI.Colors.White);
+                userControl.Background = new SolidColorBrush(Windows.UI.Colors.LightGray);                
+            }            
+        }
     }
 }
 

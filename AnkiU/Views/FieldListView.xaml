@@ -36,7 +36,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="data:NoteField">
                                 <Button Style="{StaticResource DefaultButtonRevealStyle}" Background="Transparent" MinHeight="35" VerticalAlignment="Center" 
-                                            BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundNormal}" 
+                                            BorderThickness="0,0,0,1" BorderBrush="{StaticResource ButtonBackGroundCompliment}" 
                                             Foreground="Black"
                                             Click="FieldFlyoutButtonClickHandler"
                                             HorizontalContentAlignment="Stretch"  HorizontalAlignment="Stretch">

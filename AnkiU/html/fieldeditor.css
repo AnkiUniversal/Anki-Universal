@@ -14,7 +14,7 @@ body {
     background-color: white;
     margin: 0px -15px 20px -5px;
     padding: 2px 15px 20px 5px;
-    box-shadow: 0px 0px 10px 1px rgba(135,132,135,1);
+    /*box-shadow: 0px 0px 10px 1px rgba(135,132,135,1);*/
 }
 
 .night .outline {

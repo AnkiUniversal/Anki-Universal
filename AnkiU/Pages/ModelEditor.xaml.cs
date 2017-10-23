@@ -98,7 +98,6 @@ namespace AnkiU.Pages
         {
             mainPage.CommanBar.ClosedDisplayMode = AppBarClosedDisplayMode.Minimal;
             mainPage.EnableChangingReadMode(this);
-            ChangeBackgroundColor();
         }
 
         private void UnHookAllEvents()

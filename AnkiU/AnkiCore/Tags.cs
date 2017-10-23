@@ -257,14 +257,15 @@ namespace AnkiU.AnkiCore
         {
             List<string> currentTags = Split(tags);
             foreach(string tag in Split(delTags))
-            {
-                List<string> remove = new List<string>();
-                foreach(string tx in currentTags)
-                    if (tag.Equals(tx, StringComparison.OrdinalIgnoreCase))
-                        remove.Add(tx);
-
-                foreach (string r in remove)
-                    currentTags.Remove(r);
+            {                
+                for(int i = 0; i < currentTags.Count; i++)
+                {
+                    if (tag.Equals(currentTags[i], StringComparison.OrdinalIgnoreCase))
+                    {
+                        currentTags.RemoveAt(i);
+                        break;
+                    }
+                }                
             }
             return Join(currentTags);
         }
@@ -331,6 +332,78 @@ namespace AnkiU.AnkiCore
         public void Add(string key, int value)
         {
             this.tags[key] = JsonValue.CreateNumberValue(value);
+        }
+
+        public void RemoveTagFromNotesAndCollection(List<long> ids, string tags)
+        {
+            List<string> tagsToRemove = Split(tags);
+            if (tagsToRemove == null || (tagsToRemove.Count == 0))            
+                return;            
+
+            List<object[]> res = new List<object[]>();
+            var listNotes = collection.Database.QueryColumn<NoteTable>
+                            ("select id, tags from notes where id in " + Utils.Ids2str(ids));
+
+            foreach (NoteTable n in listNotes)
+            {
+                res.Add(new object[] {RemoveFromStr(tags, n.Tags),
+                                      DateTimeOffset.Now.ToUnixTimeSeconds(),
+                                      collection.Usn, n.Id });
+            }
+
+            collection.Database.ExecuteMany("update notes set tags=:t,mod=:n,usn=:u where id = :id", res);
+            foreach(var tag in tagsToRemove)
+            {
+                if (this.tags.ContainsKey(tag))
+                    this.tags.Remove(tag);
+            }
+            isChanged = true;            
+            collection.Tags.SaveChangesToDatabase();
+        }
+
+        public void RenameTag(List<long> ids, string oldName, string newName)
+        {
+            if (newName.Contains(" "))
+                throw new Exception("New tag name should not have white space!");
+            if(this.tags.ContainsKey(newName))
+                throw new Exception("A tag with the same name already exists!");
+
+            List<object[]> res = new List<object[]>();
+            var listNotes = collection.Database.QueryColumn<NoteTable>
+                            ("select id, tags from notes where id in " + Utils.Ids2str(ids));
+
+            foreach (NoteTable n in listNotes)
+            {
+                string newTags = RenameTagInTags(oldName, newName, n);
+
+                res.Add(new object[] {RemoveFromStr(newTags, n.Tags),
+                                      DateTimeOffset.Now.ToUnixTimeSeconds(),
+                                      collection.Usn, n.Id });
+            }
+
+            collection.Database.ExecuteMany("update notes set tags=:t,mod=:n,usn=:u where id = :id", res);
+            if (this.tags.ContainsKey(oldName))
+            {                
+                this.tags.Remove(oldName);
+                Add(newName, 0);
+            }            
+            isChanged = true;
+            collection.Tags.SaveChangesToDatabase();
+        }
+
+        private string RenameTagInTags(string oldName, string newName, NoteTable n)
+        {
+            List<string> currentTags = Split(n.Tags);
+            for (int i = 0; i < currentTags.Count; i++)
+            {
+                if (currentTags[i].Equals(oldName, StringComparison.Ordinal))
+                {
+                    currentTags[i] = newName;
+                    break;
+                }
+            }
+            string newTags = Join(currentTags);
+            return newTags;
         }
     }
 }
