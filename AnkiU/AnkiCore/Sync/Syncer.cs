@@ -169,18 +169,19 @@ namespace AnkiU.AnkiCore.Sync
                     }
                 }
 
-                // step 4: stream to server
+                
+                // step 4: stream to server                                
                 while (true)
                 {
                     JsonObject json = Chunk();
                     collection.Log(args: new object[] { "client chunk", json });
                     JsonObject chunk = new JsonObject();
                     chunk.Add("chunk", json);
-                    await server.ApplyChunk(chunk);
+                    await server.ApplyChunk(chunk);                    
                     if (json.GetNamedBoolean("done"))
                     {
                         break;
-                    }
+                    }                    
                 }
                 // step 5: sanity check
                 JsonObject clientCheck = SanityCheck();
@@ -616,6 +617,7 @@ namespace AnkiU.AnkiCore.Sync
             }
         }
 
+        private int currentCursor = 0;
         public JsonObject Chunk()
         {
             JsonObject buf = new JsonObject();
@@ -627,10 +629,10 @@ namespace AnkiU.AnkiCore.Sync
                 var listObject = CursorForTable(curTable);
                 JsonArray rows = new JsonArray();
                 int fetched = 0;
-                foreach (object[] objArray in listObject)
+                for (int i = currentCursor; i < listObject.Count; i++)
                 {
                     JsonArray r = new JsonArray();
-                    foreach (object obj in objArray)
+                    foreach (object obj in listObject[i])
                     {
                         if (obj is String)
                             r.Add(JsonValue.CreateStringValue(Convert.ToString(obj)));
@@ -638,13 +640,18 @@ namespace AnkiU.AnkiCore.Sync
                             r.Add(JsonValue.CreateNumberValue(Convert.ToDouble(obj)));
                     }
                     rows.Add(r);
-                    if (++fetched == lim)
+                    fetched++;
+                    if (fetched == lim)
+                    {
+                        currentCursor += fetched;
                         break;
+                    }
                 }
                 if (fetched != lim)
                 {
                     // table is empty
                     tablesLeft.RemoveFirst();
+                    currentCursor = 0;
 
                     // if we're the client, mark the objects as having been sent
                     if (!collection.IsServer)

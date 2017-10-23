@@ -21,7 +21,7 @@ namespace AnkiU.Anki.Syncer
 
     public class AnkiWebSync : ISync
     {
-        private const string SYNC_Progress = "Received: {0} KB. Sent: {1} KB";
+        private const string SYNC_Progress = "Received: {0} KB \n Sent: {1} KB";
         private MainPage mainPage;
 
         private AnkiCore.Sync.Syncer client;
@@ -113,18 +113,22 @@ namespace AnkiU.Anki.Syncer
             }
             catch (HttpSyncerException ex)
             {
+                await WaitForCloseSyncStateDialog();
                 await UIHelper.ShowMessageDialog("AnkiWeb Sync: " + ex.Message);
             }            
             catch(PasswordVaulException ex)
             {
+                await WaitForCloseSyncStateDialog();
                 await UIHelper.ShowMessageDialog("AnkiWeb Sync: " + ex.Message);
             }
             catch(FileLoadException ex)
             {
+                await WaitForCloseSyncStateDialog();
                 await UIHelper.ShowMessageDialog("AnkiWeb Sync: " + ex.Message);
             }
             catch(Exception ex)
             {
+                await WaitForCloseSyncStateDialog();
                 await UIHelper.ShowMessageDialog("AnkiWeb Sync: " + ex.Message + "\n" + ex.StackTrace);
             }
             finally
@@ -226,7 +230,7 @@ namespace AnkiU.Anki.Syncer
                 throw new PasswordVaulException("No hostkeys!");
             }
         }
-
+        
         private async void OnServerHttpProgressEvent(Windows.Web.Http.HttpProgress progress)
         {
             await mainPage.CurrentDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -238,7 +242,7 @@ namespace AnkiU.Anki.Syncer
                 ulong totalToSend = 0;
                 if (progress.TotalBytesToSend != null)
                     totalToSend = (ulong)progress.TotalBytesToSend / 1024;
-
+                
                 syncStateDialog.Label = label + "\n"
                                         + String.Format(SYNC_Progress, progress.BytesReceived/1024 + "/" + totalToReceive,
                                                                        progress.BytesSent/1024 + "/" + totalToSend);
