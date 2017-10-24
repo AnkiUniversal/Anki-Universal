@@ -100,8 +100,12 @@ namespace AnkiU.UserControls
                 Show(width);
         }
 
+        private bool isNightMode = false;
         public void ChangeReadMode(bool isNightMode)
-        {            
+        {
+            if (this.isNightMode == isNightMode)
+                return;
+            this.isNightMode = isNightMode;
             if(isNightMode)
             {
                 userControl.Background = UIHelper.BackgroundAcrylicDarkBrush;

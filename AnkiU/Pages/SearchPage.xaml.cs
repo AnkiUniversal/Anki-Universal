@@ -81,6 +81,9 @@ namespace AnkiU.Pages
 
         private void ChangeReadMode(bool isNightMode)
         {
+            if (this.isNightMode == isNightMode)
+                return;
+
             this.isNightMode = isNightMode;
             ChangeBackgroundColor();
             if (cardViewPopup != null)
