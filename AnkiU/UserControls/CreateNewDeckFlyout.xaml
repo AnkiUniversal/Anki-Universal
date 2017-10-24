@@ -6,21 +6,21 @@
     xmlns:local="using:AnkiU.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+    mc:Ignorable="d"    
     d:DesignHeight="300"
     d:DesignWidth="400">
 
     <UserControl.Resources>
         <Flyout x:Name="addDeckFlyout" x:Key="NewDeckFlyoutTemplate" FlyoutPresenterStyle="{StaticResource DefaultFlyoutPresenterStyle}">
-            <ContentPresenter>
+            <ContentPresenter x:Name="userControl" Foreground="Black">
                 <StackPanel Width="300">
                     
                     <TextBox x:Name="deckNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2" Margin="5,5,0,5" PlaceholderText="Deck name" IsSpellCheckEnabled="False"/>
 
                     <TextBox x:Name="noteTypeNameTextBox" KeyUp="KeyUpEventHandler" Grid.Column="2"  Margin="5,5,0,5" PlaceholderText="(Optional) Note type name" IsSpellCheckEnabled="False"/>
 
-                    <TextBlock Text="Based on note type: " FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
-                    <views:AnkiModeInformationView x:Name="modelView" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,5,0,5"/>
+                    <TextBlock Text="Based on note type:"  FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,5,0,0" />
+                    <views:AnkiModeInformationView x:Name="modelView" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,5,0,5" />
 
                     <Grid Height="35" Margin="4,5,-1,5">
                         <Grid.ColumnDefinitions>
@@ -31,7 +31,8 @@
                         <Button Style="{StaticResource ButtonBlue}" Content="OK" Click="OkButtonClick" BorderBrush="Transparent"
                          BorderThickness="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
-                        <Button Style="{StaticResource ButtonGray}" Content="Cancel" Grid.Column="2" BorderBrush="Black"
+                        <Button Style="{StaticResource ButtonGray}" Content="Cancel" Grid.Column="2" BorderBrush="Black" 
+                                Foreground="Black"
                         BorderThickness="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="CancelButtonClickHandler" />
                     </Grid>
                 </StackPanel>

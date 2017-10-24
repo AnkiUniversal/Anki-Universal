@@ -4,10 +4,10 @@
     xmlns:local="using:AnkiU.Assets.Resource">
 
     <AcrylicBrush x:Key="DefaultAcrylicBrush" BackgroundSource="Backdrop" 
-                  TintColor="LightGray" TintOpacity="0.5" FallbackColor="LightGray"/>
+                  TintColor="LightGray" TintOpacity="0.6" FallbackColor="LightGray"/>
     
     <AcrylicBrush x:Key="DefaultAcrylicDarkBrush" BackgroundSource="Backdrop" 
-                  TintColor="#FF606060" TintOpacity="0.5" FallbackColor="#FF606060"/>
+                  TintColor="#FF606060" TintOpacity="0.6" FallbackColor="#FF606060"/>
 
     <AcrylicBrush x:Key="DefaultBackgroundAcrylicLightBrush" BackgroundSource="HostBackdrop" 
                   TintColor="White" TintOpacity="0.8" FallbackColor="White"/>

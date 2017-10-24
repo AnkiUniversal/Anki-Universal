@@ -69,6 +69,9 @@ namespace AnkiU.UIUtilities
         public static SolidColorBrush ButtonBackGroundNormal { get; private set; }
                      = Application.Current.Resources["ButtonBackGroundNormal"] as SolidColorBrush;
 
+        public static SolidColorBrush WhiteBrush { get; private set; } = new SolidColorBrush(Windows.UI.Colors.White);
+        public static SolidColorBrush BlackBrush { get; private set; } = new SolidColorBrush(Windows.UI.Colors.Black);
+
         public static SolidColorBrush DeckWithNewOrDueCardsBrush { get; private set; }
                        = Application.Current.Resources["DeckWithNewOrDueCards"] as SolidColorBrush;
         public static SolidColorBrush AppDefaultTileBackgroundBrush { get; private set; }
@@ -97,7 +100,7 @@ namespace AnkiU.UIUtilities
         public static Windows.UI.Color ContentNightModeColor { get { return ContentNightModeBrush.Color; } }
         private static Windows.UI.Color defaultInkColorDay = Windows.UI.Color.FromArgb(255, 11, 96, 181);
         public static Windows.UI.Color DefaultInkColorDay { get { return defaultInkColorDay; } }
-        private static Windows.UI.Color defaultInkColorNight = Windows.UI.Color.FromArgb(255, 0, 79, 159);
+        private static Windows.UI.Color defaultInkColorNight = Windows.UI.Color.FromArgb(255, 2, 155, 191);
         public static Windows.UI.Color DefaultInkColorNight { get { return defaultInkColorNight; }  }
         public const double DEFAULT_INK_SIZE = 3;
 

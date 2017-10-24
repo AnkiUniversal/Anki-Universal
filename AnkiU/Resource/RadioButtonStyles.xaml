@@ -28,7 +28,7 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse"
                                                Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Gray" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonBackGroundAnalogousLeft}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse"
                                                Storyboard.TargetProperty="Stroke">
@@ -40,7 +40,7 @@
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph"
                                                Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonBackGroundHighlighted}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonBackGroundAnalogousLeft}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -93,17 +93,17 @@
                                 <VisualState x:Name="Checked">
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                 Storyboard.TargetProperty="Opacity"
-                                 To="1"
-                                 Duration="0" />
-                                        <DoubleAnimation Storyboard.TargetName="OuterEllipse"
-                                 Storyboard.TargetProperty="Opacity"
-                                 To="0"
-                                 Duration="0" />
-                                        <DoubleAnimation Storyboard.TargetName="CheckOuterEllipse"
-                                 Storyboard.TargetProperty="Opacity"
-                                 To="1"
-                                 Duration="0" />
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="1"
+                                         Duration="0" />
+                                                <DoubleAnimation Storyboard.TargetName="OuterEllipse"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="0"
+                                         Duration="0" />
+                                                <DoubleAnimation Storyboard.TargetName="CheckOuterEllipse"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="1"
+                                         Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Unchecked" />
@@ -116,25 +116,25 @@
                         </Grid.ColumnDefinitions>
                         <Grid VerticalAlignment="Top" Height="32" >
                             <Ellipse x:Name="OuterEllipse"
-                    Width="20"
-                    Height="20"
-                    UseLayoutRounding="False"
-                    Stroke="{TemplateBinding Foreground}"
-                    StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}" />
+                                    Width="20"
+                                    Height="20"
+                                    UseLayoutRounding="False"
+                                    Stroke="{TemplateBinding Foreground}"
+                                    StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}" />
                             <Ellipse x:Name="CheckOuterEllipse"
-                    Width="20"
-                    Height="20"
-                    UseLayoutRounding="False"
-                    Stroke="{ThemeResource SystemControlHighlightAltAccentBrush}"
-                    Fill="{ThemeResource SystemControlHighlightTransparentBrush}"
-                    Opacity="0"
-                    StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}" />
+                                    Width="20"
+                                    Height="20"
+                                    UseLayoutRounding="False"
+                                    Stroke="{StaticResource ButtonBackGroundAnalogousLeft}"
+                                    Fill="{ThemeResource SystemControlHighlightTransparentBrush}"
+                                    Opacity="0"
+                                    StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}" />
                             <Ellipse x:Name="CheckGlyph"
-                    Width="10"
-                    Height="10"
-                    UseLayoutRounding="False"
-                    Opacity="0"
-                    Fill="{StaticResource ButtonBackGroundNormal}" />
+                                    Width="10"
+                                    Height="10"
+                                    UseLayoutRounding="False"
+                                    Opacity="0"
+                                    Fill="{StaticResource ButtonBackGroundAnalogousLeft}" />
                         </Grid>
                         <ContentPresenter x:Name="ContentPresenter"
                           Content="{TemplateBinding Content}"

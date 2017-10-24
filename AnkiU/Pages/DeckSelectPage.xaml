@@ -130,12 +130,13 @@
                                     <controls:HelpButton Grid.Column="2" HorizontalAlignment="Center"    
                                              PlaceAt="{x:Bind PointToShowFlyout, Mode=OneWay}"             
                                              ParentFlyout="{x:Bind ParentFlyout, Mode=OneWay}"
+                                             
                                              Width="20" Height="20" 
                                              HelpText="{x:Bind HelpText}" Visibility="{x:Bind HelpTextVisibility}" />
 
-                                    <Button  Style="{StaticResource ButtonContentOcpacity}" Foreground="{StaticResource ButtonBackGroundNormal}"
-                                             Background="Transparent" 
-                                             Grid.Column="4" BorderThickness="0"
+                                    <Button  Style="{StaticResource DefaultButtonRevealStyle}" 
+                                             Foreground="{StaticResource ButtonBackGroundAnalogousLeft}"
+                                             Grid.Column="4" Background="Transparent"
                                              Width="35" Height="35" Padding="0"
                                              HorizontalContentAlignment="Center" Click="ConfigureFlyoutNewClickHandler">
                                         <SymbolIcon Symbol="Add" RenderTransformOrigin="0.5,0.5">
@@ -146,8 +147,8 @@
                                     </Button>
 
                                     <Button VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="6" Width="35" Height="35" Padding="0"  Visibility="{x:Bind EditVisibility}" 
-                                        Style="{StaticResource ButtonContentOcpacity}" Foreground="{StaticResource ButtonBackGroundNormal}" 
-                                            Background="Transparent" BorderThickness="0"  Click="ConfigureFlyoutEditButtonClick">
+                                        Style="{StaticResource DefaultButtonRevealStyle}" Background="Transparent" Foreground="{StaticResource ButtonBackGroundAnalogousLeft}" 
+                                              Click="ConfigureFlyoutEditButtonClick">
                                         <SymbolIcon Symbol="Edit" RenderTransformOrigin="0.5,0.5">
                                             <SymbolIcon.RenderTransform>
                                                 <CompositeTransform ScaleX="0.9" ScaleY="0.9" TranslateX="0" TranslateY="0"/>
@@ -157,8 +158,8 @@
 
                                     <Button VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="8" Width="35" Height="35" Padding="0"  Visibility="{x:Bind EditVisibility}"
                                             Click="ConfigureFlyoutDeleteButtonClick" Background="Transparent"
-                                             Style="{StaticResource ButtonContentOcpacity}" Foreground="{StaticResource ButtonBackGroundNormal}" 
-                                            BorderThickness="0" >
+                                             Style="{StaticResource DefaultButtonRevealStyle}" Foreground="{StaticResource ButtonBackGroundAnalogousLeft}" 
+                                            >
                                         <SymbolIcon Symbol="Delete" RenderTransformOrigin="0.5,0.5" >
                                             <SymbolIcon.RenderTransform>
                                                 <CompositeTransform ScaleX="0.9" ScaleY="0.9" TranslateX="0" TranslateY="0"/>
@@ -175,7 +176,7 @@
 
     </Page.Resources>
 
-    <Grid x:Name="mainGrid" Background="White" >
+    <Grid x:Name="mainGrid" Background="White" Tapped="OnMainGridTapped">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>

@@ -4,7 +4,7 @@
     xmlns:local="using:AnkiU.Resource">
 
     <AcrylicBrush x:Key="NavigationViewDefaultPaneBackground"
-              BackgroundSource="Backdrop" TintColor="#FF3FABDA" TintOpacity=".6" FallbackColor="#FF3FABDA"/>
+              BackgroundSource="Backdrop" TintColor="#FF0681B6" TintOpacity=".6" FallbackColor="#FF0681B6"/>
     <AcrylicBrush x:Key="NavigationViewExpandedPaneBackground"
               BackgroundSource="HostBackdrop" TintColor="#FF3FABDA" TintOpacity=".7" FallbackColor="#FF3FABDA"/>
 
@@ -302,7 +302,7 @@
                                         x:Name="FooterContentBorder"
                                         Grid.Row="4"
                                         Child="{TemplateBinding PaneFooter}" />
-                                    <NavigationViewItem x:Name="SettingsNavPaneItem" Grid.Row="5" Icon="Setting" />
+                                    <NavigationViewItem x:Name="SettingsNavPaneItem" Grid.Row="5" Icon="Setting"/>
                                 </Grid>
                             </SplitView.Pane>
 
@@ -455,7 +455,7 @@
                                 Margin="16,12"/>
 
                             <ContentPresenter x:Name="ContentPresenter"
-                                Grid.Column="1"
+                                Grid.Column="1"                                
                                 ContentTransitions="{TemplateBinding ContentTransitions}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                 Content="{TemplateBinding Content}"

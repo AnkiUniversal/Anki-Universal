@@ -21,6 +21,7 @@
 
         <Button Style="{StaticResource ButtonHelp}"
                 BorderThickness="0"
+                Foreground="{StaticResource ButtonBackGroundAnalogousLeft}"
                 Background="Transparent" 
                 BorderBrush="Transparent"
                 HorizontalAlignment="Stretch"

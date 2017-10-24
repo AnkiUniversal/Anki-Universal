@@ -1151,7 +1151,7 @@ namespace AnkiU.Pages
         }
 
         private void OnDecksViewContextMenuClickEvent(object sender, RoutedEventArgs e)
-        {
+        {            
             FrameworkElement button = sender as FrameworkElement;
             if (button == null)
                 return;
@@ -1173,6 +1173,12 @@ namespace AnkiU.Pages
                 customStudyFlyout.InitDeckValue(collection, isNightMode);
                 customStudyFlyout.Show();
             }
+        }
+
+        private void OnMainGridTapped(object sender, TappedRoutedEventArgs e)
+        {
+            var pointerPosition = e.GetPosition(mainGrid);
+            pointToShowFlyout.Margin = new Thickness(pointerPosition.X, pointerPosition.Y, 0, 0);
         }
     }
 }
