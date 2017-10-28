@@ -447,7 +447,7 @@ namespace AnkiU.UIUtilities
         {            
             var message = new Windows.ApplicationModel.Email.EmailMessage();
             message.Body = messageBody;
-
+            
             var emailRecipient = new Windows.ApplicationModel.Email.EmailRecipient(emailAddress);
             message.To.Add(emailRecipient);            
 

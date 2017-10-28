@@ -199,7 +199,7 @@ namespace AnkiU.Pages
             if (CheckIfSystemTag(tagName))
                 return false;
 
-            if (tagName.Contains(" ", StringComparison.OrdinalIgnoreCase))
+            if (tagName.Contains(" "))
                 return false;
 
             if (collection.Tags.GetTags().ContainsKey(tagName))

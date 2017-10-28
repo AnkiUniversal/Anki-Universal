@@ -18,7 +18,7 @@
         <converters:SliderPlaybackRateThumbToolTipValueConverter x:Key="SliderPlaybackRateThumbToolTipValueConverter"/>
     </UserControl.Resources>
 
-    <Grid Background="{StaticResource ButtonBackGroundNormal}" Height="55" Padding="0" MaxWidth="1000"
+    <Grid Background="{StaticResource ButtonBackGroundNormal}" Height="55" Padding="0"
           BorderThickness="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />

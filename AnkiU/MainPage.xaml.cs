@@ -59,9 +59,6 @@ using AnkiU.AnkiCore.Exporter;
 using AnkiU.UserControls;
 using System.IO.Compression;
 using Windows.Foundation.Metadata;
-using Microsoft.Graphics.Canvas.UI.Xaml;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.Xaml.Media.Imaging;
 using AnkiU.Anki.Syncer;
 using Shared;
@@ -2322,7 +2319,7 @@ namespace AnkiU
                         HelpButtonClick();
                         break;
 
-                    case "Support":
+                    case "Feedback":
                         OnSupportClick();
                         break;
                 }
@@ -2507,13 +2504,20 @@ namespace AnkiU
 
         private async void OnSupportClick()
         {
-            string message = "For bugs: Please describe the steps needed to reproduce them.\n"
+            string message = "Anki Universal " + GetAppVersion() + "\n"
+                            + "For bugs: Please describe the steps needed to reproduce them.\n"
                             + "For feature requests: Please mention briefly why you need them.\n"
                             + "We'll reply to your email in one business day.\n";
             await UIHelper.LaunchEmailApp("ankiuniversal@gmail.com", message);
         }
 
+        public static string GetAppVersion()
+        {
 
+            var version = Windows.ApplicationModel.Package.Current.Id.Version;            
+            return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+
+        }
     }   
 
 }
