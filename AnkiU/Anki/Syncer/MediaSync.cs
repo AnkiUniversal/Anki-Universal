@@ -258,20 +258,16 @@ namespace AnkiU.Anki.Syncer
 
         private async Task DownloadMediaFilesFromSever(Dictionary<long, StorageFolder> deckMediaFolders, string remoteMediaFolderPath, MediaTable media, long deckId, string name)
         {
-            try
-            {
-                var oldFile = await deckMediaFolders[deckId].TryGetItemAsync(name) as StorageFile;
-                if (oldFile != null)
-                    await oldFile.DeleteAsync();
+            var oldFile = await deckMediaFolders[deckId].TryGetItemAsync(name) as StorageFile;
+            if (oldFile != null)
+                await oldFile.DeleteAsync();
 
-                var newFile = await deckMediaFolders[deckId].CreateFileAsync(name,
-                                                    CreationCollisionOption.ReplaceExisting);
-                var remoteFilePath = remoteMediaFolderPath + media.RelativePathName;
-                await fullSync.SyncInstance.DownloadItemWithPathAsync(remoteFilePath, newFile);
-            }
-            catch //Syncing shouldn't stop if some files are not available
-            { }
+            var newFile = await deckMediaFolders[deckId].CreateFileAsync(name,
+                                                CreationCollisionOption.ReplaceExisting);
+            var remoteFilePath = remoteMediaFolderPath + media.RelativePathName;
+            await fullSync.SyncInstance.DownloadItemWithPathAsync(remoteFilePath, newFile, true); //Not found items should not stop syncing
         }
+
         private async Task RemoveMediaFilesInLocal(Dictionary<long, StorageFolder> deckMediaFolders, MediaTable media, long deckId, string name)
         {
             if (deckMediaFolders.ContainsKey(deckId))

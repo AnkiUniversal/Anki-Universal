@@ -76,7 +76,7 @@ namespace AnkiU.Anki.Syncer
         /// <param name="remoteFilePath">Relative path from the root sync folder. Ex: "Anki Universal/RequestedItemName"</param>
         /// <param name="writeToFile">File in the local app folder to be written into</param>
         /// <returns></returns>
-        Task DownloadItemWithPathAsync(string remoteFilePath, StorageFile writeToFile);
+        Task DownloadItemWithPathAsync(string remoteFilePath, StorageFile writeToFile, bool isSkipNotFoundItem = false);
 
         /// <summary>
         /// Upload an item from local app folder to the remote sever 

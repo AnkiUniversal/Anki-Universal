@@ -36,7 +36,7 @@ namespace AnkiU.Anki.Syncer
                 await file.DeleteAsync();
         }
 
-        public async Task DownloadItemWithPathAsync(string remoteFilePath, StorageFile writeToFile)
+        public async Task DownloadItemWithPathAsync(string remoteFilePath, StorageFile writeToFile, bool isSkipNotFoundItem = false)
         {
             var file = await syncFolder.TryGetItemAsync(remoteFilePath) as StorageFile;
             if (file == null)
