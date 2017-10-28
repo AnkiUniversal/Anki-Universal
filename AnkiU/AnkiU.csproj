@@ -990,13 +990,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights">
-      <Version>2.3.0</Version>
+      <Version>2.4.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights.PersistenceChannel">
-      <Version>1.0.0</Version>
+      <Version>1.2.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights.WindowsApps">
-      <Version>1.0.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.0.1</Version>
@@ -1030,7 +1030,7 @@
       <Name>AnkiRuntimeComponent</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\Shared.csproj">
-      <Project>{d087da6f-df74-4c85-8f7f-4bd32b793033}</Project>
+      <Project>{9881be9e-37d1-410a-a8e3-6f4e17f82064}</Project>
       <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
