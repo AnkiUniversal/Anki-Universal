@@ -1,1 +1,1 @@
-E:\Software Projects\Anki Project\Anki Universal\AnkiU\bin\ARM\Release\Upload\AnkiU_1.4.3.0\AnkiU_1.4.3.0_x86_x64_arm.appxbundle
+E:\Software Projects\Anki Project\Anki Universal\AnkiU\bin\ARM\Release\Upload\AnkiU_1.4.4.0\AnkiU_1.4.4.0_x86_x64_arm.appxbundle

@@ -56,8 +56,11 @@ namespace AnkiU.AnkiCore
                     sb.AppendAndReplace(ImgLink(col, matcher.GetGroup(1)), html, matcher);
                     isMatchOne = true;
                 }
+                if (isMatchOne)
+                    html = sb.ToString();
 
-                matches = expressionPattern.Matches(sb.ToString());
+                isMatchOne =false;
+                matches = expressionPattern.Matches(html);
                 sb = new StringBuilder();
                 foreach (Match matcher in matches)
                 {
@@ -65,8 +68,11 @@ namespace AnkiU.AnkiCore
                                         html, matcher);
                     isMatchOne = true;
                 }
+                if (isMatchOne)
+                    html = sb.ToString();
 
-                matches = mathPattern.Matches(sb.ToString());
+                isMatchOne = false;
+                matches = mathPattern.Matches(html);
                 sb = new StringBuilder();
                 foreach (Match matcher in matches)
                 {
