@@ -292,8 +292,8 @@ namespace AnkiU.Pages
                 ContinueNavigating();
                 return;
             }
-
-            if (noteFieldView.HtmlEditor.IsModified)
+            
+            if (noteFieldView.HtmlEditor.IsModified && !IsJointFieldEmpty())
             {
                 e.Cancel = true;
                 bool isContinue = false;
@@ -878,17 +878,27 @@ namespace AnkiU.Pages
                 return;
             }
 
-            bool isContinue = await UIHelper.AskUserConfirmation("Changing note type will reset all your inputs. Continue?");
-            if (!isContinue)
+            if (!IsJointFieldEmpty())
             {
-                ChangeSelectedModel(currentNote.ModelId);
-                return;
+                bool isContinue = await UIHelper.AskUserConfirmation("Changing note type will reset all your inputs. Continue?");
+                if (!isContinue)
+                {
+                    ChangeSelectedModel(currentNote.ModelId);
+                    return;
+                }
             }
 
             SetupDeckModel(selected.Id);
             noteFieldView.HtmlEditor.ReloadWebView();
             await UpdateCurrentNote();            
             fieldListView = null;
+        }
+
+        private bool IsJointFieldEmpty()
+        {
+            string jointFields = currentNote.JointFields.Replace("<div>", "");
+            jointFields = jointFields.Replace("</div>", "");
+            return String.IsNullOrWhiteSpace(jointFields);
         }
 
         private void ChangeSelectedModel(long id)
