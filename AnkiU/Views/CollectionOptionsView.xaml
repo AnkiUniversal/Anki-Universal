@@ -26,6 +26,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -83,5 +84,10 @@
             <TextBlock Text="Bottom" TextAlignment="Left"/>
             <TextBlock Text="Top" TextAlignment="Left"/>
         </ComboBox>
+
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="Night Mode Black Background" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <CheckBox Grid.Row="7" Grid.Column="2" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Foreground="{Binding Foreground, ElementName=userControl}" BorderBrush="{Binding Foreground, ElementName=userControl}"
+                                  IsChecked="{x:Bind Options.IsBlackNightMode, Converter={StaticResource BoolToNullableBoolConverter}, Mode=TwoWay}" IsThreeState="False"/>
     </Grid>
 </UserControl>

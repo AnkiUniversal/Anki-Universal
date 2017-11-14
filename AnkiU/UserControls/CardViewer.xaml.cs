@@ -48,8 +48,7 @@ namespace AnkiU.UserControls
     {
         private CoreDispatcher dispatcher;
         private string cardContent;
-
-        public const string HTML_PATH = "/html/card.html";
+        private string htmlPath;
 
         public delegate void KeyDownEventHandler(Windows.System.VirtualKey key);
         public delegate void CardViewLoadHandler();
@@ -103,6 +102,11 @@ namespace AnkiU.UserControls
 
         public void InitWebView()
         {
+            if(MainPage.UserPrefs.IsBlackNightModeLearning)
+                htmlPath = "/html/cardBlack.html";
+            else
+                htmlPath = "/html/card.html";
+
             webViewControl = new WebView();
             ScrollViewer.SetVerticalScrollBarVisibility(webViewControl, ScrollBarVisibility.Hidden);
             webViewGrid.Children.Add(webViewControl);
@@ -162,7 +166,7 @@ namespace AnkiU.UserControls
 
         public void NavigateToBlankPage()
         {
-            HtmlHelpter.LoadLocalHtml(webViewControl, HTML_PATH);
+            HtmlHelpter.LoadLocalHtml(webViewControl, htmlPath);
         }
 
 
@@ -251,13 +255,13 @@ namespace AnkiU.UserControls
 
         private void UserControlLoadedHandler(object sender, RoutedEventArgs e)
         {
-            HtmlHelpter.LoadLocalHtml(webViewControl, HTML_PATH);
+            HtmlHelpter.LoadLocalHtml(webViewControl, htmlPath);
         }
 
         public void ReloadCardView()
         {
             InitWebView();
-            HtmlHelpter.LoadLocalHtml(webViewControl, HTML_PATH);
+            HtmlHelpter.LoadLocalHtml(webViewControl, htmlPath);
         }
 
         public async void KeyDownEventFire(int keyCode)

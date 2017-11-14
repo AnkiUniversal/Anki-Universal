@@ -54,6 +54,7 @@ namespace AnkiU.ViewModels
                 Options.IsTTSAutoplay = MainPage.UserPrefs.IsAutoPlayTextSynth;
                 Options.CollapseTime = (int)JsonHelper.GetNameNumber(Config, "collapseTime") / COLLAPSE_CONVERT;
                 Options.AnswerPosition = MainPage.UserPrefs.AnswerButtonPosition;
+                Options.IsBlackNightMode = MainPage.UserPrefs.IsBlackNightModeLearning;
 
                 GetNotificationSettings();
 
@@ -86,6 +87,7 @@ namespace AnkiU.ViewModels
             dest.CollapseTime = source.CollapseTime;
             dest.IsEnableNotification = source.IsEnableNotification;
             dest.AnswerPosition = source.AnswerPosition;
+            dest.IsBlackNightMode = source.IsBlackNightMode;
         }        
 
         public void SaveOptions()
@@ -96,6 +98,7 @@ namespace AnkiU.ViewModels
             Config["collapseTime"] = JsonValue.CreateNumberValue(Options.CollapseTime * COLLAPSE_CONVERT);
             MainPage.UserPrefs.IsAutoPlayTextSynth = Options.IsTTSAutoplay;
             MainPage.UserPrefs.AnswerButtonPosition = Options.AnswerPosition;
+            MainPage.UserPrefs.IsBlackNightModeLearning = Options.IsBlackNightMode;
             ApplicationData.Current.LocalSettings.Values["IsEnableNotifciation"] = Options.IsEnableNotification;            
             CopyOptions(Options, oldOptions);
         }

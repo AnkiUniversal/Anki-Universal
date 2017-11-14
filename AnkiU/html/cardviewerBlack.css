@@ -19,6 +19,17 @@
   background-color: lightgray;
 }
 
+.night {
+    color: #DCDCDC;
+    background-color: black !important;
+}
+
+.night #cardcontent {
+    color: #DCDCDC;
+    background-color: black;
+    word-wrap: break-word;
+}
+
 .night .typeGood {
   color: white;
   background-color: #0AD200;
@@ -32,12 +43,6 @@
 .night .typeMissed {
   color: white;
   background-color: gray;
-}
-
-.night #cardcontent{  
-  color: white;
-  background-color: #202020;  
-  word-wrap: break-word;
 }
 
 #cardcontent {

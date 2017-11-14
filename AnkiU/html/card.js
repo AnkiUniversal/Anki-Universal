@@ -28,12 +28,12 @@ function SetTouchInput(value) {
 }
 
 function ChangeDeckMediaFolder(address) {
-    cardstyle = document.getElementById('deckmediafolder');
+    var cardstyle = document.getElementById('deckmediafolder');
     cardstyle.href = address;
 }
 
 function ChangeCardStyle(htmlText) {
-    cardstyle = document.getElementById('cardstyle');
+    var cardstyle = document.getElementById('cardstyle');
     cardstyle.innerHTML = htmlText;
 }
 

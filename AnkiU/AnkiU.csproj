@@ -101,6 +101,8 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="html\cardBlack.html" />
+    <Content Include="html\cardviewerBlack.css" />
     <Content Include="html\tinymce\img\backcolor.png" />
     <Content Include="html\tinymce\img\forecolor.png" />
     <Content Include="html\tinymce\img\selectall.png" />

@@ -79,6 +79,22 @@ namespace AnkiU.Anki
             }
         }
 
+        private bool isBlackNightModeLearning;
+        [SQLite.Net.Attributes.Column("IsBlackNightModeLearning")]
+        public bool IsBlackNightModeLearning
+        {
+            get { return isBlackNightModeLearning; }
+            set
+            {
+                if (isBlackNightModeLearning == value)
+                    return;
+
+                isBlackNightModeLearning = value;
+                IsModified = true;
+            }
+        }
+
+
         private bool isReadNightMode;
         [SQLite.Net.Attributes.Column("IsReadNightMode")]
         public bool IsReadNightMode
@@ -405,6 +421,7 @@ namespace AnkiU.Anki
             userPrefs.IsDeckListView = false;
             userPrefs.SortDeckBy = 0;
             userPrefs.IsReadNightMode = false;
+            userPrefs.IsBlackNightModeLearning = false;
             userPrefs.ZoomLevel = MainPage.GetDefaultZoomLevel();
             userPrefs.IsHasInkDeckPreference = false;
             userPrefs.IsHasTextSynthDeckPreference = false;
