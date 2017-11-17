@@ -134,39 +134,17 @@ namespace AnkiU.AnkiCore.Importer
                         // run anki2 importer
                         await base.Run();
                         //WARNING: AnkiU does not support static media and Latex 
-                        //import static media
-                        //PackageImportStateChangeEvent?.Invoke("Importing static media...");
-                        //foreach (var entry in numToName)
-                        //{
-                        //    string file = entry.Value;
-                        //    string c = entry.Key;
-                        //    if (!file.StartsWith("_") && !file.StartsWith("latex-"))
-                        //    {
-                        //        continue;
-                        //    }
-                        //    StorageFile path = await destCol.Media.MediaFolder
-                        //                             .TryGetItemAsync(file) as StorageFile;
-                        //    if (path == null)
-                        //    {
-                        //        try
-                        //        {
-                        //            Utils.UnZipNotFolderEntries(archive, destCol.Media.MediaFolder.Path, new string[] { c }, numToName);
-                        //        }
-                        //        catch (IOException)
-                        //        {
-                        //            Debug.WriteLine("Failed to extract static media file. Ignoring.");
-                        //        }
-                        //    }
-                        //}
+                        //import static media                        
+                        await ImportingStaticMediaFiles();
                         destCol.Database.Commit();
                         code = AnkiImportFinishCode.Success;
+                                     
+                        PackageImportStateChangeEvent?.Invoke("Importing media...");
 
                         //Only in AnkiU we perform this step to move all mediafiles into DeckIdFolder 
-                        //when importing the whole collection                  
-                        PackageImportStateChangeEvent?.Invoke("Importing media...");
-                        await ExtractSourceMediaFileToAllDeckIdFolderAsync();                        
+                        await ExtractSourceMediaFileToAllDeckIdFolderAsync();
                     }
-                    catch(AnkiImportException e)
+                    catch (AnkiImportException e)
                     {
                         code = e.Error;
                     }
@@ -196,6 +174,31 @@ namespace AnkiU.AnkiCore.Importer
                     tempDir = null;
                 }                
                 AnkiPackageImporterFinishedEvent?.Invoke(code, ImportedNoteId.Count.ToString());
+            }
+        }
+
+        private async Task ImportingStaticMediaFiles()
+        {
+            PackageImportStateChangeEvent?.Invoke("Importing static media...");
+            foreach (var entry in numToName)
+            {
+                try
+                {
+                    string file = entry.Value;
+                    string c = entry.Key;
+                    if (!file.StartsWith("_") && !file.StartsWith("latex-"))
+                        continue;
+
+                    StorageFile path = await destCol.Media.MediaFolder.TryGetItemAsync(file) as StorageFile;
+                    if (path != null)
+                        await path.DeleteAsync();
+
+                    Utils.UnZipNotFolderEntries(archive, destCol.Media.MediaFolder.Path, new string[] { c }, numToName);
+                }
+                catch (IOException)
+                {
+                    Debug.WriteLine("Failed to extract static media file. Ignoring.");
+                }
             }
         }
 
