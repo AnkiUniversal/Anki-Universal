@@ -14,7 +14,7 @@
     SecondaryButtonClick="CancelButtonClickHandler">
 
     <Grid>
-        <RichEditBox x:Name="richEditBox" Margin="0,15,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <RichEditBox x:Name="richEditBox" Margin="0,15,0,0" VerticalAlignment="Stretch" IsSpellCheckEnabled="False" HorizontalAlignment="Stretch">
 
         </RichEditBox>
     </Grid>
