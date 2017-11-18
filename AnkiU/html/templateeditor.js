@@ -43,6 +43,7 @@ var tinymceInit = {
       'advlist autolink lists charmap hr autoresize colorpicker',
       'visualblocks textcolor code textpattern table paste'
     ],    
+    verify_html: false,
     menubar: false,
     setup: function (editor) {
 
