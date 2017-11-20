@@ -177,16 +177,23 @@ namespace AnkiU.AnkiCore.Exporter
                         media[name] = JsonValue.CreateBooleanValue(true);
                     }
                 }
+
+                Dictionary<long, bool> ids = new Dictionary<long, bool>();
+                foreach (var note in listNote)
+                    ids[note.Mid] = true;
+                var modelIds = ids.Keys.ToArray();
+
                 if (mediaFolder != null)
                 {
-                    foreach (StorageFile f in await mediaFolder.GetFilesAsync())
+                    var files = await mediaFolder.GetFilesAsync();
+                    foreach (StorageFile f in files)
                     {
                         if (f.Name.StartsWith("_"))
                         {
                             // Loop through every model that will be exported, and check if it contains a reference to f
-                            for (int idx = 0; idx < listNote.Count; idx++)
+                            for (int idx = 0; idx < modelIds.Length; idx++)
                             {
-                                if (IsModelHasMedia(sourceCol.Models.Get(idx), f.Name))
+                                if (IsModelHasMedia(sourceCol.Models.Get(modelIds[idx]), f.Name))
                                 {
                                     media[f.Name] = JsonValue.CreateBooleanValue(true);
                                     break;
