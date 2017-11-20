@@ -118,7 +118,7 @@
                                 </Paragraph>
 
                                 <Paragraph>
-                                    To exclude an item from seaching, add minus sign before it, for example:
+                                    To exclude an item from seaching, add a minus sign before it, for example:
                                     <Italic>-"deck:Default"</Italic>
                                 </Paragraph>
 

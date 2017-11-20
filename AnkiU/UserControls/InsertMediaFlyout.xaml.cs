@@ -82,7 +82,7 @@ namespace AnkiU.UserControls
         {
             if(mediaZipFile == null)
             {
-                await UIHelper.ShowMessageDialog("Please choose a backed up zip file.");
+                await UIHelper.ShowMessageDialog("Please choose a *.apkg package or a backed up zip file.");
                 mediaInsertFlyout.ShowAt(placeToShow);
                 return;
             }
@@ -143,7 +143,12 @@ namespace AnkiU.UserControls
                             if (!isReplace)
                                 continue;
                         }
-                        entry.ExtractToFile(deckFolder.Path + "/" + entryName, true);
+
+                        if (entryName.StartsWith("_")) // static files in Anki
+                            entry.ExtractToFile(collection.Media.MediaFolder.Path + "/" + entryName, true);
+                        else
+                            entry.ExtractToFile(deckFolder.Path + "/" + entryName, true);
+
                         collection.Media.MarkFileAddIntoDatabase(entryName, currentSelectedDeck.Id);
                     }
 
