@@ -59,10 +59,21 @@ namespace AnkiU.Anki
             }
             else // Images are loaded from application data
             {
-                Uri localUri = new Uri("ms-appdata:///local/" + path);
-                StorageFile f = await StorageFile.GetFileFromApplicationUriAsync(localUri);
-                IRandomAccessStream stream = await f.OpenAsync(FileAccessMode.Read);
-                return stream;
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(path);
+                if (item == null)
+                {
+                    int nameStartIndex = path.LastIndexOf('\\');
+                    path = "collection.media" + path.Substring(nameStartIndex);
+                    item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(path);
+                }
+                if (item != null)
+                {
+                    var file = item as StorageFile;
+                    IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read);
+                    return stream;
+                }
+
+                throw new Exception("Invalid Source");
             }
         }        
     }
