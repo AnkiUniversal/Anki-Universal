@@ -105,6 +105,56 @@ namespace AnkiU.ViewModels
             }
         }
 
+        public void FoldAllChildrenDecks(IAnkiDecksView decksView)
+        {
+            foreach (var parent in Decks)
+            {
+                if (!parent.IsParent)
+                    continue;
+
+                var children = GetChildren(parent);
+                parent.IsShowChildren = false;
+
+                foreach (var deck in children.Desks)
+                {
+                    if (!Collection.Deck.IsParent(parent.Name, deck.Name))
+                        continue;
+
+                    deck.Visibility = Visibility.Collapsed;
+                    deck.IsShowChildren = false;
+
+                    var item = decksView.GetItemView(deck);
+                    if (item != null)
+                        item.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        public void UnFoldAllChildrenDecks(IAnkiDecksView decksView)
+        {
+            foreach (var parent in Decks)
+            {
+                if (!parent.IsParent)
+                    continue;
+
+                var children = GetChildren(parent);
+                parent.IsShowChildren = true;
+
+                foreach (var deck in children.Desks)
+                {
+                    if (!Collection.Deck.IsParent(parent.Name, deck.Name))
+                        continue;
+
+                    deck.Visibility = Visibility.Visible;
+                    deck.IsShowChildren = true;
+
+                    var item = decksView.GetItemView(deck);
+                    if (item != null)
+                        item.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
         public void ShowAllDecks(IAnkiDecksView decksView)
         {
             foreach (var deck in Decks)

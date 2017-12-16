@@ -397,6 +397,8 @@ namespace AnkiU.Pages
 
             deckListViewModel.ShowAllDecks(decksView);
             deckListView.Visibility = Visibility.Visible;
+
+            FoldAllSubDecksOnListView();
         }
 
         private void HookDeckItemEvent()
@@ -476,6 +478,20 @@ namespace AnkiU.Pages
         {
             deckListViewModel = new DeckListViewModel(mainPage.Collection);
             deckListViewModel.GetAllDeckInformation();
+            FoldAllSubDecksOnListView();
+        }
+
+        private void FoldAllSubDecksOnListView()
+        {
+            try
+            {
+                if (decksView is DeckListView)
+                    deckListViewModel.FoldAllChildrenDecks(decksView);
+            }
+            catch
+            {
+
+            }
         }
 
         private void PointerPressedHandler(object sender, PointerRoutedEventArgs e)
@@ -1026,12 +1042,14 @@ namespace AnkiU.Pages
         }
 
         private void SortByDateAddedClick(object sender, RoutedEventArgs e)
-        {
+        {            
+            deckListViewModel.UnFoldAllChildrenDecks(decksView);
             deckListViewModel.SortByDateAdded();
         }
 
         private void SortByNameClick(object sender, RoutedEventArgs e)
         {
+            deckListViewModel.UnFoldAllChildrenDecks(decksView);
             deckListViewModel.SortByName();
         }
 
