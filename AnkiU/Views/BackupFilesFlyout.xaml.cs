@@ -170,7 +170,9 @@ namespace AnkiU.Views
                 progressDialog.Hide();
                 await UIHelper.ShowMessageDialog("Unexpected error!");
                 if(collection != null)
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     collection.ReOpen();                
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
             finally
             {
