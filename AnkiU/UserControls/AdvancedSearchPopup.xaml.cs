@@ -186,8 +186,8 @@ namespace AnkiU.UserControls
 
         private string GetFieldSearchString()
         {
-            if (noteFieldsViewFlyout == null || noteFieldsViewFlyout.SelectedFields.Count == 0)            
-                return "";            
+            if (noteFieldsViewFlyout == null || noteFieldsViewFlyout.SelectedFields.Count == 0)
+                return "";
 
             if (String.IsNullOrWhiteSpace(fieldContentTextBox.Text))            
                 return "";            
@@ -321,10 +321,18 @@ namespace AnkiU.UserControls
             cardState.Add(IS_SUSPEND, false);
         }
 
-        private void CheckBoxCheckedHandler(object sender, RoutedEventArgs e)
+        private async void CheckBoxCheckedHandler(object sender, RoutedEventArgs e)
         {
             var checkBox = sender as CheckBox;
-            ChangeCardStateString(checkBox, true);
+            if (checkBox != null)
+                ChangeCardStateString(checkBox, true);
+            await WarningInvalidStatesSelection();
+        }
+
+        private async Task WarningInvalidStatesSelection()
+        {
+            if ((bool)reviewCardStateCheckBox.IsChecked && (bool)newCardStateCheckBox.IsChecked)
+                await UIHelper.ShowMessageDialog("A card can't have both \"New\" and \"Review\" state. This is an invalid search");
         }
 
         private void ChangeCardStateString(CheckBox checkBox, bool state)
@@ -458,6 +466,14 @@ namespace AnkiU.UserControls
         private void NoteFieldsViewFlyoutClosed(object sender, RoutedEventArgs e)
         {
             fieldListTextBox.Text = String.Join("; ", noteFieldsViewFlyout.SelectedFields);
+        }
+
+        private async void OnFieldContentTextBoxTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(noteFieldsViewFlyout == null || noteFieldsViewFlyout.SelectedFields.Count == 0)
+            {
+                await UIHelper.ShowMessageDialog("Please select a field name (the space on the left) first!");
+            }
         }
     }
 }

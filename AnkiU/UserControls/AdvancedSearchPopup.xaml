@@ -87,10 +87,10 @@
                         Margin="5,0,5,1.5" 
                         HorizontalContentAlignment="Left"
                         x:Name="fieldListViewButton" Click="OnFieldListViewButtonClick">
-                            <TextBlock x:Name="fieldListTextBox" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <TextBlock x:Name="fieldListTextBox" Text="Field Name" HorizontalAlignment="Left" VerticalAlignment="Center" />
                         </Button>
                         <TextBox x:Name="fieldContentTextBox" Grid.Column="2" TextWrapping="NoWrap" 
-                                 Padding="5,4,6,0" Margin="0,0,0,2"
+                                 Padding="5,4,6,0" Margin="0,0,0,2" TextChanged="OnFieldContentTextBoxTextChanged"
                          PlaceholderText="Content of your fields..." IsSpellCheckEnabled="False"
                          Foreground="{Binding Foreground, ElementName=userControl}"/>
                     </Grid>
@@ -98,9 +98,12 @@
 
                     <StackPanel Orientation="Horizontal" x:Name="cardStateRoot" Padding="0" Height="37" Grid.Row="3">
                         <TextBlock TextAlignment="Left" Text="Card state:" Margin="0" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=userControl}"/>
-                        <CheckBox Content="New" MinWidth="60" Margin="5,0,5,0" Background="Transparent" Foreground="{Binding Foreground, ElementName=userControl}" Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"/>
-                        <CheckBox Content="Review" MinWidth="60" Margin="0,0,5,0" Background="Transparent" Foreground="{Binding Foreground, ElementName=userControl}" Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"/>
-                        <CheckBox Content="Suspended"  MinWidth="60" Margin="0,0,10,0" Background="Transparent" Foreground="{Binding Foreground, ElementName=userControl}" Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"/>
+                        <CheckBox Content="New" MinWidth="60" Margin="5,0,5,0" Background="Transparent" x:Name="newCardStateCheckBox"
+                                  Foreground="{Binding Foreground, ElementName=userControl}" Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"/>
+                        <CheckBox Content="Review" MinWidth="60" Margin="0,0,5,0" Background="Transparent"  x:Name="reviewCardStateCheckBox"
+                                  Foreground="{Binding Foreground, ElementName=userControl}" Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"/>
+                        <CheckBox Content="Suspended"  MinWidth="60" Margin="0,0,10,0" Background="Transparent" 
+                                  Foreground="{Binding Foreground, ElementName=userControl}" Checked="CheckBoxCheckedHandler" Unchecked="CheckBoxUncheckedHandler"/>
                     </StackPanel>
 
                     <StackPanel  Orientation="Horizontal" Padding="0" Height="32" Grid.Row="4" >

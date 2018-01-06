@@ -232,9 +232,6 @@
     <Content Include="html\tinymce\skins\lightgray\fonts\tinymce.woff" />
     <None Include="MyResources.res" />
     <None Include="TestUiCases.txt" />
-    <AppxManifest Include="Package.appxmanifest">
-      <SubType>Designer</SubType>
-    </AppxManifest>
     <Content Include="Assets\Fonts\fira-sans\FiraSans-Bold.otf" />
     <Content Include="Assets\Fonts\fira-sans\FiraSans-BoldItalic.otf" />
     <Content Include="Assets\Fonts\fira-sans\FiraSans-Book.otf" />
@@ -1023,6 +1020,11 @@
       <Project>{9881be9e-37d1-410a-a8e3-6f4e17f82064}</Project>
       <Name>Shared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
