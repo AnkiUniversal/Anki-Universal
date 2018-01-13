@@ -144,10 +144,7 @@ namespace AnkiU.UserControls
                                 continue;
                         }
 
-                        if (entryName.StartsWith("_")) // static files in Anki
-                            entry.ExtractToFile(collection.Media.MediaFolder.Path + "/" + entryName, true);
-                        else
-                            entry.ExtractToFile(deckFolder.Path + "/" + entryName, true);
+                        await ExtractMediaFile(deckFolder, entryName, entry);
 
                         collection.Media.MarkFileAddIntoDatabase(entryName, currentSelectedDeck.Id);
                     }
@@ -155,11 +152,34 @@ namespace AnkiU.UserControls
                     progressDialog.Hide();
                     await UIHelper.ShowMessageDialog("Finished inserting media files.");
                 }
+                catch(Exception ex)
+                {
+                    await UIHelper.ShowMessageDialog("Inserting media files: " + ex.Message + "\n" + ex.StackTrace);
+                }
                 finally
                 {
                     progressDialog.Hide();
                     collection.Media.Database.Commit();
                 }
+            }
+        }
+
+        private async Task ExtractMediaFile(StorageFolder deckFolder, string entryName, ZipArchiveEntry entry)
+        {
+            try
+            {
+                string path = null;
+                if (entryName.StartsWith("_")) // static files in Anki
+                    path = collection.Media.MediaFolder.Path + Path.DirectorySeparatorChar + entryName;
+                else
+                    path = deckFolder.Path + Path.DirectorySeparatorChar + entryName;
+
+                entry.ExtractToFile(path, true);
+            }
+            catch
+            {
+                await UIHelper.ShowMessageDialog("Failed to extract " + entryName + "\n"
+                                                + "This might happen because the name of this file is too long or it contains illegal characters.");
             }
         }
 
