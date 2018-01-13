@@ -131,7 +131,7 @@
     <Grid  x:Name="mainGrid" >
         <NavigationView  x:Name="splitView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AlwaysShowHeader="True"                        
                          Style="{StaticResource NavigationViewCustomStyle}" IsPaneToggleButtonVisible="True"   Foreground="White"                               
-                         CompactModeThresholdWidth="600" ExpandedModeThresholdWidth="700" IsSettingsVisible="True" 
+                         CompactModeThresholdWidth="99999" ExpandedModeThresholdWidth="99999" IsSettingsVisible="True" 
                          IsPaneOpen="False"  CompactPaneLength="0" OpenPaneLength="200" ItemInvoked="OnNavigationViewItemInvoked" 
                          >
             <NavigationView.MenuItems>
