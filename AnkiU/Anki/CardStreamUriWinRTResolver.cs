@@ -58,13 +58,18 @@ namespace AnkiU.Anki
                 return stream;
             }
             else // Images are loaded from application data
-            {
+            {                
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(path);
+                if (item == null)                
+                    item = await TryGetUnescapeUriPath(path);                
+
                 if (item == null)
                 {
                     int nameStartIndex = path.LastIndexOf('\\');
                     path = "collection.media" + path.Substring(nameStartIndex);
                     item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(path);
+                    if(item == null)
+                        item = await TryGetUnescapeUriPath(path);
                 }
                 if (item != null)
                 {
@@ -75,6 +80,12 @@ namespace AnkiU.Anki
 
                 throw new Exception("Invalid Source");
             }
-        }        
+        }
+
+        private static async Task<IStorageItem> TryGetUnescapeUriPath(string path)
+        {
+            var decodePath = Uri.UnescapeDataString(path);
+            return await ApplicationData.Current.LocalFolder.TryGetItemAsync(decodePath);            
+        }
     }
 }

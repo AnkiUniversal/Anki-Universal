@@ -339,7 +339,7 @@ namespace AnkiU.AnkiCore.Importer
                                 destCol.Media.MarkFileAddIntoDatabase(fname.Value, did.Value);
                             }
                             catch(DirectoryNotFoundException)
-                            {//File name contains illegal chars of Windows. 
+                            {//File name contains illegal chars or out of lenght on Windows. 
                              //We can not fix this as it requires a reverse update to all notes
                              //so just ignore this file
 
