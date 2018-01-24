@@ -49,6 +49,7 @@ namespace AnkiU.AnkiCore
         // Regex pattern used in removing tags from text before diff
         private static readonly Regex stylePattern = new Regex("(?s)<style.*?>.*?</style>", RegexOptions.Compiled);
         private static readonly Regex scriptPattern = new Regex("(?s)<script.*?>.*?</script>", RegexOptions.Compiled);
+        private static readonly Regex notTTSPattern = new Regex("(?s)<notts.*?>.*?</notts>", RegexOptions.Compiled);
         private static readonly Regex tagPattern = new Regex(@"(?s)<.*?>", RegexOptions.Compiled);        
         private static readonly Regex imgPattern = new Regex("<img src=[\\\"']?([^\\\"'>]+)[\\\"']? ?/?>", RegexOptions.Compiled);
         private static readonly Regex htmlEntitiesPattern = new Regex("&#?\\w+;", RegexOptions.Compiled);
@@ -453,9 +454,18 @@ namespace AnkiU.AnkiCore
         }
 
         /// <summary>
+        /// Strips a text from <style>...</style>, <script>...</script> and <_any_tag_> HTML tags
+        /// </summary>
+        /// <param name="s">The HTML text to be cleaned</param>
+        /// <returns>The text without the aforementioned tags</returns>
+        public static string StripNoTTSContent(String s)
+        {
+            return notTTSPattern.Replace(s, "");            
+        }
+
+        /// <summary>
         /// Takes a string and replaces all the HTML symbols in it with their unescaped representation.
-        /// This should only affect substrings of the form &something; and not tags.
-        /// TODO: Need testing
+        /// This should only affect substrings of the form &something; and not tags.        
         /// </summary>
         /// <param name="html">The HTML escaped text</param>
         /// <returns>The text with its HTML entities unescaped</returns>
