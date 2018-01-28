@@ -2364,15 +2364,25 @@ namespace AnkiU
             progressDialog = new ProgressDialog();
             progressDialog.ProgressBarLabel = "Check and rebuild database";
             progressDialog.ShowInDeterminateStateNoStopAsync("Optimizing collection");
-
+            
             var task = Task.Run(async () =>
             {
+                string message;
                 Collection.DeleteGraveLog();
-                Collection.Optimize();
+                if (!Collection.BasicCheck())
+                {
+                    await Collection.FixIntegrity();
+                    message = "Collection is fixed!";
+                }
+                else
+                {
+                    Collection.Optimize();
+                    message = "Data is optimized!";
+                }
                 await CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
                     progressDialog.Hide();
-                    await UIHelper.ShowMessageDialog("Data is optimized");
+                    await UIHelper.ShowMessageDialog(message);
                 });
             });
         }
