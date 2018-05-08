@@ -351,7 +351,7 @@ namespace AnkiU.AnkiCore
             {
                 string deckName = g.GetNamedString("name");
                 if (deckName.StartsWith(name + Constant.SUBDECK_SEPERATE))
-                    actv.Add(deckName, (long)JsonHelper.GetNameNumber(g,"id"));
+                    actv[deckName] = (long)JsonHelper.GetNameNumber(g,"id");
             }
             return actv;
         }
