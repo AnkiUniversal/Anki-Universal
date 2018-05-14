@@ -1843,7 +1843,7 @@ namespace AnkiU
                 if (message == "Successed")
                     dialog = new MessageDialog("Your deck has been exported successfully.", "Successed!");
                 else
-                    dialog = new MessageDialog(UIConst.EXPORT_FAILED, "Error!");
+                    dialog = new MessageDialog(UIConst.EXPORT_FAILED + "\n" + message, "Error!");
 
                 await Collection.ReOpen();
                 IsCanNavigateBack = true;

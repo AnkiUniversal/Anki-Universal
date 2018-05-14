@@ -757,7 +757,7 @@ namespace AnkiU.Pages
                 if (message == "Successed")
                     dialog = new MessageDialog("Your deck has been exported successfully.", "Successed!");
                 else
-                    dialog = new MessageDialog(UIConst.EXPORT_FAILED, "Error!");
+                    dialog = new MessageDialog(UIConst.EXPORT_FAILED + "\n" + message, "Error!");
 
                 mainPage.IsCanNavigateBack = true;
                 await dialog.ShowAsync();
