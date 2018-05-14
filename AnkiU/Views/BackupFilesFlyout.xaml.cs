@@ -190,7 +190,7 @@ namespace AnkiU.Views
 
         private static async Task RestoreMediaDB(StorageFolder tempFolder)
         {
-            StorageFile mediaDBFile = await tempFolder.TryGetItemAsync(Constant.MEDIA_DB_NAME) as StorageFile;
+            StorageFile mediaDBFile = await tempFolder.TryGetItemAsync(Constant.MEDIA_DB_NAME_ANKI_U) as StorageFile;
             if (mediaDBFile != null)
                 await mediaDBFile.CopyAsync(Storage.AppLocalFolder, mediaDBFile.Name, NameCollisionOption.ReplaceExisting);
         }

@@ -873,7 +873,7 @@ namespace AnkiU
         private static async Task<StorageFile> CopyMediaDBFileToBackup(StorageFolder backup)
         {
             StorageFile copyMediaDBFile = null;
-            var mediaDBFile = await Storage.AppLocalFolder.TryGetItemAsync(Constant.MEDIA_DB_NAME) as StorageFile;
+            var mediaDBFile = await Storage.AppLocalFolder.TryGetItemAsync(Constant.MEDIA_DB_NAME_ANKI_U) as StorageFile;
             if (mediaDBFile != null)
                 copyMediaDBFile = await mediaDBFile.CopyAsync(backup, mediaDBFile.Name, NameCollisionOption.ReplaceExisting);
             return copyMediaDBFile;

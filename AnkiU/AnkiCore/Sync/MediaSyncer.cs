@@ -112,7 +112,7 @@ namespace AnkiU.AnkiCore.Sync
                     else if (!String.IsNullOrEmpty(lsum))
                     {
                         // deleted remotely
-                        if (ldirty != 0)
+                        if (ldirty == 0)
                         {
                             collection.Log(args: "delete local");
                             await collection.Media.SyncDelete(fname);

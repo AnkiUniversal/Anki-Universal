@@ -157,7 +157,7 @@ namespace AnkiU.AnkiCore
                 if (collection.IsServer)
                     return;
 
-                mediaDatabaseName = Constant.MEDIA_DB_NAME;
+                mediaDatabaseName = Constant.MEDIA_DB_NAME_ANKI_U;
 
                 bool create = false;
                 store = (await appFolder.TryGetItemAsync(mediaDatabaseName)) as StorageFile;

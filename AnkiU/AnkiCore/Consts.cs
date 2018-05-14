@@ -39,9 +39,10 @@ namespace AnkiU.AnkiCore
         public const string COLLECTION_NAME_ZIP = COLLECTION_NAME + ".zip";
         public const string ANKI_COL_SYNC_PATH = ANKIROOT_SYNC_FOLDER + "/" + COLLECTION_NAME;
 
-        public const string MEDIA_DB_NAME = "collection.media.au.db2";
-        public const string MEDIA_DB_NAME_ZIP = MEDIA_DB_NAME + ".zip";
-        public const string MEDIA_DB_SYNC_PATH = ANKIROOT_SYNC_FOLDER + "/" + MEDIA_DB_NAME;
+        public const string MEDIA_DB_NAME_ANKI = "collection.media.db2";
+        public const string MEDIA_DB_NAME_ANKI_U = "collection.media.au.db2";
+        public const string MEDIA_DB_NAME_ZIP = MEDIA_DB_NAME_ANKI_U + ".zip";
+        public const string MEDIA_DB_SYNC_PATH = ANKIROOT_SYNC_FOLDER + "/" + MEDIA_DB_NAME_ANKI_U;
 
         public const string USER_PREF = "Prefs.db";        
         public const string USER_PREF_SYNC_PATH = ANKIROOT_SYNC_FOLDER + "/" + USER_PREF;

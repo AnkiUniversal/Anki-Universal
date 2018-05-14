@@ -73,8 +73,7 @@ namespace AnkiU.AnkiCore.Sync
             json.Add("files", JsonArray.Parse(String.Join(" ", top)));
             using (MemoryStream stream = GetInputStream(Utils.JsonToString(json)))
             {
-                HttpResponseMessage resp;
-                resp = await Request("downloadFiles", stream);
+                HttpResponseMessage resp = await Request("downloadFiles", stream);
                 String zipPath = collection.RelativePath.ReplaceFirst("collection.anki2", "tmpSyncFromServer.zip");
                 // retrieve contents and save to file on disk:
                 WriteToFile((await resp.Content.ReadAsInputStreamAsync()).AsStreamForRead(), zipPath);
@@ -130,9 +129,6 @@ namespace AnkiU.AnkiCore.Sync
         /// the content of the "data" element, and there are several such types in the various server responses. 
         /// Java ver requires us to specifically choose a type to convert to, so we need an additional parameter (returnType) to
         /// specify the type we expect.
-        /// In C# we can use dynamic (with a hit in performance) however the JsonObject still requires us to use the 
-        /// right get method for each type.
-        /// So just use OVERLOAD instead
         /// </summary>
         /// <param name="resp"></param>
         /// <param name="notUsed">Just used to choose the right overload method. Not used in function.</param>
