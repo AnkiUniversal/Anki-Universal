@@ -90,7 +90,7 @@ namespace AnkiU.AnkiCore.Sync
                 if (!serverMeta.GetNamedBoolean("cont"))
                 {
                     // Don't add syncMsg; it can be fetched by UI code using the accessor
-                    result = new string[] { "serverAbort" };
+                    result = new string[] { "serverAbort", syncMsg };
                     return result;
                 }
                 else
@@ -114,19 +114,19 @@ namespace AnkiU.AnkiCore.Sync
                 if (diff > 300)
                 {
                     collection.Log(args: "clock off");
-                    result = new string[] { "clockOff", diff.ToString() };
+                    result = new string[] { "clockOff", diff.ToString(), syncMsg };
                     return result;
                 }
                 if (clientModifiedTime == serverModifiedTime)
                 {
                     collection.Log(args: "no changes");
-                    result = new string[] { "noChanges" };
+                    result = new string[] { "noChanges", syncMsg};
                     return result;
                 }
                 else if (clientScm != serverScm)
                 {
                     collection.Log(args: "schema diff");
-                    result = new string[] { "fullSync" };
+                    result = new string[] { "fullSync", syncMsg };
                     return result;
                 }
                 isClientNewer = clientModifiedTime > serverModifiedTime;
@@ -134,7 +134,7 @@ namespace AnkiU.AnkiCore.Sync
                 if (!collection.BasicCheck())
                 {
                     collection.Log(args: "basic check");
-                    result = new string[] { "basicCheckFailed" };
+                    result = new string[] { "basicCheckFailed", syncMsg };
                     return result;
                 }
 
@@ -189,18 +189,18 @@ namespace AnkiU.AnkiCore.Sync
                 if (severCheck == null || !severCheck.GetNamedString("status", "bad").Equals("ok"))
                 {
                     collection.Log(args: new object[] { "sanity check failed", clientCheck, severCheck });
-                    result = new string[] { "sanityCheckError", null };
+                    result = new string[] { "sanityCheckError", null, syncMsg };
                     return result;
                 }
                 // finalize
                 long timeModified = await server.Finish();
                 if (timeModified == 0)
                 {
-                    result = new string[] { "finishError" };
+                    result = new string[] { "finishError", syncMsg };
                     return result;
                 }
                 Finish(timeModified);
-                result = new string[] { "success" };
+                result = new string[] { "success", syncMsg };
             }
             catch(HttpSyncerException ex)
             {

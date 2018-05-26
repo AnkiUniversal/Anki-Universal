@@ -83,6 +83,7 @@ namespace AnkiU.Anki.Syncer
                 {
                     await ConfirmAndStartFullSync();
                     MainPage.UserPrefs.IsFullSyncRequire = false;
+                    await ShowAnkiWebReturnMessageIfHas(results);
                     return;
                 }
                 else if (results[0] == "noChanges" || results[0] == "success")
@@ -98,6 +99,7 @@ namespace AnkiU.Anki.Syncer
 
                     MainPage.UserPrefs.IsFullSyncRequire = false;
                     await WaitForCloseSyncStateDialog();
+                    await ShowAnkiWebReturnMessageIfHas(results);
                     return;
                 }
                 else if (results[0] == "serverAbort")
@@ -135,6 +137,12 @@ namespace AnkiU.Anki.Syncer
             {
                 syncStateDialog.Close();
             }
+        }
+
+        private static async Task ShowAnkiWebReturnMessageIfHas(string[] results)
+        {
+            if (!String.IsNullOrWhiteSpace(results[1]))
+                await UIHelper.ShowMessageDialog(results[1], "AnkiWeb Notification");
         }
 
         private void SetSyncLabel(string message)

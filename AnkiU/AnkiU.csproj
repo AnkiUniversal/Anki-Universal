@@ -614,6 +614,7 @@
     <Content Include="html\error.html" />
     <Content Include="html\card.html" />
     <None Include="Package.StoreAssociation.xml" />
+    <None Include="Package.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
