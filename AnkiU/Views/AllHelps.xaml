@@ -142,6 +142,20 @@
                         <TextBlock Text="Deck Options" />
                     </StackPanel>
                 </Button>
+
+                <Button Style="{StaticResource DefaultButtonRevealStyle}"    
+                    Foreground="White"
+                    Background="Transparent" 
+                    Height="35"
+                    Padding="15,0,0,0"
+                    Visibility="Visible"
+                    BorderThickness="0,1,0,1"
+                    Margin="0,-1,0,0"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"                                   
+                    Click="OnTTSButtonClick">
+                    <TextBlock Text="Text-to-Speech" />
+                </Button>
             </StackPanel>
         </ScrollViewer>
 

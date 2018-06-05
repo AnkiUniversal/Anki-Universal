@@ -131,8 +131,9 @@ namespace AnkiU.Views
         {            
             if (MainPage.UserPrefs.IsHelpAlreadyShown(HELP_DECK_NOTE))
             {
-                InitHelpPopupIfNeeded();
-                StartAddDeckAndNotehelp();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                Windows.System.Launcher.LaunchUriAsync(new Uri("https://nlpjapanesedictionary.wordpress.com/2018/05/30/anki-universal-get-started/"));
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
             else
             {
@@ -224,8 +225,11 @@ namespace AnkiU.Views
         {            
             if (MainPage.UserPrefs.IsHelpAlreadyShown(HELP_NOTE_TYPE_AND_TEMPLATE))
             {
-                InitHelpPopupIfNeeded();
-                NoteTypeAndTemplateStart();
+                //InitHelpPopupIfNeeded();
+                //NoteTypeAndTemplateStart();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                Windows.System.Launcher.LaunchUriAsync(new Uri("https://nlpjapanesedictionary.wordpress.com/2018/05/30/anki-universal-card-appearance/"));
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
             else
             {
@@ -704,6 +708,13 @@ namespace AnkiU.Views
                 UIHelper.AddToGridInFull(MainPage.MainGrid, creditPopup);
             }
             creditPopup.Show();
-        }        
+        }
+
+        private void OnTTSButtonClick(object sender, RoutedEventArgs e)
+        {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            Windows.System.Launcher.LaunchUriAsync(new Uri("https://nlpjapanesedictionary.wordpress.com/2018/06/05/anki-universal-tts/"));
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        }
     }
 }
