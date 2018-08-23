@@ -606,6 +606,8 @@ namespace AnkiU
                 InitCollectionFinished += InitCollectionFinishedHandler;
                 SyncButton.Click += SyncButtonClickHandler;
 
+                Windows.UI.Core.Preview.SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnAppCloseRequested;
+
                 //Default startup position is always narrow, but user may change win size in last used time
                 RepositionCommanBar(WINSIZE_NARROW);
             }
@@ -617,7 +619,24 @@ namespace AnkiU
                 });
             }
         }
-        
+
+        private async void OnAppCloseRequested(object sender, Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            if( Collection != null)
+            {
+                e.Handled = true;
+                if (UserPrefs.IsSyncOnClose)
+                {
+                    if(!(contentFrame.Content is DeckSelectPage))
+                    {
+                        await NavigateToDeckSelectPage();
+                    }
+                    await StartSync();                    
+                }
+                App.Current.Exit();
+            }
+        }
+
         private static void SetPreferLauchSize()
         {
             ApplicationView.PreferredLaunchViewSize = new Size { Height = 600, Width = 500 };

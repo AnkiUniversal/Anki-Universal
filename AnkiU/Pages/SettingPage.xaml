@@ -152,6 +152,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <TextBlock Text="Sync service" TextAlignment="Right" VerticalAlignment="Center"  Foreground="{Binding Foreground, ElementName=userControl}" />
@@ -182,9 +183,17 @@
                                       BorderBrush="{Binding Foreground, ElementName=userControl}"
                                       IsThreeState="False"/>
 
-                            <TextBlock Grid.Row="4" x:Name="syncMediaText" Text="Also sync media files" Margin="0,0,0,3"  Foreground="{Binding Foreground, ElementName=userControl}" 
+                            <TextBlock Text="Automatically sync on closing"   Grid.Row="4" Margin="0,0,0,3"  Foreground="{Binding Foreground, ElementName=userControl}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                            <CheckBox Grid.Row="4" Grid.Column="2" x:Name="syncMediaCheckBox"
+                            <CheckBox Grid.Row="4" Grid.Column="2"  x:Name="syncOnCloseCheckBox"
+                                      VerticalAlignment="Center" HorizontalAlignment="Left"
+                                      Foreground="{Binding Foreground, ElementName=userControl}" 
+                                      BorderBrush="{Binding Foreground, ElementName=userControl}"
+                                      IsThreeState="False"/>
+                            
+                            <TextBlock Grid.Row="5" x:Name="syncMediaText" Text="Also sync media files" Margin="0,0,0,3"  Foreground="{Binding Foreground, ElementName=userControl}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <CheckBox Grid.Row="5" Grid.Column="2" x:Name="syncMediaCheckBox"
                                       VerticalAlignment="Center" HorizontalAlignment="Left"
                                       IsThreeState="False"
                                       Foreground="{Binding Foreground, ElementName=userControl}" 

@@ -86,6 +86,7 @@ namespace AnkiU.Pages
             numberOfBackup.Number = MainPage.UserPrefs.NumberOfBackups;
             backupTime.Number = MainPage.UserPrefs.BackupsMinTime;
             syncOnOpenCheckBox.IsChecked = MainPage.UserPrefs.IsSyncOnOpen;
+            syncOnCloseCheckBox.IsChecked = MainPage.UserPrefs.IsSyncOnClose;
             syncMediaCheckBox.IsChecked = MainPage.UserPrefs.IsSyncMedia;
             if (!UIHelper.IsDeskTop())
                 openBackUpFolderButton.Visibility = Visibility.Collapsed;
@@ -134,6 +135,7 @@ namespace AnkiU.Pages
             MainPage.UserPrefs.BackupsMinTime = backupTime.Number;
             MainPage.UserPrefs.IsSyncMedia = (bool)syncMediaCheckBox.IsChecked;
             MainPage.UserPrefs.IsSyncOnOpen = (bool)syncOnOpenCheckBox.IsChecked;
+            MainPage.UserPrefs.IsSyncOnClose = (bool)syncOnCloseCheckBox.IsChecked;
             MainPage.UserPrefs.SyncService = syncServiceCombobox.SelectedIndex;
             mainPage.UpdateUserPreference();
         }

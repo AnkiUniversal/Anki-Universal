@@ -276,6 +276,21 @@ namespace AnkiU.Anki
             }
         }
 
+        private bool isSyncOnClose;
+        [SQLite.Net.Attributes.Column("IsSyncOnClose")]
+        public bool IsSyncOnClose
+        {
+            get { return isSyncOnClose; }
+            set
+            {
+                if (isSyncOnClose == value)
+                    return;
+
+                isSyncOnClose = value;
+                IsModified = true;
+            }
+        }
+
         private bool isShowLeechActionOnce;
         [SQLite.Net.Attributes.Column("IsShowLeechActionOnce")]
         public bool IsShowLeechActionOnce
@@ -437,6 +452,7 @@ namespace AnkiU.Anki
             userPrefs.LastSyncTime = 0;
             userPrefs.IsSyncMedia = false;
             userPrefs.isSyncOnOpen = false;
+            userPrefs.isSyncOnClose = true;
 
             userPrefs.isOneHandMode = false;
             userPrefs.isLeftHand = false;
