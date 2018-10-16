@@ -34,8 +34,12 @@ namespace AnkiU.AnkiCore
         public static readonly Regex expressionPattern = new Regex(@"(?s)\[\$\](.+?)\[/\$\]",
                                                                     RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public static readonly Regex mathPattern = new Regex(@"(?s)\[\$\$\](.+?)\[/\$\$\]",
-                                                                    RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
+                                                                    RegexOptions.Compiled | RegexOptions.IgnoreCase);        
+        
+        private static readonly Regex startInlinePatternMathJax = new Regex(@"(?s)\[\$\]|\\begin{math}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex endInlinePatternMathJax = new Regex(@"(?s)\[/\$\]|\\end{math}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex mathPatternMathJax = new Regex(@"(?s)\[\$\$\]|\[/\$\$\]|\\begin{displaymath}|\\end{displaymath}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex deleteLatexPattern = new Regex(@"(?s)\\begin{math}|\\end{math}|\\begin{displaymath}|\\end{displaymath}|\$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /**
         * Convert HTML with embedded latex tags to image links.
@@ -43,48 +47,67 @@ namespace AnkiU.AnkiCore
         * in java ver. The omitted parameters are used to generate LaTeX images. java ver does not
         * support the generation of LaTeX media and the provided parameters are sufficient for all
         * other cases.
-        */                            
+        * 
+        * Anki Universal 1.4.14: We use Mathjax so just replace all Latex with $$
+        */
         public static string MungeQA(string html, Collection col)
         {
             try
             {
+                string result;
                 StringBuilder sb = new StringBuilder();
-                bool isMatchOne = false;
                 MatchCollection matches = standardPattern.Matches(html);
                 foreach (Match matcher in matches)
                 {
-                    sb.AppendAndReplace(ImgLink(col, matcher.GetGroup(1)), html, matcher);
-                    isMatchOne = true;
+                    result = deleteLatexPattern.Replace(matcher.GetGroup(1), "");
+                    sb.AppendAndReplace(@"$$" + result + @"$$", html, matcher);
                 }
-                if (isMatchOne)
+                if (matches.Count > 0)
                     html = sb.ToString();
 
-                isMatchOne =false;
-                matches = expressionPattern.Matches(html);
-                sb = new StringBuilder();
-                foreach (Match matcher in matches)
-                {
-                    sb.AppendAndReplace(ImgLink(col, "$" + matcher.GetGroup(1) + "$"),
-                                        html, matcher);
-                    isMatchOne = true;
-                }
-                if (isMatchOne)
-                    html = sb.ToString();
+                result = mathPatternMathJax.Replace(html, @"$$$");
+                result = startInlinePatternMathJax.Replace(result, @"\(");
+                result = endInlinePatternMathJax.Replace(result, @"\)");             
+                return result;
 
-                isMatchOne = false;
-                matches = mathPattern.Matches(html);
-                sb = new StringBuilder();
-                foreach (Match matcher in matches)
-                {
-                    sb.AppendAndReplace(ImgLink(col, "\\begin{displaymath}"
-                                        + matcher.GetGroup(1) + "\\end{displaymath}"),
-                                        html, matcher);
-                    isMatchOne = true;
-                }
-                if (isMatchOne)
-                    return sb.ToString();
-                else
-                    return html;
+                //TODO: Delete these after testing
+                //StringBuilder sb = new StringBuilder();
+                //bool isMatchOne = false;
+                //MatchCollection matches = standardPattern.Matches(html);
+                //foreach (Match matcher in matches)
+                //{
+                //    sb.AppendAndReplace(ImgLink(col, matcher.GetGroup(1)), html, matcher);
+                //    isMatchOne = true;
+                //}
+                //if (isMatchOne)
+                //    html = sb.ToString();
+
+                //isMatchOne =false;
+                //matches = expressionPattern.Matches(html);
+                //sb = new StringBuilder();
+                //foreach (Match matcher in matches)
+                //{
+                //    sb.AppendAndReplace(ImgLink(col, "$" + matcher.GetGroup(1) + "$"),
+                //                        html, matcher);
+                //    isMatchOne = true;
+                //}
+                //if (isMatchOne)
+                //    html = sb.ToString();
+
+                //isMatchOne = false;
+                //matches = mathPattern.Matches(html);
+                //sb = new StringBuilder();
+                //foreach (Match matcher in matches)
+                //{
+                //    sb.AppendAndReplace(ImgLink(col, "\\begin{displaymath}"
+                //                        + matcher.GetGroup(1) + "\\end{displaymath}"),
+                //                        html, matcher);
+                //    isMatchOne = true;
+                //}
+                //if (isMatchOne)
+                //    return sb.ToString();
+                //else
+                //    return html;
             }
             catch
             {

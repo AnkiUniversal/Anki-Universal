@@ -172,6 +172,17 @@
                     </Paragraph>
 
                     <Paragraph>
+                        <Bold  FontSize="18">MathJax</Bold>
+                        <LineBreak/>
+                        <Hyperlink NavigateUri="https://www.mathjax.org/">https://www.mathjax.org/</Hyperlink>
+                        <LineBreak/>
+                        Copyright (c) MathJax ©2009-2018 info@mathjax.org
+                        <LineBreak/>
+                        License Apache 2.0
+                        <LineBreak/>
+                    </Paragraph>
+
+                    <Paragraph>
                         <Bold  FontSize="18">Font: Fira Sans</Bold>
                         <LineBreak/>
                         <Hyperlink NavigateUri="https://github.com/mozilla/Fira">https://github.com/mozilla/Fira</Hyperlink>

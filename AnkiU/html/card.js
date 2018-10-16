@@ -75,6 +75,29 @@ function ChangeCardContent(htmlText, cardClass) {
         cardcontent.focus();
         cardcontent.click();
     }
+
+    EnableMathJaxIfNeeded(htmlText);    
+}
+
+function EnableMathJaxIfNeeded(htmlText) {
+    if (htmlText.indexOf('$$') != -1 || (htmlText.indexOf('\\(') != -1 && htmlText.indexOf('\\)'))) {
+        if (typeof MathJax == "undefined" || MathJax == null) {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "/html/MathJax/MathJax.js";  
+
+            var config = 'MathJax.Hub.Config({' +
+                'extensions: ["tex2jax.js","MathEvents.js","MathZoom.js","toMathML.js","TeX/noErrors.js","TeX/noUndefined.js","TeX/AMSmath.js","TeX/AMSsymbols.js","fast-preview.js"],' +
+                'jax: ["input/TeX","output/SVG","output/PreviewHTML"]' +                
+                '});' +
+                'MathJax.Hub.Startup.onload();';
+
+            script.text = config;
+            document.getElementsByTagName("head")[0].appendChild(script);
+        }
+        else
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
 }
 
 function ChangeReadMode(readMode) {
