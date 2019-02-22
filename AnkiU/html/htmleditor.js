@@ -28,10 +28,13 @@ document.addEventListener("keydown", keyDownTextField, false);
 function keyDownTextField(e) {
 
     if (!isKeydownHandle) {
-        var evtobj = window.event ? event : e
+        var evtobj = window.event ? event : e;
 
-        if (evtobj.ctrlKey && evtobj.keyCode == 83) {
-            NotifyButtonClick('save');
+        if (evtobj.ctrlKey) {
+            if (evtobj.keyCode == 83)
+                NotifyButtonClick('saveS');
+            else if (evtobj.keyCode == 13)
+                NotifyButtonClick('saveE');
             return false;
         }
     }

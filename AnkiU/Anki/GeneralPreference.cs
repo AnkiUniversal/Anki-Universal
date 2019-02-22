@@ -429,6 +429,21 @@ namespace AnkiU.Anki
             }
         }
 
+        private bool isChangedSaveShortcutOpen;
+        [SQLite.Net.Attributes.Column("IsChangedSaveShortcutOpen")]
+        public bool IsChangedSaveShortcutOpen
+        {
+            get { return isChangedSaveShortcutOpen; }
+            set
+            {
+                if (isChangedSaveShortcutOpen == value)
+                    return;
+
+                isChangedSaveShortcutOpen = value;
+                IsModified = true;
+            }
+        }
+
         public static GeneralPreference GetDefaultPreference()
         {
             GeneralPreference userPrefs = new GeneralPreference();
@@ -457,6 +472,8 @@ namespace AnkiU.Anki
             userPrefs.isOneHandMode = false;
             userPrefs.isLeftHand = false;
             userPrefs.answerButtonPosition = 0;
+
+            userPrefs.isChangedSaveShortcutOpen = false;
 
             userPrefs.lastAppVer = MainPage.APP_VER;
 

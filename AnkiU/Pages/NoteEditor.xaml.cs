@@ -160,7 +160,12 @@ namespace AnkiU.Pages
             await mainPage.CurrentDispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {                
                 var control = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                if(control.HasFlag(CoreVirtualKeyStates.Down) && args.VirtualKey == VirtualKey.S)
+                VirtualKey saveKey;
+                if (MainPage.UserPrefs.IsChangedSaveShortcutOpen)
+                    saveKey = VirtualKey.Enter;
+                else
+                    saveKey = VirtualKey.S;
+                if (control.HasFlag(CoreVirtualKeyStates.Down) && args.VirtualKey == saveKey)
                 {
                     isProcessedKeyPressEvent = true;
                     await SaveNote();
@@ -538,8 +543,13 @@ namespace AnkiU.Pages
                         case ("cloze"):
                             await AddCloze();
                             break;
-                        case ("save"):                            
-                            await SaveNote();
+                        case ("saveS"):
+                            if(!MainPage.UserPrefs.IsChangedSaveShortcutOpen)
+                                await SaveNote();
+                            break;
+                        case ("saveE"):
+                            if (MainPage.UserPrefs.IsChangedSaveShortcutOpen)
+                                await SaveNote();
                             break;
                         case ("groupbutton"):
                             HideTouchKeyboad();

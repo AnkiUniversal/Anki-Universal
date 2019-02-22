@@ -202,6 +202,39 @@
 
                         </Grid>
                     </PivotItem>
+
+                    <PivotItem x:Name="Misc"  Background="{Binding Background, ElementName=learningTab}" Padding="0" Margin="0" >
+                        <PivotItem.Header >
+                            <TextBlock Text="MISC"                            
+                            FontSize="15"                            
+                            FontWeight="SemiBold"
+                            Style="{StaticResource CaptionTextBlockStyle}"    
+                            IsTextScaleFactorEnabled="False"
+                                  Foreground="White" 
+                            TextAlignment="Center"
+                            HorizontalAlignment="Center" Width="75"/>
+                        </PivotItem.Header>
+                        <Grid Margin="5,10,0,0" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="*" MaxWidth="200"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Change save note shortcut to Ctrl + Enter"   Grid.Row="3" Margin="0,0,0,3"  Foreground="{Binding Foreground, ElementName=userControl}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <CheckBox Grid.Row="3" Grid.Column="2"  x:Name="saveShortcutCheckBox"
+                                      VerticalAlignment="Center" HorizontalAlignment="Left" 
+                                      Foreground="{Binding Foreground, ElementName=userControl}" 
+                                      BorderBrush="{Binding Foreground, ElementName=userControl}"
+                                      IsThreeState="False"/>
+
+                        </Grid>
+                    </PivotItem>
                 </Pivot>
             </Grid>
         </ScrollViewer>

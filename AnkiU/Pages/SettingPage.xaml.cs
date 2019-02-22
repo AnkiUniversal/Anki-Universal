@@ -97,7 +97,8 @@ namespace AnkiU.Pages
                 DisableMediaSync();
                 ChangeAnkiWebButtonVisibility(Visibility.Visible);                
             }
-            syncServiceCombobox.SelectionChanged += OnSyncServiceSelectionChanged; //Hook here to avoid start up problems            
+            syncServiceCombobox.SelectionChanged += OnSyncServiceSelectionChanged; //Hook here to avoid start up problems     
+            saveShortcutCheckBox.IsChecked = MainPage.UserPrefs.IsChangedSaveShortcutOpen;
             HookAllEvents();
         }
 
@@ -137,6 +138,7 @@ namespace AnkiU.Pages
             MainPage.UserPrefs.IsSyncOnOpen = (bool)syncOnOpenCheckBox.IsChecked;
             MainPage.UserPrefs.IsSyncOnClose = (bool)syncOnCloseCheckBox.IsChecked;
             MainPage.UserPrefs.SyncService = syncServiceCombobox.SelectedIndex;
+            MainPage.UserPrefs.IsChangedSaveShortcutOpen = (bool)saveShortcutCheckBox.IsChecked;
             mainPage.UpdateUserPreference();
         }
 
@@ -271,6 +273,5 @@ namespace AnkiU.Pages
             if(isContinue)
                 mainPage.Collection.ModSchemaNoCheck();
         }
-        
     }
 }

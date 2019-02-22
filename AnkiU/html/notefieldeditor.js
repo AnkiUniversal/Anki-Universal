@@ -265,7 +265,13 @@ function KeyPress(e) {
 
         //s
         if (evtobj.keyCode == 83) {
-            NotifyButtonClick('save');
+            NotifyButtonClick('saveS');
+            return false;
+        }
+
+        //Enter
+        if (evtobj.keyCode == 13) {
+            NotifyButtonClick('saveE');
             return false;
         }
 
