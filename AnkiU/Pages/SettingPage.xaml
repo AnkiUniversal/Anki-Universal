@@ -153,6 +153,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <TextBlock Text="Sync service" TextAlignment="Right" VerticalAlignment="Center"  Foreground="{Binding Foreground, ElementName=userControl}" />
@@ -194,6 +195,15 @@
                             <TextBlock Grid.Row="5" x:Name="syncMediaText" Text="Also sync media files" Margin="0,0,0,3"  Foreground="{Binding Foreground, ElementName=userControl}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Right"/>
                             <CheckBox Grid.Row="5" Grid.Column="2" x:Name="syncMediaCheckBox"
+                                      VerticalAlignment="Center" HorizontalAlignment="Left"
+                                      IsThreeState="False"
+                                      Foreground="{Binding Foreground, ElementName=userControl}" 
+                                      BorderBrush="{Binding Foreground, ElementName=userControl}"
+                                      />
+
+                            <TextBlock Grid.Row="6" x:Name="syncMediaAnkiWebNotify" Text="Don't Display AnkiWeb Media Warning Message" Margin="0,0,0,3"  Foreground="{Binding Foreground, ElementName=userControl}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <CheckBox Grid.Row="6" Grid.Column="2" x:Name="syncMediaAnkiWebNotifyCheckBox"
                                       VerticalAlignment="Center" HorizontalAlignment="Left"
                                       IsThreeState="False"
                                       Foreground="{Binding Foreground, ElementName=userControl}" 

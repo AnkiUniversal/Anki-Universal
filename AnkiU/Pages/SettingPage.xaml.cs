@@ -88,6 +88,7 @@ namespace AnkiU.Pages
             syncOnOpenCheckBox.IsChecked = MainPage.UserPrefs.IsSyncOnOpen;
             syncOnCloseCheckBox.IsChecked = MainPage.UserPrefs.IsSyncOnClose;
             syncMediaCheckBox.IsChecked = MainPage.UserPrefs.IsSyncMedia;
+            syncMediaAnkiWebNotifyCheckBox.IsChecked = MainPage.UserPrefs.IsNotShowMediaNoticeAnkiWebSync;
             if (!UIHelper.IsDeskTop())
                 openBackUpFolderButton.Visibility = Visibility.Collapsed;
 
@@ -98,7 +99,7 @@ namespace AnkiU.Pages
                 ChangeAnkiWebButtonVisibility(Visibility.Visible);                
             }
             syncServiceCombobox.SelectionChanged += OnSyncServiceSelectionChanged; //Hook here to avoid start up problems     
-            saveShortcutCheckBox.IsChecked = MainPage.UserPrefs.IsChangedSaveShortcutOpen;
+            saveShortcutCheckBox.IsChecked = MainPage.UserPrefs.IsChangedSaveShortcutOpen;            
             HookAllEvents();
         }
 
@@ -139,6 +140,7 @@ namespace AnkiU.Pages
             MainPage.UserPrefs.IsSyncOnClose = (bool)syncOnCloseCheckBox.IsChecked;
             MainPage.UserPrefs.SyncService = syncServiceCombobox.SelectedIndex;
             MainPage.UserPrefs.IsChangedSaveShortcutOpen = (bool)saveShortcutCheckBox.IsChecked;
+            MainPage.UserPrefs.IsNotShowMediaNoticeAnkiWebSync = (bool)syncMediaAnkiWebNotifyCheckBox.IsChecked;
             mainPage.UpdateUserPreference();
         }
 

@@ -291,6 +291,21 @@ namespace AnkiU.Anki
             }
         }
 
+        private bool isNotShowMediaNoticeAnkiWebSync;
+        [SQLite.Net.Attributes.Column("isShowMediaNoticeAnkiWebSync")]
+        public bool IsNotShowMediaNoticeAnkiWebSync
+        {
+            get { return isNotShowMediaNoticeAnkiWebSync; }
+            set
+            {
+                if (isNotShowMediaNoticeAnkiWebSync == value)
+                    return;
+
+                isNotShowMediaNoticeAnkiWebSync = value;
+                IsModified = true;
+            }
+        }
+
         private bool isShowLeechActionOnce;
         [SQLite.Net.Attributes.Column("IsShowLeechActionOnce")]
         public bool IsShowLeechActionOnce
@@ -468,6 +483,7 @@ namespace AnkiU.Anki
             userPrefs.IsSyncMedia = false;
             userPrefs.isSyncOnOpen = false;
             userPrefs.isSyncOnClose = true;
+            userPrefs.isNotShowMediaNoticeAnkiWebSync = false;
 
             userPrefs.isOneHandMode = false;
             userPrefs.isLeftHand = false;

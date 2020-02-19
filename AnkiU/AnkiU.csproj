@@ -21,7 +21,7 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <Win32Resource>MyResources.res</Win32Resource>
-    <PackageCertificateThumbprint>DB551504C619B699C1B50FE1EDCF2110C84E0BDB</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>1B88A6792E2A51F32C5941F55E0BD57F92ECD5CA</PackageCertificateThumbprint>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>

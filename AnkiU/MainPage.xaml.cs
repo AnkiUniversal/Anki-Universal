@@ -2124,6 +2124,10 @@ namespace AnkiU
             {                
                 var ankiWebSync = new AnkiWebSync(this);
                 await ankiWebSync.StartSync();
+                if (MainPage.UserPrefs.IsNotShowMediaNoticeAnkiWebSync == false)
+                    await UIHelper.ShowMessageDialog("Please note that Anki Universal does not support syncing media,"
+                                                    + " so your sound/image files have not been sent to AnkiWeb.\n"
+                                                    + "To disable this message please go to \"Settings/Sync\"");
             }         
         }
 

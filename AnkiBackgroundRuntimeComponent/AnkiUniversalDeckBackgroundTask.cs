@@ -21,6 +21,7 @@ namespace AnkiBackgroundRuntimeComponent
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
+            taskInstance.Canceled += new BackgroundTaskCanceledEventHandler(OnCanceled);
             deferral = taskInstance.GetDeferral();
             await EnableCancelOfTask(taskInstance);            
 
@@ -48,6 +49,12 @@ namespace AnkiBackgroundRuntimeComponent
                 deferral.Complete();
             }
         }
+
+        private void OnCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            deferral.Complete();
+        }
+
 
         private async Task EnableCancelOfTask(IBackgroundTaskInstance taskInstance)
         {
